@@ -607,6 +607,9 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	padding:5px 0 5px 30px;
 	height:auto;
 }
+.filter .item.sorting.active .filter-content{
+	padding-right:30px;
+}
 .filter .item .filter-content p{
 	font-size:13px;
 	position:relative;
@@ -620,4 +623,16 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 .filter .item .filter-content hr.small{
 	margin:6px 0;
+}
+.filter .toggle-btns{
+	border:1px solid #09a3ee;
+}
+.holder .toggle-btns a{
+	padding:6px 8px 4px;
+	font-size:12px;
+	vertical-align:top;
+	display:inline-block;
+}
+.holder .toggle-btns a.active{
+	color:#fff;
 }
