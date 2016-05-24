@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    	
+	<!-- CSS -->
+	<link href="../../../../styles/helper.css" rel="stylesheet">
+	
+	<!-- JS -->
+	<script src="../../../../scripts/buildfire.js"></script>
+   
+ 	<!--
+    <script src="../../../../scripts/angular/angular.min.js"></script>
+    <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+
+    <script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+    -->
+</head>
+<body>
+    <div class="item clearfix row">
+		<div class="col-md-3 labels pull-left">
+			<span>Default View</span>
+		</div>
+		<div class="col-md-9 pull-left">
+			<div class="radio radio-primary radio-inline">
+				<input id="listView" type="radio" name="defaultView" checked="">
+				<label for="listView">List</label>
+			</div>
+			<div class="radio radio-primary radio-inline" style="margin-left:32px !important;">
+				<input id="mapView" type="radio" name="defaultView">
+				<label for="mapView">Map</label>
+			</div>
+		</div>
+	</div>
+	<hr class="none">
+	<div class="item clearfix row">
+		<div class="col-md-3 labels pull-left">
+			<span>Show Distance In</span>
+		</div>
+		<div class="col-md-9 pull-left">
+			<div class="radio radio-primary radio-inline">
+				<input id="miles" type="radio" name="showDistance" checked="">
+				<label for="miles">Miles</label>
+			</div>
+			<div class="radio radio-primary radio-inline">
+				<input id="kilometers" type="radio" name="showDistance">
+				<label for="kilometers">Kilometers</label>
+			</div>
+		</div>
+	</div>
+	<hr class="none">
+	<div class="item clearfix row">
+		<div class="col-md-3 labels pull-left">
+			<span>Map View Option</span>
+		</div>
+		<div class="col-md-9 pull-left">
+			<div class="radio radio-primary radio-inline">
+				<input id="showMap" type="radio" name="mapView" checked="">
+				<label for="showMap">Show</label>
+			</div>
+			<div class="radio radio-primary radio-inline">
+				<input id="hideMap" type="radio" name="mapView">
+				<label for="hideMap">Hide</label>
+			</div>
+		</div>
+	</div>
+	<hr class="none">
+	<div class="item clearfix row">
+		<div class="col-md-3 labels pull-left">
+			<span>Filter Page</span>
+		</div>
+		<div class="col-md-9 pull-left">
+			<div class="radio radio-primary radio-inline">
+				<input id="showFilter" type="radio" name="filterPage" checked="">
+				<label for="showFilter">Show</label>
+			</div>
+			<div class="radio radio-primary radio-inline">
+				<input id="hideFilter" type="radio" name="filterPage">
+				<label for="hideFilter">Hide</label>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

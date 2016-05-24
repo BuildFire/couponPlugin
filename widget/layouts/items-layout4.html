@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+	<!-- CSS -->
+	<link href="../../../../styles/helper.css" rel="stylesheet">
+	<link href="../../../../styles/siteIcons.css" rel="stylesheet">
+	<link href="assets/style.css" rel="stylesheet">
+	
+	<!-- JS -->
+	<script src="../../../scripts/buildfire.js"></script>
+   
+ 	<!--
+    <script src="../../../../scripts/angular/angular.min.js"></script>
+    <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+
+    <script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+    -->
+</head>
+<body class="no-scroll holder padding-zero has-bottom">
+	<div class="scrollable">
+		<div class="coupon layout4">
+			<div class="plugin-slide">
+				<img src="../../../styles/media/holder-16x9.png">
+			</div>
+			<div class="padded">
+				<p class="margin-zero">this is a wysiwyg. this is a wysiwyg. this is a wysiwyg.</p>
+			</div>
+			<div class="panels">
+				<div class="panel">
+				  	<div class="panel-heading bg-primary primaryBackgroundTheme clearfix">
+						<div class="media pull-left">
+							<img src="../../../styles/media/holder-1x1.png">
+						</div>
+				    	<p class="ellipsis margin-zero">Coupon Title Goes Here</p>
+						<div class="save-icon">
+							<span class="icon icon-star whiteTheme"></span>
+						</div>
+				  	</div>
+				  	<div class="panel-body border-grey">
+						<p>Coupon description goes here and wraps around if there is a lot of text.</p>
+						<div class="save-icon">
+							<!-- Use this when saved/active -->
+							<span class="icon icon-star whiteTheme"></span>
+						</div>
+						<div class="item clearfix row">
+							<div class="col-xs-7 pull-left text-left">
+								<p class="date ellipsis margin-zero">Expires March 21, 2016</p>
+							</div>
+							<div class="col-xs-5 pull-right text-right">
+								<p class="date margin-zero">21 miles away</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="panel">
+				  	<div class="panel-heading bg-primary primaryBackgroundTheme clearfix">
+				    	<p class="ellipsis margin-zero">Coupon Title Goes Here</p>
+						<div class="save-icon">
+							<!-- Use this when notsaved/inactive -->
+							<span class="icon icon-star-empty whiteTheme"></span>
+						</div>
+				  	</div>
+				  	<div class="panel-body border-grey">
+						<div class="item clearfix row">
+							<div class="col-xs-7 pull-left text-left">
+								<p class="date ellipsis margin-zero">Expires March 21, 2016</p>
+							</div>
+							<div class="col-xs-5 pull-right text-right">
+								<p class="date margin-zero">21 miles away</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="panel">
+				  	<div class="panel-heading bg-primary primaryBackgroundTheme clearfix">
+						<div class="media pull-left">
+							<img src="../../../styles/media/holder-1x1.png">
+						</div>
+				    	<p class="ellipsis margin-zero">Coupon Title Goes Here</p>
+						<div class="save-icon">
+							<span class="icon icon-star-empty whiteTheme"></span>
+						</div>
+				  	</div>
+				  	<div class="panel-body border-grey">
+						<div class="item clearfix row">
+							<div class="col-xs-7 pull-left text-left">
+								<p class="date ellipsis margin-zero">Expires March 21, 2016</p>
+							</div>
+							<div class="col-xs-5 pull-right text-right">
+								<p class="date margin-zero">21 miles away</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="panel">
+				  	<div class="panel-heading bg-primary primaryBackgroundTheme clearfix">
+						<div class="media pull-left">
+							<img src="../../../styles/media/holder-1x1.png">
+						</div>
+				    	<p class="ellipsis margin-zero">Coupon Title Goes Here</p>
+						<div class="save-icon">
+							<span class="icon icon-star-empty whiteTheme"></span>
+						</div>
+				  	</div>
+				  	<div class="panel-body border-grey">
+						<p>Coupon description goes here and wraps around if there is a lot of text.</p>
+						<div class="item clearfix row">
+							<div class="col-xs-7 pull-left text-left">
+								<p class="date ellipsis margin-zero">Expires March 21, 2016</p>
+							</div>
+							<div class="col-xs-5 pull-right text-right">
+								<p class="date margin-zero">21 miles away</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- If map is shown, use col-xs-3 like below -->
+	<div class="bottom fixed-bottom">
+		<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
+			<span class="whiteTheme small">Filter Applied</span>
+		</div>
+		<div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
+			<a class="whiteTheme stretch active">List</a>
+		</div>
+		<div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
+			<a class="whiteTheme stretch">Map</a>
+		</div>
+		<div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
+			<a class="whiteTheme stretch">Filter</a>
+		</div>
+		<div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
+			<a class="whiteTheme stretch">Saved</a>
+		</div>
+	</div>
+	
+	<!-- If map is hidden, use col-xs-4 like below 
+	<div class="bottom fixed-bottom">
+		<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
+			<span class="whiteTheme small">Filter Applied</span>
+		</div>
+		<div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+			<a class="whiteTheme stretch active">List</a>
+		</div>
+		<div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+			<a class="whiteTheme stretch">Filter</a>
+		</div>
+		<div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+			<a class="whiteTheme stretch">Saved</a>
+		</div>
+	</div>
+	-->
+</body>
+</html>
