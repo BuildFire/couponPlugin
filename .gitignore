@@ -34,3 +34,10 @@ node_modules
 
 #.idea folder
 .idea/*
+
+
+#bower components
+test/assets/bower_components
+
+#coverage folder
+test/coverage
