@@ -1,0 +1,24 @@
+<!-- Add Category Modal -->
+<div class="header clearfix border-bottom-grey">
+  <h4 class="margin-zero">Add Category</h4>
+  <span class="icon icon-cross2 close-modal" ng-click="closeDialog()"></span>
+</div>
+<div class="padded clearfix row">
+  <div class="content">
+    <div class="col-xs-12 pull-left margin-bottom-ten">
+      <span>Category Title</span>
+    </div>
+    <div class="col-xs-12 pull-right">
+      <input type="text" placeholder="Category Title" class="form-control">
+    </div>
+  </div>
+</div>
+<div class="bottom border-top-grey clearfix">
+  <div class="col-md-6 pull-left text-center">
+    <a class="text-default default-background-hover transition-third"
+       ng-click="closeDialog('cancel')">Cancel</a>
+  </div>
+  <div class="col-md-6 pull-right text-center border-left-grey">
+    <a class="text-success default-background-hover transition-third">Save</a>
+  </div>
+</div>
