@@ -1,50 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="couponPluginDesign">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-	<!-- CSS -->
-	<link href="../../../../styles/helper.css" rel="stylesheet">
-	
-	<!-- JS -->
-	<script src="../../../../scripts/buildfire.js"></script>
-   
- 	<!--
-    <script src="../../../../scripts/angular/angular.min.js"></script>
-    <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
-    -->
+  <!-- CSS -->
+  <link href="../../../../styles/helper.css" rel="stylesheet">
+
+  <!-- JS -->
+  <script src="../../../../scripts/buildfire.js"></script>
+
+  <script src="../../../../scripts/angular/angular.min.js"></script>
+  <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+  <script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+  <script src="app.js"></script>
+  <script src="app.services.js"></script>
+  <script src="enums.js"></script>
+  <script src="controllers/design.home.controller.js"></script>
 </head>
-<body>
-    <div class="item row clearfix">
-	    <div class="labels col-md-3 padding-right-zero pull-left">
-	        <span>Items List Layout</span>
-	    </div>
-	    <div class="main col-md-9 pull-right">
-	        <div class="screens clearfix">
-	            <div class="screen layouticon pull-left">
-	                <a class="border-grey border-radius-three default-background-hover text-center">
-	                    <span class="add-icon hidden">+</span>
-	                    <img ng-src="">
-	                </a>
-	            </div>
-	            <div class="screen layoutgrid pull-right margin-left-zero border-grey border-radius-three">
-	                <a data-number="{{$index + 1}}" class="layouticon border-grey border-radius-three default-background-hover text-center" ng-click="DesignHome.changeLayout(layout.name)">
-	                    <img ng-src="">
-	                </a>
-					<a data-number="{{$index + 1}}" class="layouticon border-grey border-radius-three default-background-hover text-center" ng-click="DesignHome.changeLayout(layout.name)">
-	                    <img ng-src="">
-	                </a>
-					<a data-number="{{$index + 1}}" class="layouticon border-grey border-radius-three default-background-hover text-center" ng-click="DesignHome.changeLayout(layout.name)">
-	                    <img ng-src="">
-	                </a>
-					<a data-number="{{$index + 1}}" class="layouticon border-grey border-radius-three default-background-hover text-center" ng-click="DesignHome.changeLayout(layout.name)">
-	                    <img ng-src="">
-	                </a>
-	            </div>
-	        </div>
-	    </div>
-	</div>
+<body ng-controller="DesignHomeCtrl as DesignHome">
+<div class="item row clearfix">
+  <div class="labels col-md-3 padding-right-zero pull-left">
+    <span>Item List Layout</span>
+  </div>
+  <div class="main col-md-9 pull-right">
+    <div class="screens clearfix">
+      <div class="screen layouticon pull-left">
+        <a class="border-radius-three default-background-hover text-center"  ng-if="DesignHome.data.design.itemListLayout.length">
+          <span class="add-icon hidden">+</span>
+          <img ng-src="images/{{DesignHome.data.design.itemListLayout}}.png">
+        </a>
+
+      </div>
+      <div class="screen layoutgrid pull-right margin-left-zero border-grey border-radius-three">
+        <a data-number="{{$index + 1}}"
+           ng-repeat="layout in DesignHome.layouts.itemListLayout" class="layouticon border-radius-three default-background-hover text-center" ng-click="DesignHome.changeListLayout(layout.name)">
+          <img ng-src="images/{{layout.name}}.png">
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
