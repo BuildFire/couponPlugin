@@ -93,15 +93,18 @@
             if (!(response.title === null || response.title.match(/^ *$/) !== null)) {
 
               //if index is there it means filter update operation is performed
-              if(index){
+              if(Number.isInteger(index)){
                 ContentHome.data.content.filters[index].title= response.title;
+              }else{
+                if(! ContentHome.data.content.filters)
+                  ContentHome.data.content={filters:[]};
+                ContentHome.data.content.filters.unshift({
+                  title: response.title
+                });
               }
-              if(! ContentHome.data.content.filters)
-                ContentHome.data.content={filters:[]};
-              ContentHome.data.content.filters.unshift({
-                title: response.title
-              });
             }
+            if(!$scope.$apply)
+                $scope.$digest();
           }, function (err) {
 
           });
