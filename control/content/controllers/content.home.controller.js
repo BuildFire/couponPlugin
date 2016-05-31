@@ -119,6 +119,23 @@
           });
 
         }
+
+        ContentHome.sortAscending=function(){
+          ContentHome.data.content.filters.sort(function(a, b){
+            if(a.title < b.title) return -1;
+            if(a.title > b.title) return 1;
+            return 0;
+          });
+        }
+
+        ContentHome.sortDescending=function(){
+          ContentHome.data.content.filters.sort(function(a, b){
+            if(a.title > b.title) return -1;
+            if(a.title < b.title) return 1;
+            return 0;
+          });
+        }
+
         /*
          * Call the datastore to save the data object
          */
