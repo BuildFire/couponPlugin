@@ -69,8 +69,8 @@
         <span class="title ellipsis">Includes # Items</span>
       </div>
       <div class="pull-right">
-        <span class="btn-icon btn-edit-icon btn-primary" ng-click="ContentHome.addEditFilter(filter, true)"></span>
-        <span class="btn-icon btn-delete-icon btn-danger"></span>
+        <span class="btn-icon btn-edit-icon btn-primary" ng-click="ContentHome.addEditFilter(filter, true , $index)"></span>
+        <span class="btn-icon btn-delete-icon btn-danger" ng-click="ContentHome.deleteFilter($index)"></span>
       </div>
     </div>
   </div>

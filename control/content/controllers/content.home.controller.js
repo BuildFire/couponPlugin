@@ -82,7 +82,7 @@
           $scope.$digest();
         };
 
-        ContentHome.addEditFilter=function(filter, editFlag){
+        ContentHome.addEditFilter=function(filter, editFlag , index){
           var tempTitle='';
           if(filter)
             tempTitle=filter.title;
@@ -91,10 +91,10 @@
             isEdit:editFlag
           }).then(function (response) {
             if (!(response.title === null || response.title.match(/^ *$/) !== null)) {
-              if( ContentHome.data.content.filters){
-                _data.content.filters.unshift({
-                  title: response.title
-                });
+
+              //if index is there it means filter update operation is performed
+              if(index){
+                ContentHome.data.content.filters[index].title= response.title;
               }
               if(! ContentHome.data.content.filters)
                 ContentHome.data.content={filters:[]};
@@ -105,6 +105,11 @@
           }, function (err) {
 
           });
+        }
+
+
+        ContentHome.deleteFilter=function(index){
+          ContentHome.data.content.filters.splice(index, 1);
         }
         /*
          * Call the datastore to save the data object
