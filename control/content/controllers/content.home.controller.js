@@ -112,7 +112,12 @@
 
 
         ContentHome.deleteFilter=function(index){
-          ContentHome.data.content.filters.splice(index, 1);
+          Modals.removePopupModal().then(function (result) {
+            if (result) {
+              ContentHome.data.content.filters.splice(index, 1);
+            }
+          });
+
         }
         /*
          * Call the datastore to save the data object

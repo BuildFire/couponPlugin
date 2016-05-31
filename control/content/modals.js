@@ -27,6 +27,26 @@
                         addFilterDeferred.reject(err);
                     });
                     return addFilterDeferred.promise;
+                },
+                removePopupModal: function () {
+                    var removePopupDeferred = $q.defer();
+                    var removePopupModal = $modal
+                        .open({
+                            templateUrl: './templates/modals/remove-filter.html',
+                            controller: 'RemovePopupCtrl',
+                            controllerAs: 'RemovePopup',
+                            size: 'sm',
+                            resolve:{
+
+                            }
+                        });
+                    removePopupModal.result.then(function (imageInfo) {
+                        removePopupDeferred.resolve(imageInfo);
+                    }, function (err) {
+                        //do something on cancel
+                        removePopupDeferred.reject(err);
+                    });
+                    return removePopupDeferred.promise;
                 }
 
             };
@@ -48,5 +68,15 @@
             };
 
         }])
+        .controller('RemovePopupCtrl', ['$scope', '$modalInstance',  function ($scope, $modalInstance) {
+            var RemovePopup = this;
+
+            RemovePopup.ok = function () {
+                $modalInstance.close('yes');
+            };
+            RemovePopup.cancel = function () {
+                $modalInstance.dismiss('no');
+            };
+        }]);
 
 })(window.angular, window.buildfire);
