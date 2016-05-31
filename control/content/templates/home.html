@@ -52,72 +52,24 @@
     </div>
   </div>
   <div class="col-md-3 padding-zero pull-left">
-    <a class="btn btn-success stretch">Add New Filter</a>
+    <a class="btn btn-success stretch" ng-click="ContentHome.addEditFilter(null , false)">Add New Filter</a>
   </div>
 </div>
 <hr class="none">
 <div class="draggable-list-view wide-list no-media has-btn-link"
      style="background:#fff;">
-  <div class="d-item square-icon clearfix">
+  <div class="d-item square-icon clearfix" ng-repeat="filter in ContentHome.data.content.filters">
     <span class="icon icon-menu pull-left"></span>
 
     <div class="copy pull-right">
       <div class="col-md-4 padding-zero pull-left">
-        <span class="title ellipsis pull-left">Filter Name</span>
+        <span class="title ellipsis pull-left">{{filter.title}}</span>
       </div>
       <div class="col-md-6 padding-right-zero pull-left">
         <span class="title ellipsis">Includes # Items</span>
       </div>
       <div class="pull-right">
-        <span class="btn-icon btn-edit-icon btn-primary"></span>
-        <span class="btn-icon btn-delete-icon btn-danger"></span>
-      </div>
-    </div>
-  </div>
-  <div class="d-item square-icon clearfix">
-    <span class="icon icon-menu pull-left"></span>
-
-    <div class="copy pull-right">
-      <div class="col-md-4 padding-zero pull-left">
-        <span class="title ellipsis pull-left">Filter Name</span>
-      </div>
-      <div class="col-md-6 padding-right-zero pull-left">
-        <span class="title ellipsis">Includes # Items</span>
-      </div>
-      <div class="pull-right">
-        <span class="btn-icon btn-edit-icon btn-primary"></span>
-        <span class="btn-icon btn-delete-icon btn-danger"></span>
-      </div>
-    </div>
-  </div>
-  <div class="d-item square-icon clearfix">
-    <span class="icon icon-menu pull-left"></span>
-
-    <div class="copy pull-right">
-      <div class="col-md-4 padding-zero pull-left">
-        <span class="title ellipsis pull-left">Filter Name</span>
-      </div>
-      <div class="col-md-6 padding-right-zero pull-left">
-        <span class="title ellipsis">Includes # Items</span>
-      </div>
-      <div class="pull-right">
-        <span class="btn-icon btn-edit-icon btn-primary"></span>
-        <span class="btn-icon btn-delete-icon btn-danger"></span>
-      </div>
-    </div>
-  </div>
-  <div class="d-item square-icon clearfix">
-    <span class="icon icon-menu pull-left"></span>
-
-    <div class="copy pull-right">
-      <div class="col-md-4 padding-zero pull-left">
-        <span class="title ellipsis pull-left">Filter Name</span>
-      </div>
-      <div class="col-md-6 padding-right-zero pull-left">
-        <span class="title ellipsis">Includes # Items</span>
-      </div>
-      <div class="pull-right">
-        <span class="btn-icon btn-edit-icon btn-primary"></span>
+        <span class="btn-icon btn-edit-icon btn-primary" ng-click="ContentHome.addEditFilter(filter, true)"></span>
         <span class="btn-icon btn-delete-icon btn-danger"></span>
       </div>
     </div>

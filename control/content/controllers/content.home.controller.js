@@ -3,15 +3,16 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire',
-      function ($scope, TAG_NAMES, STATUS_CODE, DataStore, LAYOUTS,Buildfire) {
+    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals',
+      function ($scope, TAG_NAMES, STATUS_CODE, DataStore, LAYOUTS,Buildfire,Modals) {
 
         var ContentHome = this;
 
         var _data = {
           "content": {
             "carouselImages": [],
-            "description": ""
+            "description":'',
+            "filters": []
           },
           "design": {
             "itemListLayout": LAYOUTS.itemListLayout[0].name
@@ -81,7 +82,30 @@
           $scope.$digest();
         };
 
+        ContentHome.addEditFilter=function(filter, editFlag){
+          var tempTitle='';
+          if(filter)
+            tempTitle=filter.title;
+          Modals.addFilterModal({
+            title: tempTitle,
+            isEdit:editFlag
+          }).then(function (response) {
+            if (!(response.title === null || response.title.match(/^ *$/) !== null)) {
+              if( ContentHome.data.content.filters){
+                _data.content.filters.unshift({
+                  title: response.title
+                });
+              }
+              if(! ContentHome.data.content.filters)
+                ContentHome.data.content={filters:[]};
+              ContentHome.data.content.filters.unshift({
+                title: response.title
+              });
+            }
+          }, function (err) {
 
+          });
+        }
         /*
          * Call the datastore to save the data object
          */
