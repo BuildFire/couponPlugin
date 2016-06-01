@@ -1,7 +1,7 @@
 'use strict';
 
 (function (angular, buildfire) {
-  angular.module('couponPluginSettings')
+  angular.module('couponPluginSettingsServices',['couponPluginSettingsEnums'])
       .provider('Buildfire', [function () {
         var Buildfire = this;
         Buildfire.$get = function () {

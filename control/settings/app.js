@@ -2,11 +2,9 @@
 (function (angular) {
   angular
     .module('couponPluginSettings', [
-          'couponPluginSettings',
-          'couponPluginSettings'
+          'couponPluginSettingsServices',
+          'couponPluginSettingsEnums'
       ])
     .config([function () {
-
     }])
 })(window.angular);
-
