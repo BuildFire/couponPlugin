@@ -13,6 +13,8 @@
   <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
   <script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
   <script src="app.js"></script>
+  <script src="app.services.js"></script>
+  <script src="enums.js"></script>
   <script src="controllers/settings.home.controller.js"></script>
 
 </head>
@@ -23,12 +25,12 @@
   </div>
   <div class="col-md-9 pull-left">
     <div class="radio radio-primary radio-inline">
-      <input id="listView" type="radio" name="defaultView" checked="">
+      <input id="listView" type="radio" name="defaultView" ng-model="SettingsHome.couponInfo.data.settings.defaultView" value="list">
       <label for="listView">List</label>
     </div>
     <div class="radio radio-primary radio-inline"
          style="margin-left:32px !important;">
-      <input id="mapView" type="radio" name="defaultView">
+      <input id="mapView" type="radio" name="defaultView" ng-model="SettingsHome.couponInfo.data.settings.defaultView" value="map">
       <label for="mapView">Map</label>
     </div>
   </div>
@@ -40,11 +42,11 @@
   </div>
   <div class="col-md-9 pull-left">
     <div class="radio radio-primary radio-inline">
-      <input id="miles" type="radio" name="showDistance" checked="">
+      <input id="miles" type="radio" name="showDistance" ng-model="SettingsHome.couponInfo.data.settings.distanceIn" value="mi">
       <label for="miles">Miles</label>
     </div>
     <div class="radio radio-primary radio-inline">
-      <input id="kilometers" type="radio" name="showDistance">
+      <input id="kilometers" type="radio" name="showDistance" ng-model="SettingsHome.couponInfo.data.settings.distanceIn" value="km">
       <label for="kilometers">Kilometers</label>
     </div>
   </div>
@@ -56,11 +58,11 @@
   </div>
   <div class="col-md-9 pull-left">
     <div class="radio radio-primary radio-inline">
-      <input id="showMap" type="radio" name="mapView" checked="">
+      <input id="showMap" type="radio" name="mapView" ng-model="SettingsHome.couponInfo.data.settings.mapView" value="show">
       <label for="showMap">Show</label>
     </div>
     <div class="radio radio-primary radio-inline">
-      <input id="hideMap" type="radio" name="mapView">
+      <input id="hideMap" type="radio" name="mapView" ng-model="SettingsHome.couponInfo.data.settings.mapView" value="hide">
       <label for="hideMap">Hide</label>
     </div>
   </div>
@@ -72,11 +74,11 @@
   </div>
   <div class="col-md-9 pull-left">
     <div class="radio radio-primary radio-inline">
-      <input id="showFilter" type="radio" name="filterPage" checked="">
+      <input id="showFilter" type="radio" name="filterPage" ng-model="SettingsHome.couponInfo.data.settings.filterPage" value="show">
       <label for="showFilter">Show</label>
     </div>
     <div class="radio radio-primary radio-inline">
-      <input id="hideFilter" type="radio" name="filterPage">
+      <input id="hideFilter" type="radio" name="filterPage" ng-model="SettingsHome.couponInfo.data.settings.filterPage" value="hide">
       <label for="hideFilter">Hide</label>
     </div>
   </div>

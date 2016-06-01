@@ -16,6 +16,12 @@
           },
           "design": {
             "itemListLayout": LAYOUTS.itemListLayout[0].name
+          },
+          "settings": {
+            "defaultView": "list",
+            "distanceIn": "mi",
+            mapView: "show",
+            filterPage: "show"
           }
         };
 
@@ -182,6 +188,8 @@
               } else {
                 if (!ContentHome.data.content)
                   ContentHome.data.content = {};
+                if (!ContentHome.data.settings)
+                  ContentHome.data.settings = {};
                 if (!ContentHome.data.content.carouselImages)
                   editor.loadItems([]);
                 else
