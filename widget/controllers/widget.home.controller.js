@@ -5,7 +5,8 @@
     .controller('WidgetHomeCtrl', ['$scope', 'TAG_NAMES', 'LAYOUTS', 'DataStore', 'PAGINATION', 'Buildfire', 'Location', '$rootScope', 'ViewStack', '$sce', 'UserData', '$modal', '$timeout',
       function ($scope, TAG_NAMES, LAYOUTS, DataStore, PAGINATION, Buildfire, Location, $rootScope, ViewStack, $sce, UserData, $modal, $timeout) {
         var WidgetHome = this;
-
+        $rootScope.deviceHeight = window.innerHeight;
+        $rootScope.deviceWidth = window.innerWidth || 320;
         WidgetHome.data = {
           design: {
             itemListLayout: LAYOUTS.itemListLayout[0].name
@@ -47,6 +48,23 @@
             };
           DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
         };
+
+        /**
+         * This event listener is bound for "Carousel:LOADED" event broadcast
+         */
+        $rootScope.$on("Carousel:LOADED", function () {
+          WidgetHome.view = null;
+          console.log("****************", WidgetHome.data.content.carouselImages);
+          if (!WidgetHome.view) {
+            WidgetHome.view = new Buildfire.components.carousel.view("#carousel", []);
+          }
+          if (WidgetHome.data.content && WidgetHome.data.content.carouselImages) {
+            WidgetHome.view.loadItems(WidgetHome.data.content.carouselImages);
+          } else {
+            WidgetHome.view.loadItems([]);
+          }
+        });
+
 
         WidgetHome.init();
 
