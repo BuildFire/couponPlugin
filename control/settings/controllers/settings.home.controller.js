@@ -42,7 +42,7 @@
                         if (tmrDelay)clearTimeout(tmrDelay);
                     }
                     else if (err && err.code === STATUS_CODE.NOT_FOUND) {
-                        saveData(JSON.parse(angular.toJson(ContentHome.data)), TAG_NAMES.COUPON_INFO);
+                        saveData(JSON.parse(angular.toJson(SettingsHome.data)), TAG_NAMES.COUPON_INFO);
                     }
                 }
 
