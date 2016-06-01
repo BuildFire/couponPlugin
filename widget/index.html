@@ -15,140 +15,15 @@
   <script src="../../../scripts/angular/ui-bootstrap.min.js"></script>
   <script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
   <script src="app.js"></script>
+  <script src="enums.js"></script>
+  <script src="app.services.js"></script>
+  <script src="controllers/widget.home.controller.js"></script>
 </head>
 <body class="no-scroll holder padding-zero has-bottom">
-<div class="scrollable">
-  <div class="coupon items-layout3">
-    <div class="plugin-slide">
-      <img src="../../../styles/media/holder-16x9.png">
-    </div>
-    <div class="padded">
-      <p class="margin-zero">this is a wysiwyg. this is a wysiwyg. this is a
-        wysiwyg.</p>
-    </div>
-    <div class="notes">
-      <div
-          class="plugin-banner col-xs-6 pull-left overflow-hidden padding-zero">
-        <div class="plugin-slide border-grey border-radius-four">
-          <img src="../../../styles/media/holder-16x9.png">
-
-          <div class="item-text">
-            <p class="item-title margin-zero text-center text-primary primaryTheme ellipsis">
-              Free Entree</p>
-
-            <p class="item-summary margin-zero text-center ellipsis">This is a
-              summary that goes here.</p>
-
-            <p class="item-date margin-zero text-center">Expires March 21,
-              2016</p>
-
-            <p class="item-date margin-zero text-center">21 miles away</p>
-          </div>
-          <!-- Use these theme classes when active/selected -->
-          <span class="icon icon-star text-primary primaryTheme"></span>
-        </div>
-      </div>
-      <div
-          class="plugin-banner col-xs-6 pull-left overflow-hidden padding-zero">
-        <div class="plugin-slide border-grey border-radius-four">
-          <img src="../../../styles/media/holder-16x9.png">
-
-          <div class="item-text">
-            <p class="item-title margin-zero text-center text-primary primaryTheme ellipsis">
-              Free Entree</p>
-
-            <p class="item-summary margin-zero text-center ellipsis">This is a
-              summary that goes here.</p>
-
-            <p class="item-date margin-zero text-center">Expires March 21,
-              2016</p>
-
-            <p class="item-date margin-zero text-center">&nbsp;</p>
-          </div>
-          <!-- Use these theme classes when active/selected -->
-          <span class="icon icon-star text-primary primaryTheme"></span>
-        </div>
-      </div>
-      <div
-          class="plugin-banner col-xs-6 pull-left overflow-hidden padding-zero">
-        <div class="plugin-slide border-grey border-radius-four">
-          <img src="../../../styles/media/holder-16x9.png">
-
-          <div class="item-text">
-            <p class="item-title margin-zero text-center text-primary primaryTheme ellipsis">
-              Free Entree</p>
-
-            <p class="item-summary margin-zero text-center ellipsis">This is a
-              summary that goes here.</p>
-
-            <p class="item-date margin-zero text-center">Expires March 21,
-              2016</p>
-
-            <p class="item-date margin-zero text-center">&nbsp;</p>
-          </div>
-          <!-- Use these theme classes when active/selected -->
-          <span class="icon icon-star text-primary primaryTheme"></span>
-        </div>
-      </div>
-      <div
-          class="plugin-banner col-xs-6 pull-left overflow-hidden padding-zero">
-        <div class="plugin-slide border-grey border-radius-four">
-          <img src="../../../styles/media/holder-16x9.png">
-
-          <div class="item-text">
-            <p class="item-title margin-zero text-center text-primary primaryTheme ellipsis">
-              Free Entree</p>
-
-            <p class="item-summary margin-zero text-center ellipsis">This is a
-              summary that goes here.</p>
-
-            <p class="item-date margin-zero text-center">Expires March 21,
-              2016</p>
-
-            <p class="item-date margin-zero text-center">&nbsp;</p>
-          </div>
-          <!-- Use these theme classes when active/selected -->
-          <span class="icon icon-star text-primary primaryTheme"></span>
-        </div>
-      </div>
-    </div>
+<div ng-controller="WidgetHomeCtrl as WidgetHome" class="slide content">
+  <div ng-if="WidgetHome.data.design.itemListLayout" ng-include="'templates/' +  WidgetHome.data.design.itemListLayout + '.html'">
   </div>
 </div>
-<!-- If map is shown, use col-xs-3 like below -->
-<div class="bottom fixed-bottom">
-  <div
-      class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
-    <span class="whiteTheme small">Filter Applied</span>
-  </div>
-  <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-    <a class="whiteTheme stretch active">List</a>
-  </div>
-  <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-    <a class="whiteTheme stretch">Map</a>
-  </div>
-  <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-    <a class="whiteTheme stretch">Filter</a>
-  </div>
-  <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-    <a class="whiteTheme stretch">Saved</a>
-  </div>
-</div>
-
-<!-- If map is hidden, use col-xs-4 like below
-<div class="bottom fixed-bottom">
-  <div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
-    <span class="whiteTheme small">Filter Applied</span>
-  </div>
-  <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-    <a class="whiteTheme stretch active">List</a>
-  </div>
-  <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-    <a class="whiteTheme stretch">Filter</a>
-  </div>
-  <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-    <a class="whiteTheme stretch">Saved</a>
-  </div>
-</div>
--->
+<div view-switcher=""></div>
 </body>
 </html>

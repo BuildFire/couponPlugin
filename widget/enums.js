@@ -1,11 +1,12 @@
 'use strict';
 
 (function (angular) {
-  angular.module('couponPluginContent')
+  angular.module('couponPluginWidget')
     .constant('TAG_NAMES', {
       COUPON_INFO: 'couponInfo',
       COUPON_CATEGORIES: 'couponCategories',
-      COUPON_ITEMS: "couponItems"
+      COUPON_ITEMS: "couponItems",
+      COUPON_SAVED: "couponSaved"
     })
     .constant('STATUS_CODE', {
       INSERTED: 'inserted',
@@ -42,5 +43,5 @@
       _limit: 10,
       _maxLimit: 19,
       _skip: 0
-    })
+    });
 })(window.angular);
