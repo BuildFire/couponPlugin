@@ -13,6 +13,8 @@
           }
         };
 
+        WidgetHome.locationData = {};
+
         WidgetHome.init = function () {
           Buildfire.spinner.show();
           var success = function (result) {
@@ -47,6 +49,20 @@
               console.error('Error while getting data', err);
             };
           DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
+
+          // Fecth user location
+
+          if (typeof(Storage) !== "undefined") {
+            var userLocation = localStorage.getItem('user_location');
+            if (userLocation) {
+              WidgetHome.locationData.currentCoordinates = JSON.parse(userLocation);
+            }
+            else
+              getGeoLocation(); // get data if not in cache
+          }
+          else {
+            getGeoLocation(); // get data if localStorage is not supported
+          }
         };
 
         /**
@@ -84,6 +100,27 @@
             return $sce.trustAsHtml($html.html());
           }
         };
+
+        function getGeoLocation() {
+          Buildfire.geo.getCurrentPosition(
+            null,
+            function (err, position) {
+              if (err) {
+                console.error(err);
+              }
+              else if (position && position.coords) {
+                $scope.$apply(function () {
+                  console.log('position>>>>>.', position);
+                  WidgetHome.locationData.currentCoordinates = [position.coords.longitude, position.coords.latitude];
+                  localStorage.setItem('user_location', JSON.stringify(WidgetHome.locationData.currentCoordinates));
+                });
+              }
+              else {
+                getGeoLocation();
+              }
+            }
+          );
+        }
 
 
         WidgetHome.init();
