@@ -1,7 +1,10 @@
 'use strict';
 (function (angular) {
   angular
-    .module('couponPluginSettings', [])
+    .module('couponPluginSettings', [
+          'couponPluginSettings',
+          'couponPluginSettings'
+      ])
     .config([function () {
 
     }])

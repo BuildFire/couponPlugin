@@ -1,6 +1,6 @@
 'use strict';
 
-(function (angular, window) {
+(function (angular) {
   angular
     .module('couponPluginSettings')
     .controller('SettingsHomeCtrl', ['$scope',
