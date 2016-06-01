@@ -1,7 +1,7 @@
 'use strict';
 
 (function (angular, buildfire, window) {
-  angular.module('couponPluginWidget', ['ui.bootstrap'])
+  angular.module('couponPluginWidget', ['ui.bootstrap','ngAnimate'])
     .config(['$compileProvider', function ($compileProvider) {
 
       /**
@@ -76,4 +76,12 @@
           }
         };
       }])
+    .directive("buildFireCarousel", ["$rootScope", function ($rootScope) {
+      return {
+        restrict: 'A',
+        link: function (scope, elem, attrs) {
+          $rootScope.$broadcast("Carousel:LOADED");
+        }
+      };
+    }])
 })(window.angular, window.buildfire, window);

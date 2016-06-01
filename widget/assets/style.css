@@ -636,3 +636,11 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .holder .toggle-btns a.active{
 	color:#fff;
 }
+
+
+.sticky-bottom-menu {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+}
