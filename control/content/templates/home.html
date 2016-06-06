@@ -38,16 +38,18 @@
   <div class="col-md-1 labels pull-left margin-top-five">
     <span>Sort</span>
   </div>
-  <div class="col-md-4 pull-left">
+  <div class="col-md-5 pull-left">
     <div class="dropdown" dropdown>
       <button class="btn btn-default text-left dropdown-toggle"
               data-toggle="dropdown" dropdown-toggle aria-expanded="true">
-        <span class="pull-left">Manually</span>
+        <span class="pull-left">{{ContentHome.data.content.sortFilterBy || ContentHome.sortFilterOptions[0]}}</span>
         <span class="chevron icon-chevron-down pull-right"></span>
       </button>
       <ul class="dropdown-menu extended" role="menu">
-        <li ng-click="ContentHome.sortAscending()"><a>Category Name A-Z</a></li>
-        <li ng-click="ContentHome.sortDescending()"><a>Category Name Z-A</a></li>
+        <li ng-repeat="value in ContentHome.sortFilterOptions"
+            ng-click="ContentHome.sortFilterBy(this.value)">
+          <a tabindex="-1" class="transition-third">{{value}}</a>
+        </li>
       </ul>
     </div>
   </div>
@@ -57,7 +59,7 @@
 </div>
 <hr class="none">
 <div class="draggable-list-view wide-list no-media has-btn-link"
-     style="background:#fff;">
+     style="background:#fff;" infinite-scroll-distance='2'>
   <div class="d-item square-icon clearfix" ng-repeat="filter in ContentHome.data.content.filters">
     <span class="icon icon-menu pull-left"></span>
 
@@ -66,7 +68,7 @@
         <span class="title ellipsis pull-left">{{filter.title}}</span>
       </div>
       <div class="col-md-6 padding-right-zero pull-left">
-        <span class="title ellipsis">Includes # Items</span>
+        <span class="title ellipsis">Includes {{filter.items || 0}} Items</span>
       </div>
       <div class="pull-right">
         <span class="btn-icon btn-edit-icon btn-primary" ng-click="ContentHome.addEditFilter(filter, true , $index)"></span>

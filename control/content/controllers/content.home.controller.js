@@ -3,8 +3,8 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals',
-      function ($scope, TAG_NAMES, STATUS_CODE, DataStore, LAYOUTS,Buildfire,Modals) {
+    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals',
+      function ($scope, TAG_NAMES, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS,Buildfire,Modals) {
 
         var ContentHome = this;
 
@@ -19,6 +19,17 @@
           }
         };
 
+        ContentHome.sortFilterOptions=[
+          SORT_FILTER.MANUALLY,
+          SORT_FILTER.CATEGORY_NAME_A_Z,
+          SORT_FILTER.CATEGORY_NAME_Z_A
+        ]
+
+        ContentHome.searchOptions = {
+          filter: {"$json.fName": {"$regex": '/*'}},
+          skip: SORT_FILTER._skip,
+          limit: SORT_FILTER._limit + 1 // the plus one is to check if there are any more
+        };
         /*
          * create an artificial delay so api isnt called on every character entered
          * */
@@ -117,8 +128,71 @@
               ContentHome.data.content.filters.splice(index, 1);
             }
           });
-
         }
+
+        ContentHome.sortFilterBy = function (value) {
+          if (!value) {
+            console.info('There was a problem sorting your data');
+          } else {
+           // ContentHome.data.content.filters=null;
+            ContentHome.data.content.sortFilterBy = value;
+            ContentHome.loadMore();
+          }
+        };
+
+        /**
+         * getSearchOptions(value) is used to get searchOptions with one more key sort which decide the order of sorting.
+         * @param value is used to filter sort option.
+         * @returns object
+         * SORT_FILTER.CATEGORY_NAME_A_Z,
+         * SORT_FILTER.CATEGORY_NAME_Z_A
+         */
+        var getSearchOptions = function (value) {
+          //ContentHome.itemSortableOptions.disabled = true;
+          switch (value) {
+            case SORT_FILTER.CATEGORY_NAME_A_Z:
+              ContentHome.searchOptions.sort = {"title": 1};
+              break;
+            case SORT_FILTER.CATEGORY_NAME_Z_A:
+              ContentHome.searchOptions.sort = {"title": -1};
+              break;
+            default :
+              ContentHome.itemSortableOptions.disabled = false;
+              ContentHome.searchOptions.sort = {"rank": 1};
+              break;
+          }
+          return ContentHome.searchOptions;
+        };
+
+        ContentHome.loadMore = function (search) {
+          Buildfire.spinner.show();
+          if (ContentHome.busy) {
+            return;
+          }
+
+          ContentHome.busy = true;
+          if (ContentHome.data && ContentHome.data.content.sortFilterBy && !search) {
+            ContentHome.searchOptions = getSearchOptions(ContentHome.data.content.sortFilterBy);
+          }
+          Buildfire.datastore.search(ContentHome.searchOptions, TAG_NAMES.COUPON_INFO, function (err, result) {
+            if (err) {
+              Buildfire.spinner.hide();
+              return console.error('-----------err in getting list-------------', err);
+            }
+            if (result.length <= SORT_FILTER._limit) {// to indicate there are more
+              ContentHome.noMore = true;
+              Buildfire.spinner.hide();
+            } else {
+              result.pop();
+              ContentHome.searchOptions.skip = ContentHome.searchOptions.skip + SORT_FILTER._limit;
+              ContentHome.noMore = false;
+            }
+            ContentHome.data.content.filters =  result;
+            ContentHome.busy = false;
+            Buildfire.spinner.hide();
+            $scope.$digest();
+          });
+        };
 
         ContentHome.sortAscending=function(){
           ContentHome.data.content.filters.sort(function(a, b){

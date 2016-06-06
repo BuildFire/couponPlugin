@@ -46,5 +46,13 @@
       _limit: 10,
       _maxLimit: 19,
       _skip: 0
-    });
+    })
+      .constant('SORT_FILTER', {
+        MANUALLY: 'Manually',
+        CATEGORY_NAME_A_Z: 'Category Name A-Z',
+        CATEGORY_NAME_Z_A: 'Category Name Z-A',
+        _limit: 10,
+        _maxLimit: 19,
+        _skip: 0
+      });
 })(window.angular);
