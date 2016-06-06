@@ -1,11 +1,12 @@
 'use strict';
 
 (function (angular) {
-  angular.module('couponPluginContent')
+  angular.module('couponPluginWidget')
     .constant('TAG_NAMES', {
       COUPON_INFO: 'couponInfo',
       COUPON_CATEGORIES: 'couponCategories',
-      COUPON_ITEMS: "couponItems"
+      COUPON_ITEMS: "couponItems",
+      COUPON_SAVED: "couponSaved"
     })
     .constant('STATUS_CODE', {
       INSERTED: 'inserted',
@@ -35,45 +36,12 @@
     .constant('PAGINATION', {
       itemCount: 10
     })
-    .constant('SORT', {
+    .constant('SORT_FILTER', {
       MANUALLY: 'Manually',
-      ITEM_TITLE_A_Z: 'Item title A-Z',
-      ITEM_TITLE_Z_A: 'Item title Z-A',
-      NEWEST_PUBLICATION_DATE: 'Newest publication date',
-      OLDEST_PUBLICATION_DATE: 'Oldest publication date',
-      NEWEST_FIRST: 'Newest entry first',
-      OLDEST_FIRST: 'Oldest entry first',
+      FILTER_TITLE_A_Z: 'Filter title A-Z',
+      FILTER_TITLE_Z_A: 'Filter title Z-A',
       _limit: 10,
       _maxLimit: 19,
       _skip: 0
-    }) 
-      .constant('PAGINATION', {
-        itemCount: 10
-      })
-      .constant('SORT_FILTER', {
-        MANUALLY: 'Manually',
-        CATEGORY_NAME_A_Z: 'Category Name A-Z',
-        CATEGORY_NAME_Z_A: 'Category Name Z-A',
-        _limit: 10,
-        _maxLimit: 19,
-        _skip: 0
-      }) 
-      .constant('DEFAULT_DATA', {
-        ITEM: {
-          data: {
-            title: '',
-            summary: '',
-            listImage: '',
-            startOn: '',
-            expiresOn: '',
-            links: [],
-            preRedemptionText: '',
-            postRedemptionText: '',
-            carouselImages: [],
-            rank: '',
-            location: {},
-            Categories: []
-          }
-        }
-      });
+    });
 })(window.angular);
