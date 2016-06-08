@@ -11,8 +11,7 @@
         var _data = {
           "content": {
             "carouselImages": [],
-            "description":'',
-            "filters": []
+            "description":''
           },
           "design": {
             "itemListLayout": LAYOUTS.itemListLayout[0].name
@@ -24,6 +23,8 @@
             filterPage: "show"
           }
         };
+
+        ContentHome.filters=[];
 
         ContentHome.sortFilterOptions=[
           SORT_FILTER.MANUALLY,
@@ -111,12 +112,19 @@
 
               //if index is there it means filter update operation is performed
               if(Number.isInteger(index)){
-                ContentHome.data.content.filters[index].title= response.title;
+                ContentHome.filters[index].title= response.title;
               }else{
-                if(! ContentHome.data.content.filters)
-                  ContentHome.data.content={filters:[]};
-                ContentHome.data.content.filters.unshift({
+                ContentHome.filters.unshift({
                   title: response.title
+                });
+                Buildfire.datastore.save(ContentHome.filters, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
+                  console.log("Inserted", data.id);
+                  ContentHome.isUpdating = false;
+                  if (err) {
+                    ContentHome.isNewItemInserted = false;
+                    return console.error('There was a problem saving your data');
+                  }
+                  $scope.$digest();
                 });
               }
             }
@@ -180,7 +188,7 @@
           if (ContentHome.data && ContentHome.data.content.sortFilterBy && !search) {
             ContentHome.searchOptions = getSearchOptions(ContentHome.data.content.sortFilterBy);
           }
-          Buildfire.datastore.search(ContentHome.searchOptions, TAG_NAMES.COUPON_INFO, function (err, result) {
+          Buildfire.datastore.search(ContentHome.searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
             if (err) {
               Buildfire.spinner.hide();
               return console.error('-----------err in getting list-------------', err);
@@ -193,7 +201,7 @@
               ContentHome.searchOptions.skip = ContentHome.searchOptions.skip + SORT_FILTER._limit;
               ContentHome.noMore = false;
             }
-            ContentHome.data.content.filters =  result;
+            ContentHome.filters =  result.data;
             ContentHome.busy = false;
             Buildfire.spinner.hide();
             $scope.$digest();
@@ -282,7 +290,27 @@
               }
             };
           DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
+         getAllFilterData();
         };
+
+        function getAllFilterData(){
+          var success = function (result) {
+                console.info('Init success result:', result);
+
+                  if (!ContentHome.filters)
+                    ContentHome.filters = [];
+                if(Array.isArray(result.data))
+                ContentHome.filters=result.data;
+              }
+              , error = function (err) {
+                if (err && err.code !== STATUS_CODE.NOT_FOUND) {
+                  console.error('Error while getting data', err);
+                  if (tmrDelay)clearTimeout(tmrDelay);
+                }
+              };
+          DataStore.get(TAG_NAMES.COUPON_CATEGORIES).then(success, error);
+        }
+
 
 
         init();
