@@ -8,7 +8,7 @@
       <div class="padded" ng-if="WidgetHome.showDescription(WidgetHome.data.content.description)">
         <p class="margin-zero" ng-bind-html="WidgetHome.safeHtml(WidgetHome.data.content.description)"></p>
       </div>
-			<div class="notes">
+			<div class="notes" ng-if="WidgetHome.data.content">
 				<div class="plugin-banner col-xs-6 pull-left overflow-hidden padding-zero">
 					<div class="plugin-slide border-grey border-radius-four">
 						<img src="../../../styles/media/holder-16x9.png">
