@@ -8,7 +8,7 @@
       <div class="padded" ng-if="WidgetHome.showDescription(WidgetHome.data.content.description)">
         <p class="margin-zero" ng-bind-html="WidgetHome.safeHtml(WidgetHome.data.content.description)"></p>
       </div>
-			<div class="panels">
+			<div class="panels" ng-if="WidgetHome.data.content">
 				<div class="panel">
 				  	<div class="panel-heading bg-primary primaryBackgroundTheme clearfix">
 						<div class="media pull-left">
