@@ -1,3 +1,20 @@
+<div id="carousel"></div>
+<hr class="none">
+<div class="item clearfix row">
+  <div class="labels col-md-3 padding-right-zero pull-left">
+    <span>Text</span>
+  </div>
+</div>
+<hr class="none">
+<div class="item clearfix row">
+  <div class="main col-md-12 pull-left">
+        <textarea id="text" rows="5" width="100%" class="form-control"
+                  ui-tinymce="ContentHome.descriptionWYSIWYGOptions"
+                  ng-model="ContentHome.data.content.description"
+                  placeholder="WYSIWYG"></textarea>
+  </div>
+</div>
+<hr class="none">
 <div class="item clearfix row">
   <div class="col-md-2 labels pull-left margin-top-five">
     <span>Bulk Actions</span>
@@ -21,81 +38,41 @@
   <div class="col-md-1 labels pull-left margin-top-five">
     <span>Sort</span>
   </div>
-  <div class="col-md-4 pull-left">
+  <div class="col-md-5 pull-left">
     <div class="dropdown" dropdown>
-      <button class="btn btn-default text-left dropdown-toggle" data-toggle="dropdown" dropdown-toggle aria-expanded="true">
-        <span class="pull-left">Manually</span>
+      <button class="btn btn-default text-left dropdown-toggle"
+              data-toggle="dropdown" dropdown-toggle aria-expanded="true">
+        <span class="pull-left">{{ContentHome.data.content.sortFilterBy || ContentHome.sortFilterOptions[0]}}</span>
         <span class="chevron icon-chevron-down pull-right"></span>
       </button>
       <ul class="dropdown-menu extended" role="menu">
-        <li><a>Category Name A-Z</a></li>
-        <li><a>Category Name Z-A</a></li>
+        <li ng-repeat="value in ContentHome.sortFilterOptions"
+            ng-click="ContentHome.sortFilterBy(this.value)">
+          <a tabindex="-1" class="transition-third">{{value}}</a>
+        </li>
       </ul>
     </div>
   </div>
   <div class="col-md-3 padding-zero pull-left">
-    <a class="btn btn-success stretch">Add New Filter</a>
+    <a class="btn btn-success stretch" ng-click="ContentHome.addEditFilter(null , false)">Add New Filter</a>
   </div>
 </div>
 <hr class="none">
-<div class="draggable-list-view wide-list no-media has-btn-link" style="background:#fff;">
-  <div class="d-item square-icon clearfix">
+<div class="draggable-list-view wide-list no-media has-btn-link"
+     style="background:#fff;max-height: 282px;" infinite-scroll='ContentHome.loadMore()' infinite-scroll-distance='1'>
+  <div class="d-item square-icon clearfix" ng-repeat="filter in ContentHome.filters">
     <span class="icon icon-menu pull-left"></span>
+
     <div class="copy pull-right">
       <div class="col-md-4 padding-zero pull-left">
-        <span class="title ellipsis pull-left">Filter Name</span>
+        <span class="title ellipsis pull-left">{{filter.title}}</span>
       </div>
       <div class="col-md-6 padding-right-zero pull-left">
-        <span class="title ellipsis">Includes # Items</span>
+        <span class="title ellipsis">Includes {{filter.items || 0}} Items</span>
       </div>
       <div class="pull-right">
-        <span class="btn-icon btn-edit-icon btn-primary"></span>
-        <span class="btn-icon btn-delete-icon btn-danger"></span>
-      </div>
-    </div>
-  </div>
-  <div class="d-item square-icon clearfix">
-    <span class="icon icon-menu pull-left"></span>
-    <div class="copy pull-right">
-      <div class="col-md-4 padding-zero pull-left">
-        <span class="title ellipsis pull-left">Filter Name</span>
-      </div>
-      <div class="col-md-6 padding-right-zero pull-left">
-        <span class="title ellipsis">Includes # Items</span>
-      </div>
-      <div class="pull-right">
-        <span class="btn-icon btn-edit-icon btn-primary"></span>
-        <span class="btn-icon btn-delete-icon btn-danger"></span>
-      </div>
-    </div>
-  </div>
-  <div class="d-item square-icon clearfix">
-    <span class="icon icon-menu pull-left"></span>
-    <div class="copy pull-right">
-      <div class="col-md-4 padding-zero pull-left">
-        <span class="title ellipsis pull-left">Filter Name</span>
-      </div>
-      <div class="col-md-6 padding-right-zero pull-left">
-        <span class="title ellipsis">Includes # Items</span>
-      </div>
-      <div class="pull-right">
-        <span class="btn-icon btn-edit-icon btn-primary"></span>
-        <span class="btn-icon btn-delete-icon btn-danger"></span>
-      </div>
-    </div>
-  </div>
-  <div class="d-item square-icon clearfix">
-    <span class="icon icon-menu pull-left"></span>
-    <div class="copy pull-right">
-      <div class="col-md-4 padding-zero pull-left">
-        <span class="title ellipsis pull-left">Filter Name</span>
-      </div>
-      <div class="col-md-6 padding-right-zero pull-left">
-        <span class="title ellipsis">Includes # Items</span>
-      </div>
-      <div class="pull-right">
-        <span class="btn-icon btn-edit-icon btn-primary"></span>
-        <span class="btn-icon btn-delete-icon btn-danger"></span>
+        <span class="btn-icon btn-edit-icon btn-primary" ng-click="ContentHome.addEditFilter(filter, true , $index)"></span>
+        <span class="btn-icon btn-delete-icon btn-danger" ng-click="ContentHome.deleteFilter($index)"></span>
       </div>
     </div>
   </div>
@@ -109,7 +86,8 @@
   </div>
   <div class="col-md-7 padding-right-zero pull-left">
     <div class="dropdown" dropdown>
-      <button class="btn btn-default text-left dropdown-toggle" data-toggle="dropdown" dropdown-toggle aria-expanded="true">
+      <button class="btn btn-default text-left dropdown-toggle"
+              data-toggle="dropdown" dropdown-toggle aria-expanded="true">
         <span class="pull-left">All Categories</span>
         <span class="chevron icon-chevron-down pull-right"></span>
       </button>
@@ -122,7 +100,8 @@
   </div>
   <div class="col-md-4 pull-left">
     <div class="dropdown" dropdown>
-      <button class="btn btn-default text-left dropdown-toggle" data-toggle="dropdown" dropdown-toggle aria-expanded="true">
+      <button class="btn btn-default text-left dropdown-toggle"
+              data-toggle="dropdown" dropdown-toggle aria-expanded="true">
         <span class="pull-left">All Statuses</span>
         <span class="chevron icon-chevron-down pull-right"></span>
       </button>
@@ -137,7 +116,8 @@
 <div class="item clearfix row">
   <div class="col-md-1 labels pull-left margin-top-five"></div>
   <div class="col-md-8 padding-right-zero pull-left">
-    <input type="text" class="form-control" placeholder="Search item name or summary">
+    <input type="text" class="form-control"
+           placeholder="Search item name or summary">
   </div>
   <div class="col-md-3 pull-left">
     <a class="btn btn-primary stretch">Search</a>
@@ -150,7 +130,8 @@
   </div>
   <div class="col-md-4 pull-left">
     <div class="dropdown" dropdown>
-      <button class="btn btn-default text-left dropdown-toggle" data-toggle="dropdown" dropdown-toggle aria-expanded="true">
+      <button class="btn btn-default text-left dropdown-toggle"
+              data-toggle="dropdown" dropdown-toggle aria-expanded="true">
         <span class="pull-left">Manually</span>
         <span class="chevron icon-chevron-down pull-right"></span>
       </button>
@@ -165,26 +146,30 @@
     </div>
   </div>
   <div class="col-md-3 padding-zero pull-left">
-    <a class="btn btn-success stretch">Add New Item</a>
+    <a class="btn btn-success stretch" href="#/item">Add New Item</a>
   </div>
 </div>
 <hr class="none">
 <div class="draggable-list-view wide-list has-btn links-list">
   <div class="d-item double-line square-icon clearfix">
     <span class="icon icon-menu pull-left"></span>
+
     <div class="media-holder pull-left">
       <img src="http://www.placehold.it/80x50">
     </div>
     <div class="copy pull-right">
       <div class="col-md-4 padding-zero pull-left">
-        <a class="text-primary"><span class="title ellipsis pull-left">Item Name</span></a>
+        <a class="text-primary"><span
+            class="title ellipsis pull-left">Item Name</span></a>
         <span class="title ellipsis pull-left">Item Summary</span>
       </div>
       <div class="col-md-3 padding-right-zero pull-left">
-        <span class="title pull-left ellipsis">Included in <br><a class="text-primary"># Categories</a></span>
+        <span class="title pull-left ellipsis">Included in <br><a
+            class="text-primary"># Categories</a></span>
       </div>
       <div class="col-md-3 pull-left padding-right-zero">
-        <span class="title pull-left ellipsis">Expires On<br>July 12, 2016</span>
+        <span
+            class="title pull-left ellipsis">Expires On<br>July 12, 2016</span>
       </div>
       <div class="col-xs-2 pull-right padding-right-zero text-right">
         <span class="btn-icon btn-delete-icon btn-danger"></span>
@@ -193,19 +178,23 @@
   </div>
   <div class="d-item double-line square-icon clearfix">
     <span class="icon icon-menu pull-left"></span>
+
     <div class="media-holder pull-left">
       <img src="http://www.placehold.it/80x50">
     </div>
     <div class="copy pull-right">
       <div class="col-md-4 padding-zero pull-left">
-        <a class="text-primary"><span class="title ellipsis pull-left">Item Name</span></a>
+        <a class="text-primary"><span
+            class="title ellipsis pull-left">Item Name</span></a>
         <span class="title ellipsis pull-left">Item Summary</span>
       </div>
       <div class="col-md-3 padding-right-zero pull-left">
-        <span class="title pull-left ellipsis">Included in <br><a class="text-primary"># Categories</a></span>
+        <span class="title pull-left ellipsis">Included in <br><a
+            class="text-primary"># Categories</a></span>
       </div>
       <div class="col-md-3 pull-left padding-right-zero">
-        <span class="title pull-left ellipsis">Expires On<br>July 12, 2016</span>
+        <span
+            class="title pull-left ellipsis">Expires On<br>July 12, 2016</span>
       </div>
       <div class="col-xs-2 pull-right padding-right-zero text-right">
         <span class="btn-icon btn-delete-icon btn-danger"></span>
@@ -214,19 +203,23 @@
   </div>
   <div class="d-item double-line square-icon clearfix">
     <span class="icon icon-menu pull-left"></span>
+
     <div class="media-holder pull-left">
       <img src="http://www.placehold.it/80x50">
     </div>
     <div class="copy pull-right">
       <div class="col-md-4 padding-zero pull-left">
-        <a class="text-primary"><span class="title ellipsis pull-left">Item Name</span></a>
+        <a class="text-primary"><span
+            class="title ellipsis pull-left">Item Name</span></a>
         <span class="title ellipsis pull-left">Item Summary</span>
       </div>
       <div class="col-md-3 padding-right-zero pull-left">
-        <span class="title pull-left ellipsis">Included in <br><a class="text-primary"># Categories</a></span>
+        <span class="title pull-left ellipsis">Included in <br><a
+            class="text-primary"># Categories</a></span>
       </div>
       <div class="col-md-3 pull-left padding-right-zero">
-        <span class="title pull-left ellipsis">Expires On<br>July 12, 2016</span>
+        <span
+            class="title pull-left ellipsis">Expires On<br>July 12, 2016</span>
       </div>
       <div class="col-xs-2 pull-right padding-right-zero text-right">
         <span class="btn-icon btn-delete-icon btn-danger"></span>
@@ -235,19 +228,23 @@
   </div>
   <div class="d-item double-line square-icon clearfix">
     <span class="icon icon-menu pull-left"></span>
+
     <div class="media-holder pull-left">
       <img src="http://www.placehold.it/80x50">
     </div>
     <div class="copy pull-right">
       <div class="col-md-4 padding-zero pull-left">
-        <a class="text-primary"><span class="title ellipsis pull-left">Item Name</span></a>
+        <a class="text-primary"><span
+            class="title ellipsis pull-left">Item Name</span></a>
         <span class="title ellipsis pull-left">Item Summary</span>
       </div>
       <div class="col-md-3 padding-right-zero pull-left">
-        <span class="title pull-left ellipsis">Included in <br><a class="text-primary"># Categories</a></span>
+        <span class="title pull-left ellipsis">Included in <br><a
+            class="text-primary"># Categories</a></span>
       </div>
       <div class="col-md-3 pull-left padding-right-zero">
-        <span class="title pull-left ellipsis">Expires On<br>July 12, 2016</span>
+        <span
+            class="title pull-left ellipsis">Expires On<br>July 12, 2016</span>
       </div>
       <div class="col-xs-2 pull-right padding-right-zero text-right">
         <span class="btn-icon btn-delete-icon btn-danger"></span>
