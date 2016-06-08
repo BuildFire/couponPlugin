@@ -161,5 +161,32 @@
 
         DataStore.onUpdate().then(null, null, onUpdateCallback);
 
+        WidgetHome.showMapView = function () {
+          ViewStack.push({
+            template: 'Map',
+            params: {
+              controller: "WidgetMapCtrl as WidgetMap"
+            }
+          });
+        };
+
+        WidgetHome.showFilter = function () {
+          ViewStack.push({
+            template: 'Filter',
+            params: {
+              controller: "WidgetFilterCtrl as WidgetFilter"
+            }
+          });
+        };
+
+        WidgetHome.showSavedItems = function () {
+          ViewStack.push({
+            template: 'Saved',
+            params: {
+              controller: "WidgetSavedCtrl as WidgetSaved"
+            }
+          });
+        };
+
       }])
 })(window.angular, window.buildfire);

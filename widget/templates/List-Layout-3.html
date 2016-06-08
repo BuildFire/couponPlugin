@@ -69,18 +69,19 @@
 		<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
 			<span class="whiteTheme small">Filter Applied</span>
 		</div>
-		<div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch active">List</a>
-		</div>
-		<div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch">Map</a>
-		</div>
-		<div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch">Filter</a>
-		</div>
-		<div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch">Saved</a>
-		</div>
+    <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch active">List</a>
+    </div>
+    <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showMapView()">Map</a>
+    </div>
+    <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showFilter()">Filter</a>
+    </div>
+    <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()">Saved
+      </a>
+    </div>
 	</div>
 	
 	<!-- If map is hidden, use col-xs-4 like below 
