@@ -12,7 +12,7 @@
             itemListLayout: LAYOUTS.itemListLayout[0].name
           }
         };
-
+        var currentListLayout = null;
         WidgetHome.locationData = {};
 
         WidgetHome.init = function () {
@@ -122,8 +122,71 @@
           );
         }
 
-
         WidgetHome.init();
+
+        var onUpdateCallback = function (event) {
+          console.log(event);
+          setTimeout(function () {
+            $scope.$digest();
+            if (event && event.tag === TAG_NAMES.COUPON_INFO) {
+              WidgetHome.data = event.data;
+              if (!WidgetHome.data.design)
+                WidgetHome.data.design = {};
+              if (!WidgetHome.data.content)
+                WidgetHome.data.content = {};
+            }
+            else if (event && event.tag === TAG_NAMES.COUPON_ITEMS) {
+
+            }
+
+            if (!WidgetHome.data.design.itemListLayout) {
+              WidgetHome.data.design.itemListLayout = LAYOUTS.itemListLayout[0].name;
+            }
+            if (currentListLayout != WidgetHome.data.design.itemListLayout && WidgetHome.view && WidgetHome.data.content.carouselImages) {
+              WidgetHome.view._destroySlider();
+              WidgetHome.view = null;
+              console.log("==========1")
+            }
+            else {
+              if (WidgetHome.view) {
+                WidgetHome.view.loadItems(WidgetHome.data.content.carouselImages);
+                console.log("==========2")
+              }
+            }
+            currentListLayout = WidgetHome.data.design.itemListLayout;
+            $scope.$digest();
+            $rootScope.$digest();
+          }, 0);
+        };
+
+        DataStore.onUpdate().then(null, null, onUpdateCallback);
+
+        WidgetHome.showMapView = function () {
+          ViewStack.push({
+            template: 'Map',
+            params: {
+              controller: "WidgetMapCtrl as WidgetMap"
+            }
+          });
+        };
+
+        WidgetHome.showFilter = function () {
+          ViewStack.push({
+            template: 'Filter',
+            params: {
+              controller: "WidgetFilterCtrl as WidgetFilter"
+            }
+          });
+        };
+
+        WidgetHome.showSavedItems = function () {
+          ViewStack.push({
+            template: 'Saved',
+            params: {
+              controller: "WidgetSavedCtrl as WidgetSaved"
+            }
+          });
+        };
 
       }])
 })(window.angular, window.buildfire);

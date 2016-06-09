@@ -1,7 +1,7 @@
 'use strict';
 
 (function (angular, buildfire, window) {
-  angular.module('couponPluginWidget', ['ui.bootstrap','ngAnimate'])
+  angular.module('couponPluginWidget', ['ui.bootstrap', 'ngAnimate'])
     .config(['$compileProvider', function ($compileProvider) {
 
       /**
@@ -83,5 +83,15 @@
           $rootScope.$broadcast("Carousel:LOADED");
         }
       };
+    }])
+    .run(['ViewStack', '$rootScope', function (ViewStack, $rootScope) {
+      buildfire.navigation.onBackButtonClick = function () {
+        if (ViewStack.hasViews()) {
+          ViewStack.pop();
+        } else {
+          buildfire.navigation._goBackOne();
+        }
+      };
+
     }])
 })(window.angular, window.buildfire, window);

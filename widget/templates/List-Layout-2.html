@@ -7,7 +7,7 @@
       <div class="padded" ng-if="WidgetHome.showDescription(WidgetHome.data.content.description)">
         <p class="margin-zero" ng-bind-html="WidgetHome.safeHtml(WidgetHome.data.content.description)"></p>
       </div>
-			<div class="list-layout">
+			<div class="list-layout" ng-if="WidgetHome.data.content">
 				<div class="list-item">
 					<div class="list-item-media text-left overflow-hidden">
 						<div class="list-media-holder pull-left">
@@ -88,18 +88,19 @@
 		<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
 			<span class="whiteTheme small">Filter Applied</span>
 		</div>
-		<div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch active">List</a>
-		</div>
-		<div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch">Map</a>
-		</div>
-		<div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch">Filter</a>
-		</div>
-		<div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch">Saved</a>
-		</div>
+    <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch active">List</a>
+    </div>
+    <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showMapView()">Map</a>
+    </div>
+    <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showFilter()">Filter</a>
+    </div>
+    <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()">Saved
+      </a>
+    </div>
 	</div>
 	
 	<!-- If map is hidden, use col-xs-4 like below 
