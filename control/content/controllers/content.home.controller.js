@@ -182,16 +182,15 @@
           return ContentHome.searchOptions;
         };
 
-        ContentHome.loadMore = function (search) {
+        ContentHome.loadMore = function () {
           Buildfire.spinner.show();
-          if (ContentHome.busy) {
+          /*if (ContentHome.busy) {
             return;
-          }
+          }*/
 
           ContentHome.busy = true;
-          if (ContentHome.data && ContentHome.data.content.sortFilterBy && !search) {
+          if (ContentHome.data && ContentHome.data.content.sortFilterBy) {
             ContentHome.searchOptions = getSearchOptions(ContentHome.data.content.sortFilterBy);
-            //ContentHome.$json=
           }
           Buildfire.datastore.search(ContentHome.searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
             if (err) {
@@ -210,7 +209,8 @@
             result.forEach(function(res){
               tmpArray.push({'title' : res.data.title});
             });
-            ContentHome.filters =  tmpArray;
+
+            ContentHome.filters = ContentHome.filters ? ContentHome.filters.concat(tmpArray) : tmpArray;
             ContentHome.busy = false;
             Buildfire.spinner.hide();
             $scope.$digest();
@@ -284,26 +284,8 @@
               }
             };
           DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
-         getAllFilterData();
+          ContentHome.loadMore();
         };
-
-        function getAllFilterData(){
-          var success = function (result) {
-                console.info('Init success result:', result);
-
-                  if (!ContentHome.filters)
-                    ContentHome.filters = [];
-                if(Array.isArray(result.data))
-                ContentHome.filters=result.data;
-              }
-              , error = function (err) {
-                if (err && err.code !== STATUS_CODE.NOT_FOUND) {
-                  console.error('Error while getting data', err);
-                  if (tmrDelay)clearTimeout(tmrDelay);
-                }
-              };
-          DataStore.get(TAG_NAMES.COUPON_CATEGORIES).then(success, error);
-        }
 
         init();
 
