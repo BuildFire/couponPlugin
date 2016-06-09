@@ -33,7 +33,7 @@
         ]
 
         ContentHome.searchOptions = {
-          filter: {"$json.fName": {"$regex": '/*'}},
+          filter: {"$json.title": {"$regex": '/*'}},
           skip: SORT_FILTER._skip,
           limit: SORT_FILTER._limit + 1 // the plus one is to check if there are any more
         };
@@ -114,11 +114,12 @@
               if(Number.isInteger(index)){
                 ContentHome.filters[index].title= response.title;
               }else{
-                ContentHome.filters.unshift({
+                var filter={
                   title: response.title
-                });
-                Buildfire.datastore.save(ContentHome.filters, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
-                  console.log("Inserted", data.id);
+                }
+                ContentHome.filters.unshift(filter);
+                Buildfire.datastore.insert(filter, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
+                  console.log("Saved", data.id);
                   ContentHome.isUpdating = false;
                   if (err) {
                     ContentHome.isNewItemInserted = false;
@@ -149,6 +150,9 @@
             console.info('There was a problem sorting your data');
           } else {
            // ContentHome.data.content.filters=null;
+            ContentHome.filters = null;
+            ContentHome.searchOptions.skip = 0;
+            ContentHome.busy = false;
             ContentHome.data.content.sortFilterBy = value;
             ContentHome.loadMore();
           }
@@ -187,6 +191,7 @@
           ContentHome.busy = true;
           if (ContentHome.data && ContentHome.data.content.sortFilterBy && !search) {
             ContentHome.searchOptions = getSearchOptions(ContentHome.data.content.sortFilterBy);
+            //ContentHome.$json=
           }
           Buildfire.datastore.search(ContentHome.searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
             if (err) {
@@ -201,28 +206,17 @@
               ContentHome.searchOptions.skip = ContentHome.searchOptions.skip + SORT_FILTER._limit;
               ContentHome.noMore = false;
             }
-            ContentHome.filters =  result.data;
+            var tmpArray=[];
+            result.forEach(function(res){
+              tmpArray.push({'title' : res.data.title});
+            });
+            ContentHome.filters =  tmpArray;
             ContentHome.busy = false;
             Buildfire.spinner.hide();
             $scope.$digest();
           });
         };
 
-        ContentHome.sortAscending=function(){
-          ContentHome.data.content.filters.sort(function(a, b){
-            if(a.title < b.title) return -1;
-            if(a.title > b.title) return 1;
-            return 0;
-          });
-        }
-
-        ContentHome.sortDescending=function(){
-          ContentHome.data.content.filters.sort(function(a, b){
-            if(a.title > b.title) return -1;
-            if(a.title < b.title) return 1;
-            return 0;
-          });
-        }
 
         /*
          * Call the datastore to save the data object
@@ -310,8 +304,6 @@
               };
           DataStore.get(TAG_NAMES.COUPON_CATEGORIES).then(success, error);
         }
-
-
 
         init();
 
