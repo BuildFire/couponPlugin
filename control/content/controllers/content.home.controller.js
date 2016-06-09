@@ -42,6 +42,8 @@
          * */
         var tmrDelay = null;
 
+        ContentHome.busy=false;
+
         var updateMasterItem = function (data) {
           ContentHome.masterData = angular.copy(data);
         };
@@ -154,7 +156,7 @@
             ContentHome.searchOptions.skip = 0;
             ContentHome.busy = false;
             ContentHome.data.content.sortFilterBy = value;
-            ContentHome.loadMore();
+            ContentHome.loadMore('js');
           }
         };
 
@@ -182,11 +184,11 @@
           return ContentHome.searchOptions;
         };
 
-        ContentHome.loadMore = function () {
+        ContentHome.loadMore = function (str) {
           Buildfire.spinner.show();
-          /*if (ContentHome.busy) {
+          if (ContentHome.busy) {
             return;
-          }*/
+          }
 
           ContentHome.busy = true;
           if (ContentHome.data && ContentHome.data.content.sortFilterBy) {
@@ -284,7 +286,7 @@
               }
             };
           DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
-          ContentHome.loadMore();
+          ContentHome.loadMore('js');
         };
 
         init();
