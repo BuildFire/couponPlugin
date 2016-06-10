@@ -3,15 +3,16 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals',
-      function ($scope, TAG_NAMES, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS,Buildfire,Modals) {
+    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter',
+      function ($scope, TAG_NAMES, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS,Buildfire,Modals,RankOfLastFilter) {
 
         var ContentHome = this;
 
         var _data = {
           "content": {
             "carouselImages": [],
-            "description":''
+            "description":'',
+            "rankOfLastFilter" :''
           },
           "design": {
             "itemListLayout": LAYOUTS.itemListLayout[0].name
@@ -43,6 +44,7 @@
         var tmrDelay = null;
 
         ContentHome.busy=false;
+        RankOfLastFilter.setRank(0);
 
         var updateMasterItem = function (data) {
           ContentHome.masterData = angular.copy(data);
@@ -102,6 +104,54 @@
           $scope.$digest();
         };
 
+        /**
+         * ContentHome.itemSortableOptions used for ui-sortable directory to sort filter listing Manually.
+         * @type object
+         */
+        ContentHome.itemSortableOptions = {
+          handle: '> .cursor-grab',
+          disabled: true,
+          stop: function (e, ui) {
+            var endIndex = ui.item.sortable.dropindex,
+                maxRank = 0,
+                draggedItem = ContentHome.filters[endIndex];
+
+            if (draggedItem) {
+              var prev = ContentHome.filters[endIndex - 1],
+                  next = ContentHome.filters[endIndex + 1];
+              var isRankChanged = false;
+              if (next) {
+                if (prev) {
+                  draggedItem.data.rank = ((prev.data.rank || 0) + (next.data.rank || 0)) / 2;
+                  isRankChanged = true;
+                } else {
+                  draggedItem.data.rank = (next.data.rank || 0) / 2;
+                  isRankChanged = true;
+                }
+              } else {
+                if (prev) {
+                  draggedItem.data.rank = (((prev.data.rank || 0) * 2) + 10) / 2;
+                  maxRank = draggedItem.data.rank;
+                  isRankChanged = true;
+                }
+              }
+              if (isRankChanged) {
+                Buildfire.datastore.update(draggedItem.id, draggedItem.data, TAG_NAMES.COUPON_CATEGORIES, function (err) {
+                  if (err) {
+                    console.error('Error during updating rank');
+                  } else {
+                    if (ContentHome.data.content.rankOfLastFilter < maxRank) {
+                      ContentHome.data.content.rankOfLastFilter = maxRank;
+                      RankOfLastFilter.setRank(maxRank);
+                    }
+                  }
+                })
+              }
+            }
+          }
+        };
+        //ContentHome.itemSortableOptions.disabled = !(ContentHome.data.content.sortFilterBy === SORT_FILTER.MANUALLY);
+
         ContentHome.addEditFilter=function(filter, editFlag , index){
           var tempTitle='';
           if(filter)
@@ -117,8 +167,11 @@
                 ContentHome.filters[index].title= response.title;
               }else{
                 var filter={
-                  title: response.title
+                  title: response.title,
+                  rank: RankOfLastFilter.getRank()+1
                 }
+                ContentHome.data.content.rankOfLastFilter=RankOfLastFilter.getRank()+1;
+                RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
                 ContentHome.filters.unshift(filter);
                 Buildfire.datastore.insert(filter, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
                   console.log("Saved", data.id);
@@ -229,13 +282,13 @@
           }
           var success = function (result) {
               console.info('Saved data result: ', result);
-              RankOfLastItem.setRank(result.data.content.rankOfLastItem);
+              RankOfLastFilter.setRank(result.data.content.rankOfLastFilter);
               updateMasterItem(newObj);
             }
             , error = function (err) {
               console.error('Error while saving data : ', err);
             };
-          newObj.content.rankOfLastItem = newObj.content.rankOfLastItem || 0;
+          newObj.content.rankOfLastFilter = newObj.content.rankOfLastFilter || 0;
           DataStore.save(newObj, tag).then(success, error);
         };
 
@@ -272,6 +325,7 @@
                   editor.loadItems([]);
                 else
                   editor.loadItems(ContentHome.data.content.carouselImages);
+                RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter || 0);
               }
               updateMasterItem(ContentHome.data);
               if (tmrDelay)clearTimeout(tmrDelay);
