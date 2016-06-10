@@ -1,5 +1,6 @@
 
-<body class="no-scroll holder padding-zero has-bottom">
+<div class="no-scroll holder padding-zero has-bottom sticky-bottom-menu clearfix"
+     ng-controller="WidgetItemCtrl as WidgetItem">
 	<div class="scrollable">
 		<div class="coupon coupon-item layout3">
 			<div class="plugin-slide">
@@ -8,9 +9,9 @@
 			<div class="padded">
 				<div class="clearfix row intro">
 					<div class="col-xs-7 pull-left">
-						<p class="margin-zero ellipsis" style="font-size:15px;">Item title goes here. Item title goes here.</p>
-						<p class="margin-zero ellipsis">Item summary. Item summary. Item summary. Item summary. Item summary.</p>
-						<p class="margin-zero small ellipsis"><i>Expires March 21, 2016</i></p>
+						<p class="margin-zero ellipsis" style="font-size:15px;">{{WidgetItem.item.data.title}}</p>
+						<p class="margin-zero ellipsis">{{WidgetItem.item.data.summary}}</p>
+						<p class="margin-zero small ellipsis"><i>Expires {{item.data.expiresOn | date}}</i></p>
 					</div>
 					<div class="col-xs-5 pull-right text-right">
 						<img src="assets/media/map-icon.png">
@@ -36,4 +37,4 @@
 			<p class="bodyTextTheme stretch margin-top-ten">Item redeemed 3w 5d 13h 24m ago</p>
 		</div>
 	</div>
-</body>
+</div>
