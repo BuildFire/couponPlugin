@@ -1,5 +1,5 @@
 'use strict';
-(function (angular, buildfire) {
+(function (angular) {
     angular
         .module('couponPluginContent')
         .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES',
@@ -44,7 +44,7 @@
                     if (_item.id) {
                         console.log('Going to update item----------');
                         DataStore.update(_item.id, _item.data, TAG_NAMES.COUPON_ITEMS).then(function (data) {
-                            console.log('Item updated successfully-----',data);
+                            console.log('Item updated successfully-----', data);
                             updating = false;
                         }, function (err) {
                             updating = false;
@@ -106,4 +106,4 @@
                     return ContentItem.item;
                 }, updateItemsWithDelay, true);
             }]);
-})(window.angular, window.buildfire);
+})(window.angular);
