@@ -65,6 +65,17 @@
           }
         };
 
+        WidgetHome.currentLoggedInUser = null;
+
+        /**
+         * Method to open buildfire auth login pop up and allow user to login using credentials.
+         */
+        WidgetHome.openLogin = function () {
+          buildfire.auth.login({}, function () {
+
+          });
+        };
+
         /**
          * This event listener is bound for "Carousel:LOADED" event broadcast
          */
@@ -180,13 +191,47 @@
         };
 
         WidgetHome.showSavedItems = function () {
-          ViewStack.push({
-            template: 'Saved',
-            params: {
-              controller: "WidgetSavedCtrl as WidgetSaved"
+          if(WidgetHome.currentLoggedInUser){
+            ViewStack.push({
+              template: 'Saved',
+              params: {
+                controller: "WidgetSavedCtrl as WidgetSaved"
+              }
+            });
+          } else{
+            WidgetHome.openLogin();
+          }
+        };
+
+        var loginCallback = function () {
+          buildfire.auth.getCurrentUser(function (err, user) {
+            console.log("=========User", user);
+            if (user) {
+              WidgetHome.currentLoggedInUser = user;
+              $scope.$apply();
             }
           });
         };
+
+        buildfire.auth.onLogin(loginCallback);
+
+        var logoutCallback = function () {
+          WidgetHome.currentLoggedInUser = null;
+          $scope.$apply();
+        };
+
+        buildfire.auth.onLogout(logoutCallback);
+
+        /**
+         * Check for current logged in user, if not show ogin screen
+         */
+        buildfire.auth.getCurrentUser(function (err, user) {
+          console.log("===========LoggedInUser", user);
+          if (user) {
+            WidgetHome.currentLoggedInUser = user;
+            $scope.$apply();
+          }
+        });
 
       }])
 })(window.angular, window.buildfire);
