@@ -247,6 +247,8 @@
           ContentHome.busy = true;
           if (ContentHome.data && ContentHome.data.content.sortFilterBy) {
             ContentHome.searchOptions = getSearchOptions(ContentHome.data.content.sortFilterBy);
+          }else{
+            return;
           }
           Buildfire.datastore.search(ContentHome.searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
             if (err) {
@@ -369,6 +371,7 @@
               }
               updateMasterItem(ContentHome.data);
               if (tmrDelay)clearTimeout(tmrDelay);
+                ContentHome.loadMore('js');
             }
             , error = function (err) {
               if (err && err.code !== STATUS_CODE.NOT_FOUND) {
@@ -380,7 +383,7 @@
               }
             };
           DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
-          ContentHome.loadMore('js');
+
         };
 
         init();
