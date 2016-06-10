@@ -478,8 +478,9 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .coupon.layout4 .panel .panel-heading p{
 	position:relative;
 	top:50%;
-	margin-top:-8px !important;
+	margin-top:-10px !important;
 	height:20px;
+	max-width:78%;
 	padding-right:30px !important;
 }
 .coupon.layout4 .panel .panel-heading .save-icon{
