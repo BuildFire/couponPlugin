@@ -8,16 +8,13 @@
                 replace: true,
                 scope: {images: '='},
                 link: function (scope, elem, attrs) {
-                    console.log('Directive attached-----------Content Section----------',scope,elem,attrs);
                     var editor = new buildfire.components.carousel.editor("#carousel");
                     if(scope.images && scope.images.length>0)
                         editor.loadItems(scope.images);
-                    console.log('Images in directive-------------Content Section---------------',scope.images);
                     // this method will be called when a new item added to the list
                     editor.onAddItems = function (items) {
                         if (!scope.images)
                             scope.images = [];
-                        console.log('onAddItems called from directive-----------------',items);
                         $timeout(function(){
                             scope.$apply(function () {
                                 scope.images.push.apply(scope.images, items);
@@ -60,6 +57,72 @@
                                 items[newIndex] = tmp;
 
                                 scope.images = items;
+                            });
+                        },0);
+                    };
+                }
+            };
+        }])
+        .directive('dynamicLinkComponent', ['$timeout',function ($timeout) {
+            return {
+                template: "<div id='actionItems'></div>",
+                replace: true,
+                scope: {links: '='},
+                link: function (scope, elem, attrs) {
+                    console.log('Directive attached-----------Content Section----------',scope,elem,attrs);
+
+                    // create a new instance of the buildfire action Items
+                    var linkEditor = new buildfire.components.actionItems.sortableList("#actionItems");
+
+                    console.log('Links in directive-------------Content Section---------------',scope.links);
+
+                    if(scope.links && scope.links.length>0)
+                        linkEditor.loadItems(scope.links);
+                    // this method will be called when a new item added to the list
+                    linkEditor.onAddItems = function (items) {
+                        if (!scope.links)
+                            scope.links = [];
+
+                        $timeout(function(){
+                            scope.$apply(function () {
+                                scope.links.push(items);
+                            });
+                        },0);
+                    };
+                    // this method will be called when an item deleted from the list
+                    linkEditor.onDeleteItem = function (item, index) {
+                        $timeout(function(){
+                            scope.$apply(function () {
+                                scope.links.splice(index, 1);
+                            });
+                        },0);
+                    };
+                    // this method will be called when you edit item details
+                    linkEditor.onItemChange = function (item, index) {
+                        $timeout(function(){
+                            scope.$apply(function () {
+                                scope.links.splice(index, 1, item);
+                            });
+                        },0);
+                    };
+                    // this method will be called when you change the order of items
+                    linkEditor.onOrderChange = function (item, oldIndex, newIndex) {
+                        $timeout(function(){
+                            scope.$apply(function () {
+                                var items = scope.links;
+                                var i;
+                                var tmp = items[oldIndex];
+                                if (oldIndex < newIndex) {
+                                    for ( i = oldIndex + 1; i <= newIndex; i++) {
+                                        items[i - 1] = items[i];
+                                    }
+                                } else {
+                                    for (i = oldIndex - 1; i >= newIndex; i--) {
+                                        items[i + 1] = items[i];
+                                    }
+                                }
+                                items[newIndex] = tmp;
+                                scope.links = items;
                             });
                         },0);
                     };
