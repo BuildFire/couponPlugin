@@ -160,5 +160,16 @@
           _rankOfLastItem = value;
         }
       };
-    }]);
+    }])
+      .factory('RankOfLastFilter', [function () {
+        var _rankOfLastFilter;
+        return {
+          getRank: function () {
+            return _rankOfLastFilter;
+          },
+          setRank: function (value) {
+            _rankOfLastFilter = value;
+          }
+        };
+      }]);
 })(window.angular, window.buildfire);

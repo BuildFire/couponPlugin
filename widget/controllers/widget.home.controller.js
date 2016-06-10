@@ -2,8 +2,8 @@
 
 (function (angular, buildfire) {
   angular.module('couponPluginWidget')
-    .controller('WidgetHomeCtrl', ['$scope', 'TAG_NAMES', 'LAYOUTS', 'DataStore', 'PAGINATION', 'Buildfire', 'Location', '$rootScope', 'ViewStack', '$sce', 'UserData', '$modal', '$timeout',
-      function ($scope, TAG_NAMES, LAYOUTS, DataStore, PAGINATION, Buildfire, Location, $rootScope, ViewStack, $sce, UserData, $modal, $timeout) {
+    .controller('WidgetHomeCtrl', ['$scope', 'TAG_NAMES', 'LAYOUTS', 'DataStore', 'PAGINATION', 'Buildfire', 'Location', '$rootScope', 'ViewStack', '$sce', 'UserData', '$modal', '$timeout', 'SORT',
+      function ($scope, TAG_NAMES, LAYOUTS, DataStore, PAGINATION, Buildfire, Location, $rootScope, ViewStack, $sce, UserData, $modal, $timeout, SORT) {
         var WidgetHome = this;
         $rootScope.deviceHeight = window.innerHeight;
         $rootScope.deviceWidth = window.innerWidth || 320;
@@ -14,6 +14,42 @@
         };
         var currentListLayout = null;
         WidgetHome.locationData = {};
+        WidgetHome.busy = false;
+        WidgetHome.items = [];
+        var searchOptions = {
+          skip: 0,
+          limit: PAGINATION.itemCount
+        };
+
+        /**
+         * getSearchOptions(value) is used to get searchOptions with one more key sort which decide the order of sorting.
+         */
+        WidgetHome.getSearchOptions = function (value) {
+          switch (value) {
+            case SORT.ITEM_TITLE_A_Z:
+              searchOptions.sort = {"title": 1};
+              break;
+            case SORT.ITEM_TITLE_Z_A:
+              searchOptions.sort = {"title": -1};
+              break;
+            case SORT.EXPIRATION_DATE_ASC:
+              searchOptions.sort = {"expiresOn": -1};
+              break;
+            case SORT.EXPIRATION_DATE_DESC:
+              searchOptions.sort = {"expiresOn": 1};
+              break;
+            case SORT.NEWEST_FIRST:
+              searchOptions.sort = {"dateCreated": -1};
+              break;
+            case SORT.OLDEST_FIRST:
+              searchOptions.sort = {"dateCreated": 1};
+              break;
+            default :
+              searchOptions.sort = {"rank": 1};
+              break;
+          }
+          return searchOptions;
+        };
 
         WidgetHome.init = function () {
           Buildfire.spinner.show();
@@ -91,7 +127,6 @@
             WidgetHome.view.loadItems([]);
           }
         });
-
 
         WidgetHome.showDescription = function (description) {
           if (description)
@@ -172,6 +207,35 @@
 
         DataStore.onUpdate().then(null, null, onUpdateCallback);
 
+        WidgetHome.getItems = function () {
+          Buildfire.spinner.show();
+          var successAll = function (resultAll) {
+              Buildfire.spinner.hide();
+              WidgetHome.items = WidgetHome.items.length ? WidgetHome.items.concat(resultAll) : resultAll;
+              searchOptions.skip = searchOptions.skip + PAGINATION.itemCount;
+              if (resultAll.length == PAGINATION.itemCount) {
+                WidgetHome.busy = false;
+              }
+              console.log("----------------------", WidgetHome.items);
+            },
+            errorAll = function (error) {
+              Buildfire.spinner.hide();
+              console.log("error", error)
+            };
+          console.log("***********", WidgetHome.data.content);
+          if (WidgetHome.data && WidgetHome.data.content && WidgetHome.data.content.sortBy) {
+            searchOptions = WidgetHome.getSearchOptions(WidgetHome.data.content.sortBy);
+          }
+          DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
+        };
+
+        WidgetHome.loadMore = function () {
+          console.log("===============In loadmore");
+          if (WidgetHome.busy) return;
+          WidgetHome.busy = true;
+          WidgetHome.getItems();
+        };
+
         WidgetHome.showMapView = function () {
           ViewStack.push({
             template: 'Map',
@@ -191,14 +255,14 @@
         };
 
         WidgetHome.showSavedItems = function () {
-          if(WidgetHome.currentLoggedInUser){
+          if (WidgetHome.currentLoggedInUser) {
             ViewStack.push({
               template: 'Saved',
               params: {
                 controller: "WidgetSavedCtrl as WidgetSaved"
               }
             });
-          } else{
+          } else {
             WidgetHome.openLogin();
           }
         };
