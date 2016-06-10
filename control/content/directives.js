@@ -148,4 +148,32 @@
                 }
             };
         })
+        .directive('dateTime', function () {
+            return {
+                scope: {publishDate: "="},
+                link: function (scope, elem, attrs) {
+                    setTimeout(function () {
+                        $(elem).datepicker({
+                            dateFormat: "mm/dd/yy",
+                            onSelect: function () {
+                                var value = $(this).val();
+                                scope.publishDate = +new Date(value);
+                                scope.$apply();
+                                $(elem).datepicker("setDate", new Date(value));
+                                document.activeElement.blur();
+                            }
+                        });
+                        scope.hasDatePicker = true;
+                        scope.$apply();
+                    }, 0);
+
+                    var unbindWatch = scope.$watch("publishDate", function (newVal) {
+                        if(newVal && scope.hasDatePicker) {
+                            $(elem).datepicker("setDate", new Date(newVal));
+                            unbindWatch();
+                        }
+                    });
+                }
+            };
+        })
 })(window.angular,buildfire);
