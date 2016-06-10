@@ -59,14 +59,14 @@
 </div>
 <hr class="none">
 <div class="infinite-scroll-parent" style="height: 282px;overflow-y: auto;">
- <div class="draggable-list-view wide-list no-media has-btn-link"
+ <div ui-sortable="ContentHome.itemSortableOptions"  ng-model="ContentHome.filters" class="draggable-list-view wide-list no-media has-btn-link"
      style="background:#fff;"
      infinite-scroll='ContentHome.loadMore("html")'
      infinite-scroll-distance='1'
      data-infinite-container=".infinite-scroll-parent"
      infinite-scroll-disabled="ContentHome.noMore">
   <div class="d-item square-icon clearfix" ng-repeat="filter in ContentHome.filters">
-    <span class="icon icon-menu pull-left"></span>
+    <span class="icon icon-menu pull-left cursor-grab"></span>
 
     <div class="copy pull-right">
       <div class="col-md-4 padding-zero pull-left">
