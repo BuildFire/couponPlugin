@@ -7,7 +7,7 @@
       function ($scope, TAG_NAMES, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS,Buildfire,Modals,RankOfLastFilter) {
 
         var ContentHome = this;
-
+        ContentHome.filter=null;
         var _data = {
           "content": {
             "carouselImages": [],
@@ -166,16 +166,17 @@
               if(Number.isInteger(index)){
                 ContentHome.filters[index].title= response.title;
               }else{
-                var filter={
+                ContentHome.filter={
                   title: response.title,
                   rank: RankOfLastFilter.getRank()+1
                 }
                 ContentHome.data.content.rankOfLastFilter=RankOfLastFilter.getRank()+1;
                 RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
-                ContentHome.filters.unshift(filter);
-                Buildfire.datastore.insert(filter, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
+                ContentHome.filters.unshift(ContentHome.filter);
+                Buildfire.datastore.insert(ContentHome.filter, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
                   console.log("Saved", data.id);
                   ContentHome.isUpdating = false;
+                  ContentHome.filter.id=data.id;
                   if (err) {
                     ContentHome.isNewItemInserted = false;
                     return console.error('There was a problem saving your data');
@@ -264,7 +265,8 @@
             var lastIndex=result.length;
             result.forEach(function(res,index){
               tmpArray.push({'title' : res.data.title,
-              rank:index +1 });
+              rank:index +1,
+                id:res.data.id});
             });
 
             ContentHome.filters = ContentHome.filters ? ContentHome.filters.concat(tmpArray) : tmpArray;
@@ -292,6 +294,39 @@
             };
           newObj.content.rankOfLastFilter = newObj.content.rankOfLastFilter || 0;
           DataStore.save(newObj, tag).then(success, error);
+        };
+
+        function isValidItem(item) {
+          if(item){
+            return item.title;
+          }
+          else{
+            return false;
+          }
+
+        }
+
+        var updateItemsWithDelay = function (item) {
+          ContentHome.isUpdating = false;
+          ContentHome.isItemValid = isValidItem(ContentHome.filter);
+          if (!ContentHome.isUpdating && !isUnchanged(ContentHome.filter) && ContentHome.isItemValid) {
+           setTimeout(function () {
+              if (item.id) {
+                ContentHome.updateItemData();
+                $scope.$digest();
+              } /*else if (!ContentHome.isNewItemInserted) {
+                ContentHome.addNewItem();
+              }*/
+            }, 300);
+          }
+        };
+
+        ContentHome.updateItemData = function () {
+          Buildfire.datastore.update(ContentHome.filter.id, ContentHome.filter, TAG_NAMES.COUPON_CATEGORIES, function (err) {
+            ContentHome.isUpdating = false;
+            if (err)
+              return console.error('There was a problem saving your data');
+          })
         };
 
         var saveDataWithDelay = function (newObj) {
@@ -327,6 +362,9 @@
                   editor.loadItems([]);
                 else
                   editor.loadItems(ContentHome.data.content.carouselImages);
+                ContentHome.filters = null;
+                ContentHome.searchOptions.skip = 0;
+                ContentHome.busy = false;
                 RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter || 0);
               }
               updateMasterItem(ContentHome.data);
@@ -360,8 +398,8 @@
          * watch for changes in filters and trigger the saveDataWithDelay function on change
          * */
         $scope.$watch(function () {
-          return ContentHome.data;
-        }, saveDataWithDelay, true);
+          return ContentHome.filter;
+        }, updateItemsWithDelay, true);
 
 
       }]);
