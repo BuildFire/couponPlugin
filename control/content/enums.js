@@ -71,7 +71,10 @@
           postRedemptionText: '',
           carouselImages: [],
           rank: '',
-          location: {},
+          location: {
+            addressTitle:'',
+            coordinates:{lat:'',lng:''}
+          },
           Categories: []
         }
       }
