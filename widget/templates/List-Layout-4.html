@@ -13,9 +13,11 @@
            data-infinite-container=".infinite-scroll-parent"
            infinite-scroll-disabled="WidgetHome.busy">
 				<div class="panel" ng-repeat="item in WidgetHome.items">
-				  	<div class="panel-heading bg-primary primaryBackgroundTheme clearfix">
-						<div class="media pull-left">
-							<img src="../../../styles/media/holder-1x1.png">
+				  	<div
+                class="panel-heading bg-primary primaryBackgroundTheme clearfix" ng-click="WidgetHome.openDetails(item.id)">
+						<div class="media pull-left" ng-if="item.data.listImage" >
+              <img load-image="1x1" data-final-src="{{item.data.listImage |
+                       getImageUrl : 60:60}}">
 						</div>
 				    	<p class="ellipsis margin-zero">{{item.data.title}}</p>
 						<div class="save-icon">
@@ -23,7 +25,7 @@
 						</div>
 				  	</div>
 				  	<div class="panel-body border-grey">
-						<p> {{item.data.summary}}</p>
+						<p ng-click="WidgetHome.openDetails(item.id)"> {{item.data.summary}}</p>
 						<div class="save-icon">
 							<!-- Use this when saved/active -->
 							<span class="icon icon-star whiteTheme"></span>
@@ -32,7 +34,7 @@
               <!--<span class="icon icon-star-empty whiteTheme"></span>-->
 
 						</div>
-						<div class="item clearfix row">
+						<div class="item clearfix row" ng-click="WidgetHome.openDetails(item.id)">
 							<div class="col-xs-7 pull-left text-left">
 								<p class="date ellipsis margin-zero">Expires {{item.data.expiresOn | date}}</p>
 							</div>

@@ -297,5 +297,15 @@
           }
         });
 
+        WidgetHome.openDetails = function (itemId) {
+          ViewStack.push({
+            template: 'Item',
+            params: {
+              controller: "WidgetItemCtrl as WidgetItem",
+              itemId: itemId
+            }
+          });
+        };
+
       }])
 })(window.angular, window.buildfire);

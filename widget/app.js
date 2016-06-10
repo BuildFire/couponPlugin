@@ -84,6 +84,35 @@
         }
       };
     }])
+    .directive("loadImage", [function () {
+      return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+          element.attr("src", "../../../styles/media/holder-" + attrs.loadImage + ".gif");
+
+          var elem = $("<img>");
+          elem[0].onload = function () {
+            element.attr("src", attrs.finalSrc);
+            elem.remove();
+          };
+          elem.attr("src", attrs.finalSrc);
+        }
+      };
+    }])
+    .filter('getImageUrl', function () {
+      return function (url, width, height, type) {
+        if (type == 'resize')
+          return buildfire.imageLib.resizeImage(url, {
+            width: width,
+            height: height
+          });
+        else
+          return buildfire.imageLib.cropImage(url, {
+            width: width,
+            height: height
+          });
+      }
+    })
     .run(['ViewStack', '$rootScope', function (ViewStack, $rootScope) {
       buildfire.navigation.onBackButtonClick = function () {
         if (ViewStack.hasViews()) {
