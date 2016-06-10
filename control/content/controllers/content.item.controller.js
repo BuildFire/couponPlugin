@@ -2,8 +2,8 @@
 (function (angular) {
     angular
         .module('couponPluginContent')
-        .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location',
-            function ($scope, $routeParams, $timeout, DEFAULT_DATA, DataStore, TAG_NAMES, Location) {
+        .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location','Utils',
+            function ($scope, $routeParams, $timeout, DEFAULT_DATA, DataStore, TAG_NAMES, Location,Utils) {
                 var ContentItem = this;
                 var tmrDelayForItem = null
                     , isNewItemInserted = false
@@ -58,7 +58,7 @@
                         DataStore.insert(_item.data, TAG_NAMES.COUPON_ITEMS).then(function (data) {
                             updating = false;
                             if (data && data.id) {
-                                //ContentItem.item.data.deepLinkUrl = Buildfire.deeplink.createLink({id: data.id});
+                                ContentItem.item.data.deepLinkUrl = buildfire.deeplink.createLink({id: data.id});
                                 ContentItem.item.id = data.id;
                                 updateMasterItem(ContentItem.item);
                             }
@@ -110,7 +110,7 @@
                             if (error) {
                                 console.error('Error:', error);
                             } else {
-                                ContentItem.item.data.listImage = result.selectedFiles && result.selectedFiles[0] || null;
+                                ContentItem.item.data.listImage = result && result.selectedFiles && result.selectedFiles[0] || null;
                                 if (!$scope.$$phase)$scope.$digest();
                             }
                         };
@@ -135,8 +135,127 @@
                         },
                         addressTitle: data.location
                     };
+                    $timeout(function(){
+                        ContentItem.currentAddress = data.location;
+                        ContentItem.currentCoordinates = data.coordinates;
+                    },0);
+                };
+
+                ContentItem.setDraggedLocation = function (data) {
+                    ContentItem.item.data.address = {
+                        lng: data.coordinates[0],
+                        lat: data.coordinates[1],
+                        aName: data.location
+                    };
                     ContentItem.currentAddress = data.location;
                     ContentItem.currentCoordinates = data.coordinates;
+                    $scope.$digest();
+                };
+                ContentItem.setCoordinates = function () {
+                    var latlng = '';
+                    console.log('ng-enter---------------------called------------------', ContentItem.currentAddress);
+                    function successCallback(resp) {
+                        console.error('Successfully validated coordinates-----------', resp);
+                        if (resp) {
+                            ContentItem.item.data.address = {
+                                lng: ContentItem.currentAddress.split(",")[1].trim(),
+                                lat: ContentItem.currentAddress.split(",")[0].trim(),
+                                aName: ContentItem.currentAddress
+                            };
+                            ContentItem.currentCoordinates = [ContentItem.currentAddress.split(",")[1].trim(), ContentItem.currentAddress.split(",")[0].trim()];
+                        } else {
+                            //errorCallback();
+                        }
+                    }
+
+                    function errorCallback(err) {
+                        console.error('Error while validating coordinates------------', err);
+                        ContentItem.validCoordinatesFailure = true;
+                        $timeout(function () {
+                            ContentItem.validCoordinatesFailure = false;
+                        }, 5000);
+                    }
+
+                    if (ContentItem.currentAddress) {
+                        latlng = ContentItem.currentAddress.split(',')[1] + "," + ContentItem.currentAddress.split(',')[0]
+                    }
+
+                    Utils.validLongLats(latlng).then(successCallback, errorCallback);
+                };
+                ContentItem.clearData = function () {
+                    if (!ContentItem.currentAddress) {
+                        ContentItem.item.data.address = {
+                            lng: '',
+                            lat: '',
+                            aName: ''
+                        };
+                        ContentItem.currentCoordinates = null;
+                    }
+                };
+
+                ContentItem.validCopyAddressFailure = false;
+                ContentItem.locationAutocompletePaste = function () {
+                    function error() {
+                        console.error('ERROOR emethpdd called');
+                        ContentItem.validCopyAddressFailure = true;
+                        $timeout(function () {
+                            ContentItem.validCopyAddressFailure = false;
+                        }, 5000);
+
+                    }
+
+                    $timeout(function () {
+                        console.log('val>>>', $("#googleMapAutocomplete").val());
+                        console.log('.pac-container .pac-item', $(".pac-container .pac-item").length);
+                        if ($(".pac-container .pac-item").length) {
+                            var firstResult = $(".pac-container .pac-item:first").find('.pac-matched').map(function () {
+                                return $(this).text();
+                            }).get().join(); // + ', ' + $(".pac-container .pac-item:first").find('span:last').text();
+                            console.log('firstResult', firstResult);
+                            var geocoder = new google.maps.Geocoder();
+                            geocoder.geocode({"address": firstResult}, function (results, status) {
+                                if (status == google.maps.GeocoderStatus.OK) {
+                                    var lat = results[0].geometry.location.lat(),
+                                        lng = results[0].geometry.location.lng();
+                                    ContentItem.setLocation({location: firstResult, coordinates: [lng, lat]});
+                                    $("#googleMapAutocomplete").blur();
+                                }
+                                else {
+                                    console.error('' +
+                                        'Error else parts of google');
+                                    error();
+                                }
+                            });
+                        }
+                        else if (ContentItem.currentAddress && ContentItem.currentAddress.split(',').length) {
+                            console.log('Location found---------------------', ContentItem.currentAddress.split(',').length, ContentItem.currentAddress.split(','));
+                            ContentItem.setCoordinates();
+                            /*var geocoder = new google.maps.Geocoder();
+                             geocoder.geocode({
+                             "latLng": {
+                             "lat": parseInt(ContentItem.currentAddress.split(',')[0]),
+                             "lng": parseInt(ContentItem.currentAddress.split(',')[1])
+                             }
+                             }, function (results, status) {
+                             console.log('Got Address based on coordinates--------------------', results, status);
+                             if (status == google.maps.GeocoderStatus.OK) {
+                             var lat = results[0].geometry.location.lat(),
+                             lng = results[0].geometry.location.lng();
+                             ContentItem.setLocation({location: ContentItem.currentAddress, coordinates: [lng, lat]});
+                             $("#googleMapAutocomplete").blur();
+                             }
+                             else {
+                             console.error('' +
+                             'Error else parts of google');
+                             error();
+                             }
+                             });*/
+                        }
+                        else {
+                            error();
+                        }
+                    }, 1000);
+
                 };
 
                 //option for wysiwyg

@@ -13,7 +13,7 @@
     <span>Deep Link URL</span>
   </div>
   <div class="col-md-9 main pull-right">
-    <p class="margin-zero">app[APPID]://thedeeplinkgoeshere</p>
+    <p class="margin-zero">{{ContentItem.item.data.deepLinkUrl}}</p>
   </div>
 </div>
 <hr class="none">
@@ -134,7 +134,7 @@
     <span>Address Title</span>
   </div>
   <div class="col-md-9 main pull-right">
-    <input type="text" class="form-control" placeholder="Address Title">
+    <input type="text" class="form-control" placeholder="Address Title" ng-model="ContentItem.item.data.addressTitle">
   </div>
 </div>
 <hr class="none">
@@ -144,8 +144,14 @@
   </div>
   <div class="col-md-9 main pull-right">
     <input type="text" class="form-control" placeholder="Enter street address or lat/long coordinates" google-location-search="" callback-fn="ContentItem.setLocation(data)"
-           ng-model="ContentItem.currentAddress">
-    <textarea class="form-control margin-top-ten" placeholder="Map"></textarea>
+           ng-model="ContentItem.currentAddress"
+           ng-enter="ContentItem.setCoordinates()"
+           ng-paste="ContentItem.locationAutocompletePaste()"
+           ng-change="ContentItem.clearData()">
+    <div ng-if="ContentItem.currentCoordinates.length" google-map dragged-fn="ContentItem.setDraggedLocation(data)"
+         coordinates="ContentItem.currentCoordinates"
+         class="google-map-fix" style="height: 200px; width: 300px"
+            ></div>
   </div>
 </div>
 <hr class="none">
