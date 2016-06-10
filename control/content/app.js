@@ -20,7 +20,17 @@
           controllerAs: 'ContentItem',
           controller: 'ContentItemCtrl'
         })
-        .otherwise('/');
+          .when('/filter', {
+            templateUrl: 'templates/home.html',
+            controllerAs: 'ContentFilter',
+            controller: 'ContentFilterCtrl'
+          })
+          .when('/filter/:itemId', {
+            templateUrl: 'templates/home.html',
+            controllerAs: 'ContentFilter',
+            controller: 'ContentFilterCtrl'
+          })
+          .otherwise('/');
     }])
     .filter('getImageUrl', ['Buildfire', function (Buildfire) {
       return function (url, width, height, type) {
