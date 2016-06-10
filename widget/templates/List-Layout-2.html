@@ -17,7 +17,7 @@
 							<img load-image="16x9" data-final-src="{{item.data.listImage | getImageUrl : 120:70}}">
 						</div>
 						<div class="list-item-copy text-left padding-left-ten padding-right-ten">
-							<div class="copy-holder">
+							<div class="copy-holder" ng-click="WidgetHome.openDetails(item.id)">
 								<p class="ellipsis margin-zero text-primary margin-top-five">
                   {{item.data.title}}
 								</p>
