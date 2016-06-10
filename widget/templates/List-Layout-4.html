@@ -17,20 +17,20 @@
 						<div class="media pull-left">
 							<img src="../../../styles/media/holder-1x1.png">
 						</div>
-				    	<p class="ellipsis margin-zero">Coupon Title Goes Here</p>
+				    	<p class="ellipsis margin-zero">{{item.data.title}}</p>
 						<div class="save-icon">
 							<span class="icon icon-star whiteTheme"></span>
 						</div>
 				  	</div>
 				  	<div class="panel-body border-grey">
-						<p>Coupon description goes here and wraps around if there is a lot of text.</p>
+						<p> {{item.data.summary}}</p>
 						<div class="save-icon">
 							<!-- Use this when saved/active -->
 							<span class="icon icon-star whiteTheme"></span>
 						</div>
 						<div class="item clearfix row">
 							<div class="col-xs-7 pull-left text-left">
-								<p class="date ellipsis margin-zero">Expires March 21, 2016</p>
+								<p class="date ellipsis margin-zero">Expires {{item.data.expiresOn | date}}</p>
 							</div>
 							<div class="col-xs-5 pull-right text-right">
 								<p class="date margin-zero">21 miles away</p>

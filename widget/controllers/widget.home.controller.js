@@ -33,10 +33,10 @@
               searchOptions.sort = {"title": -1};
               break;
             case SORT.EXPIRATION_DATE_ASC:
-              searchOptions.sort = {"expDate": -1};
+              searchOptions.sort = {"expiresOn": -1};
               break;
             case SORT.EXPIRATION_DATE_DESC:
-              searchOptions.sort = {"expDate": 1};
+              searchOptions.sort = {"expiresOn": 1};
               break;
             case SORT.NEWEST_FIRST:
               searchOptions.sort = {"dateCreated": -1};

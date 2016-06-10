@@ -17,9 +17,9 @@
 					<div class="plugin-slide border-grey border-radius-four">
 						<img src="../../../styles/media/holder-16x9.png">
 						<div class="item-text">
-							<p class="item-title margin-zero text-center text-primary primaryTheme ellipsis">Free Entree</p>
-							<p class="item-summary margin-zero text-center ellipsis">This is a summary that goes here.</p>
-							<p class="item-date margin-zero text-center">Expires March 21, 2016</p>
+							<p class="item-title margin-zero text-center text-primary primaryTheme ellipsis">{{item.data.title}}</p>
+							<p class="item-summary margin-zero text-center ellipsis"> {{item.data.summary}}</p>
+							<p class="item-date margin-zero text-center">Expires {{item.data.expiresOn | date}}</p>
 							<p class="item-date margin-zero text-center">21 miles away</p>
 						</div>
 						<!-- Use these theme classes when active/selected -->
