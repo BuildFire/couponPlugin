@@ -78,9 +78,10 @@
 </div>
 <hr class="none">
 <div class="item clearfix row">
-  <div class="col-md-3">
-    carousel
-  </div>
+
+  <!--<div class="col-md-3">-->
+    <div id="carousel" carousel-component images="ContentItem.item.data.carouselImages"></div>
+  <!--</div>-->
 </div>
 <hr class="none">
 <div class="item clearfix row">
@@ -90,7 +91,7 @@
 </div>
 <div class="item clearfix row margin-top-ten">
   <div class="col-md-12 main pull-left">
-    <textarea placeholder="WYSIWYG" class="form-control"></textarea>
+    <textarea placeholder="WYSIWYG" class="form-control" ui-tinymce="ContentItem.bodyWYSIWYGOptions" ng-model="ContentItem.item.data.preRedemptionText"></textarea>
   </div>
 </div>
 <hr class="none">
@@ -101,7 +102,7 @@
 </div>
 <div class="item clearfix row margin-top-ten">
   <div class="col-md-12 main pull-left">
-    <textarea placeholder="WYSIWYG" class="form-control"></textarea>
+    <textarea placeholder="WYSIWYG" class="form-control" ui-tinymce="ContentItem.bodyWYSIWYGOptions" ng-model="ContentItem.item.data.postRedemptionText"></textarea>
   </div>
 </div>
 <hr class="none">
@@ -137,18 +138,19 @@
     <span>Coupon Location</span>
   </div>
   <div class="col-md-9 main pull-right">
-    <input type="text" class="form-control" placeholder="Enter street address or lat/long coordinates">
+    <input type="text" class="form-control" placeholder="Enter street address or lat/long coordinates" google-location-search="" callback-fn="ContentItem.setLocation(data)"
+           ng-model="ContentItem.currentAddress">
     <textarea class="form-control margin-top-ten" placeholder="Map"></textarea>
   </div>
 </div>
 <hr class="none">
 <div class="item clearfix row">
-  <div class="col-md-3 labels pull-left">
+<!--  <div class="col-md-3 labels pull-left">
     <span>Menu Links</span>
   </div>
-  <div class="col-md-9 main pull-right">
-    Standard dynamic link/action builder
-  </div>
+  <div class="col-md-9 main pull-right">-->
+    <div id="actionItems" dynamic-link-component links="ContentItem.item.data.links"></div>
+  <!--</div>-->
 </div>
 <hr class="none">
 <div class="item clearfix row">

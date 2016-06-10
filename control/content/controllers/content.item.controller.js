@@ -1,5 +1,5 @@
 'use strict';
-(function (angular, buildfire) {
+(function (angular) {
     angular
         .module('couponPluginContent')
         .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES',
@@ -42,33 +42,34 @@
                 function insertAndUpdate(_item) {
                     updating = true;
                     if (_item.id) {
-                        console.log('Going to update item----------');
                         DataStore.update(_item.id, _item.data, TAG_NAMES.COUPON_ITEMS).then(function (data) {
-                            console.log('Item updated successfully-----',data);
+                            console.log('Item updated successfully-----', data);
+                            updateMasterItem(data);
                             updating = false;
                         }, function (err) {
+                            console.error('Error: while updating item--:', err);
+                            resetItem();
                             updating = false;
-                            //console.log('Error while updating data---', err);
                         });
                     }
                     else if (!isNewItemInserted) {
                         isNewItemInserted = true;
                         _item.data.dateCreated = new Date();
                         DataStore.insert(_item.data, TAG_NAMES.COUPON_ITEMS).then(function (data) {
-                            console.log('Item Inserted---------------------', data);
+                            updating = false;
                             if (data && data.id) {
                                 //ContentItem.item.data.deepLinkUrl = Buildfire.deeplink.createLink({id: data.id});
                                 ContentItem.item.id = data.id;
                                 updateMasterItem(ContentItem.item);
                             }
                             else {
-                                //isNewItemInserted = false;
-                                updating = false;
+                                isNewItemInserted = false;
                             }
                         }, function (err) {
-                            //resetItem();
+                            console.error('Error: while inserting item--:', err);
+                            resetItem();
                             updating = false;
-                            //isNewItemInserted = false;
+                            isNewItemInserted = false;
                         });
                     }
                 }
@@ -102,8 +103,31 @@
 
                 init();
 
+                ContentItem.setLocation = function (data) {
+                    console.log('setLocation-------------------method called-----------', data);
+                    ContentItem.item.data.location = {
+                        coordinates: {
+                            lng: data.coordinates[0],
+                            lat: data.coordinates[1]
+                        },
+                        addressTitle: data.location
+                    };
+                    ContentItem.currentAddress = data.location;
+                    ContentItem.currentCoordinates = data.coordinates;
+                };
+
+                //option for wysiwyg
+                ContentItem.bodyWYSIWYGOptions = {
+                    plugins: 'advlist autolink link image lists charmap print preview',
+                    skin: 'lightgray',
+                    trusted: true,
+                    theme: 'modern',
+                    plugin_preview_width: "500",
+                    plugin_preview_height: "500"
+                };
+
                 $scope.$watch(function () {
                     return ContentItem.item;
                 }, updateItemsWithDelay, true);
             }]);
-})(window.angular, window.buildfire);
+})(window.angular);
