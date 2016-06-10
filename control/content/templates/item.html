@@ -68,10 +68,15 @@
   <div class="col-md-9 main pull-right">
     <div class="screens clearfix">
       <div class="screen logoicon pull-left text-center">
-        <a class="border-radius-three default-background-hover">
+        <a class="border-grey border-radius-three default-background-hover" ng-click="ContentItem.addListImage()">
+          <span ng-if="!ContentItem.item.data.listImage" class="add-icon">+</span>
+          <img ng-if="ContentItem.item.data.listImage" ng-src="{{ContentItem.item.data.listImage | getImageUrl : 82:110 :'resize'}}">
+        </a>
+        <span ng-if="ContentItem.item.data.listImage" class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentItem.removeListImage()"></span>
+        <!--<a class="border-radius-three default-background-hover">
           <span class="add-icon">+</span>
           <img ng-src="{{ tools.resizeImage(info.logoUrl,{width:300}) }}">
-        </a>
+        </a>-->
       </div>
     </div>
   </div>
@@ -155,6 +160,6 @@
 <hr class="none">
 <div class="item clearfix row">
   <div class="col-md-3 main pull-right">
-    <a class="btn btn-primary stretch">Done</a>
+    <a class="btn btn-primary stretch" ng-click="ContentItem.done()">Done</a>
   </div>
 </div>

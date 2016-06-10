@@ -2,8 +2,8 @@
 (function (angular) {
     angular
         .module('couponPluginContent')
-        .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES',
-            function ($scope, $routeParams, $timeout, DEFAULT_DATA, DataStore, TAG_NAMES) {
+        .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location',
+            function ($scope, $routeParams, $timeout, DEFAULT_DATA, DataStore, TAG_NAMES, Location) {
                 var ContentItem = this;
                 var tmrDelayForItem = null
                     , isNewItemInserted = false
@@ -103,6 +103,29 @@
 
                 init();
 
+
+                ContentItem.addListImage = function () {
+                    var options = {showIcons: false, multiSelection: false},
+                        listImgCB = function (error, result) {
+                            if (error) {
+                                console.error('Error:', error);
+                            } else {
+                                ContentItem.item.data.listImage = result.selectedFiles && result.selectedFiles[0] || null;
+                                if (!$scope.$$phase)$scope.$digest();
+                            }
+                        };
+                    buildfire.imageLib.showDialog(options, listImgCB);
+                };
+                ContentItem.removeListImage = function () {
+                    ContentItem.item.data.listImage = null;
+                };
+
+                /**
+                 * done will close the single item view
+                 */
+                ContentItem.done = function () {
+                    Location.goToHome();
+                };
                 ContentItem.setLocation = function (data) {
                     console.log('setLocation-------------------method called-----------', data);
                     ContentItem.item.data.location = {
