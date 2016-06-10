@@ -42,33 +42,34 @@
                 function insertAndUpdate(_item) {
                     updating = true;
                     if (_item.id) {
-                        console.log('Going to update item----------');
                         DataStore.update(_item.id, _item.data, TAG_NAMES.COUPON_ITEMS).then(function (data) {
                             console.log('Item updated successfully-----', data);
+                            updateMasterItem(data);
                             updating = false;
                         }, function (err) {
+                            console.error('Error: while updating item--:',err);
+                            resetItem();
                             updating = false;
-                            //console.log('Error while updating data---', err);
                         });
                     }
                     else if (!isNewItemInserted) {
                         isNewItemInserted = true;
                         _item.data.dateCreated = new Date();
                         DataStore.insert(_item.data, TAG_NAMES.COUPON_ITEMS).then(function (data) {
-                            console.log('Item Inserted---------------------', data);
+                            updating = false;
                             if (data && data.id) {
                                 //ContentItem.item.data.deepLinkUrl = Buildfire.deeplink.createLink({id: data.id});
                                 ContentItem.item.id = data.id;
                                 updateMasterItem(ContentItem.item);
                             }
                             else {
-                                //isNewItemInserted = false;
-                                updating = false;
+                                isNewItemInserted = false;
                             }
                         }, function (err) {
-                            //resetItem();
+                            console.error('Error: while inserting item--:',err);
+                            resetItem();
                             updating = false;
-                            //isNewItemInserted = false;
+                            isNewItemInserted = false;
                         });
                     }
                 }
