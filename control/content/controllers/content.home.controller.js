@@ -122,21 +122,21 @@
               var isRankChanged = false;
               if (next) {
                 if (prev) {
-                  draggedItem.data.rank = ((prev.data.rank || 0) + (next.data.rank || 0)) / 2;
+                  draggedItem.rank = ((prev.rank || 0) + (next.rank || 0)) / 2;
                   isRankChanged = true;
                 } else {
-                  draggedItem.data.rank = (next.data.rank || 0) / 2;
+                  draggedItem.rank = (next.rank || 0) / 2;
                   isRankChanged = true;
                 }
               } else {
                 if (prev) {
-                  draggedItem.data.rank = (((prev.data.rank || 0) * 2) + 10) / 2;
-                  maxRank = draggedItem.data.rank;
+                  draggedItem.rank = (((prev.rank || 0) * 2) + 10) / 2;
+                  maxRank = draggedItem.rank;
                   isRankChanged = true;
                 }
               }
               if (isRankChanged) {
-                Buildfire.datastore.update(draggedItem.id, draggedItem.data, TAG_NAMES.COUPON_CATEGORIES, function (err) {
+                Buildfire.datastore.update(draggedItem.id, draggedItem, TAG_NAMES.COUPON_CATEGORIES, function (err) {
                   if (err) {
                     console.error('Error during updating rank');
                   } else {
@@ -195,7 +195,7 @@
         ContentHome.deleteFilter=function(index){
           Modals.removePopupModal().then(function (result) {
             if (result) {
-              ContentHome.data.content.filters.splice(index, 1);
+              ContentHome.filters.splice(index, 1);
             }
           });
         }
@@ -261,8 +261,10 @@
               ContentHome.noMore = false;
             }
             var tmpArray=[];
-            result.forEach(function(res){
-              tmpArray.push({'title' : res.data.title});
+            var lastIndex=result.length;
+            result.forEach(function(res,index){
+              tmpArray.push({'title' : res.data.title,
+              rank:index +1 });
             });
 
             ContentHome.filters = ContentHome.filters ? ContentHome.filters.concat(tmpArray) : tmpArray;
@@ -349,6 +351,13 @@
 
         /*
          * watch for changes in data and trigger the saveDataWithDelay function on change
+         * */
+        $scope.$watch(function () {
+          return ContentHome.data;
+        }, saveDataWithDelay, true);
+
+        /*
+         * watch for changes in filters and trigger the saveDataWithDelay function on change
          * */
         $scope.$watch(function () {
           return ContentHome.data;
