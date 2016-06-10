@@ -47,7 +47,7 @@
                             updateMasterItem(data);
                             updating = false;
                         }, function (err) {
-                            console.error('Error: while updating item--:',err);
+                            console.error('Error: while updating item--:', err);
                             resetItem();
                             updating = false;
                         });
@@ -66,7 +66,7 @@
                                 isNewItemInserted = false;
                             }
                         }, function (err) {
-                            console.error('Error: while inserting item--:',err);
+                            console.error('Error: while inserting item--:', err);
                             resetItem();
                             updating = false;
                             isNewItemInserted = false;
@@ -102,6 +102,19 @@
                 }
 
                 init();
+
+                ContentItem.setLocation = function (data) {
+                    console.log('setLocation-------------------method called-----------', data);
+                    ContentItem.item.data.location = {
+                        coordinates: {
+                            lng: data.coordinates[0],
+                            lat: data.coordinates[1]
+                        },
+                        addressTitle: data.location
+                    };
+                    ContentItem.currentAddress = data.location;
+                    ContentItem.currentCoordinates = data.coordinates;
+                };
 
                 //option for wysiwyg
                 ContentItem.bodyWYSIWYGOptions = {

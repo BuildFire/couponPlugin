@@ -69,13 +69,8 @@
                 replace: true,
                 scope: {links: '='},
                 link: function (scope, elem, attrs) {
-                    console.log('Directive attached-----------Content Section----------',scope,elem,attrs);
-
                     // create a new instance of the buildfire action Items
                     var linkEditor = new buildfire.components.actionItems.sortableList("#actionItems");
-
-                    console.log('Links in directive-------------Content Section---------------',scope.links);
-
                     if(scope.links && scope.links.length>0)
                         linkEditor.loadItems(scope.links);
                     // this method will be called when a new item added to the list
@@ -129,4 +124,28 @@
                 }
             };
         }])
+        .directive('googleLocationSearch', function () {
+            return {
+                restrict: 'A',
+                scope: {setLocationInController: '&callbackFn'},
+                link: function (scope, element, attributes) {
+                    var options = {
+                        types: ['geocode']
+                    };
+                    var autocomplete = new google.maps.places.Autocomplete(element[0], options);
+                    google.maps.event.addListener(autocomplete, 'place_changed', function () {
+                        var location = autocomplete.getPlace().formatted_address;
+                        if (autocomplete.getPlace().geometry) {
+                            var coordinates = [autocomplete.getPlace().geometry.location.lng(), autocomplete.getPlace().geometry.location.lat()];
+                            scope.setLocationInController({
+                                data: {
+                                    location: location,
+                                    coordinates: coordinates
+                                }
+                            });
+                        }
+                    });
+                }
+            };
+        })
 })(window.angular,buildfire);
