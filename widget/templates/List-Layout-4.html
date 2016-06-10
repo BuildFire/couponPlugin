@@ -14,8 +14,9 @@
            infinite-scroll-disabled="WidgetHome.busy">
 				<div class="panel" ng-repeat="item in WidgetHome.items">
 				  	<div class="panel-heading bg-primary primaryBackgroundTheme clearfix">
-						<div class="media pull-left">
-							<img src="../../../styles/media/holder-1x1.png">
+						<div class="media pull-left" ng-if="item.data.listImage" >
+              <img load-image="1x1" data-final-src="{{item.data.listImage |
+                       getImageUrl : 60:60}}">
 						</div>
 				    	<p class="ellipsis margin-zero">{{item.data.title}}</p>
 						<div class="save-icon">
