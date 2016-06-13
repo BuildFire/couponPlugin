@@ -148,16 +148,16 @@
                 }
             };
         })
-        .directive('dateTime', function () {
+        .directive('dateTimeStart', function () {
             return {
-                scope: {publishDate: "="},
+                scope: {startDate: "="},
                 link: function (scope, elem, attrs) {
                     setTimeout(function () {
                         $(elem).datepicker({
                             dateFormat: "mm/dd/yy",
                             onSelect: function () {
                                 var value = $(this).val();
-                                scope.publishDate = +new Date(value);
+                                scope.startDate = +new Date(value);
                                 scope.$apply();
                                 $(elem).datepicker("setDate", new Date(value));
                                 document.activeElement.blur();
@@ -167,7 +167,35 @@
                         scope.$apply();
                     }, 0);
 
-                    var unbindWatch = scope.$watch("publishDate", function (newVal) {
+                    var unbindWatch = scope.$watch("startDate", function (newVal) {
+                        if(newVal && scope.hasDatePicker) {
+                            $(elem).datepicker("setDate", new Date(newVal));
+                            unbindWatch();
+                        }
+                    });
+                }
+            };
+        })
+      .directive('dateTimeExpire', function () {
+            return {
+                scope: {expireDate: "="},
+                link: function (scope, elem, attrs) {
+                    setTimeout(function () {
+                        $(elem).datepicker({
+                            dateFormat: "mm/dd/yy",
+                            onSelect: function () {
+                                var value = $(this).val();
+                                scope.expireDate = +new Date(value);
+                                scope.$apply();
+                                $(elem).datepicker("setDate", new Date(value));
+                                document.activeElement.blur();
+                            }
+                        });
+                        scope.hasDatePicker = true;
+                        scope.$apply();
+                    }, 0);
+
+                    var unbindWatch = scope.$watch("expireDate", function (newVal) {
                         if(newVal && scope.hasDatePicker) {
                             $(elem).datepicker("setDate", new Date(newVal));
                             unbindWatch();

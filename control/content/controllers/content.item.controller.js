@@ -54,7 +54,7 @@
                     }
                     else if (!isNewItemInserted) {
                         isNewItemInserted = true;
-                        _item.data.dateCreated = new Date();
+                        _item.data.dateCreated = +new Date();
                         DataStore.insert(_item.data, TAG_NAMES.COUPON_ITEMS).then(function (data) {
                             updating = false;
                             if (data && data.id) {
