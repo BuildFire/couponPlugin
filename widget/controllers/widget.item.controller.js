@@ -25,6 +25,31 @@
           }
         };
 
+        WidgetItem.safeHtml = function (html) {
+          if (html) {
+            var $html = $('<div />', {html: html});
+            $html.find('iframe').each(function (index, element) {
+              var src = element.src;
+              console.log('element is: ', src, src.indexOf('http'));
+              src = src && src.indexOf('file://') != -1 ? src.replace('file://', 'http://') : src;
+              element.src = src && src.indexOf('http') != -1 ? src : 'http:' + src;
+            });
+            return $sce.trustAsHtml($html.html());
+          }
+        };
+
+        WidgetItem.openLinks = function (actionItems) {
+          if (actionItems && actionItems.length) {
+            var options = {};
+            var callback = function (error, result) {
+              if (error) {
+                console.error('Error:', error);
+              }
+            };
+            buildfire.actionItems.list(actionItems, options, callback);
+          }
+        };
+
         /*
          * Fetch user's data from datastore
          */

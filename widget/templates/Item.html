@@ -11,7 +11,8 @@
 					<div class="col-xs-7 pull-left">
 						<p class="margin-zero ellipsis" style="font-size:15px;">{{WidgetItem.item.data.title}}</p>
 						<p class="margin-zero ellipsis">{{WidgetItem.item.data.summary}}</p>
-						<p class="margin-zero small ellipsis"><i>Expires {{item.data.expiresOn | date}}</i></p>
+						<p class="margin-zero small ellipsis" ng-if="WidgetItem.item.data.expiresOn"><i>Expires
+              {{WidgetItem.item.data.expiresOn | date}}</i></p>
 					</div>
 					<div class="col-xs-5 pull-right text-right">
 						<img src="assets/media/map-icon.png">
@@ -20,15 +21,16 @@
 						</div>
 					</div>
 				</div>
-				<hr class="small">
-				<div class="text-center">
-					<a class="text-primary">Open More Options</a>
+				<hr class="small" ng-if="WidgetItem.item.data.links.length">
+				<div class="text-center" ng-if="WidgetItem.item.data.links.length">
+					<a class="text-primary" ng-click="WidgetItem.openLinks(WidgetItem.item.data.links)">Open More Options</a>
 				</div>
 				<hr class="small">
-				<div class="redeem-photo text-center margin-top-five margin-bottom-ten">
+        <!--Pre redemption image is in phase 2-->
+				<!--<div class="redeem-photo text-center margin-top-five margin-bottom-ten">
 					<img src="../../../styles/media/holder-4x1.png">
-				</div>				
-				<p class="margin-zero">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				</div>-->
+				<p class="margin-zero" ng-bind-html="WidgetItem.safeHtml(WidgetItem.item.data.preRedemptionText)"></p>
 			</div>
 		</div>
 	</div>
