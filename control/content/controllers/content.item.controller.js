@@ -2,12 +2,13 @@
 (function (angular) {
     angular
         .module('couponPluginContent')
-        .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location','Utils',
-            function ($scope, $routeParams, $timeout, DEFAULT_DATA, DataStore, TAG_NAMES, Location,Utils) {
+        .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location', 'Utils', 'Modals', 'RankOfLastFilter', 'Buildfire',
+            function ($scope, $routeParams, $timeout, DEFAULT_DATA, DataStore, TAG_NAMES, Location, Utils, Modals, RankOfLastFilter, Buildfire) {
                 var ContentItem = this;
                 var tmrDelayForItem = null
                     , isNewItemInserted = false
                     , updating = false;
+                ContentItem.filters=[];
 
                 /**
                  * This updateMasterItem will update the ContentMedia.masterItem with passed item
@@ -135,10 +136,10 @@
                         },
                         addressTitle: data.location
                     };
-                    $timeout(function(){
+                    $timeout(function () {
                         ContentItem.currentAddress = data.location;
                         ContentItem.currentCoordinates = data.coordinates;
-                    },0);
+                    }, 0);
                 };
 
                 ContentItem.setDraggedLocation = function (data) {
@@ -256,6 +257,39 @@
                         }
                     }, 1000);
 
+                };
+
+
+                ContentItem.addFilter = function () {
+                    Modals.addFilterModal({
+                        title: '',
+                        isEdit: false
+                    }).then(function (response) {
+                        console.log('Response of a popup----------------------------', response);
+                        if (!(response.title === null || response.title.match(/^ *$/) !== null)) {
+
+                            //if index is there it means filter update operation is performed
+                            ContentItem.filter = {
+                                title: response.title,
+                                rank: RankOfLastFilter.getRank() + 1
+                            };
+                            //ContentItem.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 1;
+                           // RankOfLastFilter.setRank(ContentItem.data.content.rankOfLastFilter);
+                            ContentItem.filters.unshift(ContentItem.filter);
+                            Buildfire.datastore.insert(ContentItem.filter, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
+                                console.log("Saved", data.id);
+                                ContentItem.isUpdating = false;
+                                ContentItem.filter.id = data.id;
+                                if (err) {
+                                    ContentItem.isNewItemInserted = false;
+                                    return console.error('There was a problem saving your data');
+                                }
+                                $scope.$digest();
+                            });
+                        }
+                    }, function (err) {
+
+                    });
                 };
 
                 //option for wysiwyg
