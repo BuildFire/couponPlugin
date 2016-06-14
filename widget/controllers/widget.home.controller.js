@@ -2,8 +2,8 @@
 
 (function (angular, buildfire) {
   angular.module('couponPluginWidget')
-    .controller('WidgetHomeCtrl', ['$scope', 'TAG_NAMES', 'LAYOUTS', 'DataStore', 'PAGINATION', 'Buildfire', 'Location', '$rootScope', 'ViewStack', '$sce', 'UserData', '$modal', '$timeout', 'SORT',
-      function ($scope, TAG_NAMES, LAYOUTS, DataStore, PAGINATION, Buildfire, Location, $rootScope, ViewStack, $sce, UserData, $modal, $timeout, SORT) {
+    .controller('WidgetHomeCtrl', ['$scope', 'TAG_NAMES', 'LAYOUTS', 'DataStore', 'PAGINATION', 'Buildfire', 'Location', '$rootScope', 'ViewStack', '$sce', 'UserData', '$modal', '$timeout', 'SORT', 'GeoDistance',
+      function ($scope, TAG_NAMES, LAYOUTS, DataStore, PAGINATION, Buildfire, Location, $rootScope, ViewStack, $sce, UserData, $modal, $timeout, SORT, GeoDistance) {
         var WidgetHome = this;
         $rootScope.deviceHeight = window.innerHeight;
         $rootScope.deviceWidth = window.innerWidth || 320;
@@ -20,6 +20,7 @@
           skip: 0,
           limit: PAGINATION.itemCount
         };
+        WidgetHome.couponInfo = null;
 
         /**
          * getSearchOptions(value) is used to get searchOptions with one more key sort which decide the order of sorting.
@@ -211,6 +212,12 @@
           Buildfire.spinner.show();
           var successAll = function (resultAll) {
               Buildfire.spinner.hide();
+              if (resultAll) {
+                resultAll.forEach(function (_item) {
+                  _item.data.distance = 0; // default distance value
+                  _item.data.distanceText = (WidgetHome.locationData.currentCoordinates) ? 'Fetching..' : 'NA';
+                });
+              }
               WidgetHome.items = WidgetHome.items.length ? WidgetHome.items.concat(resultAll) : resultAll;
               searchOptions.skip = searchOptions.skip + PAGINATION.itemCount;
               if (resultAll.length == PAGINATION.itemCount) {
@@ -306,6 +313,32 @@
             }
           });
         };
+
+        function getItemsDistance(_items) {
+          console.log('WidgetHome.items', _items);
+          if (WidgetHome.locationData.currentCoordinates == null) {
+            return;
+          }
+          if (_items && _items.length) {
+            GeoDistance.getDistance(WidgetHome.locationData.currentCoordinates, _items, WidgetHome.data.settings.distanceIn).then(function (result) {
+              console.log('WidgetHome.locationData.currentCoordinates', WidgetHome.locationData.currentCoordinates);
+              console.log('distance result', result);
+              for (var _ind = 0; _ind < WidgetHome.items.length; _ind++) {
+                if (_items && _items[_ind]) {
+                  _items[_ind].data.distanceText = (result.rows[0].elements[_ind].status != 'OK') ? 'NA' : result.rows[0].elements[_ind].distance.text;
+                  _items[_ind].data.distance = (result.rows[0].elements[_ind].status != 'OK') ? -1 : result.rows[0].elements[_ind].distance.value;
+                }
+              }
+
+            }, function (err) {
+              console.error('distance err', err);
+            });
+          }
+        }
+
+        $scope.$watch(function () {
+          return WidgetHome.items;
+        }, getItemsDistance);
 
       }])
 })(window.angular, window.buildfire);
