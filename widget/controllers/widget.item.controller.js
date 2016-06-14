@@ -50,6 +50,24 @@
           }
         };
 
+
+        /**
+         * This event listener is bound for "Carousel:LOADED" event broadcast
+         */
+        $rootScope.$on("Carousel2:LOADED", function () {
+          //  WidgetItem.view = null;
+          if (WidgetItem.view)
+            WidgetItem.view._destroySlider();
+          if (!WidgetItem.view) {
+            WidgetItem.view = new Buildfire.components.carousel.view("#carousel2", []);
+          }
+          if (WidgetItem.item.data && WidgetItem.item.data.carouselImages) {
+            WidgetItem.view.loadItems(WidgetItem.item.data.carouselImages);
+          } else {
+            WidgetItem.view.loadItems([]);
+          }
+        });
+
         /*
          * Fetch user's data from datastore
          */
