@@ -58,7 +58,7 @@
   </div>
 </div>
 <hr class="none">
-<div class="infinite-scroll-parent" style="height: 282px;overflow-y: auto;">
+<div class="infinite-scroll-parent" ng-style="ContentHome.filters.length>4? {'height': '282px'}:{'height':'100%'}" style=";overflow-y: auto;">
  <div ui-sortable="ContentHome.itemSortableOptions"  ng-model="ContentHome.filters" class="draggable-list-view wide-list no-media has-btn-link"
      style="background:#fff;"
      infinite-scroll='ContentHome.loadMore("html")'
@@ -94,13 +94,13 @@
     <div class="dropdown" dropdown>
       <button class="btn btn-default text-left dropdown-toggle"
               data-toggle="dropdown" dropdown-toggle aria-expanded="true">
-        <span class="pull-left">All Categories</span>
+        <span class="pull-left" ng-if="!ContentHome.data.content.selectedFilter">All Categories</span>
+
+        <span class="pull-left" ng-if="ContentHome.data.content.selectedFilter"> {{ContentHome.data.content.selectedFilter}}</span>
         <span class="chevron icon-chevron-down pull-right"></span>
       </button>
       <ul class="dropdown-menu extended" role="menu">
-        <li><a>Category 1</a></li>
-        <li><a>Category 2</a></li>
-        <li><a>Category 3</a></li>
+        <li ng-repeat="filter in ContentHome.filters"  ng-click="ContentHome.chooseFilter(filter.title)"><a>{{filter.title}}</a></li>
       </ul>
     </div>
   </div>

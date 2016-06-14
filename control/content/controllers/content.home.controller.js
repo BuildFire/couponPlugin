@@ -168,9 +168,9 @@
               }else{
                 ContentHome.filter={
                   title: response.title,
-                  rank: RankOfLastFilter.getRank()+1
+                  rank: RankOfLastFilter.getRank()+10
                 }
-                ContentHome.data.content.rankOfLastFilter=RankOfLastFilter.getRank()+1;
+                ContentHome.data.content.rankOfLastFilter=RankOfLastFilter.getRank()+10;
                 RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
                 ContentHome.filters.unshift(ContentHome.filter);
                 Buildfire.datastore.insert(ContentHome.filter, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
@@ -218,6 +218,16 @@
             ContentHome.busy = false;
             ContentHome.data.content.sortFilterBy = value;
             ContentHome.loadMore('js');
+          }
+        };
+
+
+        ContentHome.chooseFilter=function (value) {
+          if (!value) {
+            console.info('There was a problem sorting your data');
+          } else {
+            ContentHome.data.content.selectedFilter = value;
+            //ContentHome.loadMore('js');
           }
         };
 
