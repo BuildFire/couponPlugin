@@ -196,7 +196,14 @@
         ContentHome.deleteFilter=function(index){
           Modals.removePopupModal().then(function (result) {
             if (result) {
-              ContentHome.filters.splice(index, 1);
+
+              Buildfire.datastore.delete(ContentHome.filters[index].id, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
+                if (err)
+                  return;
+                //ContentHome.items.splice(_index, 1);
+                ContentHome.filters.splice(index, 1);
+                $scope.$digest();
+              });
             }
           });
         }
@@ -206,7 +213,7 @@
             console.info('There was a problem sorting your data');
           } else {
            // ContentHome.data.content.filters=null;
-            ContentHome.filters = null;
+            ContentHome.filters = [];
             ContentHome.searchOptions.skip = 0;
             ContentHome.busy = false;
             ContentHome.data.content.sortFilterBy = value;
@@ -364,7 +371,7 @@
                   editor.loadItems([]);
                 else
                   editor.loadItems(ContentHome.data.content.carouselImages);
-                ContentHome.filters = null;
+                ContentHome.filters = [];
                 ContentHome.searchOptions.skip = 0;
                 ContentHome.busy = false;
                 RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter || 0);
