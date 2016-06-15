@@ -3,8 +3,8 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter',
-      function ($scope, TAG_NAMES, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS,Buildfire,Modals,RankOfLastFilter) {
+    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter',
+      function ($scope, TAG_NAMES,SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS,Buildfire,Modals,RankOfLastFilter) {
 
         var ContentHome = this;
         ContentHome.filter=null;
@@ -27,6 +27,8 @@
 
         ContentHome.filters=[];
 
+        ContentHome.items=[];
+
         ContentHome.sortFilterOptions=[
           SORT_FILTER.MANUALLY,
           SORT_FILTER.CATEGORY_NAME_A_Z,
@@ -37,6 +39,13 @@
           filter: {"$json.title": {"$regex": '/*'}},
           skip: SORT_FILTER._skip,
           limit: SORT_FILTER._limit + 1 // the plus one is to check if there are any more
+        };
+
+
+        ContentHome.searchOptionsForItems = {
+          filter: {"$json.title": {"$regex": '/*'}},
+          skip: SORT._skip,
+          limit: SORT._limit + 1 // the plus one is to check if there are any more
         };
         /*
          * create an artificial delay so api isnt called on every character entered
@@ -208,6 +217,21 @@
           });
         }
 
+        ContentHome.deleteItem=function(index){
+          Modals.removePopupModal().then(function (result) {
+            if (result) {
+
+              Buildfire.datastore.delete(ContentHome.items[index].id, TAG_NAMES.COUPON_ITEMS, function (err, result) {
+                if (err)
+                  return;
+                //ContentHome.items.splice(_index, 1);
+                ContentHome.items.splice(index, 1);
+                $scope.$digest();
+              });
+            }
+          });
+        }
+
         ContentHome.sortFilterBy = function (value) {
           if (!value) {
             console.info('There was a problem sorting your data');
@@ -289,6 +313,37 @@
             });
 
             ContentHome.filters = ContentHome.filters ? ContentHome.filters.concat(tmpArray) : tmpArray;
+            ContentHome.busy = false;
+            Buildfire.spinner.hide();
+            $scope.$digest();
+          });
+
+          Buildfire.datastore.search(ContentHome.searchOptionsForItems, TAG_NAMES.COUPON_ITEMS, function (err, result) {
+            if (err) {
+              Buildfire.spinner.hide();
+              return console.error('-----------err in getting list-------------', err);
+            }
+            if (result.length <= SORT._limit) {// to indicate there are more
+              ContentHome.noMore = true;
+              Buildfire.spinner.hide();
+            } else {
+              result.pop();
+              ContentHome.searchOptionsForItems.skip = ContentHome.searchOptionsForItems.skip + SORT._limit;
+              ContentHome.noMore = false;
+            }
+            var tmpArray=[];
+            var lastIndex=result.length;
+            result.forEach(function(res,index){
+              tmpArray.push({'title' : res.data.title,
+                rank:index +1,
+                summary : res.data.summary,
+                categories : res.data.Categories.length,
+                expiresOn : res.data.expiresOn,
+                listImage  : res.data.listImage,
+                id:res.id});
+            });
+
+            ContentHome.items = ContentHome.items ? ContentHome.items.concat(tmpArray) : tmpArray;
             ContentHome.busy = false;
             Buildfire.spinner.hide();
             $scope.$digest();
