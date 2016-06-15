@@ -11,7 +11,8 @@
           design: {
             itemListLayout: ""
           },
-          content: {}
+          content: {},
+          settings:{}
         };
 
         DesignHome.layouts = {
