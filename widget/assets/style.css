@@ -186,9 +186,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .holder.has-bottom.has-extra-links.has-filter.map-layout{
 	padding-bottom:0px !important;
 }
-.holder.has-bottom .bottom .filterBar{
-	display:none;
-}
+
 .holder.has-bottom.has-filter .bottom .filterBar{
 	display:block;
 	position:absolute;

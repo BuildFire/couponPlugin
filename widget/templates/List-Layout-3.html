@@ -36,11 +36,12 @@
 			</div>
 		</div>
 	</div>
-	<!-- If map is shown, use col-xs-3 like below -->
-	<div class="bottom fixed-bottom">
-		<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
-			<span class="whiteTheme small">Filter Applied</span>
-		</div>
+  <!-- If map is shown, use col-xs-3 like below -->
+  <div class="bottom fixed-bottom"
+       ng-if="WidgetHome.data.settings.mapView == 'show' || WidgetHome.data.settings.filterPage == 'show'">
+    <!--<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
+      <span class="whiteTheme small">Filter Applied</span>
+    </div>-->
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch active">List</a>
     </div>
@@ -54,22 +55,39 @@
       <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()">Saved
       </a>
     </div>
-	</div>
-	
-	<!-- If map is hidden, use col-xs-4 like below 
-	<div class="bottom fixed-bottom">
-		<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
-			<span class="whiteTheme small">Filter Applied</span>
-		</div>
-		<div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch active">List</a>
-		</div>
-		<div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch">Filter</a>
-		</div>
-		<div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch">Saved</a>
-		</div>
-	</div>
-	-->
+  </div>
+
+  <!-- If map is hidden, use col-xs-4 like below-->
+  <div class="bottom fixed-bottom"
+       ng-if="WidgetHome.data.settings.mapView == 'hide'">
+    <!--<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
+      <span class="whiteTheme small">Filter Applied</span>
+    </div>-->
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch active">List</a>
+    </div>
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showFilter()">Filter</a>
+    </div>
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()">Saved</a>
+    </div>
+  </div>
+
+  <!-- If filter is hidden, use col-xs-4 like below-->
+  <div class="bottom fixed-bottom"
+       ng-if="WidgetHome.data.settings.filterPage == 'hide'">
+    <!--<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
+      <span class="whiteTheme small">Filter Applied</span>
+    </div>-->
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch active">List</a>
+    </div>
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showMapView()">Map</a>
+    </div>
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()">Saved</a>
+    </div>
+  </div>
 </div>
