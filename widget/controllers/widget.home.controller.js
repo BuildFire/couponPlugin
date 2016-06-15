@@ -184,7 +184,10 @@
                 WidgetHome.data.content = {};
             }
             else if (event && event.tag === TAG_NAMES.COUPON_ITEMS) {
-
+              WidgetHome.items = [];
+              searchOptions.skip = 0;
+              WidgetHome.busy = false;
+              WidgetHome.loadMore();
             }
 
             if (!WidgetHome.data.design.itemListLayout) {
@@ -302,7 +305,6 @@
               }
             }
           }
-          console.log("$$$$$$$$$$$$$$$$$$", WidgetHome.saved, WidgetHome.items);
           $scope.isFetchedAllData = true;
         };
 
