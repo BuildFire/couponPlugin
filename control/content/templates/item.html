@@ -34,29 +34,9 @@
     <div class="col-xs-12 pull-left padding-zero margin-bottom-ten">
       <a class="text-success" ng-click="ContentItem.addFilter()">Add New Category</a>
     </div>
-    <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
+    <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten" ng-repeat="category in ContentItem.item.data.Categories">
       <input id="nolabel" type="checkbox">
-      <label for="nolabel" class="padding-left-ten">Category Name</label>
-    </div>
-    <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
-      <input id="nolabel" type="checkbox">
-      <label for="nolabel" class="padding-left-ten">Category Name</label>
-    </div>
-    <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
-      <input id="nolabel" type="checkbox">
-      <label for="nolabel" class="padding-left-ten">Category Name</label>
-    </div>
-    <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
-      <input id="nolabel" type="checkbox">
-      <label for="nolabel" class="padding-left-ten">Category Name</label>
-    </div>
-    <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
-      <input id="nolabel" type="checkbox">
-      <label for="nolabel" class="padding-left-ten">Category Name</label>
-    </div>
-    <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
-      <input id="nolabel" type="checkbox">
-      <label for="nolabel" class="padding-left-ten">Category Name</label>
+      <label for="nolabel" class="padding-left-ten">{{category.title}}</label>
     </div>
   </div>
 </div>
