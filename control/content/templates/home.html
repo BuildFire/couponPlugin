@@ -90,7 +90,7 @@
   <div class="col-md-1 labels pull-left margin-top-five">
     <span>Filter</span>
   </div>
-  <div class="col-md-7 padding-right-zero pull-left">
+  <div class="col-md-6 padding-right-zero pull-left">
     <div class="dropdown" dropdown>
       <button class="btn btn-default text-left dropdown-toggle"
               data-toggle="dropdown" dropdown-toggle aria-expanded="true">
@@ -134,20 +134,16 @@
   <div class="col-md-1 labels pull-left margin-top-five">
     <span>Sort</span>
   </div>
-  <div class="col-md-4 pull-left">
+  <div class="col-md-6 pull-left">
     <div class="dropdown" dropdown>
       <button class="btn btn-default text-left dropdown-toggle"
               data-toggle="dropdown" dropdown-toggle aria-expanded="true">
-        <span class="pull-left">Manually</span>
+        <span class="pull-left">{{ContentHome.data.content.sortItemBy || ContentHome.sortItemOptions[0]}}</span>
         <span class="chevron icon-chevron-down pull-right"></span>
       </button>
       <ul class="dropdown-menu extended" role="menu">
-        <li><a>Item Name A-Z</a></li>
-        <li><a>Item Name Z-A</a></li>
-        <li><a>Newest Entry First</a></li>
-        <li><a>Oldest Entry First</a></li>
-        <li><a>Expiration Date Ascending</a></li>
-        <li><a>Expiration Date Descending</a></li>
+        <li ng-repeat="value in ContentHome.sortItemOptions"
+            ng-click="ContentHome.sortItemBy (this.value)"><a>{{value}}</a></li>
       </ul>
     </div>
   </div>
@@ -156,7 +152,11 @@
   </div>
 </div>
 <hr class="none">
-<div class="draggable-list-view wide-list has-btn links-list">
+<div  infinite-scroll='ContentHome.loadMore("html")'
+      infinite-scroll-distance='1'
+      data-infinite-container=".infinite-scroll-parent"
+      infinite-scroll-disabled="ContentHome.noMore"
+      class="draggable-list-view wide-list has-btn links-list" >
   <div class="d-item double-line square-icon clearfix" ng-repeat="item in ContentHome.items">
     <span class="icon icon-menu pull-left"></span>
 

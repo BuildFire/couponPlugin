@@ -35,6 +35,16 @@
           SORT_FILTER.CATEGORY_NAME_Z_A
         ];
 
+        ContentHome.sortItemOptions=[
+          SORT.MANUALLY,
+          SORT.ITEM_NAME_A_Z,
+          SORT.ITEM_NAME_Z_A,
+          SORT.NEWEST_FIRST,
+          SORT.OLDEST_FIRST,
+          SORT.EXPIRATION_DATE_ASC,
+          SORT.EXPIRATION_DATE_DESC
+        ];
+
         ContentHome.searchOptions = {
           filter: {"$json.title": {"$regex": '/*'}},
           skip: SORT_FILTER._skip,
@@ -241,6 +251,19 @@
             ContentHome.searchOptions.skip = 0;
             ContentHome.busy = false;
             ContentHome.data.content.sortFilterBy = value;
+            ContentHome.loadMore('js');
+          }
+        };
+
+        ContentHome.sortItemBy = function (value) {
+          if (!value) {
+            console.info('There was a problem sorting your data');
+          } else {
+            // ContentHome.data.content.filters=null;
+            ContentHome.items = [];
+            ContentHome.searchOptionsForItems.skip = 0;
+            ContentHome.busy = false;
+            ContentHome.data.content.sortItemBy = value;
             ContentHome.loadMore('js');
           }
         };
