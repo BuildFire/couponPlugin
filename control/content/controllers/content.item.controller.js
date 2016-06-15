@@ -332,5 +332,13 @@
                 $scope.$watch(function () {
                     return ContentItem.item;
                 }, updateItemsWithDelay, true);
+
+                /*
+                 * watch for changes in filters and trigger the saveDataWithDelay function on change
+                 * */
+                $scope.$watch(function () {
+                    return ContentHome.filter;
+                }, updateItemsWithDelay, true);
+
             }]);
 })(window.angular);
