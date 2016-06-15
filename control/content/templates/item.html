@@ -13,7 +13,7 @@
     <span>Deep Link URL</span>
   </div>
   <div class="col-md-9 main pull-right">
-    <p class="margin-zero">app[APPID]://thedeeplinkgoeshere</p>
+    <p class="margin-zero">{{ContentItem.item.data.deepLinkUrl}}</p>
   </div>
 </div>
 <hr class="none">
@@ -32,31 +32,11 @@
   </div>
   <div class="col-md-9 main pull-right">
     <div class="col-xs-12 pull-left padding-zero margin-bottom-ten">
-      <a class="text-success">Add New Category</a>
+      <a class="text-success" ng-click="ContentItem.addFilter()">Add New Category</a>
     </div>
-    <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
-      <input id="nolabel" type="checkbox">
-      <label for="nolabel" class="padding-left-ten">Category Name</label>
-    </div>
-    <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
-      <input id="nolabel" type="checkbox">
-      <label for="nolabel" class="padding-left-ten">Category Name</label>
-    </div>
-    <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
-      <input id="nolabel" type="checkbox">
-      <label for="nolabel" class="padding-left-ten">Category Name</label>
-    </div>
-    <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
-      <input id="nolabel" type="checkbox">
-      <label for="nolabel" class="padding-left-ten">Category Name</label>
-    </div>
-    <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
-      <input id="nolabel" type="checkbox">
-      <label for="nolabel" class="padding-left-ten">Category Name</label>
-    </div>
-    <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
-      <input id="nolabel" type="checkbox">
-      <label for="nolabel" class="padding-left-ten">Category Name</label>
+    <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten" ng-repeat="category in ContentItem.item.data.Categories">
+      <input type="checkbox">
+      <label for="nolabel" class="padding-left-ten">{{category.title}}</label>
     </div>
   </div>
 </div>
@@ -68,20 +48,21 @@
   <div class="col-md-9 main pull-right">
     <div class="screens clearfix">
       <div class="screen logoicon pull-left text-center">
-        <a class="border-radius-three default-background-hover">
+        <a class="border-grey border-radius-three default-background-hover" ng-click="ContentItem.addListImage()">
+          <span ng-if="!ContentItem.item.data.listImage" class="add-icon">+</span>
+          <img ng-if="ContentItem.item.data.listImage" ng-src="{{ContentItem.item.data.listImage | getImageUrl : 82:110 :'resize'}}">
+        </a>
+        <span ng-if="ContentItem.item.data.listImage" class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentItem.removeListImage()"></span>
+        <!--<a class="border-radius-three default-background-hover">
           <span class="add-icon">+</span>
           <img ng-src="{{ tools.resizeImage(info.logoUrl,{width:300}) }}">
-        </a>
+        </a>-->
       </div>
     </div>
   </div>
 </div>
 <hr class="none">
-<div class="item clearfix row">
-  <div class="col-md-3">
-    carousel
-  </div>
-</div>
+    <div id="carousel" carousel-component images="ContentItem.item.data.carouselImages"></div>
 <hr class="none">
 <div class="item clearfix row">
   <div class="col-md-12 labels pull-left">
@@ -90,7 +71,7 @@
 </div>
 <div class="item clearfix row margin-top-ten">
   <div class="col-md-12 main pull-left">
-    <textarea placeholder="WYSIWYG" class="form-control"></textarea>
+    <textarea placeholder="WYSIWYG" class="form-control" ui-tinymce="ContentItem.bodyWYSIWYGOptions" ng-model="ContentItem.item.data.preRedemptionText"></textarea>
   </div>
 </div>
 <hr class="none">
@@ -101,7 +82,7 @@
 </div>
 <div class="item clearfix row margin-top-ten">
   <div class="col-md-12 main pull-left">
-    <textarea placeholder="WYSIWYG" class="form-control"></textarea>
+    <textarea placeholder="WYSIWYG" class="form-control" ui-tinymce="ContentItem.bodyWYSIWYGOptions" ng-model="ContentItem.item.data.postRedemptionText"></textarea>
   </div>
 </div>
 <hr class="none">
@@ -110,7 +91,8 @@
     <span>Start Date</span>
   </div>
   <div class="col-md-9 main pull-right">
-    <input type="text" class="form-control" placeholder="Start Date">
+    <input type="text" class="form-control" placeholder="MM/DD/YYYY"
+           date-time-start="" data-start-date="ContentItem.item.data.startOn">
   </div>
 </div>
 <hr class="none">
@@ -119,7 +101,9 @@
     <span>Expiration Date</span>
   </div>
   <div class="col-md-9 main pull-right">
-    <input type="text" class="form-control" placeholder="Expiration Date">
+    <input type="text" class="form-control" placeholder="MM/DD/YYYY"
+           date-time-expire=""
+           data-expire-date="ContentItem.item.data.expiresOn">
   </div>
 </div>
 <hr class="none">
@@ -128,7 +112,7 @@
     <span>Address Title</span>
   </div>
   <div class="col-md-9 main pull-right">
-    <input type="text" class="form-control" placeholder="Address Title">
+    <input type="text" class="form-control" placeholder="Address Title" ng-model="ContentItem.item.data.addressTitle">
   </div>
 </div>
 <hr class="none">
@@ -137,22 +121,22 @@
     <span>Coupon Location</span>
   </div>
   <div class="col-md-9 main pull-right">
-    <input type="text" class="form-control" placeholder="Enter street address or lat/long coordinates">
-    <textarea class="form-control margin-top-ten" placeholder="Map"></textarea>
+    <input type="text" class="form-control" placeholder="Enter street address or lat/long coordinates" google-location-search="" callback-fn="ContentItem.setLocation(data)"
+           ng-model="ContentItem.currentAddress"
+           ng-enter="ContentItem.setCoordinates()"
+           ng-paste="ContentItem.locationAutocompletePaste()"
+           ng-change="ContentItem.clearData()">
+    <div ng-if="ContentItem.currentCoordinates.length" google-map dragged-fn="ContentItem.setDraggedLocation(data)"
+         coordinates="ContentItem.currentCoordinates"
+         class="google-map-fix" style="height: 200px; width: 300px"
+            ></div>
   </div>
 </div>
 <hr class="none">
-<div class="item clearfix row">
-  <div class="col-md-3 labels pull-left">
-    <span>Menu Links</span>
-  </div>
-  <div class="col-md-9 main pull-right">
-    Standard dynamic link/action builder
-  </div>
-</div>
+<div id="actionItems" dynamic-link-component links="ContentItem.item.data.links"></div>
 <hr class="none">
 <div class="item clearfix row">
   <div class="col-md-3 main pull-right">
-    <a class="btn btn-primary stretch">Done</a>
+    <a class="btn btn-primary stretch" ng-click="ContentItem.done()">Done</a>
   </div>
 </div>

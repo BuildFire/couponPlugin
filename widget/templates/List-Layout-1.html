@@ -1,5 +1,5 @@
 <div class="holder padding-zero has-bottom sticky-bottom-menu clearfix">
-  <div class="scrollable">
+  <div class="scrollable infinite-scroll-parent">
     <div class="coupon layout3">
       <div id="carousel" ng-if="WidgetHome.data.content.carouselImages.length"
            build-fire-carousel=""
@@ -7,98 +7,38 @@
       <div class="padded" ng-if="WidgetHome.showDescription(WidgetHome.data.content.description)">
         <p class="margin-zero" ng-bind-html="WidgetHome.safeHtml(WidgetHome.data.content.description)"></p>
       </div>
-      <div class="list-layout" ng-if="WidgetHome.data.content">
-        <div class="list-item">
+      <div class="list-layout" ng-if="WidgetHome.data.content" infinite-scroll="WidgetHome.loadMore()"
+           infinite-scroll-distance="1"
+           data-infinite-container=".infinite-scroll-parent"
+           infinite-scroll-disabled="WidgetHome.busy">
+        <div class="list-item" ng-repeat="item in WidgetHome.items" ng-if="isFetchedAllData">
           <div class="list-item-media text-left overflow-hidden">
-            <div class="square-icon list-media-holder pull-left">
-              <img src="../../../styles/media/holder-1x1.png">
+            <div class="square-icon list-media-holder pull-left" ng-if="item.data.listImage">
+              <img load-image="1x1" data-final-src="{{item.data.listImage |
+                       getImageUrl : 60:60}}">
             </div>
             <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-              <div class="copy-holder">
+              <div class="copy-holder" ng-click="WidgetHome.openDetails(item.id)">
                 <p class="ellipsis margin-zero text-primary margin-top-five">
-                  Free Entree
+                  {{item.data.title}}
                 </p>
                 <p class="ellipsis margin-zero bodyTextTheme">
-                  With purchase of equal or less value
+                 {{item.data.summary}}
+                </p>
+                <p
+                    class="small ellipsis margin-zero bodyTextTheme opacity-seventy" ng-if="item.data.expiresOn">
+                  <i>Expires {{item.data.expiresOn | date}}</i>
                 </p>
                 <p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-                  <i>Expires March 21, 2016</i>
-                </p>
-                <p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-                  <i>21 miles away</i>
+                  <i>{{item.data.distanceText}}</i>
                 </p>
               </div>
-              <div class="bookmark-holder">
-                <span class="icon icon-star text-primary"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="list-item">
-          <div class="list-item-media text-left overflow-hidden">
-            <div class="square-icon list-media-holder pull-left">
-              <img src="../../../styles/media/holder-1x1.png">
-            </div>
-            <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-              <div class="copy-holder">
-                <p class="ellipsis margin-zero text-primary margin-top-five">
-                  Free Entree
-                </p>
-                <p class="ellipsis margin-zero bodyTextTheme">
-                  With purchase of equal or less value
-                </p>
-                <p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-                  <i>21 miles away</i>
-                </p>
-              </div>
-              <div class="bookmark-holder">
-                <span class="icon icon-star-empty text-default"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="list-item">
-          <div class="list-item-media text-left overflow-hidden">
-            <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-              <div class="copy-holder">
-                <p class="ellipsis margin-zero text-primary margin-top-five">
-                  Free Entree
-                </p>
-                <p class="ellipsis margin-zero bodyTextTheme">
-                  With purchase of equal or less value
-                </p>
-                <p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-                  <i>Expires March 21, 2016</i>
-                </p>
-                <p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-                  <i>21 miles away</i>
-                </p>
-              </div>
-              <div class="bookmark-holder">
-                <span class="icon icon-star-empty text-default"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="list-item">
-          <div class="list-item-media text-left overflow-hidden">
-            <div class="square-icon list-media-holder pull-left">
-              <img src="../../../styles/media/holder-1x1.png">
-            </div>
-            <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-              <div class="copy-holder">
-                <p class="ellipsis margin-zero text-primary margin-top-five">
-                  Free Entree
-                </p>
-                <p class="ellipsis margin-zero bodyTextTheme">
-                  With purchase of equal or less value
-                </p>
-                <p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-                  <i>21 miles away</i>
-                </p>
-              </div>
-              <div class="bookmark-holder">
-                <span class="icon icon-star-empty text-default"></span>
+              <div class="bookmark-holder" ng-if="WidgetHome.currentLoggedInUser">
+                <span class="icon icon-star text-primary"
+                      ng-if="item.isSaved"
+                      ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
+                 <span class="icon icon-star-empty text-default" ng-if="!item.isSaved"
+                       ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
               </div>
             </div>
           </div>
@@ -108,10 +48,11 @@
   </div>
 
   <!-- If map is shown, use col-xs-3 like below -->
-  <div class="bottom fixed-bottom">
-    <div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
+  <div class="bottom fixed-bottom"
+       ng-if="WidgetHome.data.settings.mapView == 'show' || WidgetHome.data.settings.filterPage == 'show'">
+    <!--<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
       <span class="whiteTheme small">Filter Applied</span>
-    </div>
+    </div>-->
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch active">List</a>
     </div>
@@ -127,21 +68,38 @@
     </div>
   </div>
 
-  <!-- If map is hidden, use col-xs-4 like below
-  <div class="bottom fixed-bottom">
-    <div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
+  <!-- If map is hidden, use col-xs-4 like below-->
+  <div class="bottom fixed-bottom"
+       ng-if="WidgetHome.data.settings.mapView == 'hide'">
+    <!--<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
       <span class="whiteTheme small">Filter Applied</span>
-    </div>
+    </div>-->
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch active">List</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch">Filter</a>
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showFilter()">Filter</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch">Saved</a>
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()">Saved</a>
     </div>
   </div>
-  -->
+
+  <!-- If filter is hidden, use col-xs-4 like below-->
+  <div class="bottom fixed-bottom"
+       ng-if="WidgetHome.data.settings.filterPage == 'hide'">
+    <!--<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
+      <span class="whiteTheme small">Filter Applied</span>
+    </div>-->
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch active">List</a>
+    </div>
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showMapView()">Map</a>
+    </div>
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()">Saved</a>
+    </div>
+  </div>
 </div>
 

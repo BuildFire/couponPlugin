@@ -186,9 +186,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .holder.has-bottom.has-extra-links.has-filter.map-layout{
 	padding-bottom:0px !important;
 }
-.holder.has-bottom .bottom .filterBar{
-	display:none;
-}
+
 .holder.has-bottom.has-filter .bottom .filterBar{
 	display:block;
 	position:absolute;
@@ -644,4 +642,20 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
     width: 100%;
     height: 100%;
     overflow-y: auto;
+}
+
+/*
+* Removed border for modal pop up
+*/
+
+html[buildfire] .modal .modal-dialog {
+    border: none !important;
+}
+
+/*
+* Removed backdrop for modal pop up
+*/
+
+html[buildfire='widget'] .modal {
+    background: none !important;
 }
