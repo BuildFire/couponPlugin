@@ -1,7 +1,7 @@
 'use strict';
 
 (function (angular) {
-  angular.module('couponPluginContent', ['couponPluginModal','ngRoute', 'ui.bootstrap', 'ui.tinymce'])
+  angular.module('couponPluginContent', ['couponPluginModal','couponsContentDirectives','ngRoute', 'ui.bootstrap', 'ui.tinymce','infinite-scroll','ui.sortable'])
     //injected ngRoute for routing
     .config(['$routeProvider', function ($routeProvider) {
       $routeProvider
@@ -20,7 +20,17 @@
           controllerAs: 'ContentItem',
           controller: 'ContentItemCtrl'
         })
-        .otherwise('/');
+          .when('/filter', {
+            templateUrl: 'templates/home.html',
+            controllerAs: 'ContentFilter',
+            controller: 'ContentFilterCtrl'
+          })
+          .when('/filter/:itemId', {
+            templateUrl: 'templates/home.html',
+            controllerAs: 'ContentFilter',
+            controller: 'ContentFilterCtrl'
+          })
+          .otherwise('/');
     }])
     .filter('getImageUrl', ['Buildfire', function (Buildfire) {
       return function (url, width, height, type) {

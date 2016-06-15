@@ -3,15 +3,16 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals',
-      function ($scope, TAG_NAMES, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS,Buildfire,Modals) {
+    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter',
+      function ($scope, TAG_NAMES,SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS,Buildfire,Modals,RankOfLastFilter) {
 
         var ContentHome = this;
-
+        ContentHome.filter=null;
         var _data = {
           "content": {
             "carouselImages": [],
-            "description":''
+            "description":'',
+            "rankOfLastFilter" :''
           },
           "design": {
             "itemListLayout": LAYOUTS.itemListLayout[0].name
@@ -26,21 +27,43 @@
 
         ContentHome.filters=[];
 
+        ContentHome.items=[];
+
         ContentHome.sortFilterOptions=[
           SORT_FILTER.MANUALLY,
           SORT_FILTER.CATEGORY_NAME_A_Z,
           SORT_FILTER.CATEGORY_NAME_Z_A
-        ]
+        ];
+
+        ContentHome.sortItemOptions=[
+          SORT.MANUALLY,
+          SORT.ITEM_TITLE_A_Z,
+          SORT.ITEM_TITLE_Z_A,
+          SORT.NEWEST_FIRST,
+          SORT.OLDEST_FIRST,
+          SORT.EXPIRATION_DATE_ASC,
+          SORT.EXPIRATION_DATE_DESC
+        ];
 
         ContentHome.searchOptions = {
-          filter: {"$json.fName": {"$regex": '/*'}},
+          filter: {"$json.title": {"$regex": '/*'}},
           skip: SORT_FILTER._skip,
           limit: SORT_FILTER._limit + 1 // the plus one is to check if there are any more
+        };
+
+
+        ContentHome.searchOptionsForItems = {
+          filter: {"$json.title": {"$regex": '/*'}},
+          skip: SORT._skip,
+          limit: SORT._limit + 1 // the plus one is to check if there are any more
         };
         /*
          * create an artificial delay so api isnt called on every character entered
          * */
         var tmrDelay = null;
+
+        ContentHome.busy=false;
+        RankOfLastFilter.setRank(0);
 
         var updateMasterItem = function (data) {
           ContentHome.masterData = angular.copy(data);
@@ -100,6 +123,54 @@
           $scope.$digest();
         };
 
+        /**
+         * ContentHome.itemSortableOptions used for ui-sortable directory to sort filter listing Manually.
+         * @type object
+         */
+        ContentHome.itemSortableOptions = {
+          handle: '> .cursor-grab',
+          disabled: true,
+          stop: function (e, ui) {
+            var endIndex = ui.item.sortable.dropindex,
+                maxRank = 0,
+                draggedItem = ContentHome.filters[endIndex];
+
+            if (draggedItem) {
+              var prev = ContentHome.filters[endIndex - 1],
+                  next = ContentHome.filters[endIndex + 1];
+              var isRankChanged = false;
+              if (next) {
+                if (prev) {
+                  draggedItem.rank = ((prev.rank || 0) + (next.rank || 0)) / 2;
+                  isRankChanged = true;
+                } else {
+                  draggedItem.rank = (next.rank || 0) / 2;
+                  isRankChanged = true;
+                }
+              } else {
+                if (prev) {
+                  draggedItem.rank = (((prev.rank || 0) * 2) + 10) / 2;
+                  maxRank = draggedItem.rank;
+                  isRankChanged = true;
+                }
+              }
+              if (isRankChanged) {
+                Buildfire.datastore.update(draggedItem.id, draggedItem, TAG_NAMES.COUPON_CATEGORIES, function (err) {
+                  if (err) {
+                    console.error('Error during updating rank');
+                  } else {
+                    if (ContentHome.data.content.rankOfLastFilter < maxRank) {
+                      ContentHome.data.content.rankOfLastFilter = maxRank;
+                      RankOfLastFilter.setRank(maxRank);
+                    }
+                  }
+                })
+              }
+            }
+          }
+        };
+        //ContentHome.itemSortableOptions.disabled = !(ContentHome.data.content.sortFilterBy === SORT_FILTER.MANUALLY);
+
         ContentHome.addEditFilter=function(filter, editFlag , index){
           var tempTitle='';
           if(filter)
@@ -114,12 +185,17 @@
               if(Number.isInteger(index)){
                 ContentHome.filters[index].title= response.title;
               }else{
-                ContentHome.filters.unshift({
-                  title: response.title
-                });
-                Buildfire.datastore.save(ContentHome.filters, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
-                  console.log("Inserted", data.id);
+                ContentHome.filter={
+                  title: response.title,
+                  rank: RankOfLastFilter.getRank()+10
+                }
+                ContentHome.data.content.rankOfLastFilter=RankOfLastFilter.getRank()+10;
+                RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
+                ContentHome.filters.unshift(ContentHome.filter);
+                Buildfire.datastore.insert(ContentHome.filter, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
+                  console.log("Saved", data.id);
                   ContentHome.isUpdating = false;
+                  ContentHome.filter.id=data.id;
                   if (err) {
                     ContentHome.isNewItemInserted = false;
                     return console.error('There was a problem saving your data');
@@ -137,9 +213,31 @@
 
 
         ContentHome.deleteFilter=function(index){
-          Modals.removePopupModal().then(function (result) {
+          Modals.removePopupModal({'item':'filter'}).then(function (result) {
             if (result) {
-              ContentHome.data.content.filters.splice(index, 1);
+
+              Buildfire.datastore.delete(ContentHome.filters[index].id, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
+                if (err)
+                  return;
+                //ContentHome.items.splice(_index, 1);
+                ContentHome.filters.splice(index, 1);
+                $scope.$digest();
+              });
+            }
+          });
+        }
+
+        ContentHome.deleteItem=function(index){
+          Modals.removePopupModal({'item':'item'}).then(function (result) {
+            if (result) {
+
+              Buildfire.datastore.delete(ContentHome.items[index].id, TAG_NAMES.COUPON_ITEMS, function (err, result) {
+                if (err)
+                  return;
+                //ContentHome.items.splice(_index, 1);
+                ContentHome.items.splice(index, 1);
+                $scope.$digest();
+              });
             }
           });
         }
@@ -149,8 +247,34 @@
             console.info('There was a problem sorting your data');
           } else {
            // ContentHome.data.content.filters=null;
+            ContentHome.filters = [];
+            ContentHome.searchOptions.skip = 0;
+            ContentHome.busy = false;
             ContentHome.data.content.sortFilterBy = value;
-            ContentHome.loadMore();
+            ContentHome.loadMore('js');
+          }
+        };
+
+        ContentHome.sortItemBy = function (value) {
+          if (!value) {
+            console.info('There was a problem sorting your data');
+          } else {
+            // ContentHome.data.content.filters=null;
+            //ContentHome.items = [];
+            ContentHome.searchOptionsForItems.skip = 0;
+            ContentHome.busy = false;
+            ContentHome.data.content.sortItemBy = value;
+            //ContentHome.loadMore('js');
+          }
+        };
+
+
+        ContentHome.chooseFilter=function (value) {
+          if (!value) {
+            console.info('There was a problem sorting your data');
+          } else {
+            ContentHome.data.content.selectedFilter = value;
+            //ContentHome.loadMore('js');
           }
         };
 
@@ -178,15 +302,17 @@
           return ContentHome.searchOptions;
         };
 
-        ContentHome.loadMore = function (search) {
+        ContentHome.loadMore = function (str) {
           Buildfire.spinner.show();
           if (ContentHome.busy) {
             return;
           }
 
           ContentHome.busy = true;
-          if (ContentHome.data && ContentHome.data.content.sortFilterBy && !search) {
+          if (ContentHome.data && ContentHome.data.content.sortFilterBy) {
             ContentHome.searchOptions = getSearchOptions(ContentHome.data.content.sortFilterBy);
+          }else{
+            return;
           }
           Buildfire.datastore.search(ContentHome.searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
             if (err) {
@@ -201,28 +327,52 @@
               ContentHome.searchOptions.skip = ContentHome.searchOptions.skip + SORT_FILTER._limit;
               ContentHome.noMore = false;
             }
-            ContentHome.filters =  result.data;
+            var tmpArray=[];
+            var lastIndex=result.length;
+            result.forEach(function(res,index){
+              tmpArray.push({'title' : res.data.title,
+              rank:index +1,
+                id:res.data.id});
+            });
+
+            ContentHome.filters = ContentHome.filters ? ContentHome.filters.concat(tmpArray) : tmpArray;
+            ContentHome.busy = false;
+            Buildfire.spinner.hide();
+            $scope.$digest();
+          });
+
+          Buildfire.datastore.search(ContentHome.searchOptionsForItems, TAG_NAMES.COUPON_ITEMS, function (err, result) {
+            if (err) {
+              Buildfire.spinner.hide();
+              return console.error('-----------err in getting list-------------', err);
+            }
+            if (result.length <= SORT._limit) {// to indicate there are more
+              ContentHome.noMore = true;
+              Buildfire.spinner.hide();
+            } else {
+              result.pop();
+              ContentHome.searchOptionsForItems.skip = ContentHome.searchOptionsForItems.skip + SORT._limit;
+              ContentHome.noMore = false;
+            }
+            var tmpArray=[];
+            var lastIndex=result.length;
+            result.forEach(function(res,index){
+              tmpArray.push({'title' : res.data.title,
+                rank:index +1,
+                summary : res.data.summary,
+                categories : res.data.Categories.length,
+                expiresOn : res.data.expiresOn,
+                listImage  : res.data.listImage,
+                id:res.id});
+            });
+
+            ContentHome.items = ContentHome.items ? ContentHome.items.concat(tmpArray) : tmpArray;
             ContentHome.busy = false;
             Buildfire.spinner.hide();
             $scope.$digest();
           });
         };
 
-        ContentHome.sortAscending=function(){
-          ContentHome.data.content.filters.sort(function(a, b){
-            if(a.title < b.title) return -1;
-            if(a.title > b.title) return 1;
-            return 0;
-          });
-        }
-
-        ContentHome.sortDescending=function(){
-          ContentHome.data.content.filters.sort(function(a, b){
-            if(a.title > b.title) return -1;
-            if(a.title < b.title) return 1;
-            return 0;
-          });
-        }
 
         /*
          * Call the datastore to save the data object
@@ -233,14 +383,47 @@
           }
           var success = function (result) {
               console.info('Saved data result: ', result);
-              RankOfLastItem.setRank(result.data.content.rankOfLastItem);
+              RankOfLastFilter.setRank(result.data.content.rankOfLastFilter);
               updateMasterItem(newObj);
             }
             , error = function (err) {
               console.error('Error while saving data : ', err);
             };
-          newObj.content.rankOfLastItem = newObj.content.rankOfLastItem || 0;
+          newObj.content.rankOfLastFilter = newObj.content.rankOfLastFilter || 0;
           DataStore.save(newObj, tag).then(success, error);
+        };
+
+        function isValidItem(item) {
+          if(item){
+            return item.title;
+          }
+          else{
+            return false;
+          }
+
+        }
+
+        var updateItemsWithDelay = function (item) {
+          ContentHome.isUpdating = false;
+          ContentHome.isItemValid = isValidItem(ContentHome.filter);
+          if (!ContentHome.isUpdating && !isUnchanged(ContentHome.filter) && ContentHome.isItemValid) {
+           setTimeout(function () {
+              if (item.id) {
+                ContentHome.updateItemData();
+                $scope.$digest();
+              } /*else if (!ContentHome.isNewItemInserted) {
+                ContentHome.addNewItem();
+              }*/
+            }, 300);
+          }
+        };
+
+        ContentHome.updateItemData = function () {
+          Buildfire.datastore.update(ContentHome.filter.id, ContentHome.filter, TAG_NAMES.COUPON_CATEGORIES, function (err) {
+            ContentHome.isUpdating = false;
+            if (err)
+              return console.error('There was a problem saving your data');
+          })
         };
 
         var saveDataWithDelay = function (newObj) {
@@ -276,9 +459,16 @@
                   editor.loadItems([]);
                 else
                   editor.loadItems(ContentHome.data.content.carouselImages);
+                if(!ContentHome.data.content.sortFilterBy)
+                  ContentHome.data.content.sortFilterBy=ContentHome.sortFilterOptions[0];
+                ContentHome.filters = [];
+                ContentHome.searchOptions.skip = 0;
+                ContentHome.busy = false;
+                RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter || 0);
               }
               updateMasterItem(ContentHome.data);
               if (tmrDelay)clearTimeout(tmrDelay);
+                ContentHome.loadMore('js');
             }
             , error = function (err) {
               if (err && err.code !== STATUS_CODE.NOT_FOUND) {
@@ -290,28 +480,8 @@
               }
             };
           DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
-         getAllFilterData();
+
         };
-
-        function getAllFilterData(){
-          var success = function (result) {
-                console.info('Init success result:', result);
-
-                  if (!ContentHome.filters)
-                    ContentHome.filters = [];
-                if(Array.isArray(result.data))
-                ContentHome.filters=result.data;
-              }
-              , error = function (err) {
-                if (err && err.code !== STATUS_CODE.NOT_FOUND) {
-                  console.error('Error while getting data', err);
-                  if (tmrDelay)clearTimeout(tmrDelay);
-                }
-              };
-          DataStore.get(TAG_NAMES.COUPON_CATEGORIES).then(success, error);
-        }
-
-
 
         init();
 
@@ -323,6 +493,13 @@
         $scope.$watch(function () {
           return ContentHome.data;
         }, saveDataWithDelay, true);
+
+        /*
+         * watch for changes in filters and trigger the saveDataWithDelay function on change
+         * */
+        $scope.$watch(function () {
+          return ContentHome.filter;
+        }, updateItemsWithDelay, true);
 
 
       }]);

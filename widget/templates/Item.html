@@ -1,16 +1,18 @@
 
-<body class="no-scroll holder padding-zero has-bottom">
+<div class="no-scroll holder padding-zero has-bottom sticky-bottom-menu clearfix"
+     ng-controller="WidgetItemCtrl as WidgetItem">
 	<div class="scrollable">
 		<div class="coupon coupon-item layout3">
-			<div class="plugin-slide">
-				<img src="../../../styles/media/holder-16x9.png">
-			</div>
-			<div class="padded">
+      <div id="carousel2" ng-if="WidgetItem.item.data.carouselImages.length"
+           build-fire-carousel2=""
+           ng-style="WidgetItem.item.data.carouselImages.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}"></div>
+			<div class="padded" ng-if="WidgetItem.item.data">
 				<div class="clearfix row intro">
 					<div class="col-xs-7 pull-left">
-						<p class="margin-zero ellipsis" style="font-size:15px;">Item title goes here. Item title goes here.</p>
-						<p class="margin-zero ellipsis">Item summary. Item summary. Item summary. Item summary. Item summary.</p>
-						<p class="margin-zero small ellipsis"><i>Expires March 21, 2016</i></p>
+						<p class="margin-zero ellipsis" style="font-size:15px;">{{WidgetItem.item.data.title}}</p>
+						<p class="margin-zero ellipsis">{{WidgetItem.item.data.summary}}</p>
+						<p class="margin-zero small ellipsis" ng-if="WidgetItem.item.data.expiresOn"><i>Expires
+              {{WidgetItem.item.data.expiresOn | date}}</i></p>
 					</div>
 					<div class="col-xs-5 pull-right text-right">
 						<img src="assets/media/map-icon.png">
@@ -19,29 +21,25 @@
 						</div>
 					</div>
 				</div>
-				<hr class="small">
-				<div class="text-center">
-					<a class="text-primary">Open More Options</a>
+				<hr class="small" ng-if="WidgetItem.item.data.links.length">
+				<div class="text-center" ng-if="WidgetItem.item.data.links.length">
+					<a class="text-primary" ng-click="WidgetItem.openLinks(WidgetItem.item.data.links)">Open More Options</a>
 				</div>
 				<hr class="small">
-				<div class="redeem-photo text-center margin-top-five margin-bottom-ten">
+        <!--Pre redemption image is in phase 2-->
+				<!--<div class="redeem-photo text-center margin-top-five margin-bottom-ten">
 					<img src="../../../styles/media/holder-4x1.png">
-				</div>				
-				<p class="margin-zero">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				</div>-->
+				<p class="margin-zero" ng-bind-html="WidgetItem.safeHtml(WidgetItem.item.data.preRedemptionText)"></p>
 			</div>
 		</div>
 	</div>
 	<div class="bottom fixed-bottom border-top-grey transition-third">
-		<div class="col-xs-12 pull-left text-center">
+		<!--<div class="col-xs-12 pull-left text-center">
 			<p class="bodyTextTheme stretch margin-top-ten">Item redeemed 3w 5d 13h 24m ago</p>
-		</div>
+		</div>-->
+    <div class="col-xs-12 pull-left text-center primaryBackgroundTheme">
+      <p class="whiteTheme stretch margin-top-ten">Redeem this Item</p>
+    </div>
 	</div>
-	
-	<!-- Simple Popup that notifies user if item is saved or removed from saved list (show for 2 seconds) -->
-	<div class="simple-popup activ">
-	  	<div class="content border-radius-four text-center">
-	    	<p class="whiteTheme margin-zero text-center">Item redeemed</p>
-	    	<span class="whiteTheme main-icon glyphicon glyphicon-ok"></span>
-	  	</div>
-	</div>
-</body>
+</div>

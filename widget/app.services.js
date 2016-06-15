@@ -235,5 +235,57 @@
           return views.length && views[views.length - 2] || {};
         }
       };
+    }])
+    .factory('GeoDistance', ['$q', '$http', function ($q, $http) {
+      var _getDistance = function (origin, items, distanceUnit) {
+        var deferred = $q.defer();
+        var originMap;
+        if (origin && origin.length)
+          originMap = {lat: origin[1], lng: origin[0]};
+        else {
+          originMap = {lat: 121.88, lng: 37.33};
+        }
+        var destinationsMap = [];
+
+        if (!origin || !Array.isArray(origin)) {
+          deferred.reject({
+            code: 'NOT_ARRAY',
+            message: 'origin is not an Array'
+          });
+        }
+        if (!items || !Array.isArray(items) || !items.length) {
+          deferred.reject({
+            code: 'NOT_ARRAY',
+            message: 'destinations is not an Array'
+          });
+        }
+
+        items.forEach(function (_dest) {
+          if (_dest && _dest.data && _dest.data.location && _dest.data.location.coordinates && _dest.data.location.coordinates.lat && _dest.data.location.coordinates.lng)
+            destinationsMap.push({lat: _dest.data.location.coordinates.lat, lng: _dest.data.location.coordinates.lng});
+          else
+            destinationsMap.push({lat: 0, lng: 0});
+        });
+
+        var service = new google.maps.DistanceMatrixService;
+        service.getDistanceMatrix({
+          origins: [originMap],
+          destinations: destinationsMap,
+          travelMode: google.maps.TravelMode.DRIVING,
+          unitSystem: distanceUnit == 'km' ? google.maps.UnitSystem.METRIC : google.maps.UnitSystem.IMPERIAL,
+          avoidHighways: false,
+          avoidTolls: false
+        }, function (response, status) {
+          if (status !== google.maps.DistanceMatrixStatus.OK) {
+            deferred.reject(status);
+          } else {
+            deferred.resolve(response);
+          }
+        });
+        return deferred.promise;
+      };
+      return {
+        getDistance: _getDistance
+      }
     }]);
 })(window.angular, window.buildfire);

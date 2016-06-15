@@ -58,10 +58,15 @@
   </div>
 </div>
 <hr class="none">
-<div class="draggable-list-view wide-list no-media has-btn-link"
-     style="background:#fff;max-height: 282px;" infinite-scroll='ContentHome.loadMore()' infinite-scroll-distance='1'>
+<div class="infinite-scroll-parent" ng-style="ContentHome.filters.length>4? {'height': '282px'}:{'height':'100%'}" style=";overflow-y: auto;">
+ <div ui-sortable="ContentHome.itemSortableOptions"  ng-model="ContentHome.filters" class="draggable-list-view wide-list no-media has-btn-link"
+     style="background:#fff;"
+     infinite-scroll='ContentHome.loadMore("html")'
+     infinite-scroll-distance='1'
+     data-infinite-container=".infinite-scroll-parent"
+     infinite-scroll-disabled="ContentHome.noMore">
   <div class="d-item square-icon clearfix" ng-repeat="filter in ContentHome.filters">
-    <span class="icon icon-menu pull-left"></span>
+    <span class="icon icon-menu pull-left cursor-grab"></span>
 
     <div class="copy pull-right">
       <div class="col-md-4 padding-zero pull-left">
@@ -76,6 +81,7 @@
       </div>
     </div>
   </div>
+ </div>
 </div>
 <div class="header clearfix">
   <h4 class="margin-zero">Items</h4>
@@ -84,17 +90,17 @@
   <div class="col-md-1 labels pull-left margin-top-five">
     <span>Filter</span>
   </div>
-  <div class="col-md-7 padding-right-zero pull-left">
+  <div class="col-md-6 padding-right-zero pull-left">
     <div class="dropdown" dropdown>
       <button class="btn btn-default text-left dropdown-toggle"
               data-toggle="dropdown" dropdown-toggle aria-expanded="true">
-        <span class="pull-left">All Categories</span>
+        <span class="pull-left" ng-if="!ContentHome.data.content.selectedFilter">All Categories</span>
+
+        <span class="pull-left" ng-if="ContentHome.data.content.selectedFilter"> {{ContentHome.data.content.selectedFilter}}</span>
         <span class="chevron icon-chevron-down pull-right"></span>
       </button>
       <ul class="dropdown-menu extended" role="menu">
-        <li><a>Category 1</a></li>
-        <li><a>Category 2</a></li>
-        <li><a>Category 3</a></li>
+        <li ng-repeat="filter in ContentHome.filters"  ng-click="ContentHome.chooseFilter(filter.title)"><a>{{filter.title}}</a></li>
       </ul>
     </div>
   </div>
@@ -128,20 +134,16 @@
   <div class="col-md-1 labels pull-left margin-top-five">
     <span>Sort</span>
   </div>
-  <div class="col-md-4 pull-left">
+  <div class="col-md-6 pull-left">
     <div class="dropdown" dropdown>
       <button class="btn btn-default text-left dropdown-toggle"
               data-toggle="dropdown" dropdown-toggle aria-expanded="true">
-        <span class="pull-left">Manually</span>
+        <span class="pull-left">{{ContentHome.data.content.sortItemBy || ContentHome.sortItemOptions[0]}}</span>
         <span class="chevron icon-chevron-down pull-right"></span>
       </button>
       <ul class="dropdown-menu extended" role="menu">
-        <li><a>Item Name A-Z</a></li>
-        <li><a>Item Name Z-A</a></li>
-        <li><a>Newest Entry First</a></li>
-        <li><a>Oldest Entry First</a></li>
-        <li><a>Expiration Date Ascending</a></li>
-        <li><a>Expiration Date Descending</a></li>
+        <li ng-repeat="value in ContentHome.sortItemOptions"
+            ng-click="ContentHome.sortItemBy (this.value)"><a>{{value}}</a></li>
       </ul>
     </div>
   </div>
@@ -150,104 +152,34 @@
   </div>
 </div>
 <hr class="none">
-<div class="draggable-list-view wide-list has-btn links-list">
-  <div class="d-item double-line square-icon clearfix">
+<div  infinite-scroll='ContentHome.loadMore("html")'
+      infinite-scroll-distance='1'
+      data-infinite-container=".infinite-scroll-parent"
+      infinite-scroll-disabled="ContentHome.noMore"
+      class="draggable-list-view wide-list has-btn links-list" >
+  <div class="d-item double-line square-icon clearfix" ng-repeat="item in ContentHome.items">
     <span class="icon icon-menu pull-left"></span>
 
     <div class="media-holder pull-left">
-      <img src="http://www.placehold.it/80x50">
+      <img  ng-if="item.listImage" ng-src="{{item.listImage}}">
+      <img ng-if="!item.listImage" src="../../../../styles/media/holder-1x1.png">
     </div>
     <div class="copy pull-right">
       <div class="col-md-4 padding-zero pull-left">
         <a class="text-primary"><span
-            class="title ellipsis pull-left">Item Name</span></a>
-        <span class="title ellipsis pull-left">Item Summary</span>
+            class="title ellipsis pull-left">{{item.title}}</span></a>
+        <span class="title ellipsis pull-left">{{item.summary}}</span>
       </div>
       <div class="col-md-3 padding-right-zero pull-left">
         <span class="title pull-left ellipsis">Included in <br><a
-            class="text-primary"># Categories</a></span>
+            class="text-primary">{{item.categories}} Categories</a></span>
       </div>
       <div class="col-md-3 pull-left padding-right-zero">
         <span
-            class="title pull-left ellipsis">Expires On<br>July 12, 2016</span>
+            class="title pull-left ellipsis">Expires On<br>{{item.expiresOn | date :'mediumDate'}}</span>
       </div>
       <div class="col-xs-2 pull-right padding-right-zero text-right">
-        <span class="btn-icon btn-delete-icon btn-danger"></span>
-      </div>
-    </div>
-  </div>
-  <div class="d-item double-line square-icon clearfix">
-    <span class="icon icon-menu pull-left"></span>
-
-    <div class="media-holder pull-left">
-      <img src="http://www.placehold.it/80x50">
-    </div>
-    <div class="copy pull-right">
-      <div class="col-md-4 padding-zero pull-left">
-        <a class="text-primary"><span
-            class="title ellipsis pull-left">Item Name</span></a>
-        <span class="title ellipsis pull-left">Item Summary</span>
-      </div>
-      <div class="col-md-3 padding-right-zero pull-left">
-        <span class="title pull-left ellipsis">Included in <br><a
-            class="text-primary"># Categories</a></span>
-      </div>
-      <div class="col-md-3 pull-left padding-right-zero">
-        <span
-            class="title pull-left ellipsis">Expires On<br>July 12, 2016</span>
-      </div>
-      <div class="col-xs-2 pull-right padding-right-zero text-right">
-        <span class="btn-icon btn-delete-icon btn-danger"></span>
-      </div>
-    </div>
-  </div>
-  <div class="d-item double-line square-icon clearfix">
-    <span class="icon icon-menu pull-left"></span>
-
-    <div class="media-holder pull-left">
-      <img src="http://www.placehold.it/80x50">
-    </div>
-    <div class="copy pull-right">
-      <div class="col-md-4 padding-zero pull-left">
-        <a class="text-primary"><span
-            class="title ellipsis pull-left">Item Name</span></a>
-        <span class="title ellipsis pull-left">Item Summary</span>
-      </div>
-      <div class="col-md-3 padding-right-zero pull-left">
-        <span class="title pull-left ellipsis">Included in <br><a
-            class="text-primary"># Categories</a></span>
-      </div>
-      <div class="col-md-3 pull-left padding-right-zero">
-        <span
-            class="title pull-left ellipsis">Expires On<br>July 12, 2016</span>
-      </div>
-      <div class="col-xs-2 pull-right padding-right-zero text-right">
-        <span class="btn-icon btn-delete-icon btn-danger"></span>
-      </div>
-    </div>
-  </div>
-  <div class="d-item double-line square-icon clearfix">
-    <span class="icon icon-menu pull-left"></span>
-
-    <div class="media-holder pull-left">
-      <img src="http://www.placehold.it/80x50">
-    </div>
-    <div class="copy pull-right">
-      <div class="col-md-4 padding-zero pull-left">
-        <a class="text-primary"><span
-            class="title ellipsis pull-left">Item Name</span></a>
-        <span class="title ellipsis pull-left">Item Summary</span>
-      </div>
-      <div class="col-md-3 padding-right-zero pull-left">
-        <span class="title pull-left ellipsis">Included in <br><a
-            class="text-primary"># Categories</a></span>
-      </div>
-      <div class="col-md-3 pull-left padding-right-zero">
-        <span
-            class="title pull-left ellipsis">Expires On<br>July 12, 2016</span>
-      </div>
-      <div class="col-xs-2 pull-right padding-right-zero text-right">
-        <span class="btn-icon btn-delete-icon btn-danger"></span>
+        <span class="btn-icon btn-delete-icon btn-danger" ng-click="ContentHome.deleteItem($index)"></span>
       </div>
     </div>
   </div>
