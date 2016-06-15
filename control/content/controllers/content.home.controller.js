@@ -37,8 +37,8 @@
 
         ContentHome.sortItemOptions=[
           SORT.MANUALLY,
-          SORT.ITEM_NAME_A_Z,
-          SORT.ITEM_NAME_Z_A,
+          SORT.ITEM_TITLE_A_Z,
+          SORT.ITEM_TITLE_Z_A,
           SORT.NEWEST_FIRST,
           SORT.OLDEST_FIRST,
           SORT.EXPIRATION_DATE_ASC,
@@ -260,11 +260,11 @@
             console.info('There was a problem sorting your data');
           } else {
             // ContentHome.data.content.filters=null;
-            ContentHome.items = [];
+            //ContentHome.items = [];
             ContentHome.searchOptionsForItems.skip = 0;
             ContentHome.busy = false;
             ContentHome.data.content.sortItemBy = value;
-            ContentHome.loadMore('js');
+            //ContentHome.loadMore('js');
           }
         };
 
