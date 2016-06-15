@@ -221,7 +221,7 @@
           Modals.removePopupModal().then(function (result) {
             if (result) {
 
-              Buildfire.datastore.delete(ContentHome.items[index].id, TAG_NAMES.COUPON_INFO, function (err, result) {
+              Buildfire.datastore.delete(ContentHome.items[index].id, TAG_NAMES.COUPON_ITEMS, function (err, result) {
                 if (err)
                   return;
                 //ContentHome.items.splice(_index, 1);
