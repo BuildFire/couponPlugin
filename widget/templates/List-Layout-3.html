@@ -22,9 +22,13 @@
 						<div class="item-text" ng-click="WidgetHome.openDetails(item.id)">
 							<p class="item-title margin-zero text-center text-primary primaryTheme ellipsis">{{item.data.title}}</p>
 							<p class="item-summary margin-zero text-center ellipsis"> {{item.data.summary}}</p>
-							<p class="item-date margin-zero text-center" ng-if="item.data.expiresOn">Expires
-                {{item.data.expiresOn | date}}</p>
+							<p class="item-date margin-zero text-center" ng-if="item.data.expiresOn">Expires {{item.data.expiresOn | date}}</p>
 							<p class="item-date margin-zero text-center">{{item.data.distanceText}}</p>
+							
+							<!-- If summary, expires, or distance are empty, show these -->
+							<p class="item-summary margin-zero text-center ellipsis" ng-hide="{{item.data.summary}}">&nbsp;</p>
+							<p class="item-date margin-zero text-center" ng-hide="item.data.expiresOn">&nbsp;</p>
+							<p class="item-date margin-zero text-center" ng-hide="{{item.data.distanceText}}">&nbsp;</p>
 						</div>
 						<!-- Use these theme classes when active/selected -->
 						<span class="icon icon-star text-primary primaryTheme" ng-if="item.isSaved"
