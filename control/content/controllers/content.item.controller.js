@@ -97,8 +97,35 @@
                     if ($routeParams.id) {
                     }
                     else {
-                        ContentItem.item = angular.copy(DEFAULT_DATA.ITEM);
-                        updateMasterItem(ContentItem.item);
+
+
+                        var searchOptions={
+                            "filter":{"$json.title": {"$regex": '/*'}},
+                            "sort": {"title": 1},
+                            "skip":"0",
+                            "limit":"50"
+                        };
+
+                        Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
+                            ContentItem.item = angular.copy(DEFAULT_DATA.ITEM);
+                            if (err) {
+                                Buildfire.spinner.hide();
+                                return console.error('-----------err in getting list-------------', err);
+                            }
+                            var tmpArray=[];
+                            var lastIndex=result.length;
+                            result.forEach(function(res,index){
+                                tmpArray.push({'title' : res.data.title,
+                                    id:res.data.id});
+                            });
+
+                            ContentItem.item.data.Categories = tmpArray;
+                            updateMasterItem(ContentItem.item);
+                            Buildfire.spinner.hide();
+                            $scope.$digest();
+                        });
+
+
                     }
                 }
 

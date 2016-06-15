@@ -203,7 +203,7 @@
 
 
         ContentHome.deleteFilter=function(index){
-          Modals.removePopupModal().then(function (result) {
+          Modals.removePopupModal({'item':'filter'}).then(function (result) {
             if (result) {
 
               Buildfire.datastore.delete(ContentHome.filters[index].id, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
@@ -218,7 +218,7 @@
         }
 
         ContentHome.deleteItem=function(index){
-          Modals.removePopupModal().then(function (result) {
+          Modals.removePopupModal({'item':'item'}).then(function (result) {
             if (result) {
 
               Buildfire.datastore.delete(ContentHome.items[index].id, TAG_NAMES.COUPON_ITEMS, function (err, result) {

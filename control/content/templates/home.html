@@ -157,103 +157,29 @@
 </div>
 <hr class="none">
 <div class="draggable-list-view wide-list has-btn links-list">
-  <div class="d-item double-line square-icon clearfix">
+  <div class="d-item double-line square-icon clearfix" ng-repeat="item in ContentHome.items">
     <span class="icon icon-menu pull-left"></span>
 
     <div class="media-holder pull-left">
-      <img src="http://www.placehold.it/80x50">
+      <img  ng-if="item.listImage" ng-src="{{item.listImage}}">
+      <img ng-if="!item.listImage" src="http://www.placehold.it/80x50">
     </div>
     <div class="copy pull-right">
       <div class="col-md-4 padding-zero pull-left">
         <a class="text-primary"><span
-            class="title ellipsis pull-left">Item Name</span></a>
-        <span class="title ellipsis pull-left">Item Summary</span>
+            class="title ellipsis pull-left">{{item.title}}</span></a>
+        <span class="title ellipsis pull-left">{{item.summary}}</span>
       </div>
       <div class="col-md-3 padding-right-zero pull-left">
         <span class="title pull-left ellipsis">Included in <br><a
-            class="text-primary"># Categories</a></span>
+            class="text-primary"># {{item.categories}}</a></span>
       </div>
       <div class="col-md-3 pull-left padding-right-zero">
         <span
-            class="title pull-left ellipsis">Expires On<br>July 12, 2016</span>
+            class="title pull-left ellipsis">Expires On<br>{{item.expiresOn | date :'mediumDate'}}</span>
       </div>
       <div class="col-xs-2 pull-right padding-right-zero text-right">
-        <span class="btn-icon btn-delete-icon btn-danger"></span>
-      </div>
-    </div>
-  </div>
-  <div class="d-item double-line square-icon clearfix">
-    <span class="icon icon-menu pull-left"></span>
-
-    <div class="media-holder pull-left">
-      <img src="http://www.placehold.it/80x50">
-    </div>
-    <div class="copy pull-right">
-      <div class="col-md-4 padding-zero pull-left">
-        <a class="text-primary"><span
-            class="title ellipsis pull-left">Item Name</span></a>
-        <span class="title ellipsis pull-left">Item Summary</span>
-      </div>
-      <div class="col-md-3 padding-right-zero pull-left">
-        <span class="title pull-left ellipsis">Included in <br><a
-            class="text-primary"># Categories</a></span>
-      </div>
-      <div class="col-md-3 pull-left padding-right-zero">
-        <span
-            class="title pull-left ellipsis">Expires On<br>July 12, 2016</span>
-      </div>
-      <div class="col-xs-2 pull-right padding-right-zero text-right">
-        <span class="btn-icon btn-delete-icon btn-danger"></span>
-      </div>
-    </div>
-  </div>
-  <div class="d-item double-line square-icon clearfix">
-    <span class="icon icon-menu pull-left"></span>
-
-    <div class="media-holder pull-left">
-      <img src="http://www.placehold.it/80x50">
-    </div>
-    <div class="copy pull-right">
-      <div class="col-md-4 padding-zero pull-left">
-        <a class="text-primary"><span
-            class="title ellipsis pull-left">Item Name</span></a>
-        <span class="title ellipsis pull-left">Item Summary</span>
-      </div>
-      <div class="col-md-3 padding-right-zero pull-left">
-        <span class="title pull-left ellipsis">Included in <br><a
-            class="text-primary"># Categories</a></span>
-      </div>
-      <div class="col-md-3 pull-left padding-right-zero">
-        <span
-            class="title pull-left ellipsis">Expires On<br>July 12, 2016</span>
-      </div>
-      <div class="col-xs-2 pull-right padding-right-zero text-right">
-        <span class="btn-icon btn-delete-icon btn-danger"></span>
-      </div>
-    </div>
-  </div>
-  <div class="d-item double-line square-icon clearfix">
-    <span class="icon icon-menu pull-left"></span>
-
-    <div class="media-holder pull-left">
-      <img src="http://www.placehold.it/80x50">
-    </div>
-    <div class="copy pull-right">
-      <div class="col-md-4 padding-zero pull-left">
-        <a class="text-primary"><span
-            class="title ellipsis pull-left">Item Name</span></a>
-        <span class="title ellipsis pull-left">Item Summary</span>
-      </div>
-      <div class="col-md-3 padding-right-zero pull-left">
-        <span class="title pull-left ellipsis">Included in <br><a
-            class="text-primary"># Categories</a></span>
-      </div>
-      <div class="col-md-3 pull-left padding-right-zero">
-        <span
-            class="title pull-left ellipsis">Expires On<br>July 12, 2016</span>
-      </div>
-      <div class="col-xs-2 pull-right padding-right-zero text-right">
-        <span class="btn-icon btn-delete-icon btn-danger"></span>
+        <span class="btn-icon btn-delete-icon btn-danger" ng-click="ContentHome.deleteItem($index)"></span>
       </div>
     </div>
   </div>
