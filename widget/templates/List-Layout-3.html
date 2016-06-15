@@ -24,11 +24,13 @@
 							<p class="item-summary margin-zero text-center ellipsis"> {{item.data.summary}}</p>
 							<p class="item-date margin-zero text-center" ng-if="item.data.expiresOn">Expires
                 {{item.data.expiresOn | date}}</p>
-							<p class="item-date margin-zero text-center">21 miles away</p>
+							<p class="item-date margin-zero text-center">{{item.data.distanceText}}</p>
 						</div>
 						<!-- Use these theme classes when active/selected -->
-						<span class="icon icon-star text-primary primaryTheme"></span>
-            <!-- <span class="icon icon-star-empty text-default"></span>-->
+						<span class="icon icon-star text-primary primaryTheme" ng-if="item.isSaved"
+                  ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
+             <span class="icon icon-star-empty text-default" ng-if="!item.isSaved"
+                   ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
 					</div>
 				</div>
 			</div>
