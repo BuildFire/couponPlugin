@@ -18,13 +18,15 @@
            infinite-scroll-disabled="WidgetSaved.busy">
         <div class="list-item" ng-if="item.isSaved" ng-repeat="item in WidgetSaved.items">
           <div class="list-item-media text-left overflow-hidden">
-            <div class="square-icon list-media-holder pull-left" ng-if="item.data.listImage" >
+            <div class="square-icon list-media-holder pull-left"
+                 ng-if="item.data.listImage"
+                 ng-click="WidgetSaved.openDetails(item.id)">
               <img class="border-radius-three"
                    load-image="1x1" data-final-src="{{item.data.listImage | getImageUrl : 60:60}}">
             </div>
             <div
                 class="list-item-copy text-left padding-left-ten padding-right-ten">
-              <div class="copy-holder">
+              <div class="copy-holder" ng-click="WidgetSaved.openDetails(item.id)">
                 <p class="ellipsis margin-zero text-primary margin-top-five">
                   {{item.data.title}}
                 </p>

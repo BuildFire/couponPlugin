@@ -9,11 +9,11 @@
         WidgetSaved.items = [];
         WidgetSaved.savedItems = {};
         WidgetSaved.hasAtleastOneSavedItem = false;
-
         var searchOptions = {
           skip: 0,
           limit: PAGINATION.itemCount
         };
+
         WidgetSaved.init = function () {
           Buildfire.spinner.show();
           var success = function (result) {
@@ -123,6 +123,16 @@
             template: 'Filter',
             params: {
               controller: "WidgetFilterCtrl as WidgetFilter"
+            }
+          });
+        };
+
+        WidgetSaved.openDetails = function (itemId) {
+          ViewStack.push({
+            template: 'Item',
+            params: {
+              controller: "WidgetItemCtrl as WidgetItem",
+              itemId: itemId
             }
           });
         };
