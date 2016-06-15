@@ -645,3 +645,19 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
     height: 100%;
     overflow-y: auto;
 }
+
+/*
+* Removed border for modal pop up
+*/
+
+html[buildfire] .modal .modal-dialog {
+    border: none !important;
+}
+
+/*
+* Removed backdrop for modal pop up
+*/
+
+html[buildfire='widget'] .modal {
+    background: none !important;
+}

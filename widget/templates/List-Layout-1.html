@@ -11,7 +11,7 @@
            infinite-scroll-distance="1"
            data-infinite-container=".infinite-scroll-parent"
            infinite-scroll-disabled="WidgetHome.busy">
-        <div class="list-item" ng-repeat="item in WidgetHome.items">
+        <div class="list-item" ng-repeat="item in WidgetHome.items" ng-if="isFetchedAllData">
           <div class="list-item-media text-left overflow-hidden">
             <div class="square-icon list-media-holder pull-left" ng-if="item.data.listImage">
               <img load-image="1x1" data-final-src="{{item.data.listImage |
@@ -33,9 +33,12 @@
                   <i>{{item.data.distanceText}}</i>
                 </p>
               </div>
-              <div class="bookmark-holder">
-                <span class="icon icon-star text-primary"></span>
-                <!-- <span class="icon icon-star-empty text-default"></span>-->
+              <div class="bookmark-holder" ng-if="WidgetHome.currentLoggedInUser">
+                <span class="icon icon-star text-primary"
+                      ng-if="item.isSaved"
+                      ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
+                 <span class="icon icon-star-empty text-default" ng-if="!item.isSaved"
+                       ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
               </div>
             </div>
           </div>

@@ -33,7 +33,7 @@
           SORT_FILTER.MANUALLY,
           SORT_FILTER.CATEGORY_NAME_A_Z,
           SORT_FILTER.CATEGORY_NAME_Z_A
-        ]
+        ];
 
         ContentHome.searchOptions = {
           filter: {"$json.title": {"$regex": '/*'}},

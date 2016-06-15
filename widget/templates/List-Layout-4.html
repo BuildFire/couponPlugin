@@ -1,57 +1,63 @@
-
 <div class="holder padding-zero has-bottom sticky-bottom-menu clearfix">
-	<div class="scrollable infinite-scroll-parent">
-		<div class="coupon layout4">
+  <div class="scrollable infinite-scroll-parent">
+    <div class="coupon layout4">
       <div id="carousel" ng-if="WidgetHome.data.content.carouselImages.length"
            build-fire-carousel=""
            ng-style="WidgetHome.data.content.carouselImages.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}"></div>
-      <div class="padded" ng-if="WidgetHome.showDescription(WidgetHome.data.content.description)">
-        <p class="margin-zero" ng-bind-html="WidgetHome.safeHtml(WidgetHome.data.content.description)"></p>
+      <div class="padded"
+           ng-if="WidgetHome.showDescription(WidgetHome.data.content.description)">
+        <p class="margin-zero"
+           ng-bind-html="WidgetHome.safeHtml(WidgetHome.data.content.description)"></p>
       </div>
-			<div class="panels" ng-if="WidgetHome.data.content" infinite-scroll="WidgetHome.loadMore()"
+      <div class="panels" ng-if="WidgetHome.data.content"
+           infinite-scroll="WidgetHome.loadMore()"
            infinite-scroll-distance="1"
            data-infinite-container=".infinite-scroll-parent"
            infinite-scroll-disabled="WidgetHome.busy">
-				<div class="panel" ng-repeat="item in WidgetHome.items">
-				  	<div
-                class="panel-heading bg-primary primaryBackgroundTheme clearfix" ng-click="WidgetHome.openDetails(item.id)">
-						<div class="media pull-left" ng-if="item.data.listImage" >
+        <div class="panel" ng-repeat="item in WidgetHome.items">
+          <div
+              class="panel-heading bg-primary primaryBackgroundTheme clearfix">
+            <div class="media pull-left" ng-if="item.data.listImage"
+                 ng-click="WidgetHome.openDetails(item.id)">
               <img load-image="1x1" data-final-src="{{item.data.listImage |
                        getImageUrl : 60:60}}">
-						</div>
-				    	<p class="ellipsis margin-zero">{{item.data.title}}</p>
-						<div class="save-icon">
-							<span class="icon icon-star whiteTheme"></span>
-						</div>
-				  	</div>
-				  	<div class="panel-body border-grey">
-						<p ng-click="WidgetHome.openDetails(item.id)"> {{item.data.summary}}</p>
-						<div class="save-icon">
-							<!-- Use this when saved/active -->
-							<span class="icon icon-star whiteTheme"></span>
+            </div>
+            <p class="ellipsis margin-zero" ng-click="WidgetHome.openDetails(item.id)">{{item.data.title}}</p>
 
-              <!-- Use this when notsaved/inactive -->
-              <!--<span class="icon icon-star-empty whiteTheme"></span>-->
+            <div class="save-icon">
+							<span class="icon icon-star whiteTheme" ng-if="item.isSaved"
+                    ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
+              <span class="icon icon-star-empty whiteTheme"
+                    ng-if="!item.isSaved"
+                    ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
+            </div>
+          </div>
+          <div class="panel-body border-grey" ng-click="WidgetHome.openDetails(item.id)">
+            <p ng-click="WidgetHome.openDetails(item.id)">
+              {{item.data.summary}}</p>
 
-						</div>
-						<div class="item clearfix row" ng-click="WidgetHome.openDetails(item.id)">
-							<div class="col-xs-7 pull-left text-left" ng-if="item.data.expiresOn">
-								<p class="date ellipsis margin-zero">Expires {{item.data.expiresOn | date}}</p>
-							</div>
-							<div class="col-xs-5 pull-right text-right">
-								<p class="date margin-zero">21 miles away</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- If map is shown, use col-xs-3 like below -->
-	<div class="bottom fixed-bottom">
-		<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
-			<span class="whiteTheme small">Filter Applied</span>
-		</div>
+            <div class="item clearfix row"
+                 ng-click="WidgetHome.openDetails(item.id)">
+              <div class="col-xs-7 pull-left text-left"
+                   ng-if="item.data.expiresOn">
+                <p class="date ellipsis margin-zero">Expires
+                  {{item.data.expiresOn | date}}</p>
+              </div>
+              <div class="col-xs-5 pull-right text-right">
+                <p class="date margin-zero">{{item.data.distanceText}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- If map is shown, use col-xs-3 like below -->
+  <div class="bottom fixed-bottom">
+    <div
+        class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
+      <span class="whiteTheme small">Filter Applied</span>
+    </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch active">List</a>
     </div>
@@ -59,28 +65,29 @@
       <a class="whiteTheme stretch" ng-click="WidgetHome.showMapView()">Map</a>
     </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetHome.showFilter()">Filter</a>
+      <a class="whiteTheme stretch"
+         ng-click="WidgetHome.showFilter()">Filter</a>
     </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()">Saved
       </a>
     </div>
-	</div>
-	
-	<!-- If map is hidden, use col-xs-4 like below 
-	<div class="bottom fixed-bottom">
-		<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
-			<span class="whiteTheme small">Filter Applied</span>
-		</div>
-		<div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch active">List</a>
-		</div>
-		<div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch">Filter</a>
-		</div>
-		<div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch">Saved</a>
-		</div>
-	</div>
-	-->
+  </div>
+
+  <!-- If map is hidden, use col-xs-4 like below
+  <div class="bottom fixed-bottom">
+    <div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
+      <span class="whiteTheme small">Filter Applied</span>
+    </div>
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch active">List</a>
+    </div>
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch">Filter</a>
+    </div>
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch">Saved</a>
+    </div>
+  </div>
+  -->
 </div>

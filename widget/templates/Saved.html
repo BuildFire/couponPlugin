@@ -1,202 +1,89 @@
+<div class="no-scroll holder padding-zero has-bottom sticky-bottom-menu"
+     ng-controller="WidgetSavedCtrl as WidgetSaved">
+  <div class="scrollable infinite-scroll-parent">
+    <div class="coupon layout3">
+      <div class="form-holder">
+        <input type="text" class="border-none form-control bodyTextTheme"
+               placeholder="Search item name or summary...">
+        <span class="clear-icon dangerBackgroundTheme"></span>
+        <hr class="small margin-zero">
+      </div>
+      <div
+          class="well well-sm text-center margin-top-twenty margin-left-ten margin-right-ten hidde" ng-if="!WidgetSaved.hasAtleastOneSaved">
+        <p class="margin-top-ten">No coupons saved yet.</p>
+      </div>
+      <div class="list-layout" infinite-scroll="WidgetSaved.loadMore()"
+           infinite-scroll-distance="1"
+           data-infinite-container=".infinite-scroll-parent"
+           infinite-scroll-disabled="WidgetSaved.busy">
+        <div class="list-item" ng-if="item.isSaved" ng-repeat="item in WidgetSaved.items">
+          <div class="list-item-media text-left overflow-hidden">
+            <div class="square-icon list-media-holder pull-left">
+              <img src="../../../styles/media/holder-1x1.png">
+            </div>
+            <div
+                class="list-item-copy text-left padding-left-ten padding-right-ten">
+              <div class="copy-holder">
+                <p class="ellipsis margin-zero text-primary margin-top-five">
+                  <span class="selected">Fre</span>e Entree
+                </p>
 
-<div class="no-scroll holder padding-zero has-bottom">
-	<div class="scrollable">
-		<div class="coupon layout3">
-	  		<div class="form-holder">
-			  	<input type="text" class="border-none form-control bodyTextTheme" placeholder="Search item name or summary...">	
-				<span class="clear-icon dangerBackgroundTheme"></span>
-		     	<hr class="small margin-zero">
-			</div>
-			<div class="well well-sm text-center margin-top-twenty margin-left-ten margin-right-ten hidde">
-				<p class="margin-top-ten">No search results found.</p>
-			</div>
-			<div class="list-layout">
-				<div class="list-item">
-					<div class="list-item-media text-left overflow-hidden">
-						<div class="square-icon list-media-holder pull-left">
-							<img src="../../../styles/media/holder-1x1.png">
-						</div>
-						<div class="list-item-copy text-left padding-left-ten padding-right-ten">
-							<div class="copy-holder">
-								<p class="ellipsis margin-zero text-primary margin-top-five">
-									<span class="selected">Fre</span>e Entree
-								</p>
-								<p class="ellipsis margin-zero bodyTextTheme">
-									With purchase of equal or less value
-								</p>
-								<p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-									<i>Expires March 21, 2016</i>
-								</p>
-								<p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-									<i>21 miles away</i>
-								</p>
-							</div>
-							<div class="bookmark-holder">
-								<span class="icon icon-star text-primary"></span>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="list-item">
-					<div class="list-item-media text-left overflow-hidden">
-						<div class="square-icon list-media-holder pull-left">
-							<img src="../../../styles/media/holder-1x1.png">
-						</div>
-						<div class="list-item-copy text-left padding-left-ten padding-right-ten">
-							<div class="copy-holder">
-								<p class="ellipsis margin-zero text-primary margin-top-five">
-									<span class="selected">Fre</span>e Entree
-								</p>
-								<p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-									<i>Expires March 21, 2016</i>
-								</p>
-								<p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-									<i>21 miles away</i>
-								</p>
-							</div>
-							<div class="bookmark-holder">
-								<span class="icon icon-star-empty text-default"></span>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="list-item">
-					<div class="list-item-media text-left overflow-hidden">
-						<div class="list-item-copy text-left padding-left-ten padding-right-ten">
-							<div class="copy-holder">
-								<p class="ellipsis margin-zero text-primary margin-top-five">
-									<span class="selected">Fre</span>e Entree
-								</p>
-								<p class="ellipsis margin-zero bodyTextTheme">
-									With purchase of equal or less value
-								</p>
-								<p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-									<i>Expires March 21, 2016</i>
-								</p>
-								<p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-									<i>21 miles away</i>
-								</p>
-							</div>
-							<div class="bookmark-holder">
-								<span class="icon icon-star-empty text-default"></span>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="list-item">
-					<div class="list-item-media text-left overflow-hidden">
-						<div class="square-icon list-media-holder pull-left">
-							<img src="../../../styles/media/holder-1x1.png">
-						</div>
-						<div class="list-item-copy text-left padding-left-ten padding-right-ten">
-							<div class="copy-holder">
-								<p class="ellipsis margin-zero text-primary margin-top-five">
-									<span class="selected">Fre</span>e Entree
-								</p>
-								<p class="ellipsis margin-zero bodyTextTheme">
-									With purchase of equal or less value
-								</p>
-								<p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-									<i>Expires March 21, 2016</i>
-								</p>
-								<p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-									<i>21 miles away</i>
-								</p>
-							</div>
-							<div class="bookmark-holder">
-								<span class="icon icon-star-empty text-default"></span>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="list-item">
-					<div class="list-item-media text-left overflow-hidden">
-						<div class="square-icon list-media-holder pull-left">
-							<img src="../../../styles/media/holder-1x1.png">
-						</div>
-						<div class="list-item-copy text-left padding-left-ten padding-right-ten">
-							<div class="copy-holder">
-								<p class="ellipsis margin-zero text-primary margin-top-five">
-									<span class="selected">Fre</span>e Entree
-								</p>
-								<p class="ellipsis margin-zero bodyTextTheme">
-									With purchase of equal or less value
-								</p>
-								<p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-									<i>Expires March 21, 2016</i>
-								</p>
-								<p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-									<i>21 miles away</i>
-								</p>
-							</div>
-							<div class="bookmark-holder">
-								<span class="icon icon-star-empty text-default"></span>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="list-item">
-					<div class="list-item-media text-left overflow-hidden">
-						<div class="square-icon list-media-holder pull-left">
-							<img src="../../../styles/media/holder-1x1.png">
-						</div>
-						<div class="list-item-copy text-left padding-left-ten padding-right-ten">
-							<div class="copy-holder">
-								<p class="ellipsis margin-zero text-primary margin-top-five">
-									<span class="selected">Fre</span>e Entree
-								</p>
-								<p class="ellipsis margin-zero bodyTextTheme">
-									With purchase of equal or less value
-								</p>
-								<p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-									<i>Expires March 21, 2016</i>
-								</p>
-								<p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-									<i>21 miles away</i>
-								</p>
-							</div>
-							<div class="bookmark-holder">
-								<span class="icon icon-star-empty text-default"></span>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- If map is shown, use col-xs-3 like below -->
-	<div class="bottom fixed-bottom">
-		<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
-			<span class="whiteTheme small">Filter Applied</span>
-		</div>
-		<div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch">List</a>
-		</div>
-		<div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch">Map</a>
-		</div>
-		<div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch">Filter</a>
-		</div>
-		<div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch active">Saved</a>
-		</div>
-	</div>
-	
-	<!-- If map is hidden, use col-xs-4 like below 
-	<div class="bottom fixed-bottom">
-		<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
-			<span class="whiteTheme small">Filter Applied</span>
-		</div>
-		<div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch active">List</a>
-		</div>
-		<div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch">Filter</a>
-		</div>
-		<div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch">Saved</a>
-		</div>
-	</div>
-	-->
+                <p class="ellipsis margin-zero bodyTextTheme">
+                  With purchase of equal or less value
+                </p>
+
+                <p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
+                  <i>Expires March 21, 2016</i>
+                </p>
+
+                <p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
+                  <i>21 miles away</i>
+                </p>
+              </div>
+              <div class="bookmark-holder">
+                <span class="icon icon-star text-primary"></span>
+                <!--<span class="icon icon-star-empty text-default"></span>-->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- If map is shown, use col-xs-3 like below -->
+  <div class="bottom fixed-bottom">
+    <div
+        class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
+      <span class="whiteTheme small">Filter Applied</span>
+    </div>
+    <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch">List</a>
+    </div>
+    <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch">Map</a>
+    </div>
+    <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch">Filter</a>
+    </div>
+    <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch active">Saved</a>
+    </div>
+  </div>
+
+  <!-- If map is hidden, use col-xs-4 like below
+  <div class="bottom fixed-bottom">
+    <div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
+      <span class="whiteTheme small">Filter Applied</span>
+    </div>
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch active">List</a>
+    </div>
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch">Filter</a>
+    </div>
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch">Saved</a>
+    </div>
+  </div>
+  -->
 </div>
