@@ -21,6 +21,7 @@
           limit: PAGINATION.itemCount
         };
         WidgetHome.couponInfo = null;
+        $scope.isFetchedAllData = false;
 
         /**
          * getSearchOptions(value) is used to get searchOptions with one more key sort which decide the order of sorting.
@@ -224,6 +225,7 @@
                 WidgetHome.busy = false;
               }
               console.log("----------------------", WidgetHome.items);
+              WidgetHome.setSavedItems();
             },
             errorAll = function (error) {
               Buildfire.spinner.hide();
@@ -274,12 +276,100 @@
           }
         };
 
+        WidgetHome.getSavedData = function (setSaved) {
+          Buildfire.spinner.show();
+          var err = function (error) {
+            Buildfire.spinner.hide();
+            console.log("============ There is an error in getting data", error);
+          }, result = function (result) {
+            Buildfire.spinner.hide();
+            console.log("===========Saved Coupons", result);
+            WidgetHome.saved = result;
+            if (setSaved)
+              WidgetHome.setSavedItems();
+          };
+
+          UserData.search({}, TAG_NAMES.COUPON_SAVED).then(result, err);
+        };
+
+        WidgetHome.setSavedItems = function () {
+          for (var item = 0; item < WidgetHome.items.length; item++) {
+            WidgetHome.items[item].isSaved = false;
+            for (var save in WidgetHome.saved) {
+              if (WidgetHome.items[item].id == WidgetHome.saved[save].data.itemId) {
+                WidgetHome.items[item].isSaved = true;
+                WidgetHome.items[item].savedId = WidgetHome.saved[save].id;
+              }
+            }
+          }
+          console.log("$$$$$$$$$$$$$$$$$$", WidgetHome.saved, WidgetHome.items);
+          $scope.isFetchedAllData = true;
+        };
+
+        WidgetHome.addToSavedItems = function (item, index) {
+          Buildfire.spinner.show();
+          WidgetHome.savedItem = {
+            data: {
+              itemId: item.id
+            }
+          };
+          var successItem = function (result) {
+            Buildfire.spinner.hide();
+            console.log("Inserted", result);
+            WidgetHome.items[index].isSaved = true;
+            WidgetHome.items[index].savedId = result.id;
+            if (!$scope.$$phase)
+              $scope.$digest();
+
+            var addedCouponModal = $modal.open({
+              templateUrl: 'templates/Saved_Confirmation.html',
+              size: 'sm',
+              backdropClass: "ng-hide"
+            });
+            $timeout(function () {
+              addedCouponModal.close();
+            }, 3000);
+
+          }, errorItem = function () {
+            Buildfire.spinner.hide();
+            return console.error('There was a problem saving your data');
+          };
+          UserData.insert(WidgetHome.savedItem.data, TAG_NAMES.COUPON_SAVED).then(successItem, errorItem);
+        };
+
+        WidgetHome.removeFromSavedItems = function (item, index) {
+          if (item.isSaved && item.savedId) {
+            Buildfire.spinner.show();
+            var successRemove = function (result) {
+              Buildfire.spinner.hide();
+              WidgetHome.items[index].isSaved = false;
+              WidgetHome.items[index].savedId = null;
+              if (!$scope.$$phase)
+                $scope.$digest();
+              var removeSavedModal = $modal.open({
+                templateUrl: 'templates/Saved_Removed.html',
+                size: 'sm',
+                backdropClass: "ng-hide"
+              });
+              $timeout(function () {
+                removeSavedModal.close();
+              }, 3000);
+
+            }, errorRemove = function () {
+              Buildfire.spinner.hide();
+              return console.error('There was a problem removing your data');
+            };
+            UserData.delete(item.savedId, TAG_NAMES.COUPON_SAVED, WidgetHome.currentLoggedInUser._id).then(successRemove, errorRemove)
+          }
+        };
+
         var loginCallback = function () {
           buildfire.auth.getCurrentUser(function (err, user) {
             console.log("=========User", user);
             if (user) {
               WidgetHome.currentLoggedInUser = user;
               $scope.$apply();
+              WidgetHome.getSavedData(true);
             }
           });
         };
@@ -301,6 +391,7 @@
           if (user) {
             WidgetHome.currentLoggedInUser = user;
             $scope.$apply();
+            WidgetHome.getSavedData(true);
           }
         });
 
