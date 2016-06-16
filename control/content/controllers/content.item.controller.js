@@ -298,7 +298,7 @@
                             //if index is there it means filter update operation is performed
                             ContentItem.filter = {
                                 title: response.title,
-                                rank: RankOfLastFilter.getRank() + 1
+                                rank: RankOfLastFilter.getRank() + 10
                             };
                             //ContentItem.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 1;
                            // RankOfLastFilter.setRank(ContentItem.data.content.rankOfLastFilter);
@@ -329,6 +329,30 @@
                     plugin_preview_height: "500"
                 };
 
+                var updateItemsWithDelay = function (item) {
+                    ContentItem.isUpdating = false;
+                    ContentItem.isItemValid = isValidItem(ContentItem.filter);
+                    if (!ContentItem.isUpdating && ContentItem.isItemValid) {
+                        setTimeout(function () {
+                            if (item.id) {
+                                ContentItem.updateItemData();
+                                $scope.$digest();
+                            } /*else if (!ContentHome.isNewItemInserted) {
+                             ContentHome.addNewItem();
+                             }*/
+                        }, 300);
+                    }
+                };
+
+            ContentItem.updateItemData = function () {
+                    Buildfire.datastore.update(ContentItem.filter.id, ContentItem.filter, TAG_NAMES.COUPON_CATEGORIES, function (err) {
+                        ContentItem.isUpdating = false;
+                        init();
+                        if (err)
+                            return console.error('There was a problem saving your data');
+                    })
+                };
+
                 $scope.$watch(function () {
                     return ContentItem.item;
                 }, updateItemsWithDelay, true);
@@ -337,7 +361,7 @@
                  * watch for changes in filters and trigger the saveDataWithDelay function on change
                  * */
                 $scope.$watch(function () {
-                    return ContentHome.filter;
+                    return ContentItem.filter;
                 }, updateItemsWithDelay, true);
 
             }]);
