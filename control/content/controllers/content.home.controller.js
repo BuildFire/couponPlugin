@@ -286,7 +286,7 @@
          * SORT_FILTER.CATEGORY_NAME_Z_A
          */
         var getSearchOptions = function (value) {
-          //ContentHome.itemSortableOptions.disabled = true;
+          ContentHome.itemSortableOptions.disabled = true;
           switch (value) {
             case SORT_FILTER.CATEGORY_NAME_A_Z:
               ContentHome.searchOptions.sort = {"title": 1};

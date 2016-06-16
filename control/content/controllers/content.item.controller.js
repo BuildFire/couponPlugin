@@ -36,7 +36,12 @@
                 }
 
                 function isValidItem(item) {
-                    return item.title;
+                    if(item){
+                        return item.title;
+                    }
+                    else{
+                        return false;
+                    }
                 }
 
 
