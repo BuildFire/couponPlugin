@@ -20,9 +20,9 @@
         var searchOptions = {
           skip: 0,
           limit: PAGINATION.itemCount,
-          filter : {
+          filter: {
             "$or": [{
-              "$json.expiresOn": { $gte: WidgetHome.currentDate }
+              "$json.expiresOn": {$gte: WidgetHome.currentDate}
             }, {"$json.expiresOn": ""}]
           }
         };
@@ -71,6 +71,12 @@
                 WidgetHome.data = {
                   design: {
                     itemListLayout: LAYOUTS.itemListLayout[0].name
+                  },
+                  "settings": {
+                    defaultView: "list",
+                    distanceIn: "mi",
+                    mapView: "show",
+                    filterPage: "show"
                   }
                 };
               }
@@ -79,8 +85,14 @@
                   itemListLayout: LAYOUTS.itemListLayout[0].name
                 };
               }
-              if (!WidgetHome.data.design)
-                WidgetHome.data.design = {};
+              if (WidgetHome.data && !WidgetHome.data.settings) {
+                WidgetHome.data.settings = {
+                  defaultView: "list",
+                  distanceIn: "mi",
+                  mapView: "show",
+                  filterPage: "show"
+                };
+              }
               if (!WidgetHome.data.design.itemListLayout) {
                 WidgetHome.data.design.itemListLayout = LAYOUTS.itemListLayout[0].name;
               }
