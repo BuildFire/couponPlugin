@@ -16,12 +16,19 @@
         WidgetHome.locationData = {};
         WidgetHome.busy = false;
         WidgetHome.items = [];
+        WidgetHome.currentDate = +new Date();
         var searchOptions = {
           skip: 0,
-          limit: PAGINATION.itemCount
+          limit: PAGINATION.itemCount,
+          filter : {
+            "$or": [{
+              "$json.expiresOn": { $gte: WidgetHome.currentDate }
+            }, {"$json.expiresOn": ""}]
+          }
         };
         WidgetHome.couponInfo = null;
         $scope.isFetchedAllData = false;
+
 
         /**
          * getSearchOptions(value) is used to get searchOptions with one more key sort which decide the order of sorting.
@@ -386,7 +393,7 @@
         buildfire.auth.onLogout(logoutCallback);
 
         /**
-         * Check for current logged in user, if not show ogin screen
+         * Check for current logged in user, if not show login screen
          */
         buildfire.auth.getCurrentUser(function (err, user) {
           console.log("===========LoggedInUser", user);
