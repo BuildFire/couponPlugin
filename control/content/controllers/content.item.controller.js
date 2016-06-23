@@ -1,5 +1,5 @@
 'use strict';
-(function (angular) {
+(function (buildfire, angular) {
     angular
         .module('couponPluginContent')
         .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location', 'Utils', 'Modals', 'RankOfLastFilter', 'Buildfire',
@@ -92,6 +92,11 @@
                                 ContentItem.item.data.deepLinkUrl = buildfire.deeplink.createLink({id: data.id});
                                 ContentItem.item.id = data.id;
                                 updateMasterItem(ContentItem.item);
+                                if(ContentItem.item.id)
+                                buildfire.messaging.sendMessageToWidget({
+                                    id:ContentItem.item.id,
+                                    type:'AddNewItem'
+                                });
                             }
                             else {
                                 isNewItemInserted = false;
@@ -172,8 +177,16 @@
                     DataStore.getById(itemId, TAG_NAMES.COUPON_ITEMS).then(success, error);
                  }
 
+                 /*
+                  Send message to widget that this page has been opened
+                */
+
                 if ($routeParams.id) {
                     ContentItem.getItemData($routeParams.id)
+                    buildfire.messaging.sendMessageToWidget({
+                        id: $routeParams.id,
+                        type: 'OpenItem'
+                    });
                 }
                 else{
                     init();
@@ -412,4 +425,4 @@
                 }, updateFilterWithDelay, true);
 
             }]);
-})(window.angular);
+})(window.buildfire, window.angular);
