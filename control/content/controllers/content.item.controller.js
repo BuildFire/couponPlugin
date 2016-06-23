@@ -31,6 +31,23 @@
                  * @param item
                  * @returns {*|boolean}
                  */
+
+                ContentItem.selection = [];
+
+                ContentItem.toggleCategoriesSelection = function toggleCategoriesSelection(category) {
+                    var idx = ContentItem.selection.indexOf(category);
+                    // is currently selected
+                    if (idx > -1) {
+                        ContentItem.selection.splice(idx, 1);
+                    }
+
+                    // is newly selected
+                    else {
+                        ContentItem.selection.push(category);
+                    }
+                    ContentItem.item.data.SelectedCategories = ContentItem.selection;
+                    //insertAndUpdate(ContentItem.item)
+                }
                 function isUnChanged(item) {
                     return angular.equals(item, ContentItem.masterItem);
                 }
@@ -44,6 +61,14 @@
                     }
                 }
 
+                function isValidFilter(item) {
+                    if(item){
+                        return item.title;
+                    }
+                    else{
+                        return false;
+                    }
+                }
 
                 function insertAndUpdate(_item) {
                     updating = true;
@@ -90,11 +115,13 @@
                     if (tmrDelayForItem) {
                         $timeout.cancel(tmrDelayForItem);
                     }
-                    ContentItem.isItemValid = isValidItem(ContentItem.item.data);
-                    if (_item && !isUnChanged(_item) && ContentItem.isItemValid) {
-                        tmrDelayForItem = $timeout(function () {
-                            insertAndUpdate(_item);
-                        }, 300);
+                    if(ContentItem.item) {
+                        ContentItem.isItemValid = isValidItem(ContentItem.item.data);
+                        if (_item && !isUnChanged(_item) && ContentItem.isItemValid) {
+                            tmrDelayForItem = $timeout(function () {
+                                insertAndUpdate(_item);
+                            }, 300);
+                        }
                     }
                 }
 
@@ -112,6 +139,7 @@
                         };
 
                         Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
+                            if(!ContentItem.item)
                             ContentItem.item = angular.copy(DEFAULT_DATA.ITEM);
                             if (err) {
                                 Buildfire.spinner.hide();
@@ -334,9 +362,9 @@
                     plugin_preview_height: "500"
                 };
 
-                var updateItemsWithDelay = function (item) {
+                var updateFilterWithDelay = function (item) {
                     ContentItem.isUpdating = false;
-                    ContentItem.isItemValid = isValidItem(ContentItem.filter);
+                    ContentItem.isItemValid = isValidFilter(ContentItem.filter);
                     if (!ContentItem.isUpdating && ContentItem.isItemValid) {
                         setTimeout(function () {
                             if (item.id) {
@@ -367,7 +395,7 @@
                  * */
                 $scope.$watch(function () {
                     return ContentItem.filter;
-                }, updateItemsWithDelay, true);
+                }, updateFilterWithDelay, true);
 
             }]);
 })(window.angular);
