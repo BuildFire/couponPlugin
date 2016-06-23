@@ -126,11 +126,9 @@
                 }
 
                 function init() {
-                    if ($routeParams.id) {
-                    }
-                    else {
-
-
+                    //if ($routeParams.id) {
+                    //}
+                    //else {
                         var searchOptions={
                             "filter":{"$json.title": {"$regex": '/*'}},
                             "sort": {"title": 1},
@@ -157,13 +155,29 @@
                             Buildfire.spinner.hide();
                             $scope.$digest();
                         });
-
-
                     }
+                //}
+
+
+
+                ContentItem.getItemData = function(itemId){
+                    var success = function(result){
+                          console.log("------------->>>>", result, itemId);
+                          ContentItem.item = result;
+                          ContentItem.selection = ContentItem.item.data.SelectedCategories;
+                      },
+                      error = function(err){
+                          console.log("There is error in fetching data", err);
+                      }
+                    DataStore.getById(itemId, TAG_NAMES.COUPON_ITEMS).then(success, error);
+                 }
+
+                if ($routeParams.id) {
+                    ContentItem.getItemData($routeParams.id)
                 }
-
-                init();
-
+                else{
+                    init();
+                }
 
                 ContentItem.addListImage = function () {
                     var options = {showIcons: false, multiSelection: false},

@@ -166,8 +166,8 @@
     </div>
     <div class="copy pull-right">
       <div class="col-md-4 padding-zero pull-left">
-        <a class="text-primary"><span
-            class="title ellipsis pull-left">{{item.title}}</span></a>
+        <a class="text-primary" href="#/item/{{item.id}}"><span
+            class="title ellipsis pull-left" >{{item.title}}</span></a>
         <span class="title ellipsis pull-left" >{{item.summary}}</span>
       </div>
       <div class="col-md-3 padding-right-zero pull-left">
@@ -176,7 +176,9 @@
       </div>
       <div class="col-md-3 pull-left padding-right-zero">
         <span
-            class="title pull-left ellipsis">Expires On<br>{{item.expiresOn | date :'mediumDate'}}</span>
+            class="title pull-left ellipsis" ng-show="item.expiresOn!=''">Expires On<br>{{item.expiresOn | date :'mediumDate'}}</span>
+        <span
+            class="title pull-left ellipsis" ng-hide="item.expiresOn!=''">Expires On<br>No Expiration</span>
       </div>
       <div class="col-xs-2 pull-right padding-right-zero text-right">
         <span class="btn-icon btn-delete-icon btn-danger" ng-click="ContentHome.deleteItem($index)"></span>
