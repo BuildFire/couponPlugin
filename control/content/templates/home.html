@@ -158,17 +158,17 @@
       infinite-scroll-disabled="ContentHome.noMore"
       class="draggable-list-view wide-list has-btn links-list" >
   <div class="d-item double-line square-icon clearfix" ng-repeat="item in ContentHome.items">
-    <span class="icon icon-menu pull-left"></span>
+    <span class="icon icon-menu pull-left"  ng-class="{ 'disabled': ContentHome.itemSortableOptions.disabled }"></span>
 
     <div class="media-holder pull-left">
       <img  ng-if="item.listImage" ng-src="{{item.listImage}}">
-      <img ng-if="!item.listImage" src="http://www.placehold.it/80x50">
+      <img ng-if="!item.listImage" src="../../../../styles/media/holder-1x1.png">
     </div>
     <div class="copy pull-right">
       <div class="col-md-4 padding-zero pull-left">
         <a class="text-primary"><span
             class="title ellipsis pull-left">{{item.title}}</span></a>
-        <span class="title ellipsis pull-left">{{item.summary}}</span>
+        <span class="title ellipsis pull-left" >{{item.summary}}</span>
       </div>
       <div class="col-md-3 padding-right-zero pull-left">
         <span class="title pull-left ellipsis">Included in <br><a

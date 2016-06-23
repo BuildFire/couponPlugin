@@ -40,8 +40,8 @@
         })
         .constant('SORT', {
             MANUALLY: 'Manually',
-            ITEM_NAME_A_Z: 'Item Name A-Z',
-            ITEM_NAME_Z_A: 'Item Name Z-A',
+            ITEM_TITLE_A_Z: 'Item title A-Z',
+            ITEM_TITLE_Z_A: 'Item title Z-A',
             NEWEST_FIRST: 'Newest entry first',
             OLDEST_FIRST: 'Oldest entry first',
             EXPIRATION_DATE_ASC: 'Expiration Date Ascending',
