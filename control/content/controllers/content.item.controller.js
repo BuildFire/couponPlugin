@@ -253,6 +253,7 @@
                  * done will close the single item view
                  */
                 ContentItem.done = function () {
+                  buildfire.messaging.sendMessageToWidget({});
                     Location.goToHome();
                 };
                 ContentItem.setLocation = function (data) {
