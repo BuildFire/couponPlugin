@@ -159,6 +159,28 @@
           }
         };
 
+        var loginCallback = function () {
+          buildfire.auth.getCurrentUser(function (err, user) {
+            if (user) {
+              WidgetItem.currentLoggedInUser = user;
+              $scope.$apply();
+              WidgetItem.getSavedItems();
+            }
+          });
+        };
+
+        buildfire.auth.onLogin(loginCallback);
+
+        WidgetItem.redeemCoupon = function(){
+          if(WidgetItem.currentLoggedInUser){
+
+          }else{
+            buildfire.auth.login({}, function () {
+
+            });
+          }
+        };
+
         var onUpdateCallback = function (event) {
           setTimeout(function () {
             $scope.$digest();
