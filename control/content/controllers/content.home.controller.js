@@ -141,29 +141,29 @@
               var isRankChanged = false;
               if (next) {
                 if (prev) {
-                  draggedItem.rank = ((prev.rank || 0) + (next.rank || 0)) / 2;
+                  draggedItem.data.rank = ((prev.data.rank || 0) + (next.data.rank || 0)) / 2;
                   isRankChanged = true;
                 } else {
-                  draggedItem.rank = (next.rank || 0) / 2;
+                  draggedItem.data.rank = (next.data.rank || 0) / 2;
                   isRankChanged = true;
                 }
               } else {
                 if (prev) {
-                  draggedItem.rank = (((prev.rank || 0) * 2) + 10) / 2;
-                  maxRank = draggedItem.rank;
+                  draggedItem.data.rank = (((prev.data.rank || 0) * 2) + 10) / 2;
+                  maxRank = draggedItem.data.rank;
                   isRankChanged = true;
                 }
               }
               if (isRankChanged) {
-                Buildfire.datastore.update(draggedItem.id, draggedItem, TAG_NAMES.COUPON_CATEGORIES, function (err) {
-                  if (err) {
-                    console.error('Error during updating rank');
-                  } else {
-                    if (ContentHome.data.content.rankOfLastFilter < maxRank) {
-                      ContentHome.data.content.rankOfLastFilter = maxRank;
-                      RankOfLastFilter.setRank(maxRank);
-                    }
+                DataStore.update(draggedItem.id, draggedItem.data, TAG_NAMES.COUPON_CATEGORIES).then( function (success) {
+                 if (ContentHome.data.content.rankOfLastFilter < maxRank) {
+                    ContentHome.data.content.rankOfLastFilter = maxRank;
+                    RankOfLastFilter.setRank(maxRank);
                   }
+                },function(error) {
+                    console.error('Error during updating rank');
+
+
                 })
               }
             }
@@ -335,7 +335,7 @@
                 id:res.data.id});
             });
 
-            ContentHome.filters = ContentHome.filters ? ContentHome.filters.concat(tmpArray) : tmpArray;
+            ContentHome.filters = ContentHome.filters ? ContentHome.filters.concat(result) : result;
             ContentHome.busy = false;
             Buildfire.spinner.hide();
             $scope.$digest();

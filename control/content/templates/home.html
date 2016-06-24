@@ -65,15 +65,16 @@
      infinite-scroll-distance='1'
      data-infinite-container=".infinite-scroll-parent"
      infinite-scroll-disabled="ContentHome.noMore">
+   <!--{{ContentHome.filters}}-->
   <div class="d-item square-icon clearfix" ng-repeat="filter in ContentHome.filters">
     <span class="icon icon-menu pull-left cursor-grab"></span>
 
     <div class="copy pull-right">
       <div class="col-md-4 padding-zero pull-left">
-        <span class="title ellipsis pull-left">{{filter.title}}</span>
+        <span class="title ellipsis pull-left">{{filter.data.title}}</span>
       </div>
       <div class="col-md-6 padding-right-zero pull-left">
-        <span class="title ellipsis">Includes {{filter.items || 0}} Items</span>
+        <span class="title ellipsis">Includes {{filter.data.items || 0}} Items</span>
       </div>
       <div class="pull-right">
         <span class="btn-icon btn-edit-icon btn-primary" ng-click="ContentHome.addEditFilter(filter, true , $index)"></span>
