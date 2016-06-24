@@ -159,6 +159,36 @@
           }
         };
 
+        var onUpdateCallback = function (event) {
+          setTimeout(function () {
+            $scope.$digest();
+            if (event && event.tag) {
+              console.log("_____________________________", event);
+              switch (event.tag) {
+                case TAG_NAMES.COUPON_INFO:
+                  WidgetItem.data = event.data;
+                  if (!WidgetItem.data.design)
+                    WidgetItem.data.design = {};
+                  if (!WidgetItem.data.settings)
+                    WidgetItem.data.settings = {};
+                  break;
+                case TAG_NAMES.COUPON_ITEMS:
+                  if (event.data) {
+                    WidgetItem.item.data = event.data;
+                    if (WidgetItem.view) {
+                      WidgetItem.view.loadItems(WidgetItem.item.data.carouselImages);
+                    }
+                  }
+                  break;
+              }
+              $scope.$digest();
+              $rootScope.$apply();
+            }
+          }, 500);
+        };
+
+        DataStore.onUpdate().then(null, null, onUpdateCallback);
+
         /*
          * Fetch user's data from datastore
          */
