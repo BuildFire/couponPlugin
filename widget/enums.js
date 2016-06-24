@@ -6,7 +6,8 @@
       COUPON_INFO: 'couponInfo',
       COUPON_CATEGORIES: 'couponCategories',
       COUPON_ITEMS: "couponItems",
-      COUPON_SAVED: "couponSaved"
+      COUPON_SAVED: "couponSaved",
+      COUPON_REDEEMED: "couponRedeemed"
     })
     .constant('STATUS_CODE', {
       INSERTED: 'inserted',
