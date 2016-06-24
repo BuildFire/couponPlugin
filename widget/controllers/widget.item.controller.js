@@ -92,7 +92,17 @@
                 WidgetItem.item.savedId = WidgetItem.saved[save].id;
               }
             }
-            $scope.isFetchedAllData = true;
+          }
+        };
+
+        WidgetItem.setRedeemedItem = function () {
+          if (WidgetItem.item) {
+            for (var redeem in WidgetItem.redeemed) {
+              if (WidgetItem.redeemed[redeem].data.itemId == WidgetItem.item.id) {
+                WidgetItem.item.isRedeemed = true;
+                WidgetItem.item.redeemedOn = WidgetItem.redeemed[redeem].data.redeemedOn;
+              }
+            }
           }
         };
 
@@ -107,6 +117,19 @@
             WidgetItem.setSavedItem();
           };
           UserData.search({}, TAG_NAMES.COUPON_SAVED).then(result, err);
+        };
+
+        WidgetItem.getRedeemedCoupons = function () {
+          Buildfire.spinner.show();
+          var err = function (error) {
+            Buildfire.spinner.hide();
+            console.log("============ There is an error in getting redeemed coupons data", error);
+          }, result = function (result) {
+            Buildfire.spinner.hide();
+            WidgetItem.redeemed = result;
+            WidgetItem.setRedeemedItem();
+          };
+          UserData.search({}, TAG_NAMES.COUPON_REDEEMED).then(result, err);
         };
 
         WidgetItem.addToSaved = function (item, isSaved) {
@@ -165,14 +188,40 @@
               WidgetItem.currentLoggedInUser = user;
               $scope.$apply();
               WidgetItem.getSavedItems();
+              WidgetItem.getRedeemedCoupons();
             }
           });
         };
 
         buildfire.auth.onLogin(loginCallback);
 
-        WidgetItem.redeemCoupon = function(){
+        WidgetItem.redeemCoupon = function(item){
           if(WidgetItem.currentLoggedInUser){
+            WidgetItem.redeemedItem = {
+              data: {
+                itemId: item.id,
+                redeemedOn: +new Date()
+              }
+            };
+            var successItem = function (result) {
+              console.log("+++++++++++++", result);
+              Buildfire.spinner.hide();
+              WidgetItem.item.isRedeemed = true;
+              WidgetItem.item.redeemedOn = result.data.redeemedOn;
+              console.log("Inserted", result);
+              var redeemedModal = $modal.open({
+                templateUrl: 'templates/Redeem_Confirmation.html',
+                size: 'sm',
+                backdropClass: "ng-hide"
+              });
+              $timeout(function () {
+                redeemedModal.close();
+              }, 3000);
+            }, errorItem = function () {
+              Buildfire.spinner.hide();
+              return console.error('There was a problem redeeming the coupon');
+            };
+            UserData.insert(WidgetItem.redeemedItem.data, TAG_NAMES.COUPON_REDEEMED).then(successItem, errorItem);
 
           }else{
             buildfire.auth.login({}, function () {
@@ -229,8 +278,10 @@
                   console.log("Error while getting the device context data", error)
               };
               buildfire.getContext(getDevice);
-              if(WidgetItem.currentLoggedInUser)
+              if(WidgetItem.currentLoggedInUser){
                 WidgetItem.getSavedItems();
+                WidgetItem.getRedeemedCoupons();
+              }
             }
             , error = function (err) {
               Buildfire.spinner.hide();

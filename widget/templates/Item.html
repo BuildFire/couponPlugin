@@ -44,16 +44,19 @@
           <img src="../../../styles/media/holder-4x1.png">
         </div>-->
         <p class="margin-zero"
-           ng-bind-html="WidgetItem.safeHtml(WidgetItem.item.data.preRedemptionText)"></p>
+           ng-bind-html="WidgetItem.safeHtml(WidgetItem.item.data.preRedemptionText)" ng-if="!WidgetItem.item.isRedeemed"></p>
+        <p class="margin-zero"
+           ng-bind-html="WidgetItem.safeHtml(WidgetItem.item.data.postRedemptionText)" ng-if="WidgetItem.item.isRedeemed"></p>
       </div>
     </div>
   </div>
   <div class="bottom fixed-bottom border-top-grey transition-third">
-    <!--<div class="col-xs-12 pull-left text-center">
-      <p class="bodyTextTheme stretch margin-top-ten">Item redeemed 3w 5d 13h 24m ago</p>
-    </div>-->
+    <div class="col-xs-12 pull-left text-center" ng-if="WidgetItem.item.isRedeemed">
+      <p class="bodyTextTheme stretch margin-top-ten">Item redeemed
+        {{WidgetItem.item.redeemedOn |timeago}}</p>
+    </div>
     <div class="col-xs-12 pull-left text-center primaryBackgroundTheme"
-         ng-click="WidgetItem.redeemCoupon()">
+         ng-click="WidgetItem.redeemCoupon(WidgetItem.item)" ng-if="!WidgetItem.item.isRedeemed">
       <p class="whiteTheme stretch margin-top-ten">Redeem this Item</p>
     </div>
   </div>
