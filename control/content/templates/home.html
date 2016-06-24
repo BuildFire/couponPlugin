@@ -59,7 +59,7 @@
 </div>
 <hr class="none">
 <div class="infinite-scroll-parent" ng-style="ContentHome.filters.length>4? {'height': '282px'}:{'height':'100%'}" style=";overflow-y: auto;">
- <div ui-sortable="ContentHome.itemSortableOptions"  ng-model="ContentHome.filters" class="draggable-list-view wide-list no-media has-btn-link"
+ <div ui-sortable="ContentHome.filterSortableOptions"  ng-model="ContentHome.filters" class="draggable-list-view wide-list no-media has-btn-link"
      style="background:#fff;"
      infinite-scroll='ContentHome.loadMore("html")'
      infinite-scroll-distance='1'
@@ -101,7 +101,7 @@
         <span class="chevron icon-chevron-down pull-right"></span>
       </button>
       <ul class="dropdown-menu extended" role="menu">
-        <li ng-repeat="filter in ContentHome.filters"  ng-click="ContentHome.chooseFilter(filter.title)"><a>{{filter.title}}</a></li>
+        <li ng-repeat="filter in ContentHome.filters"  ng-click="ContentHome.chooseFilter(filter.title)"><a>{{filter.data.title}}</a></li>
       </ul>
     </div>
   </div>
@@ -153,31 +153,32 @@
   </div>
 </div>
 <hr class="none">
-<div  infinite-scroll='ContentHome.loadMore("html")'
+<div ui-sortable="ContentHome.itemSortableOptions" ng-model="ContentHome.items"
+     infinite-scroll='ContentHome.loadMore("html")'
       infinite-scroll-distance='1'
       data-infinite-container=".infinite-scroll-parent"
       infinite-scroll-disabled="ContentHome.noMore"
       class="draggable-list-view wide-list has-btn links-list" >
   <div class="d-item double-line square-icon clearfix" ng-repeat="item in ContentHome.items">
-    <span class="icon icon-menu pull-left"  ng-class="{ 'disabled': ContentHome.itemSortableOptions.disabled }"></span>
+    <span class="icon icon-menu pull-left cursor-grab-item"></span>
 
     <div class="media-holder pull-left">
-      <img  ng-if="item.listImage" ng-src="{{item.listImage}}">
-      <img ng-if="!item.listImage" src="../../../../styles/media/holder-1x1.png">
+      <img  ng-if="item.data.listImage" ng-src="{{item.data.listImage}}">
+      <img ng-if="!item.data.listImage" src="../../../../styles/media/holder-1x1.png">
     </div>
     <div class="copy pull-right">
       <div class="col-md-4 padding-zero pull-left">
         <a class="text-primary" href="#/item/{{item.id}}"><span
-            class="title ellipsis pull-left" >{{item.title}}</span></a>
-        <span class="title ellipsis pull-left" >{{item.summary}}</span>
+            class="title ellipsis pull-left" >{{item.data.title}}</span></a>
+        <span class="title ellipsis pull-left" >{{item.data.summary}}</span>
       </div>
       <div class="col-md-3 padding-right-zero pull-left">
         <span class="title pull-left ellipsis">Included in <br><a
-            class="text-primary">{{item.categories}} Categories</a></span>
+            class="text-primary">{{item.data.categories}} Categories</a></span>
       </div>
       <div class="col-md-3 pull-left padding-right-zero">
         <span
-            class="title pull-left ellipsis" ng-show="item.expiresOn!=''">Expires On<br>{{item.expiresOn | date :'mediumDate'}}</span>
+            class="title pull-left ellipsis" ng-show="item.expiresOn!=''">Expires On<br>{{item.data.expiresOn | date :'mediumDate'}}</span>
         <span
             class="title pull-left ellipsis" ng-hide="item.expiresOn!=''">Expires On<br>No Expiration</span>
       </div>

@@ -142,8 +142,11 @@
                         };
 
                         Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
-                            if(!ContentItem.item)
-                            ContentItem.item = angular.copy(DEFAULT_DATA.ITEM);
+                            if (!$routeParams.id) {
+                                if(!ContentItem.item)
+                                    ContentItem.item = angular.copy(DEFAULT_DATA.ITEM);
+                            }
+
                             if (err) {
                                 Buildfire.spinner.hide();
                                 return console.error('-----------err in getting list-------------', err);
@@ -152,7 +155,7 @@
                             var lastIndex=result.length;
                             result.forEach(function(res,index){
                                 tmpArray.push({'title' : res.data.title,
-                                    id:res.data.id});
+                                    id:res.id});
                             });
 
                             ContentItem.item.data.Categories = tmpArray;
@@ -169,7 +172,12 @@
                     var success = function(result){
                           console.log("------------->>>>", result, itemId);
                           ContentItem.item = result;
+                          if(!ContentItem.item.data.SelectedCategories)
+                              ContentItem.selection =[];
+                          else
                           ContentItem.selection = ContentItem.item.data.SelectedCategories;
+
+                          init();
                       },
                       error = function(err){
                           console.log("There is error in fetching data", err);
