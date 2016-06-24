@@ -2,8 +2,8 @@
 (function (buildfire, angular) {
     angular
         .module('couponPluginContent')
-        .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location', 'Utils', 'Modals', 'RankOfLastFilter', 'Buildfire',
-            function ($scope, $routeParams, $timeout, DEFAULT_DATA, DataStore, TAG_NAMES, Location, Utils, Modals, RankOfLastFilter, Buildfire) {
+        .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location', 'Utils', 'Modals', 'RankOfLastFilter', 'Buildfire','RankOfLastItem',
+            function ($scope, $routeParams, $timeout, DEFAULT_DATA, DataStore, TAG_NAMES, Location, Utils, Modals, RankOfLastFilter, Buildfire, RankOfLastItem) {
                 var ContentItem = this;
                 var tmrDelayForItem = null
                     , isNewItemInserted = false
@@ -25,7 +25,37 @@
                     ContentItem.item = angular.copy(ContentItem.masterItem);
                 }
 
+                var saveData = function (newObj, tag) {
+                    if (typeof newObj === 'undefined') {
+                        return;
+                    }
+                    var success = function (result) {
+                          console.info('Saved data result: ', result);
+                          RankOfLastItem.setRank(result.data.content.rankOfLastItem);
+                      }
+                      , error = function (err) {
+                          console.error('Error while saving data : ', err);
+                      };
+                    newObj.content.rankOfLastItem = newObj.content.rankOfLastItem || 0;
+                    DataStore.save(newObj, tag).then(success, error);
+                };
 
+                /*
+                 * Go pull any previously saved data
+                 * */
+                var getInfoInitData = function () {
+                    var success = function (result) {
+                          ContentItem.data = result.data;
+                          console.log("============aaaa", ContentItem.data)
+                      }
+                      , error = function (err) {
+                              console.error('Error while getting data', err);
+                      };
+                    DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
+
+                };
+
+                getInfoInitData();
                 /**
                  * isUnChanged to check whether there is change in controller media item or not
                  * @param item
@@ -86,11 +116,14 @@
                     else if (!isNewItemInserted) {
                         isNewItemInserted = true;
                         _item.data.dateCreated = +new Date();
+                        _item.data.rank = RankOfLastItem.getRank()+10;
                         DataStore.insert(_item.data, TAG_NAMES.COUPON_ITEMS).then(function (data) {
                             updating = false;
                             if (data && data.id) {
                                 ContentItem.item.data.deepLinkUrl = buildfire.deeplink.createLink({id: data.id});
                                 ContentItem.item.id = data.id;
+                                ContentItem.data.content.rankOfLastItem = RankOfLastItem.getRank()+10;
+                                saveData(ContentItem.data, TAG_NAMES.COUPON_INFO);
                                 updateMasterItem(ContentItem.item);
                                 if(ContentItem.item.id)
                                 buildfire.messaging.sendMessageToWidget({
