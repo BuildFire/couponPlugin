@@ -74,6 +74,91 @@
           }
         });
 
+        /**
+         * Check for current logged in user, if not show ogin screen
+         */
+        buildfire.auth.getCurrentUser(function (err, user) {
+          console.log("===========LoggedInUser", user);
+          if (user) {
+            WidgetItem.currentLoggedInUser = user;
+          }
+        });
+
+        WidgetItem.setSavedItem = function () {
+          if (WidgetItem.item) {
+            for (var save in WidgetItem.saved) {
+              if (WidgetItem.saved[save].data.itemId == WidgetItem.item.id) {
+                WidgetItem.item.isSaved = true;
+                WidgetItem.item.savedId = WidgetItem.saved[save].id;
+              }
+            }
+            $scope.isFetchedAllData = true;
+          }
+        };
+
+        WidgetItem.getSavedItems = function () {
+          Buildfire.spinner.show();
+          var err = function (error) {
+            Buildfire.spinner.hide();
+            console.log("============ There is an error in getting saved items data", error);
+          }, result = function (result) {
+            Buildfire.spinner.hide();
+            WidgetItem.saved = result;
+            WidgetItem.setSavedItem();
+          };
+          UserData.search({}, TAG_NAMES.COUPON_SAVED).then(result, err);
+        };
+
+        WidgetItem.addToSaved = function (item, isSaved) {
+          Buildfire.spinner.show();
+          if (isSaved && item.savedId) {
+            var successRemove = function (result) {
+              Buildfire.spinner.hide();
+              WidgetItem.item.isSaved = false;
+              WidgetItem.item.savedId = null;
+              if (!$scope.$$phase)
+                $scope.$digest();
+              var removeSavedModal = $modal.open({
+                templateUrl: 'templates/Saved_Removed.html',
+                size: 'sm',
+                backdropClass: "ng-hide"
+              });
+              $timeout(function () {
+                removeSavedModal.close();
+              }, 3000);
+
+            }, errorRemove = function () {
+              Buildfire.spinner.hide();
+              return console.error('There was a problem removing your data');
+            };
+            UserData.delete(item.savedId, TAG_NAMES.COUPON_SAVED, WidgetItem.currentLoggedInUser._id).then(successRemove, errorRemove)
+          } else {
+            WidgetItem.savedItem = {
+              data: {
+                itemId: item.id
+              }
+            };
+            var successItem = function (result) {
+              Buildfire.spinner.hide();
+              WidgetItem.item.isSaved = true;
+              WidgetItem.item.savedId = result.id;
+              console.log("Inserted", result);
+              var addedSavedModal = $modal.open({
+                templateUrl: 'templates/Saved_Confirmation.html',
+                size: 'sm',
+                backdropClass: "ng-hide"
+              });
+              $timeout(function () {
+                addedSavedModal.close();
+              }, 3000);
+            }, errorItem = function () {
+              Buildfire.spinner.hide();
+              return console.error('There was a problem saving your data');
+            };
+            UserData.insert(WidgetItem.savedItem.data, TAG_NAMES.COUPON_SAVED).then(successItem, errorItem);
+          }
+        };
+
         /*
          * Fetch user's data from datastore
          */
@@ -92,6 +177,8 @@
                   console.log("Error while getting the device context data", error)
               };
               buildfire.getContext(getDevice);
+              if(WidgetItem.currentLoggedInUser)
+                WidgetItem.getSavedItems();
             }
             , error = function (err) {
               Buildfire.spinner.hide();
