@@ -64,6 +64,7 @@
 
         ContentHome.busy=false;
         RankOfLastFilter.setRank(0);
+        RankOfLastItem.setRank(0);
 
         var updateMasterItem = function (data) {
           ContentHome.masterData = angular.copy(data);
@@ -358,10 +359,10 @@
               ContentHome.searchOptionsForItems.sort = {"title": -1};
               break;
             case SORT.NEWEST_FIRST:
-              ContentHome.searchOptionsForItems.sort = {"dateCreated": 1};
+              ContentHome.searchOptionsForItems.sort = {"dateCreated": -1};
               break;
             case SORT.OLDEST_FIRST:
-              ContentHome.searchOptionsForItems.sort = {"dateCreated": -1};
+              ContentHome.searchOptionsForItems.sort = {"dateCreated": 1};
               break;
             case SORT.EXPIRATION_DATE_ASC:
               ContentHome.searchOptionsForItems.sort = {"expiresOn": 1};
@@ -466,6 +467,7 @@
           var success = function (result) {
               console.info('Saved data result: ', result);
               RankOfLastFilter.setRank(result.data.content.rankOfLastFilter);
+              RankOfLastItem.setRank(result.data.content.rankOfLastItem);
               updateMasterItem(newObj);
             }
             , error = function (err) {
@@ -547,6 +549,7 @@
                 ContentHome.searchOptions.skip = 0;
                 ContentHome.busy = false;
                 RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter || 0);
+                RankOfLastItem.setRank(ContentHome.data.content.rankOfLastItem || 0);
               }
               updateMasterItem(ContentHome.data);
               if (tmrDelay)clearTimeout(tmrDelay);
