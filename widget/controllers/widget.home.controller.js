@@ -16,12 +16,19 @@
         WidgetHome.locationData = {};
         WidgetHome.busy = false;
         WidgetHome.items = [];
+        WidgetHome.currentDate = +new Date();
         var searchOptions = {
           skip: 0,
-          limit: PAGINATION.itemCount
+          limit: PAGINATION.itemCount,
+          filter: {
+            "$or": [{
+              "$json.expiresOn": {$gte: WidgetHome.currentDate}
+            }, {"$json.expiresOn": ""}]
+          }
         };
         WidgetHome.couponInfo = null;
         $scope.isFetchedAllData = false;
+
 
         /**
          * getSearchOptions(value) is used to get searchOptions with one more key sort which decide the order of sorting.
@@ -64,6 +71,12 @@
                 WidgetHome.data = {
                   design: {
                     itemListLayout: LAYOUTS.itemListLayout[0].name
+                  },
+                  "settings": {
+                    defaultView: "list",
+                    distanceIn: "mi",
+                    mapView: "show",
+                    filterPage: "show"
                   }
                 };
               }
@@ -72,8 +85,14 @@
                   itemListLayout: LAYOUTS.itemListLayout[0].name
                 };
               }
-              if (!WidgetHome.data.design)
-                WidgetHome.data.design = {};
+              if (WidgetHome.data && !WidgetHome.data.settings) {
+                WidgetHome.data.settings = {
+                  defaultView: "list",
+                  distanceIn: "mi",
+                  mapView: "show",
+                  filterPage: "show"
+                };
+              }
               if (!WidgetHome.data.design.itemListLayout) {
                 WidgetHome.data.design.itemListLayout = LAYOUTS.itemListLayout[0].name;
               }
@@ -386,7 +405,7 @@
         buildfire.auth.onLogout(logoutCallback);
 
         /**
-         * Check for current logged in user, if not show ogin screen
+         * Check for current logged in user, if not show login screen
          */
         buildfire.auth.getCurrentUser(function (err, user) {
           console.log("===========LoggedInUser", user);

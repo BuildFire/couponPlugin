@@ -1,7 +1,7 @@
 'use strict';
 
 (function (angular, buildfire, window) {
-  angular.module('couponPluginWidget', ['ui.bootstrap', 'ngAnimate','infinite-scroll'])
+  angular.module('couponPluginWidget', ['ui.bootstrap', 'ngAnimate','infinite-scroll','ngtimeago'])
     .config(['$compileProvider', function ($compileProvider) {
 
       /**
@@ -129,6 +129,37 @@
           buildfire.navigation._goBackOne();
         }
       };
+
+      buildfire.messaging.onReceivedMessage = function (msg) {
+        switch (msg.type) {
+          case 'AddNewItem':
+            ViewStack.popAllViews(true);
+            ViewStack.push({
+              template: 'Item',
+              params: {
+                itemId: msg.id,
+                stopSwitch: true
+              }
+            });
+            $rootScope.$apply();
+            break;
+          case 'OpenItem':
+            var currentView = ViewStack.getCurrentView();
+            if (currentView && currentView.template !== "Item") {
+              ViewStack.push({
+                template: 'Item',
+                params: {
+                  itemId: msg.id
+                }
+              });
+              $rootScope.$apply();
+            }
+            break;
+          default:
+            ViewStack.popAllViews(true);
+        }
+      };
+
 
     }])
 })(window.angular, window.buildfire, window);

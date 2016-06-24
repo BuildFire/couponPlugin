@@ -35,8 +35,9 @@
       <a class="text-success" ng-click="ContentItem.addFilter()">Add New Category</a>
     </div>
     <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten" ng-repeat="category in ContentItem.item.data.Categories">
-      <input type="checkbox">
-      <label for="nolabel" class="padding-left-ten">{{category.title}}</label>
+      <input id="{{category.id}}" type="checkbox"    ng-checked="ContentItem.selection.indexOf(category.id) > -1"
+             ng-click="ContentItem.toggleCategoriesSelection(category.id)">
+      <label for="{{category.id}}" class="item padding-left-ten">{{category.title}}</label>
     </div>
   </div>
 </div>

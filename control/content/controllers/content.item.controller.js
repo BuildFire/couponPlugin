@@ -1,9 +1,9 @@
 'use strict';
-(function (angular) {
+(function (buildfire, angular) {
     angular
         .module('couponPluginContent')
-        .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location', 'Utils', 'Modals', 'RankOfLastFilter', 'Buildfire',
-            function ($scope, $routeParams, $timeout, DEFAULT_DATA, DataStore, TAG_NAMES, Location, Utils, Modals, RankOfLastFilter, Buildfire) {
+        .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location', 'Utils', 'Modals', 'RankOfLastFilter', 'Buildfire','RankOfLastItem',
+            function ($scope, $routeParams, $timeout, DEFAULT_DATA, DataStore, TAG_NAMES, Location, Utils, Modals, RankOfLastFilter, Buildfire, RankOfLastItem) {
                 var ContentItem = this;
                 var tmrDelayForItem = null
                     , isNewItemInserted = false
@@ -25,20 +25,80 @@
                     ContentItem.item = angular.copy(ContentItem.masterItem);
                 }
 
+                var saveData = function (newObj, tag) {
+                    if (typeof newObj === 'undefined') {
+                        return;
+                    }
+                    var success = function (result) {
+                          console.info('Saved data result: ', result);
+                          RankOfLastItem.setRank(result.data.content.rankOfLastItem);
+                      }
+                      , error = function (err) {
+                          console.error('Error while saving data : ', err);
+                      };
+                    newObj.content.rankOfLastItem = newObj.content.rankOfLastItem || 0;
+                    DataStore.save(newObj, tag).then(success, error);
+                };
 
+                /*
+                 * Go pull any previously saved data
+                 * */
+                var getInfoInitData = function () {
+                    var success = function (result) {
+                          ContentItem.data = result.data;
+                          console.log("============aaaa", ContentItem.data)
+                      }
+                      , error = function (err) {
+                              console.error('Error while getting data', err);
+                      };
+                    DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
+
+                };
+
+                getInfoInitData();
                 /**
                  * isUnChanged to check whether there is change in controller media item or not
                  * @param item
                  * @returns {*|boolean}
                  */
+
+                ContentItem.selection = [];
+
+                ContentItem.toggleCategoriesSelection = function toggleCategoriesSelection(category) {
+                    var idx = ContentItem.selection.indexOf(category);
+                    // is currently selected
+                    if (idx > -1) {
+                        ContentItem.selection.splice(idx, 1);
+                    }
+
+                    // is newly selected
+                    else {
+                        ContentItem.selection.push(category);
+                    }
+                    ContentItem.item.data.SelectedCategories = ContentItem.selection;
+                    //insertAndUpdate(ContentItem.item)
+                }
                 function isUnChanged(item) {
                     return angular.equals(item, ContentItem.masterItem);
                 }
 
                 function isValidItem(item) {
-                    return item.title;
+                    if(item){
+                        return item.title;
+                    }
+                    else{
+                        return false;
+                    }
                 }
 
+                function isValidFilter(item) {
+                    if(item){
+                        return item.title;
+                    }
+                    else{
+                        return false;
+                    }
+                }
 
                 function insertAndUpdate(_item) {
                     updating = true;
@@ -56,12 +116,20 @@
                     else if (!isNewItemInserted) {
                         isNewItemInserted = true;
                         _item.data.dateCreated = +new Date();
+                        _item.data.rank = RankOfLastItem.getRank()+10;
                         DataStore.insert(_item.data, TAG_NAMES.COUPON_ITEMS).then(function (data) {
                             updating = false;
                             if (data && data.id) {
                                 ContentItem.item.data.deepLinkUrl = buildfire.deeplink.createLink({id: data.id});
                                 ContentItem.item.id = data.id;
+                                ContentItem.data.content.rankOfLastItem = RankOfLastItem.getRank()+10;
+                                saveData(ContentItem.data, TAG_NAMES.COUPON_INFO);
                                 updateMasterItem(ContentItem.item);
+                                if(ContentItem.item.id)
+                                buildfire.messaging.sendMessageToWidget({
+                                    id:ContentItem.item.id,
+                                    type:'AddNewItem'
+                                });
                             }
                             else {
                                 isNewItemInserted = false;
@@ -85,20 +153,20 @@
                     if (tmrDelayForItem) {
                         $timeout.cancel(tmrDelayForItem);
                     }
-                    ContentItem.isItemValid = isValidItem(ContentItem.item.data);
-                    if (_item && !isUnChanged(_item) && ContentItem.isItemValid) {
-                        tmrDelayForItem = $timeout(function () {
-                            insertAndUpdate(_item);
-                        }, 300);
+                    if(ContentItem.item) {
+                        ContentItem.isItemValid = isValidItem(ContentItem.item.data);
+                        if (_item && !isUnChanged(_item) && ContentItem.isItemValid) {
+                            tmrDelayForItem = $timeout(function () {
+                                insertAndUpdate(_item);
+                            }, 300);
+                        }
                     }
                 }
 
                 function init() {
-                    if ($routeParams.id) {
-                    }
-                    else {
-
-
+                    //if ($routeParams.id) {
+                    //}
+                    //else {
                         var searchOptions={
                             "filter":{"$json.title": {"$regex": '/*'}},
                             "sort": {"title": 1},
@@ -107,7 +175,11 @@
                         };
 
                         Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
-                            ContentItem.item = angular.copy(DEFAULT_DATA.ITEM);
+                            if (!$routeParams.id) {
+                                if(!ContentItem.item)
+                                    ContentItem.item = angular.copy(DEFAULT_DATA.ITEM);
+                            }
+
                             if (err) {
                                 Buildfire.spinner.hide();
                                 return console.error('-----------err in getting list-------------', err);
@@ -116,7 +188,7 @@
                             var lastIndex=result.length;
                             result.forEach(function(res,index){
                                 tmpArray.push({'title' : res.data.title,
-                                    id:res.data.id});
+                                    id:res.id});
                             });
 
                             ContentItem.item.data.Categories = tmpArray;
@@ -124,13 +196,42 @@
                             Buildfire.spinner.hide();
                             $scope.$digest();
                         });
-
-
                     }
+                //}
+
+
+
+                ContentItem.getItemData = function(itemId){
+                    var success = function(result){
+                          console.log("------------->>>>", result, itemId);
+                          ContentItem.item = result;
+                          if(!ContentItem.item.data.SelectedCategories)
+                              ContentItem.selection =[];
+                          else
+                          ContentItem.selection = ContentItem.item.data.SelectedCategories;
+
+                          init();
+                      },
+                      error = function(err){
+                          console.log("There is error in fetching data", err);
+                      }
+                    DataStore.getById(itemId, TAG_NAMES.COUPON_ITEMS).then(success, error);
+                 }
+
+                 /*
+                  Send message to widget that this page has been opened
+                */
+
+                if ($routeParams.id) {
+                    ContentItem.getItemData($routeParams.id)
+                    buildfire.messaging.sendMessageToWidget({
+                        id: $routeParams.id,
+                        type: 'OpenItem'
+                    });
                 }
-
-                init();
-
+                else{
+                    init();
+                }
 
                 ContentItem.addListImage = function () {
                     var options = {showIcons: false, multiSelection: false},
@@ -152,6 +253,7 @@
                  * done will close the single item view
                  */
                 ContentItem.done = function () {
+                  buildfire.messaging.sendMessageToWidget({});
                     Location.goToHome();
                 };
                 ContentItem.setLocation = function (data) {
@@ -298,7 +400,7 @@
                             //if index is there it means filter update operation is performed
                             ContentItem.filter = {
                                 title: response.title,
-                                rank: RankOfLastFilter.getRank() + 1
+                                rank: RankOfLastFilter.getRank() + 10
                             };
                             //ContentItem.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 1;
                            // RankOfLastFilter.setRank(ContentItem.data.content.rankOfLastFilter);
@@ -329,6 +431,30 @@
                     plugin_preview_height: "500"
                 };
 
+                var updateFilterWithDelay = function (item) {
+                    ContentItem.isUpdating = false;
+                    ContentItem.isItemValid = isValidFilter(ContentItem.filter);
+                    if (!ContentItem.isUpdating && ContentItem.isItemValid) {
+                        setTimeout(function () {
+                            if (item.id) {
+                                ContentItem.updateItemData();
+                                $scope.$digest();
+                            } /*else if (!ContentHome.isNewItemInserted) {
+                             ContentHome.addNewItem();
+                             }*/
+                        }, 300);
+                    }
+                };
+
+            ContentItem.updateItemData = function () {
+                    Buildfire.datastore.update(ContentItem.filter.id, ContentItem.filter, TAG_NAMES.COUPON_CATEGORIES, function (err) {
+                        ContentItem.isUpdating = false;
+                        init();
+                        if (err)
+                            return console.error('There was a problem saving your data');
+                    })
+                };
+
                 $scope.$watch(function () {
                     return ContentItem.item;
                 }, updateItemsWithDelay, true);
@@ -337,8 +463,8 @@
                  * watch for changes in filters and trigger the saveDataWithDelay function on change
                  * */
                 $scope.$watch(function () {
-                    return ContentHome.filter;
-                }, updateItemsWithDelay, true);
+                    return ContentItem.filter;
+                }, updateFilterWithDelay, true);
 
             }]);
-})(window.angular);
+})(window.buildfire, window.angular);

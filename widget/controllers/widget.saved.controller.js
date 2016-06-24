@@ -48,7 +48,7 @@
           var successAll = function (resultAll) {
               Buildfire.spinner.hide();
               WidgetSaved.items = WidgetSaved.items.length ? WidgetSaved.items.concat(resultAll) : resultAll;
-              console.log("==============", WidgetSaved.items);
+              console.log("***************** ==============", WidgetSaved.items);
               searchOptions.skip = searchOptions.skip + PAGINATION.itemCount;
               if (resultAll.length == PAGINATION.itemCount) {
                 WidgetSaved.busy = false;
@@ -147,6 +147,96 @@
             $scope.$apply();
           }
         });
+
+        var searchData = function (newValue, tag) {
+          Buildfire.spinner.show();
+          var searchTerm = '';
+          if (typeof newValue === 'undefined') {
+            return;
+          }
+          if (newValue) {
+            newValue = newValue.trim();
+            if (newValue.indexOf(' ') !== -1) {
+              searchTerm = newValue.split(' ');
+              searchOptions.filter = {
+                "$or": [{
+                  "$json.title": {
+                    "$regex": searchTerm[0],
+                    "$options": "i"
+                  }
+                }, {
+                  "$json.summary": {
+                    "$regex": searchTerm[0],
+                    "$options": "i"
+                  }
+                }, {
+                  "$json.title": {
+                    "$regex": searchTerm[1],
+                    "$options": "i"
+                  }
+                }, {
+                  "$json.summary": {
+                    "$regex": searchTerm[1],
+                    "$options": "i"
+                  }
+                }
+                ]
+              };
+            } else {
+              searchTerm = newValue;
+              searchOptions.filter = {
+                "$or": [{
+                  "$json.title": {
+                    "$regex": searchTerm,
+                    "$options": "i"
+                  }
+                }, {"$json.summary": {"$regex": searchTerm, "$options": "i"}}]
+              };
+            }
+          }
+
+          WidgetSaved.busy = false;
+          searchOptions.skip = 0;
+          WidgetSaved.items = [];
+          WidgetSaved.savedItems = {};
+          WidgetSaved.loadMore();
+        };
+
+        var tmrDelay = null;
+
+        var saveDataWithDelay = function (newObj) {
+          if (newObj) {
+            if (tmrDelay) {
+              clearTimeout(tmrDelay);
+            }
+            tmrDelay = setTimeout(function () {
+              if (newObj)
+                searchData(newObj, TAG_NAMES.COUPON_SAVED);
+            }, 500);
+          }
+          else {
+            WidgetSaved.busy = false;
+            searchOptions.skip = 0;
+            searchOptions.filter = {};
+            WidgetSaved.items = [];
+            WidgetSaved.savedItems = {};
+            WidgetSaved.loadMore();
+          }
+        };
+
+        $scope.$watch(function () {
+          return WidgetSaved.keyword;
+        }, saveDataWithDelay, true);
+
+        WidgetSaved.clearSearchResult = function () {
+          WidgetSaved.keyword = null;
+          WidgetSaved.busy = false;
+          searchOptions.skip = 0;
+          searchOptions.filter = {};
+          WidgetSaved.items = [];
+          WidgetSaved.savedItems = {};
+          WidgetSaved.loadMore();
+        };
 
         WidgetSaved.init();
 

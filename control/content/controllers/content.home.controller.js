@@ -3,8 +3,8 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter',
-      function ($scope, TAG_NAMES,SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS,Buildfire,Modals,RankOfLastFilter) {
+    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter', 'RankOfLastItem',
+      function ($scope, TAG_NAMES,SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem) {
 
         var ContentHome = this;
         ContentHome.filter=null;
@@ -64,6 +64,7 @@
 
         ContentHome.busy=false;
         RankOfLastFilter.setRank(0);
+        RankOfLastItem.setRank(0);
 
         var updateMasterItem = function (data) {
           ContentHome.masterData = angular.copy(data);
@@ -127,7 +128,7 @@
          * ContentHome.itemSortableOptions used for ui-sortable directory to sort filter listing Manually.
          * @type object
          */
-        ContentHome.itemSortableOptions = {
+        ContentHome.filterSortableOptions = {
           handle: '> .cursor-grab',
           disabled: true,
           stop: function (e, ui) {
@@ -141,29 +142,72 @@
               var isRankChanged = false;
               if (next) {
                 if (prev) {
-                  draggedItem.rank = ((prev.rank || 0) + (next.rank || 0)) / 2;
+                  draggedItem.data.rank = ((prev.data.rank || 0) + (next.data.rank || 0)) / 2;
                   isRankChanged = true;
                 } else {
-                  draggedItem.rank = (next.rank || 0) / 2;
+                  draggedItem.data.rank = (next.data.rank || 0) / 2;
                   isRankChanged = true;
                 }
               } else {
                 if (prev) {
-                  draggedItem.rank = (((prev.rank || 0) * 2) + 10) / 2;
-                  maxRank = draggedItem.rank;
+                  draggedItem.data.rank = (((prev.data.rank || 0) * 2) + 10) / 2;
+                  maxRank = draggedItem.data.rank;
                   isRankChanged = true;
                 }
               }
               if (isRankChanged) {
-                Buildfire.datastore.update(draggedItem.id, draggedItem, TAG_NAMES.COUPON_CATEGORIES, function (err) {
-                  if (err) {
-                    console.error('Error during updating rank');
-                  } else {
-                    if (ContentHome.data.content.rankOfLastFilter < maxRank) {
-                      ContentHome.data.content.rankOfLastFilter = maxRank;
-                      RankOfLastFilter.setRank(maxRank);
-                    }
+                DataStore.update(draggedItem.id, draggedItem.data, TAG_NAMES.COUPON_CATEGORIES).then( function (success) {
+                 if (ContentHome.data.content.rankOfLastFilter < maxRank) {
+                    ContentHome.data.content.rankOfLastFilter = maxRank;
+                    RankOfLastFilter.setRank(maxRank);
                   }
+                },function(error) {
+                    console.error('Error during updating rank');
+
+
+                })
+              }
+            }
+          }
+        };
+
+        ContentHome.itemSortableOptions = {
+          handle: '> .cursor-grab-item',
+          disabled: true,
+          stop: function (e, ui) {
+            var endIndex = ui.item.sortable.dropindex,
+              maxRank = 0,
+              draggedItem = ContentHome.items[endIndex];
+
+            if (draggedItem) {
+              var prev = ContentHome.items[endIndex - 1],
+                next = ContentHome.items[endIndex + 1];
+              var isRankChanged = false;
+              if (next) {
+                if (prev) {
+                  draggedItem.data.rank = ((prev.data.rank || 0) + (next.data.rank || 0)) / 2;
+                  isRankChanged = true;
+                } else {
+                  draggedItem.data.rank = (next.data.rank || 0) / 2;
+                  isRankChanged = true;
+                }
+              } else {
+                if (prev) {
+                  draggedItem.data.rank = (((prev.data.rank || 0) * 2) + 10) / 2;
+                  maxRank = draggedItem.data.rank;
+                  isRankChanged = true;
+                }
+              }
+              if (isRankChanged) {
+                DataStore.update(draggedItem.id, draggedItem.data, TAG_NAMES.COUPON_ITEMS).then( function (success) {
+                  if (ContentHome.data.content.rankOfLastItem < maxRank) {
+                    ContentHome.data.content.rankOfLastItem = maxRank;
+                    RankOfLastItem.setRank(maxRank);
+                  }
+                },function(error) {
+                  console.error('Error during updating rank');
+
+
                 })
               }
             }
@@ -183,19 +227,22 @@
 
               //if index is there it means filter update operation is performed
               if(Number.isInteger(index)){
-                ContentHome.filters[index].title= response.title;
+                ContentHome.filters[index].data.title= response.title;
               }else{
                 ContentHome.filter={
-                  title: response.title,
-                  rank: RankOfLastFilter.getRank()+10
+                  data: {
+                    title: response.title,
+                    rank: RankOfLastFilter.getRank() + 10
+                  }
                 }
                 ContentHome.data.content.rankOfLastFilter=RankOfLastFilter.getRank()+10;
                 RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
                 ContentHome.filters.unshift(ContentHome.filter);
-                Buildfire.datastore.insert(ContentHome.filter, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
+                Buildfire.datastore.insert(ContentHome.filter.data, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
                   console.log("Saved", data.id);
                   ContentHome.isUpdating = false;
                   ContentHome.filter.id=data.id;
+                  ContentHome.filter.data.title=data.data.title;
                   if (err) {
                     ContentHome.isNewItemInserted = false;
                     return console.error('There was a problem saving your data');
@@ -251,7 +298,7 @@
             ContentHome.searchOptions.skip = 0;
             ContentHome.busy = false;
             ContentHome.data.content.sortFilterBy = value;
-            ContentHome.loadMore('js');
+            ContentHome.loadMore('filter');
           }
         };
 
@@ -260,21 +307,28 @@
             console.info('There was a problem sorting your data');
           } else {
             // ContentHome.data.content.filters=null;
-            //ContentHome.items = [];
+            ContentHome.items = [];
             ContentHome.searchOptionsForItems.skip = 0;
             ContentHome.busy = false;
             ContentHome.data.content.sortItemBy = value;
-            //ContentHome.loadMore('js');
+            ContentHome.loadMore('items');
           }
         };
 
 
-        ContentHome.chooseFilter=function (value) {
+        ContentHome.chooseFilter=function (value, title) {
           if (!value) {
             console.info('There was a problem sorting your data');
           } else {
-            ContentHome.data.content.selectedFilter = value;
-            //ContentHome.loadMore('js');
+            ContentHome.data.content.selectedFilter = {"title":title, "id":value};
+            ContentHome.items = [];
+            ContentHome.searchOptionsForItems.skip = 0;
+            ContentHome.searchOptionsForItems.filter= {
+              "$or": [{
+                "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
+              }]
+            }
+            ContentHome.loadMore('items');
           }
         };
 
@@ -286,7 +340,7 @@
          * SORT_FILTER.CATEGORY_NAME_Z_A
          */
         var getSearchOptions = function (value) {
-          //ContentHome.itemSortableOptions.disabled = true;
+          ContentHome.filterSortableOptions.disabled = true;
           switch (value) {
             case SORT_FILTER.CATEGORY_NAME_A_Z:
               ContentHome.searchOptions.sort = {"title": 1};
@@ -295,11 +349,40 @@
               ContentHome.searchOptions.sort = {"title": -1};
               break;
             default :
-              ContentHome.itemSortableOptions.disabled = false;
+              ContentHome.filterSortableOptions.disabled = false;
               ContentHome.searchOptions.sort = {"rank": 1};
               break;
           }
           return ContentHome.searchOptions;
+        };
+
+        var getItemSearchOptions = function (value) {
+          ContentHome.itemSortableOptions.disabled = true;
+          switch (value) {
+            case SORT.ITEM_TITLE_A_Z:
+              ContentHome.searchOptionsForItems.sort = {"title": 1};
+              break;
+            case SORT.ITEM_TITLE_Z_A:
+              ContentHome.searchOptionsForItems.sort = {"title": -1};
+              break;
+            case SORT.NEWEST_FIRST:
+              ContentHome.searchOptionsForItems.sort = {"dateCreated": -1};
+              break;
+            case SORT.OLDEST_FIRST:
+              ContentHome.searchOptionsForItems.sort = {"dateCreated": 1};
+              break;
+            case SORT.EXPIRATION_DATE_ASC:
+              ContentHome.searchOptionsForItems.sort = {"expiresOn": 1};
+              break;
+            case SORT.EXPIRATION_DATE_DESC:
+              ContentHome.searchOptionsForItems.sort = {"expiresOn": -1};
+              break;
+            default :
+              ContentHome.itemSortableOptions.disabled = false;
+              ContentHome.searchOptionsForItems.sort = {"rank": 1};
+              break;
+          }
+          return ContentHome.searchOptionsForItems;
         };
 
         ContentHome.loadMore = function (str) {
@@ -314,6 +397,7 @@
           }else{
             return;
           }
+          if(str!=='items')
           Buildfire.datastore.search(ContentHome.searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
             if (err) {
               Buildfire.spinner.hide();
@@ -335,13 +419,19 @@
                 id:res.data.id});
             });
 
-            ContentHome.filters = ContentHome.filters ? ContentHome.filters.concat(tmpArray) : tmpArray;
+            ContentHome.filters = ContentHome.filters ? ContentHome.filters.concat(result) : result;
             ContentHome.busy = false;
             Buildfire.spinner.hide();
             $scope.$digest();
           });
 
-          Buildfire.datastore.search(ContentHome.searchOptionsForItems, TAG_NAMES.COUPON_ITEMS, function (err, result) {
+          if (ContentHome.data && ContentHome.data.content.sortItemBy) {
+            ContentHome.searchOptionsForItems = getItemSearchOptions(ContentHome.data.content.sortItemBy);
+          }else{
+            return;
+          }
+          if(str!=='filter')
+            Buildfire.datastore.search(ContentHome.searchOptionsForItems, TAG_NAMES.COUPON_ITEMS, function (err, result) {
             if (err) {
               Buildfire.spinner.hide();
               return console.error('-----------err in getting list-------------', err);
@@ -366,7 +456,7 @@
                 id:res.id});
             });
 
-            ContentHome.items = ContentHome.items ? ContentHome.items.concat(tmpArray) : tmpArray;
+            ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
             ContentHome.busy = false;
             Buildfire.spinner.hide();
             $scope.$digest();
@@ -384,6 +474,7 @@
           var success = function (result) {
               console.info('Saved data result: ', result);
               RankOfLastFilter.setRank(result.data.content.rankOfLastFilter);
+              RankOfLastItem.setRank(result.data.content.rankOfLastItem);
               updateMasterItem(newObj);
             }
             , error = function (err) {
@@ -465,6 +556,7 @@
                 ContentHome.searchOptions.skip = 0;
                 ContentHome.busy = false;
                 RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter || 0);
+                RankOfLastItem.setRank(ContentHome.data.content.rankOfLastItem || 0);
               }
               updateMasterItem(ContentHome.data);
               if (tmrDelay)clearTimeout(tmrDelay);
