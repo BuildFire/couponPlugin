@@ -95,13 +95,13 @@
     <div class="dropdown" dropdown>
       <button class="btn btn-default text-left dropdown-toggle"
               data-toggle="dropdown" dropdown-toggle aria-expanded="true">
-        <span class="pull-left" ng-if="!ContentHome.data.content.selectedFilter">All Categories</span>
+        <span class="pull-left" ng-if="!ContentHome.data.content.selectedFilter.title">All Categories</span>
 
-        <span class="pull-left" ng-if="ContentHome.data.content.selectedFilter"> {{ContentHome.data.content.selectedFilter}}</span>
+        <span class="pull-left" ng-if="ContentHome.data.content.selectedFilter.title"> {{ContentHome.data.content.selectedFilter.title}}</span>
         <span class="chevron icon-chevron-down pull-right"></span>
       </button>
       <ul class="dropdown-menu extended" role="menu">
-        <li ng-repeat="filter in ContentHome.filters"  ng-click="ContentHome.chooseFilter(filter.title)"><a>{{filter.data.title}}</a></li>
+        <li ng-repeat="filter in ContentHome.filters"  ng-click="ContentHome.chooseFilter(filter.id, filter.data.title)"><a>{{filter.data.title}}</a></li>
       </ul>
     </div>
   </div>

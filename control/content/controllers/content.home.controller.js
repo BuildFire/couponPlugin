@@ -316,12 +316,19 @@
         };
 
 
-        ContentHome.chooseFilter=function (value) {
+        ContentHome.chooseFilter=function (value, title) {
           if (!value) {
             console.info('There was a problem sorting your data');
           } else {
-            ContentHome.data.content.selectedFilter = value;
-            //ContentHome.loadMore('js');
+            ContentHome.data.content.selectedFilter = {"title":title, "id":value};
+            ContentHome.items = [];
+            ContentHome.searchOptionsForItems.skip = 0;
+            ContentHome.searchOptionsForItems.filter= {
+              "$or": [{
+                "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
+              }]
+            }
+            ContentHome.loadMore('items');
           }
         };
 
