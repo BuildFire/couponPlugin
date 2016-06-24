@@ -50,6 +50,12 @@
           }
         };
 
+        WidgetItem.onAddressClick = function (long, lat) {
+          if (WidgetItem.device && WidgetItem.device.platform == 'ios')
+            buildfire.navigation.openWindow("maps://maps.google.com/maps?daddr=" + lat + "," + long, '_system');
+          else
+            buildfire.navigation.openWindow("http://maps.google.com/maps?daddr=" + lat + "," + long, '_system');
+        };
 
         /**
          * This event listener is bound for "Carousel:LOADED" event broadcast
@@ -79,6 +85,13 @@
               if (!WidgetItem.data.design)
                 WidgetItem.data.design = {};
               WidgetItem.getItemDetails();
+              var getDevice = function (error, data) {
+                if (data)
+                  WidgetItem.device = data.device;
+                else
+                  console.log("Error while getting the device context data", error)
+              };
+              buildfire.getContext(getDevice);
             }
             , error = function (err) {
               Buildfire.spinner.hide();

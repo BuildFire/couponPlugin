@@ -15,7 +15,8 @@
               {{WidgetItem.item.data.expiresOn | date}}</i></p>
 					</div>
 					<div class="col-xs-5 pull-right text-right">
-						<img src="assets/media/map-icon.png">
+						<img src="assets/media/map-icon.png"
+                 ng-click="WidgetItem.onAddressClick(WidgetItem.item.data.location.coordinates.lng,WidgetItem.item.data.location.coordinates.lat)">
 						<div class="save-holder bg-primary backgroundPrimaryTheme text-center pull-right margin-left-ten">
 							<span class="icon icon-star-empty whiteTheme"></span>
 						</div>
