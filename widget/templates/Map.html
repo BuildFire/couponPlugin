@@ -6,33 +6,40 @@
       <div google-map class="google-map-fix"
            location-data="WidgetMap.locationData" marker-callback="WidgetMap.selectedMarker"></div>
     </div>
-    <!--<div class="overlay-list coupon layout3 bodyBackgroundTheme active">
+    <div class="overlay-list coupon layout3 bodyBackgroundTheme active" ng-if="WidgetMap.selectedItem">
       <div class="list-layout">
         <div class="list-item">
           <div class="list-item-media text-left overflow-hidden">
-            <div class="square-icon list-media-holder pull-left">
-              <img src="../../../styles/media/holder-4x3.png">
+            <div class="square-icon list-media-holder pull-left" ng-if="WidgetMap.selectedItem.data.listImage">
+              <img load-image="4x3" data-final-src="{{WidgetMap.selectedItem.data.listImage |
+                       getImageUrl : 96:72}}">
             </div>
             <div class="list-item-copy text-left padding-left-ten padding-right-ten">
               <div class="copy-holder">
                 <p class="ellipsis margin-zero text-primary margin-top-five">
-                  Coupon Title Here
+                  {{WidgetMap.selectedItem.data.title}}
                 </p>
                 <p class="ellipsis margin-zero bodyTextTheme">
-                  Coupon description goes here.
+                  {{WidgetMap.selectedItem.data.summary}}
+                </p>
+                <p class="ellipsis margin-zero bodyTextTheme" ng-hide="WidgetMap.selectedItem.data.summary">
+                  &nbsp;
                 </p>
                 <p class="small ellipsis margin-zero bodyTextTheme">
-                  <i>Exp. Dec. 21, 2016 <span class="dot bodyTextBackgroundTheme"></span>21 mi</i>
+                  <i>Exp. {{WidgetMap.selectedItem.data.expiresOn | date}} <span
+                      class="dot bodyTextBackgroundTheme"></span>{{WidgetMap.selectedItemDistance}}</i>
                 </p>
               </div>
-              &lt;!&ndash; When active/saved &ndash;&gt;
-              <div class="bookmark-holder bg-primary primaryBackgroundTheme">
-                <span class="icon icon-star whiteTheme"></span>
+              <!-- When active/saved -->
+              <div class="bookmark-holder primaryBackgroundTheme" ng-class="WidgetMap.selectedItem.isSaved?'bg-primary':''"
+                   ng-if="WidgetMap.currentLoggedInUser">
+                <span class="icon icon-star-empty"
+                      ng-class="WidgetMap.selectedItem.isSaved?'whiteTheme':''"></span>
               </div>
             </div>
           </div>
         </div>
-        <div class="list-item">
+        <!--<div class="list-item">
           <div class="list-item-media text-left overflow-hidden">
             <div class="square-icon list-media-holder pull-left">
               <img src="../../../styles/media/holder-4x3.png">
@@ -151,12 +158,12 @@
               </div>
             </div>
           </div>
-        </div>
+        </div>-->
       </div>
-      <div class="close-bar bg-primary primaryBackgroundTheme">
+      <!--<div class="close-bar bg-primary primaryBackgroundTheme">
         <p class="whiteTheme stretch text-center margin-zero small">Close</p>
-      </div>
-    </div>-->
+      </div>-->
+    </div>
   </div>
   <div class="bottom fixed-bottom">
     <div class="extra-links">

@@ -10,7 +10,9 @@
         var searchOptions = {
           skip: 0,
           filter: {
-            "$json.expiresOn": {$gte: WidgetMap.currentDate}
+            "$and": [{
+              "$json.expiresOn": {$gte: WidgetMap.currentDate}
+            }, {"$json.location.coordinates": {$exists : true}}]
           }
         };
 
@@ -88,6 +90,31 @@
 
         WidgetMap.showListItems = function () {
           ViewStack.popAllViews()
+        };
+
+        WidgetMap.setSavedItem = function () {
+          for (var item = 0; item < WidgetMap.locationData.items.length; item++) {
+            WidgetMap.locationData.items[item].isSaved = false;
+            for (var save in WidgetMap.saved) {
+              if (WidgetMap.locationData.items[item].id == WidgetMap.saved[save].data.itemId) {
+                WidgetMap.locationData.items[item].isSaved = true;
+                WidgetMap.locationData.items[item].savedId = WidgetMap.saved[save].id;
+              }
+            }
+          }
+        };
+
+        WidgetMap.getSavedItems = function () {
+          Buildfire.spinner.show();
+          var err = function (error) {
+            Buildfire.spinner.hide();
+            console.log("============ There is an error in getting saved items data", error);
+          }, result = function (result) {
+            Buildfire.spinner.hide();
+            WidgetMap.saved = result;
+            WidgetMap.setSavedItem();
+          };
+          UserData.search({}, TAG_NAMES.COUPON_SAVED).then(result, err);
         };
 
         WidgetMap.init = function () {
@@ -182,6 +209,7 @@
           if (user) {
             WidgetMap.currentLoggedInUser = user;
             $scope.$apply();
+            WidgetMap.getSavedItems();
           }
         });
 
