@@ -109,12 +109,13 @@
     <div class="dropdown" dropdown>
       <button class="btn btn-default text-left dropdown-toggle"
               data-toggle="dropdown" dropdown-toggle aria-expanded="true">
-        <span class="pull-left">All Statuses</span>
+        <span class="pull-left" ng-if="!ContentHome.data.content.selectedStatus">All Statuses</span>
+        <span class="pull-left" ng-if="ContentHome.data.content.selectedStatus"> {{ContentHome.data.content.selectedStatus}}</span>
         <span class="chevron icon-chevron-down pull-right"></span>
       </button>
       <ul class="dropdown-menu extended" role="menu">
-        <li><a>Active</a></li>
-        <li><a>Expired</a></li>
+        <li><a ng-click="ContentHome.chooseStatus('Active')">Active</a></li>
+        <li><a ng-click="ContentHome.chooseStatus('Expired')">Expired</a></li>
       </ul>
     </div>
   </div>
@@ -178,9 +179,9 @@
       </div>
       <div class="col-md-3 pull-left padding-right-zero">
         <span
-            class="title pull-left ellipsis" ng-show="item.expiresOn!=''">Expires On<br>{{item.data.expiresOn | date :'mediumDate'}}</span>
+            class="title pull-left ellipsis" ng-show="item.data.expiresOn!=''">Expires On<br>{{item.data.expiresOn | date :'mediumDate'}}</span>
         <span
-            class="title pull-left ellipsis" ng-hide="item.expiresOn!=''">Expires On<br>No Expiration</span>
+            class="title pull-left ellipsis" ng-hide="item.data.expiresOn!=''">Expires On<br>No Expiration</span>
       </div>
       <div class="col-xs-2 pull-right padding-right-zero text-right">
         <span class="btn-icon btn-delete-icon btn-danger" ng-click="ContentHome.deleteItem($index)"></span>

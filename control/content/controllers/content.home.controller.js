@@ -25,6 +25,10 @@
           }
         };
 
+        var today = new Date();
+        var month = new Date().getMonth()+1
+        ContentHome.currentDate = +new Date("'"+month+"/"+today.getDate()+"/"+today.getFullYear()+"'");
+
         ContentHome.filters=[];
 
         ContentHome.items=[];
@@ -317,20 +321,47 @@
 
 
         ContentHome.chooseFilter=function (value, title) {
-          if (!value) {
-            console.info('There was a problem sorting your data');
-          } else {
             ContentHome.data.content.selectedFilter = {"title":title, "id":value};
+            ContentHome.data.content.selectedStatus = "All Statuses";
             ContentHome.items = [];
             ContentHome.searchOptionsForItems.skip = 0;
             ContentHome.searchOptionsForItems.filter= {
-              "$or": [{
+              "$and": [{
                 "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
-              }]
+              },{"$json.title": {"$regex": '/*'}}]
             }
-            ContentHome.loadMore('items');
+            ContentHome.loadMore('items');//, {"$json.title": {"$regex": '/*'}}
+          };
+
+        ContentHome.chooseStatus=function (status) {
+          ContentHome.data.content.selectedStatus = status;
+          if(status == 'Active'){
+            ContentHome.couponActiveDate = ContentHome.currentDate;
+            ContentHome.searchOptionsForItems.filter=
+            {
+              "$and": [{
+                "$and": [{
+                  "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
+                }, {"$json.title": {"$regex": '/*'}}]
+              },{"$or":[{"$json.expiresOn": {"$gte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
+            }
+          }else if(status == 'Expired'){
+            ContentHome.couponActiveDate = ContentHome.currentDate;
+            ContentHome.searchOptionsForItems.filter=
+            {
+              "$and": [{
+                "$and": [{
+                  "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
+                }, {"$json.title": {"$regex": '/*'}}]
+              },{"$or":[{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
+            }
           }
-        };
+            ContentHome.items = [];
+            ContentHome.searchOptionsForItems.skip = 0;
+
+            ContentHome.loadMore('items');//, {"$json.title": {"$regex": '/*'}}
+          console.log("-------------------llll", ContentHome.searchOptionsForItems.filter)
+          };
 
         /**
          * getSearchOptions(value) is used to get searchOptions with one more key sort which decide the order of sorting.
@@ -458,6 +489,7 @@
 
             ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
             ContentHome.busy = false;
+              console.log("-------------------llll",ContentHome.items )
             Buildfire.spinner.hide();
             $scope.$digest();
           });
@@ -557,6 +589,9 @@
                 ContentHome.filters = [];
                 ContentHome.searchOptions.skip = 0;
                 ContentHome.busy = false;
+                ContentHome.data.content.selectedFilter = null
+                ContentHome.data.content.selectedStatus = null
+                console.log("-------------------llll", ContentHome.data.content)
                 RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter || 0);
                 RankOfLastItem.setRank(ContentHome.data.content.rankOfLastItem || 0);
               }
