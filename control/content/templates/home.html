@@ -125,10 +125,11 @@
   <div class="col-md-1 labels pull-left margin-top-five"></div>
   <div class="col-md-8 padding-right-zero pull-left">
     <input type="text" class="form-control"
-           placeholder="Search item name or summary">
+           placeholder="Search item name or summary"
+        ng-model = 'ContentHome.searchValue'>
   </div>
   <div class="col-md-3 pull-left">
-    <a class="btn btn-primary stretch">Search</a>
+    <a class="btn btn-primary stretch" ng-click="ContentHome.searchItem()">Search</a>
   </div>
 </div>
 <hr class="none">
