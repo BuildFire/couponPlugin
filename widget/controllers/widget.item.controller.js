@@ -132,9 +132,9 @@
           UserData.search({}, TAG_NAMES.COUPON_REDEEMED).then(result, err);
         };
 
-        WidgetItem.addToSaved = function (item, isSaved) {
+        WidgetItem.addToSaved = function (item, isSaved, onlyAdd) {
           Buildfire.spinner.show();
-          if (isSaved && item.savedId) {
+          if (isSaved && item.savedId && !onlyAdd) {
             var successRemove = function (result) {
               Buildfire.spinner.hide();
               WidgetItem.item.isSaved = false;
@@ -204,19 +204,18 @@
               }
             };
             var successItem = function (result) {
-              console.log("+++++++++++++", result);
               Buildfire.spinner.hide();
               WidgetItem.item.isRedeemed = true;
               WidgetItem.item.redeemedOn = result.data.redeemedOn;
-              console.log("Inserted", result);
               var redeemedModal = $modal.open({
                 templateUrl: 'templates/Redeem_Confirmation.html',
                 size: 'sm',
                 backdropClass: "ng-hide"
               });
+              WidgetItem.addToSaved(WidgetItem.item, WidgetItem.item.isSaved, true);
               $timeout(function () {
                 redeemedModal.close();
-              }, 3000);
+              }, 2000);
             }, errorItem = function () {
               Buildfire.spinner.hide();
               return console.error('There was a problem redeeming the coupon');
