@@ -552,6 +552,8 @@
                   editor.loadItems(ContentHome.data.content.carouselImages);
                 if(!ContentHome.data.content.sortFilterBy)
                   ContentHome.data.content.sortFilterBy=ContentHome.sortFilterOptions[0];
+                if(!ContentHome.data.content.sortItemBy)
+                  ContentHome.data.content.sortItemBy=ContentHome.sortItemOptions[0];
                 ContentHome.filters = [];
                 ContentHome.searchOptions.skip = 0;
                 ContentHome.busy = false;
