@@ -2,17 +2,18 @@
 
 (function (angular, buildfire, window) {
   angular.module('couponPluginWidget')
-    .controller('WidgetMapCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'LAYOUTS', '$sce', '$rootScope', 'Buildfire', 'ViewStack', 'UserData', 'GeoDistance', '$timeout',
-      function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, GeoDistance, $timeout) {
+    .controller('WidgetMapCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'LAYOUTS', '$sce', '$rootScope', 'Buildfire', 'ViewStack', 'UserData', 'GeoDistance', '$timeout','$modal',
+      function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, GeoDistance, $timeout,$modal) {
         var WidgetMap = this;
         WidgetMap.locationData = {};
         WidgetMap.currentDate = +new Date();
+        WidgetMap.refreshData = 1;
         var searchOptions = {
           skip: 0,
           filter: {
             "$and": [{
               "$json.expiresOn": {$gte: WidgetMap.currentDate}
-            }, {"$json.location.coordinates": {$exists : true}}]
+            }, {"$json.location.coordinates": {$exists: true}}]
           }
         };
 
@@ -56,7 +57,8 @@
                 });
               }
               WidgetMap.locationData.items = resultAll;
-              console.log("----------------------", WidgetMap.locationData.items);
+              if (WidgetMap.currentLoggedInUser)
+                WidgetMap.getSavedItems();
             },
             errorAll = function (error) {
               Buildfire.spinner.hide();
@@ -93,15 +95,20 @@
         };
 
         WidgetMap.setSavedItem = function () {
+          var isChanged = false;
           for (var item = 0; item < WidgetMap.locationData.items.length; item++) {
+            console.log("...................bbbb", WidgetMap.locationData.items[item]);
             WidgetMap.locationData.items[item].isSaved = false;
             for (var save in WidgetMap.saved) {
               if (WidgetMap.locationData.items[item].id == WidgetMap.saved[save].data.itemId) {
+                isChanged = true;
                 WidgetMap.locationData.items[item].isSaved = true;
                 WidgetMap.locationData.items[item].savedId = WidgetMap.saved[save].id;
               }
             }
           }
+          if (isChanged)
+            WidgetMap.refreshData = 2;
         };
 
         WidgetMap.getSavedItems = function () {
@@ -112,6 +119,7 @@
           }, result = function (result) {
             Buildfire.spinner.hide();
             WidgetMap.saved = result;
+            console.log("...................", WidgetMap.saved);
             WidgetMap.setSavedItem();
           };
           UserData.search({}, TAG_NAMES.COUPON_SAVED).then(result, err);
@@ -187,6 +195,7 @@
             return;
           }
           WidgetMap.selectedItem = WidgetMap.locationData.items[itemIndex];
+          console.log("...................", WidgetMap.selectedItem);
 
           GeoDistance.getDistance(WidgetMap.locationData.currentCoordinates, [WidgetMap.selectedItem], '').then(function (result) {
             console.log('Distance---------------------', result);
@@ -200,6 +209,62 @@
           });
         };
 
+        WidgetMap.addRemoveSavedItem = function (item) {
+          if (item.isSaved && item.savedId) {
+            Buildfire.spinner.show();
+            var successRemove = function (result) {
+              Buildfire.spinner.hide();
+              WidgetMap.selectedItem.isSaved = false;
+              WidgetMap.selectedItem.savedId = null;
+              if (!$scope.$$phase)
+                $scope.$digest();
+              var removeSavedModal = $modal.open({
+                templateUrl: 'templates/Saved_Removed.html',
+                size: 'sm',
+                backdropClass: "ng-hide"
+              });
+              $timeout(function () {
+                removeSavedModal.close();
+              }, 3000);
+
+            }, errorRemove = function () {
+              Buildfire.spinner.hide();
+              return console.error('There was a problem removing your data');
+            };
+            UserData.delete(item.savedId, TAG_NAMES.COUPON_SAVED, WidgetMap.currentLoggedInUser._id).then(successRemove, errorRemove)
+          }
+          else {
+            Buildfire.spinner.show();
+            WidgetMap.savedItem = {
+              data: {
+                itemId: item.id
+              }
+            };
+            var successItem = function (result) {
+              Buildfire.spinner.hide();
+              console.log("Inserted", result);
+              WidgetMap.selectedItem.isSaved = true;
+              WidgetMap.selectedItem.savedId = result.id;
+              if (!$scope.$$phase)
+                $scope.$digest();
+
+              var addedCouponModal = $modal.open({
+                templateUrl: 'templates/Saved_Confirmation.html',
+                size: 'sm',
+                backdropClass: "ng-hide"
+              });
+              $timeout(function () {
+                addedCouponModal.close();
+              }, 3000);
+
+            }, errorItem = function () {
+              Buildfire.spinner.hide();
+              return console.error('There was a problem saving your data');
+            };
+            UserData.insert(WidgetMap.savedItem.data, TAG_NAMES.COUPON_SAVED).then(successItem, errorItem);
+          }
+        };
+
         WidgetMap.init();
 
         /**
@@ -209,7 +274,6 @@
           if (user) {
             WidgetMap.currentLoggedInUser = user;
             $scope.$apply();
-            WidgetMap.getSavedItems();
           }
         });
 
