@@ -27,17 +27,17 @@
         };
 
         var header = {
-              itemTitle : 'Item Title',
-              itemSummary : "Item Summary",
-              itemCategories : "Categories",
+              title : 'Item Title',
+              summary : "Item Summary",
+              Categories : "Categories",
               listImage : 'List Image',
-              images : 'Carousel images',
-              prebodyContent : 'Pre-Redemption Body Content',
-              postbodyContent : 'Post-Redemption Body Content',
-              startDate : 'Start Date',
-              expDate : 'Expiration Date',
+              carouselImages : 'Carousel images',
+              preRedemptionText : 'Pre-Redemption Body Content',
+              postRedemptionText : 'Post-Redemption Body Content',
+              startOn : 'Start Date',
+              expiresOn : 'Expiration Date',
               addressTitle : 'Address Title',
-              couponLocation : 'Coupon Location',
+              location : 'Coupon Location',
               webURL : 'Web URL',
               sendToEmail : 'Send to Email',
               smsTextNumber : 'SMS Text Number',
@@ -46,10 +46,9 @@
               twitterURL : 'Twitter URL',
               instagramURL : 'Instagram URL',
               googlePlusURL : 'Google+ URL',
-              linkedinURL : 'Linkedin URL',
-              mapAddress : 'Map Address'
+              linkedinURL : 'Linkedin URL'
             }
-            , headerRow = ["itemTitle", "itemSummary" , "itemCategories" , "listImage", "images", "prebodyContent" , "postbodyContent" , "startDate" , "expDate" , "addressTitle", "couponLocation", "webURL", "sendToEmail", "smsTextNumber", "phoneNumber", "facebookURL", "twitterURL", "instagramURL", "googlePlusURL", "linkedinURL", "mapAddress"];
+            , headerRow = ["title", "summary" , "Categories" , "listImage", "carouselImages", "preRedemptionText" , "postRedemptionText" , "startOn" , "expiresOn" , "addressTitle", "location", "webURL", "sendToEmail", "smsTextNumber", "phoneNumber", "facebookURL", "twitterURL", "instagramURL", "googlePlusURL", "linkedinURL"];
 
 
         var today = new Date();
@@ -666,7 +665,7 @@
               if (!ContentHome.loading)
                 return;
 
-              var rank = ContentHome.info.data.content.rankOfLastItem || 0;
+              var rank =  0;
               for (var index = 0; index < rows.length; index++) {
                 rank += 10;
                 rows[index].dateCreated = +new Date();
@@ -675,17 +674,28 @@
                 rows[index].body = "";
               }
               if (validateCsv(rows)) {
-                DataStore.insert(rows,TAG_NAMES.COUPON_ITEMS).then(function (data) {
-                  ContentHome.loading = false;
-                  ContentHome.isBusy = false;
-                  ContentHome.items = [];
-                  ContentHome.info.data.content.rankOfLastItem = rank;
-                  ContentHome.getMore();
-                }, function errorHandler(error) {
-                  console.error(error);
-                  ContentHome.loading = false;
-                  $scope.$apply();
+
+                buildfire.datastore.bulkInsert(rows, TAG_NAMES.COUPON_ITEMS,function(err,data){
+                  if(err){
+                    console.error(error);
+                    ContentHome.loading = false;
+                    $scope.$apply();
+                  }
+                  else{
+                    ContentHome.loading = false;
+                    ContentHome.isBusy = false;
+                    ContentHome.items = [];
+                    ContentHome.info.data.content.rankOfLastItem = rank;
+                    ContentHome.getMore();
+
+                  }
+
                 });
+
+             /*   DataStore.insert(rows,TAG_NAMES.COUPON_ITEMS).then(function (data) {
+                }, function errorHandler(error) {
+
+                });*/
               } else {
                 ContentHome.loading = false;
                 ContentHome.csvDataInvalid = true;
