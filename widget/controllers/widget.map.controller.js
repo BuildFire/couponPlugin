@@ -30,7 +30,7 @@
                 $scope.$apply(function () {
                   WidgetMap.locationData.currentCoordinates = [position.coords.longitude, position.coords.latitude];
                   localStorage.setItem('user_location', JSON.stringify(WidgetMap.locationData.currentCoordinates));
-                  WidgetMap.refreshData = 3;
+                  WidgetMap.refreshData += 1;
                 });
               }
               else {
@@ -108,7 +108,6 @@
         WidgetMap.setSavedItem = function () {
           var isChanged = false;
           for (var item = 0; item < WidgetMap.locationData.items.length; item++) {
-            console.log("...................bbbb", WidgetMap.locationData.items[item]);
             WidgetMap.locationData.items[item].isSaved = false;
             for (var save in WidgetMap.saved) {
               if (WidgetMap.locationData.items[item].id == WidgetMap.saved[save].data.itemId) {
@@ -119,7 +118,7 @@
             }
           }
           if (isChanged)
-            WidgetMap.refreshData = 2;
+            WidgetMap.refreshData += 1;
         };
 
         WidgetMap.getSavedItems = function () {
@@ -281,6 +280,27 @@
         };
 
         WidgetMap.init();
+
+        var onUpdateCallback = function (event) {
+          setTimeout(function () {
+            $scope.$digest();
+            if (event && event.tag === TAG_NAMES.COUPON_INFO) {
+              WidgetMap.data = event.data;
+              if (!WidgetMap.data.design)
+                WidgetMap.data.design = {};
+              if (!WidgetMap.data.content)
+                WidgetMap.data.content = {};
+              if (!WidgetMap.data.settings)
+                WidgetMap.data.settings = {};
+            }
+            else if (event && event.tag === TAG_NAMES.COUPON_ITEMS) {
+              WidgetMap.getAllItems();
+            }
+            $scope.$digest();
+          }, 0);
+        };
+
+        DataStore.onUpdate().then(null, null, onUpdateCallback);
 
         /**
          * Check for current logged in user, if not show login screen
