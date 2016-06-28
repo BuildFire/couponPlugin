@@ -2,8 +2,8 @@
 
 (function (angular, buildfire, window) {
   angular.module('couponPluginWidget')
-    .controller('WidgetMapCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'LAYOUTS', '$sce', '$rootScope', 'Buildfire', 'ViewStack', 'UserData', 'GeoDistance', '$timeout','$modal',
-      function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, GeoDistance, $timeout,$modal) {
+    .controller('WidgetMapCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'LAYOUTS', '$sce', '$rootScope', 'Buildfire', 'ViewStack', 'UserData', 'GeoDistance', '$timeout', '$modal',
+      function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, GeoDistance, $timeout, $modal) {
         var WidgetMap = this;
         WidgetMap.locationData = {};
         WidgetMap.currentDate = +new Date();
@@ -12,7 +12,9 @@
           skip: 0,
           filter: {
             "$and": [{
-              "$json.expiresOn": {$gte: WidgetMap.currentDate}
+              "$or": [{
+                "$json.expiresOn": {$gte: WidgetMap.currentDate}
+              }, {"$json.expiresOn": ""}]
             }, {"$json.location.coordinates": {$exists: true}}]
           }
         };
@@ -26,9 +28,9 @@
               }
               else if (position && position.coords) {
                 $scope.$apply(function () {
-                  console.log('position>>>>>.', position);
                   WidgetMap.locationData.currentCoordinates = [position.coords.longitude, position.coords.latitude];
                   localStorage.setItem('user_location', JSON.stringify(WidgetMap.locationData.currentCoordinates));
+                  WidgetMap.refreshData = 3;
                 });
               }
               else {
@@ -91,7 +93,16 @@
         };
 
         WidgetMap.showListItems = function () {
-          ViewStack.popAllViews()
+          console.log("============", WidgetMap.data.design.itemListLayout);
+          if (WidgetMap.data.settings.defaultView == 'list')
+            ViewStack.popAllViews();
+          else
+            ViewStack.push({
+              template: WidgetMap.data.design.itemListLayout,
+              params: {
+                controller: "WidgetHomeCtrl as WidgetHome"
+              }
+            });
         };
 
         WidgetMap.setSavedItem = function () {
@@ -263,6 +274,10 @@
             };
             UserData.insert(WidgetMap.savedItem.data, TAG_NAMES.COUPON_SAVED).then(successItem, errorItem);
           }
+        };
+
+        WidgetMap.refreshLocation = function () {
+          getGeoLocation();
         };
 
         WidgetMap.init();
