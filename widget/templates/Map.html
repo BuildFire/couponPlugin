@@ -33,9 +33,9 @@
                       class="dot bodyTextBackgroundTheme"></span>{{WidgetMap.selectedItemDistance}}</i>
                 </p>
               </div>
-              <!-- When active/saved -->
               <div class="bookmark-holder primaryBackgroundTheme" ng-class="WidgetMap.selectedItem.isSaved?'bg-primary':''"
-                   ng-if="WidgetMap.currentLoggedInUser">
+                   ng-if="WidgetMap.currentLoggedInUser"
+                   ng-click="WidgetMap.addRemoveSavedItem(WidgetMap.selectedItem)">
                 <span class="icon icon-star-empty"
                       ng-class="WidgetMap.selectedItem.isSaved?'whiteTheme':''"></span>
               </div>

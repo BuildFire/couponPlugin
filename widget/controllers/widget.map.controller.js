@@ -2,8 +2,8 @@
 
 (function (angular, buildfire, window) {
   angular.module('couponPluginWidget')
-    .controller('WidgetMapCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'LAYOUTS', '$sce', '$rootScope', 'Buildfire', 'ViewStack', 'UserData', 'GeoDistance', '$timeout',
-      function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, GeoDistance, $timeout) {
+    .controller('WidgetMapCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'LAYOUTS', '$sce', '$rootScope', 'Buildfire', 'ViewStack', 'UserData', 'GeoDistance', '$timeout','$modal',
+      function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, GeoDistance, $timeout,$modal) {
         var WidgetMap = this;
         WidgetMap.locationData = {};
         WidgetMap.currentDate = +new Date();
@@ -107,7 +107,7 @@
               }
             }
           }
-          if(isChanged)
+          if (isChanged)
             WidgetMap.refreshData = 2;
         };
 
@@ -207,6 +207,62 @@
           }, function (err) {
             WidgetMap.selectedItemDistance = null;
           });
+        };
+
+        WidgetMap.addRemoveSavedItem = function (item) {
+          if (item.isSaved && item.savedId) {
+            Buildfire.spinner.show();
+            var successRemove = function (result) {
+              Buildfire.spinner.hide();
+              WidgetMap.selectedItem.isSaved = false;
+              WidgetMap.selectedItem.savedId = null;
+              if (!$scope.$$phase)
+                $scope.$digest();
+              var removeSavedModal = $modal.open({
+                templateUrl: 'templates/Saved_Removed.html',
+                size: 'sm',
+                backdropClass: "ng-hide"
+              });
+              $timeout(function () {
+                removeSavedModal.close();
+              }, 3000);
+
+            }, errorRemove = function () {
+              Buildfire.spinner.hide();
+              return console.error('There was a problem removing your data');
+            };
+            UserData.delete(item.savedId, TAG_NAMES.COUPON_SAVED, WidgetMap.currentLoggedInUser._id).then(successRemove, errorRemove)
+          }
+          else {
+            Buildfire.spinner.show();
+            WidgetMap.savedItem = {
+              data: {
+                itemId: item.id
+              }
+            };
+            var successItem = function (result) {
+              Buildfire.spinner.hide();
+              console.log("Inserted", result);
+              WidgetMap.selectedItem.isSaved = true;
+              WidgetMap.selectedItem.savedId = result.id;
+              if (!$scope.$$phase)
+                $scope.$digest();
+
+              var addedCouponModal = $modal.open({
+                templateUrl: 'templates/Saved_Confirmation.html',
+                size: 'sm',
+                backdropClass: "ng-hide"
+              });
+              $timeout(function () {
+                addedCouponModal.close();
+              }, 3000);
+
+            }, errorItem = function () {
+              Buildfire.spinner.hide();
+              return console.error('There was a problem saving your data');
+            };
+            UserData.insert(WidgetMap.savedItem.data, TAG_NAMES.COUPON_SAVED).then(successItem, errorItem);
+          }
         };
 
         WidgetMap.init();
