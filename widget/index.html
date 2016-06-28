@@ -28,7 +28,8 @@
   <script src="controllers/widget.filter.controller.js"></script>
   <script src="controllers/widget.saved.controller.js"></script>
   <script src="controllers/widget.item.controller.js"></script>
-  <script src="https://maps.google.com/maps/api/js?v=3.exp&sensor=true&libraries=places&key=AIzaSyCRWyvs4UfQ9qjen_smzLFmpVqsjqTYdFI"></script>
+  <script
+      src="https://maps.google.com/maps/api/js?v=3.exp&sensor=true&libraries=places&key=AIzaSyCRWyvs4UfQ9qjen_smzLFmpVqsjqTYdFI"></script>
   <script src="assets/js/markerClusterer.js"></script>
 
   <script src="../../../scripts/angular/angular-animate.min.js"></script>
@@ -37,7 +38,11 @@
 </head>
 <body class="no-scroll holder padding-zero has-bottom">
 <div ng-controller="WidgetHomeCtrl as WidgetHome" class="slide content">
-  <div ng-if="WidgetHome.data.design.itemListLayout" ng-include="'templates/' +  WidgetHome.data.design.itemListLayout + '.html'">
+  <div
+      ng-if="WidgetHome.data.settings.defaultView == 'list' && WidgetHome.data.design.itemListLayout"
+      ng-include="'templates/' +  WidgetHome.data.design.itemListLayout + '.html'"></div>
+  <div ng-if="WidgetHome.data.settings.defaultView == 'map'"
+       ng-include="'templates/Map.html'">
   </div>
 </div>
 <div view-switcher=""></div>
