@@ -113,12 +113,13 @@
         replace: true,
         scope: {
           locationData: '=locationData',
+          refreshData: '=refreshData',
           markerCallback: '=markerCallback'
         },
         link: function (scope, elem, attrs) {
           var newClustererMap = '';
           elem.css('min-height', '596px').css('width', '100%');
-          scope.$watch('locationData', function (newValue, oldValue) {
+          scope.$watch('refreshData', function (newValue, oldValue) {
             if (newValue) {
               var mapCenterLng = (scope.locationData && scope.locationData.currentCoordinates && scope.locationData.currentCoordinates.length && scope.locationData.currentCoordinates[0]) ? scope.locationData.currentCoordinates[0] : -87.7679;
               var mapCenterLat = (scope.locationData && scope.locationData.currentCoordinates && scope.locationData.currentCoordinates.length && scope.locationData.currentCoordinates[1]) ? scope.locationData.currentCoordinates[1] : 41.8718;

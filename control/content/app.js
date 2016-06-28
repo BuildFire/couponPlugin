@@ -1,7 +1,7 @@
 'use strict';
 
 (function (angular) {
-  angular.module('couponPluginContent', ['couponPluginModal','couponsContentDirectives','ngRoute', 'ui.bootstrap', 'ui.tinymce','infinite-scroll','ui.sortable'])
+  angular.module('couponPluginContent', ['couponPluginModal','couponsContentDirectives','ngRoute', 'ui.bootstrap', 'ui.tinymce','infinite-scroll','ui.sortable','bngCsv'])
     //injected ngRoute for routing
     .config(['$routeProvider', function ($routeProvider) {
       $routeProvider
