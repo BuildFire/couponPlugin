@@ -3,8 +3,8 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter', 'RankOfLastItem', '$csv',
-      function ($scope, TAG_NAMES,SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem , $csv) {
+    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter', 'RankOfLastItem', '$csv','Utils',
+      function ($scope, TAG_NAMES,SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem , $csv , Utils) {
 
         var ContentHome = this;
         ContentHome.searchValue = "";
@@ -597,12 +597,103 @@
           });
         };
 
+
+
+        /**
+         * ContentHome.getMore is used to load the items
+         */
+        ContentHome.getMore = function () {
+          if (ContentHome.isBusy && !ContentHome.noMore) {
+            return;
+          }
+         // updateSearchOptions();
+          ContentHome.isBusy = true;
+          DataStore.search(searchOptions,TAG_NAMES.COUPON_ITEMS).then(function success(result) {
+            if (result.length <= _limit) {// to indicate there are more
+              ContentHome.noMore = true;
+            }
+            else {
+              result.pop();
+              searchOptions.skip = searchOptions.skip + _limit;
+              ContentHome.noMore = false;
+            }
+            ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
+            ContentHome.isBusy = false;
+          }, function fail() {
+            ContentHome.isBusy = false;
+          });
+        };
+
+
+        function validateCsv(items) {
+          if (!Array.isArray(items) || !items.length) {
+            return false;
+          }
+          return items.every(isValidItem);
+        }
+
         ContentHome.openImportCSVDialog = function () {
-          buildfire.navigation.scrollTop();
+
           $csv.import(headerRow).then(function (rows) {
-            console.log('Rows in Import CSV---------------------', rows);
-          }, function
-              () {
+            ContentHome.loading = true;
+            if (rows && rows.length > 1) {
+
+              var columns = rows.shift();
+
+              for (var _index = 0; _index < headerRow.length; _index++) {
+                console.log('>>>>>>>>>>>>>>>>>',header[headerRow[_index]]);
+                console.log('<<<<<<<<<<<<<<<<<',columns[headerRow[_index]]);
+                if (header[headerRow[_index]] != columns[headerRow[_index]]) {
+                  ContentHome.loading = false;
+                  ContentHome.csvDataInvalid = true;
+                  break;
+                }
+              }
+
+              if (!ContentHome.loading)
+                return;
+
+              var rank = ContentHome.info.data.content.rankOfLastItem || 0;
+              for (var index = 0; index < rows.length; index++) {
+                rank += 10;
+                rows[index].dateCreated = +new Date();
+                rows[index].links = [];
+                rows[index].rank = rank;
+                rows[index].body = "";
+              }
+              if (validateCsv(rows)) {
+                DataStore.insert(rows,TAG_NAMES.COUPON_ITEMS).then(function (data) {
+                  ContentHome.loading = false;
+                  ContentHome.isBusy = false;
+                  ContentHome.items = [];
+                  ContentHome.info.data.content.rankOfLastItem = rank;
+                  ContentHome.getMore();
+                }, function errorHandler(error) {
+                  console.error(error);
+                  ContentHome.loading = false;
+                  $scope.$apply();
+                });
+              } else {
+                ContentHome.loading = false;
+                ContentHome.csvDataInvalid = true;
+                $timeout(function hideCsvDataError() {
+                  ContentHome.csvDataInvalid = false;
+                }, 2000);
+              }
+            }
+            else {
+              ContentHome.loading = false;
+              ContentHome.csvDataInvalid = true;
+              /*
+               $timeout(function hideCsvDataError() {
+               ContentHome.csvDataInvalid = false;
+               }, 2000);*/
+              $scope.$apply();
+            }
+          }, function (error) {
+            ContentHome.loading = false;
+            $scope.apply();
+            //do something on cancel
           });
 
         }
