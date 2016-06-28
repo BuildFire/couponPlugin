@@ -2,9 +2,12 @@
     class="no-scroll holder padding-zero has-bottom has-extra-links has-filter map-layout sticky-bottom-menu"
     ng-controller="WidgetMapCtrl as WidgetMap">
   <div class="scrollable">
-    <div class="google-map" style="height:100%; background:#eef0f0;" ng-if="WidgetMap.data">
+    <div class="google-map" style="height:100%; background:#eef0f0;"
+         ng-if="WidgetMap.data && WidgetMap.locationData.items">
       <div google-map class="google-map-fix"
-           location-data="WidgetMap.locationData" marker-callback="WidgetMap.selectedMarker"></div>
+           location-data="WidgetMap.locationData"
+           marker-callback="WidgetMap.selectedMarker"
+           refresh-data="WidgetMap.refreshData"></div>
     </div>
     <div class="overlay-list coupon layout3 bodyBackgroundTheme active" ng-if="WidgetMap.selectedItem">
       <div class="list-layout">

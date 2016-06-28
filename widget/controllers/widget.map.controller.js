@@ -7,12 +7,13 @@
         var WidgetMap = this;
         WidgetMap.locationData = {};
         WidgetMap.currentDate = +new Date();
+        WidgetMap.refreshData = 1;
         var searchOptions = {
           skip: 0,
           filter: {
             "$and": [{
               "$json.expiresOn": {$gte: WidgetMap.currentDate}
-            }, {"$json.location.coordinates": {$exists : true}}]
+            }, {"$json.location.coordinates": {$exists: true}}]
           }
         };
 
@@ -56,7 +57,8 @@
                 });
               }
               WidgetMap.locationData.items = resultAll;
-              console.log("----------------------", WidgetMap.locationData.items);
+              if (WidgetMap.currentLoggedInUser)
+                WidgetMap.getSavedItems();
             },
             errorAll = function (error) {
               Buildfire.spinner.hide();
@@ -93,15 +95,20 @@
         };
 
         WidgetMap.setSavedItem = function () {
+          var isChanged = false;
           for (var item = 0; item < WidgetMap.locationData.items.length; item++) {
+            console.log("...................bbbb", WidgetMap.locationData.items[item]);
             WidgetMap.locationData.items[item].isSaved = false;
             for (var save in WidgetMap.saved) {
               if (WidgetMap.locationData.items[item].id == WidgetMap.saved[save].data.itemId) {
+                isChanged = true;
                 WidgetMap.locationData.items[item].isSaved = true;
                 WidgetMap.locationData.items[item].savedId = WidgetMap.saved[save].id;
               }
             }
           }
+          if(isChanged)
+            WidgetMap.refreshData = 2;
         };
 
         WidgetMap.getSavedItems = function () {
@@ -112,6 +119,7 @@
           }, result = function (result) {
             Buildfire.spinner.hide();
             WidgetMap.saved = result;
+            console.log("...................", WidgetMap.saved);
             WidgetMap.setSavedItem();
           };
           UserData.search({}, TAG_NAMES.COUPON_SAVED).then(result, err);
@@ -187,6 +195,7 @@
             return;
           }
           WidgetMap.selectedItem = WidgetMap.locationData.items[itemIndex];
+          console.log("...................", WidgetMap.selectedItem);
 
           GeoDistance.getDistance(WidgetMap.locationData.currentCoordinates, [WidgetMap.selectedItem], '').then(function (result) {
             console.log('Distance---------------------', result);
@@ -209,7 +218,6 @@
           if (user) {
             WidgetMap.currentLoggedInUser = user;
             $scope.$apply();
-            WidgetMap.getSavedItems();
           }
         });
 
