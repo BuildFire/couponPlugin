@@ -64,7 +64,7 @@
      infinite-scroll='ContentHome.loadMore("html")'
      infinite-scroll-distance='1'
      data-infinite-container=".infinite-scroll-parent"
-     infinite-scroll-disabled="ContentHome.noMore">
+     infinite-scroll-disabled="ContentHome.noMoreFilter">
    <!--{{ContentHome.filters}}-->
   <div class="d-item square-icon clearfix" ng-repeat="filter in ContentHome.filters">
     <span class="icon icon-menu pull-left cursor-grab"></span>
@@ -155,10 +155,11 @@
   </div>
 </div>
 <hr class="none">
+<div class="infinite-scroll-parent-items" ng-style="ContentHome.items.length>9? {'height': '450px'}:{'height':'100%'}" style=";overflow-y: auto;">
 <div ui-sortable="ContentHome.itemSortableOptions" ng-model="ContentHome.items"
-     infinite-scroll='ContentHome.loadMore("html")'
+     infinite-scroll='ContentHome.loadMoreItems("html")'
       infinite-scroll-distance='1'
-      data-infinite-container=".infinite-scroll-parent"
+      data-infinite-container=".infinite-scroll-parent-items"
       infinite-scroll-disabled="ContentHome.noMore"
       class="draggable-list-view wide-list has-btn links-list" >
   <div class="d-item double-line square-icon clearfix" ng-repeat="item in ContentHome.items">
@@ -189,4 +190,5 @@
       </div>
     </div>
   </div>
+</div>
 </div>

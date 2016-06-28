@@ -67,6 +67,7 @@
          * */
         var tmrDelay = null;
 
+        ContentHome.busyFilter = false;
         ContentHome.busy = false;
         RankOfLastFilter.setRank(0);
         RankOfLastItem.setRank(0);
@@ -301,7 +302,7 @@
             // ContentHome.data.content.filters=null;
             ContentHome.filters = [];
             ContentHome.searchOptions.skip = 0;
-            ContentHome.busy = false;
+            ContentHome.busyFilter = false;
             ContentHome.data.content.sortFilterBy = value;
             ContentHome.loadMore('filter');
           }
@@ -316,7 +317,7 @@
             ContentHome.searchOptionsForItems.skip = 0;
             ContentHome.busy = false;
             ContentHome.data.content.sortItemBy = value;
-            ContentHome.loadMore('items');
+            ContentHome.loadMoreItems('items');
           }
         };
 
@@ -331,7 +332,7 @@
               "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
             }, {"$json.title": {"$regex": '/*'}}]
           }
-          ContentHome.loadMore('items');//, {"$json.title": {"$regex": '/*'}}
+          ContentHome.loadMoreItems('items');//, {"$json.title": {"$regex": '/*'}}
         };
 
         ContentHome.chooseStatus = function (status) {
@@ -379,7 +380,7 @@
           ContentHome.items = [];
           ContentHome.searchOptionsForItems.skip = 0;
 
-          ContentHome.loadMore('items');//, {"$json.title": {"$regex": '/*'}}
+          ContentHome.loadMoreItems('items');//, {"$json.title": {"$regex": '/*'}}
           console.log("-------------------llll", ContentHome.searchOptionsForItems.filter)
         };
 
@@ -437,7 +438,7 @@
           }
           ContentHome.items = [];
           ContentHome.searchOptionsForItems.skip = 0;
-          ContentHome.loadMore('items');
+          ContentHome.loadMoreItems('items');
         }
         /**
          * getSearchOptions(value) is used to get searchOptions with one more key sort which decide the order of sorting.
@@ -493,12 +494,14 @@
         };
 
         ContentHome.loadMore = function (str) {
+          console.log("------------------>>>>>>>>>>>>>>>>>>>>in",str)
+
           Buildfire.spinner.show();
-          if (ContentHome.busy) {
+          if (ContentHome.busyFilter) {
             return;
           }
 
-          ContentHome.busy = true;
+          ContentHome.busyFilter = true;
           if (ContentHome.data && ContentHome.data.content.sortFilterBy) {
             ContentHome.searchOptions = getSearchOptions(ContentHome.data.content.sortFilterBy);
           }else{
@@ -511,12 +514,12 @@
               return console.error('-----------err in getting list-------------', err);
             }
             if (result.length <= SORT_FILTER._limit) {// to indicate there are more
-              ContentHome.noMore = true;
+              ContentHome.noMoreFilter = true;
               Buildfire.spinner.hide();
             } else {
               result.pop();
               ContentHome.searchOptions.skip = ContentHome.searchOptions.skip + SORT_FILTER._limit;
-              ContentHome.noMore = false;
+              ContentHome.noMoreFilter = false;
             }
             var tmpArray=[];
             var lastIndex=result.length;
@@ -527,51 +530,59 @@
             });
 
             ContentHome.filters = ContentHome.filters ? ContentHome.filters.concat(result) : result;
-            ContentHome.busy = false;
-            Buildfire.spinner.hide();
-            $scope.$digest();
-          });
-
-          if (ContentHome.data && ContentHome.data.content.sortItemBy) {
-            ContentHome.searchOptionsForItems = getItemSearchOptions(ContentHome.data.content.sortItemBy);
-          }else{
-            return;
-          }
-          if(str!=='filter')
-            Buildfire.datastore.search(ContentHome.searchOptionsForItems, TAG_NAMES.COUPON_ITEMS, function (err, result) {
-            if (err) {
-              Buildfire.spinner.hide();
-              return console.error('-----------err in getting list-------------', err);
-            }
-            if (result.length <= SORT._limit) {// to indicate there are more
-              ContentHome.noMore = true;
-              Buildfire.spinner.hide();
-            } else {
-              result.pop();
-              ContentHome.searchOptionsForItems.skip = ContentHome.searchOptionsForItems.skip + SORT._limit;
-              ContentHome.noMore = false;
-            }
-            var tmpArray=[];
-            var lastIndex=result.length;
-            result.forEach(function(res,index){
-              tmpArray.push({'title' : res.data.title,
-                rank:index +1,
-                summary : res.data.summary,
-                categories : res.data.Categories.length,
-                expiresOn : res.data.expiresOn,
-                listImage  : res.data.listImage,
-                id:res.id});
-            });
-
-            ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
-            ContentHome.busy = false;
-              console.log("-------------------llll",ContentHome.items )
+            ContentHome.busyFilter = false;
             Buildfire.spinner.hide();
             $scope.$digest();
           });
         };
 
 
+        ContentHome.loadMoreItems = function(str){
+          console.log("------------------>>>>>>>>>>>>>>>>>>>>",str)
+
+          Buildfire.spinner.show();
+          if (ContentHome.busy) {
+            return;
+          }
+          if (ContentHome.data && ContentHome.data.content.sortItemBy) {
+            ContentHome.searchOptionsForItems = getItemSearchOptions(ContentHome.data.content.sortItemBy);
+          }else{
+            return;
+          }
+          ContentHome.busy = true;
+          if(str!=='filter')
+            Buildfire.datastore.search(ContentHome.searchOptionsForItems, TAG_NAMES.COUPON_ITEMS, function (err, result) {
+              if (err) {
+                Buildfire.spinner.hide();
+                return console.error('-----------err in getting list-------------', err);
+              }
+              if (result.length <= SORT._limit) {// to indicate there are more
+                ContentHome.noMore = true;
+                Buildfire.spinner.hide();
+              } else {
+                result.pop();
+                ContentHome.searchOptionsForItems.skip = ContentHome.searchOptionsForItems.skip + SORT._limit;
+                ContentHome.noMore = false;
+              }
+              var tmpArray=[];
+              var lastIndex=result.length;
+              result.forEach(function(res,index){
+                tmpArray.push({'title' : res.data.title,
+                  rank:index +1,
+                  summary : res.data.summary,
+                  categories : res.data.Categories.length,
+                  expiresOn : res.data.expiresOn,
+                  listImage  : res.data.listImage,
+                  id:res.id});
+              });
+
+              ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
+              ContentHome.busy = false;
+              console.log("-------------------llll",ContentHome.items )
+              Buildfire.spinner.hide();
+              $scope.$digest();
+            });
+        }
         /*
          * Call the datastore to save the data object
          */
@@ -664,6 +675,7 @@
                   ContentHome.data.content.sortItemBy=ContentHome.sortItemOptions[0];
                 ContentHome.filters = [];
                 ContentHome.searchOptions.skip = 0;
+                ContentHome.busyFilter = false;
                 ContentHome.busy = false;
                 ContentHome.data.content.selectedFilter = null
                 ContentHome.data.content.selectedStatus = null
@@ -674,6 +686,7 @@
               updateMasterItem(ContentHome.data);
               if (tmrDelay)clearTimeout(tmrDelay);
                 ContentHome.loadMore('js');
+                ContentHome.loadMoreItems('js');
             }
             , error = function (err) {
               if (err && err.code !== STATUS_CODE.NOT_FOUND) {
