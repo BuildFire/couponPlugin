@@ -3,8 +3,8 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter', 'RankOfLastItem',
-      function ($scope, TAG_NAMES,SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem) {
+    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter', 'RankOfLastItem', '$csv',
+      function ($scope, TAG_NAMES,SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem , $csv) {
 
         var ContentHome = this;
         ContentHome.searchValue = "";
@@ -25,6 +25,32 @@
             filterPage: "show"
           }
         };
+
+        var header = {
+              itemTitle : 'Item Title',
+              itemSummary : "Item Summary",
+              itemCategories : "Categories",
+              listImage : 'List Image',
+              images : 'Carousel images',
+              prebodyContent : 'Pre-Redemption Body Content',
+              postbodyContent : 'Post-Redemption Body Content',
+              startDate : 'Start Date',
+              expDate : 'Expiration Date',
+              addressTitle : 'Address Title',
+              couponLocation : 'Coupon Location',
+              webURL : 'Web URL',
+              sendToEmail : 'Send to Email',
+              smsTextNumber : 'SMS Text Number',
+              phoneNumber : 'Phone Number',
+              facebookURL : 'Facebook URL',
+              twitterURL : 'Twitter URL',
+              instagramURL : 'Instagram URL',
+              googlePlusURL : 'Google+ URL',
+              linkedinURL : 'Linkedin URL',
+              mapAddress : 'Map Address'
+            }
+            , headerRow = ["itemTitle", "itemSummary" , "itemCategories" , "listImage", "images", "prebodyContent" , "postbodyContent" , "startDate" , "expDate" , "addressTitle", "couponLocation", "webURL", "sendToEmail", "smsTextNumber", "phoneNumber", "facebookURL", "twitterURL", "instagramURL", "googlePlusURL", "linkedinURL", "mapAddress"];
+
 
         var today = new Date();
         var month = new Date().getMonth() + 1
@@ -571,6 +597,15 @@
           });
         };
 
+        ContentHome.openImportCSVDialog = function () {
+          buildfire.navigation.scrollTop();
+          $csv.import(headerRow).then(function (rows) {
+            console.log('Rows in Import CSV---------------------', rows);
+          }, function
+              () {
+          });
+
+        }
 
         /*
          * Call the datastore to save the data object

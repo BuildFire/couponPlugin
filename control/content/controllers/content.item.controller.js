@@ -421,6 +421,8 @@
                     });
                 };
 
+
+
                 //option for wysiwyg
                 ContentItem.bodyWYSIWYGOptions = {
                     plugins: 'advlist autolink link image lists charmap print preview',
