@@ -23,6 +23,8 @@
     <script src="../../../../scripts/angular/ng-infinite-scroll.custom.js"></script>
     <script src="../../../../scripts/angular/angular-ui-sortable.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+    <script src="assets/js/angular-csv.js"></script>
+    <script src="assets/js/papaparse.js"></script>
     <script src="app.js"></script>
     <script src="enums.js"></script>
     <script src="app.services.js"></script>
@@ -50,6 +52,6 @@
 </style>
 
 <body>
-<div class="content relative slide padding-content-top " ng-view=""></div>
+<div class="content relative slide padding-content-top infinite-scroll-parent infinite-scroll-parent-items" ng-view=""></div>
 </body>
 </html>
