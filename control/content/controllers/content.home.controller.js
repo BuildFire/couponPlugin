@@ -13,7 +13,10 @@
           "content": {
             "carouselImages": [],
             "description": '',
-            "rankOfLastFilter": ''
+            "rankOfLastFilter": '',
+            "rankOfLastItem": '',
+            "sortItemBy": SORT.MANUALLY,
+            "sortFilterBy": SORT_FILTER.MANUALLY,
           },
           "design": {
             "itemListLayout": LAYOUTS.itemListLayout[0].name
@@ -611,9 +614,9 @@
 
 
 
-        /**
+       /* *//**
          * ContentHome.getMore is used to load the items
-         */
+         *//*
         ContentHome.getMore = function () {
           if (ContentHome.isBusy && !ContentHome.noMore) {
             return;
@@ -634,7 +637,7 @@
           }, function fail() {
             ContentHome.isBusy = false;
           });
-        };
+        };*/
 
 
         function validateCsv(items) {
@@ -653,8 +656,6 @@
               var columns = rows.shift();
 
               for (var _index = 0; _index < headerRow.length; _index++) {
-                console.log('>>>>>>>>>>>>>>>>>',header[headerRow[_index]]);
-                console.log('<<<<<<<<<<<<<<<<<',columns[headerRow[_index]]);
                 if (header[headerRow[_index]] != columns[headerRow[_index]]) {
                   ContentHome.loading = false;
                   ContentHome.csvDataInvalid = true;
@@ -665,7 +666,7 @@
               if (!ContentHome.loading)
                 return;
 
-              var rank =  0;
+              var rank =  ContentHome.data.content.rankOfLastItem || 0;
               for (var index = 0; index < rows.length; index++) {
                 rank += 10;
                 rows[index].dateCreated = +new Date();
@@ -685,9 +686,9 @@
                     ContentHome.loading = false;
                     ContentHome.isBusy = false;
                     ContentHome.items = [];
-                    ContentHome.info.data.content.rankOfLastItem = rank;
-                    ContentHome.getMore();
-
+                    ContentHome.data.content.rankOfLastItem = rank;
+                    RankOfLastItem.setRank(rank);
+                    ContentHome.loadMoreItems('js');
                   }
 
                 });
@@ -796,7 +797,7 @@
           var success = function (result) {
               console.info('Init success result:', result);
               ContentHome.data = result.data;
-              if (!ContentHome.data) {
+              if (!ContentHome.data.content) {
                 ContentHome.data = angular.copy(_data);
               } else {
                 if (!ContentHome.data.content)
