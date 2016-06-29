@@ -9,6 +9,7 @@
         WidgetSaved.items = [];
         WidgetSaved.savedItems = {};
         WidgetSaved.hasAtleastOneSavedItem = false;
+        WidgetSaved.listeners = {};
         var searchOptions = {
           skip: 0,
           limit: PAGINATION.itemCount
@@ -89,6 +90,7 @@
             $timeout(function () {
               removeSavedItemModal.close();
             }, 3000);
+            $rootScope.$broadcast("ITEM_SAVED_UPDATED");
 
           }, errorRemove = function () {
             Buildfire.spinner.hide();
@@ -223,6 +225,16 @@
             WidgetSaved.loadMore();
           }
         };
+
+        $scope.$on("$destroy", function () {
+          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>destroyed");
+          for (var i in WidgetSaved.listeners) {
+            if (WidgetSaved.listeners.hasOwnProperty(i)) {
+              WidgetSaved.listeners[i]();
+            }
+          }
+          DataStore.clearListener();
+        });
 
         $scope.$watch(function () {
           return WidgetSaved.keyword;

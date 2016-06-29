@@ -236,6 +236,7 @@
               $timeout(function () {
                 removeSavedModal.close();
               }, 3000);
+              $rootScope.$broadcast("ITEM_SAVED_UPDATED");
 
             }, errorRemove = function () {
               Buildfire.spinner.hide();
@@ -266,6 +267,7 @@
               $timeout(function () {
                 addedCouponModal.close();
               }, 3000);
+              $rootScope.$broadcast("ITEM_SAVED_UPDATED");
 
             }, errorItem = function () {
               Buildfire.spinner.hide();
