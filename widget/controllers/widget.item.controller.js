@@ -9,6 +9,13 @@
 
         var currentView = ViewStack.getCurrentView();
 
+        if (currentView.params && currentView.params.itemId && !currentView.params.stopSwitch) {
+          buildfire.messaging.sendMessageToControl({
+            id: currentView.params.itemId,
+            type: 'OpenItem'
+          });
+        }
+
         WidgetItem.getItemDetails = function () {
           Buildfire.spinner.show();
           var success = function (result) {
