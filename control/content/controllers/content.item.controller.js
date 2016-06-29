@@ -205,6 +205,10 @@
                     var success = function(result){
                           console.log("------------->>>>", result, itemId);
                           ContentItem.item = result;
+                          if (ContentItem.item.data.location && ContentItem.item.data.location.addressTitle) {
+                              ContentItem.currentAddress = ContentItem.item.data.location.addressTitle;
+                              ContentItem.currentCoordinates = ContentItem.item.data.location.coordinates;
+                          }
                           if(!ContentItem.item.data.SelectedCategories)
                               ContentItem.selection =[];
                           else
@@ -259,10 +263,7 @@
                 ContentItem.setLocation = function (data) {
                     console.log('setLocation-------------------method called-----------', data);
                     ContentItem.item.data.location = {
-                        coordinates: {
-                            lng: data.coordinates[0],
-                            lat: data.coordinates[1]
-                        },
+                        coordinates: data.coordinates,
                         addressTitle: data.location
                     };
                     $timeout(function () {
