@@ -1,4 +1,4 @@
-(function (angular, URL, navigator, window, buildfire) {
+(function (angular, URL, navigator) {
     //created bngCsv module
     angular
         .module('bngCsv', ['ui.bootstrap'])
@@ -73,7 +73,7 @@
                             throw ("header should be an array of values");
                         }
                         var items = [];
-                        for (var row = 1; row < rows.length; row++) {
+                        for (var row = 0; row < rows.length; row++) {
                             var item = {};
                             for (var col = 0; col < header.length && col < rows[row].length; col++) {
                                 var key = header[col];
@@ -145,7 +145,6 @@
                                 var url = URL.createObjectURL(blob);
                                 link.setAttribute("href", url);
                                 link.setAttribute("download", name);
-                                //link.setAttribute("target", "_blank");
                                 link.style.visibility = 'hidden';
                                 document.body.appendChild(link);
                                 link.click();
@@ -211,10 +210,8 @@
             ImportCSVPopup.fileData = "";
             ImportCSVPopup.ok = function () {
                 if (ImportCSVPopup.fileData) {
-                    //var json = JSON.parse($csv.csvToJson(ImportCSVPopup.fileData, {header: header}));
-                    var json=window.Papa.parse(ImportCSVPopup.fileData,{header:header});
-                    console.log('Json-------------------------------------------->>>>>>>>>>>>',json);
-                    $modalInstance.close(json.data);
+                    var json = JSON.parse($csv.csvToJson(ImportCSVPopup.fileData, {header: header}));
+                    $modalInstance.close(json);
                 }
                 else {
                     $modalInstance.close();
@@ -224,4 +221,4 @@
                 $modalInstance.dismiss('Dismiss');
             };
         }])
-})(window.angular, window.URL, window.navigator, window, window.buildfire);
+})(window.angular, window.URL, window.navigator);

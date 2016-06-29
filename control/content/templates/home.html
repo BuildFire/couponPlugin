@@ -14,6 +14,14 @@
                   placeholder="WYSIWYG"></textarea>
   </div>
 </div>
+<div class="item clearfix row margin-top-thirty" data-ng-show="ContentHome.csvDataInvalid">
+  <div class="labels col-md-12">
+    <div class="alert alert-warning">
+      <a href="javascript:void(0)" class="close" data-ng-click="ContentHome.csvDataInvalid=false">×</a>
+      <strong>Note!</strong>Uploaded CSV data is incomplete.Title/Summary is required.
+    </div>
+  </div>
+</div>
 <hr class="none">
 <div class="item clearfix row">
   <div class="col-md-2 labels pull-left margin-top-five">
