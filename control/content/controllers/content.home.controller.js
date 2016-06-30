@@ -32,7 +32,7 @@
         var header = {
               title : 'Item Title',
               summary : "Item Summary",
-              SelectedCategories : "SelectedCategories",
+              SelectedCategories : "Selected Categories",
               Categories : "Categories",
               listImage : 'List Image',
               carouselImages : 'Carousel images',
@@ -776,6 +776,25 @@
             return entities;
           }
         }
+
+        function returnCommaSepratedListOfCategories(Categories, selectedCategories){
+          if(selectedCategories.length && Array.isArray(selectedCategories)){
+            var tmpList=""
+            selectedCategories.forEach(function(selCategory){
+              Categories.forEach(function(category){
+                  if(selCategory==category.id){
+                    if(!tmpList)
+                    tmpList=category.title
+                    else
+                      tmpList=tmpList+","+category.title;
+                  }
+              });
+            })
+            return tmpList;
+         }
+
+        }
+
         /**
          * ContentHome.exportCSV() used to export item list data to CSV
          */
@@ -795,7 +814,9 @@
                     delete value.data.body;
 
                     value.data.carouselImages=returnCommaSepratedListOfEntity(value.data.carouselImages,'iconUrl')
-                    value.data.Categories=returnCommaSepratedListOfEntity(value.data.Categories,'title')
+                    value.data.SelectedCategories=returnCommaSepratedListOfCategories(value.data.Categories,value.data.SelectedCategories);
+                    value.data.Categories=returnCommaSepratedListOfEntity(value.data.Categories,'title');
+                    value.data.location=value.data.location.addressTitle;
 
                     items.push(value.data);
                   });
