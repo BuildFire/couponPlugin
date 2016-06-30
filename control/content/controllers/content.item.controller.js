@@ -263,7 +263,10 @@
                 ContentItem.setLocation = function (data) {
                     console.log('setLocation-------------------method called-----------', data);
                     ContentItem.item.data.location = {
-                        coordinates: data.coordinates,
+                        coordinates: {
+                          lng: data.coordinates[0],
+                          lat: data.coordinates[1]
+                        },
                         addressTitle: data.location
                     };
                     $timeout(function () {
