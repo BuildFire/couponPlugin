@@ -262,8 +262,8 @@
                     console.log('setLocation-------------------method called-----------', data);
                     ContentItem.item.data.location = {
                         coordinates: {
-                          lng: data.coordinates[0],
-                          lat: data.coordinates[1]
+                          lng: data.coordinates.lng,
+                          lat: data.coordinates.lat
                         },
                         addressTitle: data.location
                     };
@@ -349,7 +349,7 @@
                                 if (status == google.maps.GeocoderStatus.OK) {
                                     var lat = results[0].geometry.location.lat(),
                                         lng = results[0].geometry.location.lng();
-                                    ContentItem.setLocation({location: firstResult, coordinates: [lng, lat]});
+                                    ContentItem.setLocation({location: firstResult, coordinates: {lng:lng, lat:lat}});
                                     $("#googleMapAutocomplete").blur();
                                 }
                                 else {

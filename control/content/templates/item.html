@@ -127,7 +127,7 @@
            ng-enter="ContentItem.setCoordinates()"
            ng-paste="ContentItem.locationAutocompletePaste()"
            ng-change="ContentItem.clearData()">
-    <div ng-if="ContentItem.currentCoordinates.length" google-map dragged-fn="ContentItem.setDraggedLocation(data)"
+    <div ng-if="ContentItem.currentCoordinates" google-map dragged-fn="ContentItem.setDraggedLocation(data)"
          coordinates="ContentItem.currentCoordinates"
          class="google-map-fix" style="height: 200px; width: 300px"
             ></div>
