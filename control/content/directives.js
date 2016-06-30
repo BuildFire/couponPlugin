@@ -136,7 +136,7 @@
                     google.maps.event.addListener(autocomplete, 'place_changed', function () {
                         var location = autocomplete.getPlace().formatted_address;
                         if (autocomplete.getPlace().geometry) {
-                            var coordinates = [autocomplete.getPlace().geometry.location.lng(), autocomplete.getPlace().geometry.location.lat()];
+                            var coordinates = {lat: autocomplete.getPlace().geometry.location.lat(), lng: autocomplete.getPlace().geometry.location.lng()};
                             scope.setLocationInController({
                                 data: {
                                     location: location,
@@ -215,9 +215,9 @@
                     scope.$watch('coordinates', function (newValue, oldValue) {
                         if (newValue) {
                             scope.coordinates = newValue;
-                            if (scope.coordinates.length) {
+                            if (scope.coordinates) {
                                 var map = new google.maps.Map(elem[0], {
-                                    center: new google.maps.LatLng(scope.coordinates[1], scope.coordinates[0]),
+                                    center: new google.maps.LatLng(scope.coordinates.lat, scope.coordinates.lng),
                                     zoomControl: false,
                                     streetViewControl: false,
                                     mapTypeControl: false,
@@ -225,7 +225,7 @@
                                     mapTypeId: google.maps.MapTypeId.ROADMAP
                                 });
                                 var marker = new google.maps.Marker({
-                                    position: new google.maps.LatLng(scope.coordinates[1], scope.coordinates[0]),
+                                    position: new google.maps.LatLng(scope.coordinates.lat, scope.coordinates.lng),
                                     map: map,
                                     draggable: true
                                 });
