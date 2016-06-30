@@ -264,27 +264,7 @@
               if (Number.isInteger(index)) {
                 ContentHome.filters[index].data.title = response.title;
               } else {
-                ContentHome.filter = {
-                  data: {
-                    title: response.title,
-                    rank: RankOfLastFilter.getRank() + 10,
-                    noOfItems : 0,
-                  }
-                }
-                ContentHome.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 10;
-                RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
-                ContentHome.filters.unshift(ContentHome.filter);
-                Buildfire.datastore.insert(ContentHome.filter.data, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
-                  console.log("Saved", data.id);
-                  ContentHome.isUpdating = false;
-                  ContentHome.filter.id = data.id;
-                  ContentHome.filter.data.title = data.data.title;
-                  if (err) {
-                    ContentHome.isNewItemInserted = false;
-                    return console.error('There was a problem saving your data');
-                  }
-                  $scope.$digest();
-                });
+                  insertFilter(response);
               }
             }
             if (!$scope.$apply)
@@ -294,6 +274,29 @@
           });
         }
 
+        function insertFilter(response){
+          ContentHome.filter = {
+            data: {
+              title: response.title,
+              rank: RankOfLastFilter.getRank() + 10,
+              noOfItems : 0,
+            }
+          }
+          ContentHome.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 10;
+          RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
+          ContentHome.filters.unshift(ContentHome.filter);
+          Buildfire.datastore.insert(ContentHome.filter.data, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
+            console.log("Saved", data.id);
+            ContentHome.isUpdating = false;
+            ContentHome.filter.id = data.id;
+            ContentHome.filter.data.title = data.data.title;
+            if (err) {
+              ContentHome.isNewItemInserted = false;
+              return console.error('There was a problem saving your data');
+            }
+            $scope.$digest();
+          });
+        }
 
         ContentHome.deleteFilter = function (index) {
           Modals.removePopupModal({'item': 'filter'}).then(function (result) {
@@ -667,6 +670,13 @@
           $csv.import(headerRow).then(function (rows) {
             ContentHome.loading = true;
             if (rows && rows.length > 1) {
+              var categoryList=rows[1].Categories.split(',');
+              categoryList.forEach(function(category){
+                var obj={};
+                obj.title=category;
+                insertFilter(obj);
+              })
+
 
               var columns = rows.shift();
 
@@ -682,6 +692,7 @@
                 return;
 
               var rank =  ContentHome.data.content.rankOfLastItem || 0;
+              RankOfLastItem.setRank(rank);
               for (var index = 0; index < rows.length; index++) {
                 rank += 10;
                 rows[index].dateCreated = +new Date();
