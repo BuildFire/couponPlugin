@@ -32,6 +32,7 @@
         var header = {
               title : 'Item Title',
               summary : "Item Summary",
+              SelectedCategories : "SelectedCategories",
               Categories : "Categories",
               listImage : 'List Image',
               carouselImages : 'Carousel images',
@@ -51,7 +52,7 @@
               googlePlusURL : 'Google+ URL',
               linkedinURL : 'Linkedin URL'
             }
-            , headerRow = ["title", "summary" , "Categories" , "listImage", "carouselImages", "preRedemptionText" , "postRedemptionText" , "startOn" , "expiresOn" , "addressTitle", "location", "webURL", "sendToEmail", "smsTextNumber", "phoneNumber", "facebookURL", "twitterURL", "instagramURL", "googlePlusURL", "linkedinURL"];
+            , headerRow = ["title", "summary" ,"SelectedCategories", "Categories" , "listImage", "carouselImages", "preRedemptionText" , "postRedemptionText" , "startOn" , "expiresOn" , "addressTitle", "location", "webURL", "sendToEmail", "smsTextNumber", "phoneNumber", "facebookURL", "twitterURL", "instagramURL", "googlePlusURL", "linkedinURL"];
 
 
         var today = new Date();
@@ -747,6 +748,21 @@
           });
         }
 
+
+        function returnCommaSepratedListOfEntity(entities,param){
+          if(entities.length && Array.isArray(entities)){
+            var tmpURLstr="";
+            entities.forEach(function(entity){
+              if(tmpURLstr)
+                tmpURLstr=tmpURLstr+','+entity[param];
+              else
+                tmpURLstr=entity[param];
+            })
+           return tmpURLstr;
+          }else{
+            return entities;
+          }
+        }
         /**
          * ContentHome.exportCSV() used to export item list data to CSV
          */
@@ -764,6 +780,10 @@
                     delete value.data.links;
                     delete value.data.rank;
                     delete value.data.body;
+
+                    value.data.carouselImages=returnCommaSepratedListOfEntity(value.data.carouselImages,'iconUrl')
+                    value.data.Categories=returnCommaSepratedListOfEntity(value.data.Categories,'title')
+
                     items.push(value.data);
                   });
                   var csv = $csv.jsonToCsv(angular.toJson(items), {
@@ -774,7 +794,7 @@
                 else {
                   ContentHome.getTemplate();
                 }
-                records = [];
+               // records = [];
               });
         };
 
