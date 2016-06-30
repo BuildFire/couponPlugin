@@ -677,7 +677,6 @@
                 insertFilter(obj);
               })
 
-
               var columns = rows.shift();
 
               for (var _index = 0; _index < headerRow.length; _index++) {
@@ -699,6 +698,13 @@
                 rows[index].links = [];
                 rows[index].rank = rank;
                 rows[index].body = "";
+
+                if(rows[index].carouselImages){
+                  rows[index].carouselImages=rows[index].carouselImages.split(',')
+                }
+                //rows[index].body.SelectedCategories
+                //rows[index].body.Categories
+                //rows[index].body.location
               }
               if (validateCsv(rows)) {
 

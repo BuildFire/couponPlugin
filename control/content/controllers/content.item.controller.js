@@ -104,12 +104,34 @@
                     }
                 }
 
+                function updateFilterData(selectedCategories ,categories){
+                    categories.forEach(function(category){
+                        if(selectedCategories){
+                            selectedCategories.forEach(function(selectedCategory){
+                                if(selectedCategory==category.id){
+                                    if(!category.noOfItems)
+                                        category.noOfItems=0;
+                                    category.noOfItems=category.noOfItems+1;
+                                    Buildfire.datastore.update(category.id, category, TAG_NAMES.COUPON_CATEGORIES, function (err) {
+                                        ContentItem.isUpdating = false;
+                                        init();
+                                        if (err)
+                                            return console.error('There was a problem saving your data');
+                                    })
+                                }
+                            })
+                        }
+                    })
+
+                }
+
                 function insertAndUpdate(_item) {
                     updating = true;
                     if (_item.id) {
                         DataStore.update(_item.id, _item.data, TAG_NAMES.COUPON_ITEMS).then(function (data) {
                             console.log('Item updated successfully-----', data);
                             updateMasterItem(data);
+                            updateFilterData(data.data.SelectedCategories,data.data.Categories);
                             updating = false;
                         }, function (err) {
                             console.error('Error: while updating item--:', err);
@@ -190,7 +212,8 @@
                             var lastIndex=result.length;
                             result.forEach(function(res,index){
                                 tmpArray.push({'title' : res.data.title,
-                                    id:res.id});
+                                    id:res.id,
+                                    noOfItems: res.data.noOfItems});
                             });
 
                             ContentItem.item.data.Categories = tmpArray;
