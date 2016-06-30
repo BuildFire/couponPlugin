@@ -18,6 +18,7 @@
             }, {"$json.location.coordinates": {$exists: true}}]
           }
         };
+        var currentDistanceUnit = null;
 
         function getGeoLocation() {
           Buildfire.geo.getCurrentPosition(
@@ -173,6 +174,8 @@
               }
               if (!WidgetMap.data.content)
                 WidgetMap.data.content = {};
+              if (WidgetMap.data.settings.distanceIn)
+                currentDistanceUnit = WidgetMap.data.settings.distanceIn;
               WidgetMap.getAllItems();
             }
             , error = function (err) {
@@ -207,7 +210,7 @@
           WidgetMap.selectedItem = WidgetMap.locationData.items[itemIndex];
           console.log("...................", WidgetMap.selectedItem);
 
-          GeoDistance.getDistance(WidgetMap.locationData.currentCoordinates, [WidgetMap.selectedItem], '').then(function (result) {
+          GeoDistance.getDistance(WidgetMap.locationData.currentCoordinates, [WidgetMap.selectedItem], WidgetMap.data.settings.distanceIn).then(function (result) {
             console.log('Distance---------------------', result);
             if (result.rows.length && result.rows[0].elements.length && result.rows[0].elements[0].distance && result.rows[0].elements[0].distance.text) {
               WidgetMap.selectedItemDistance = result.rows[0].elements[0].distance.text;
@@ -294,6 +297,12 @@
                 WidgetMap.data.content = {};
               if (!WidgetMap.data.settings)
                 WidgetMap.data.settings = {};
+              if (currentDistanceUnit && WidgetMap.data.settings.distanceIn) {
+                if (currentDistanceUnit != WidgetMap.data.settings.distanceIn) {
+                  getItemsDistance(WidgetMap.locationData.items);
+                  currentDistanceUnit = WidgetMap.data.settings.distanceIn;
+                }
+              }
             }
             else if (event && event.tag === TAG_NAMES.COUPON_ITEMS) {
               WidgetMap.getAllItems();
@@ -315,7 +324,6 @@
         });
 
         function getItemsDistance(_items) {
-          console.log('-------------================', _items);
           if (WidgetMap.locationData.currentCoordinates == null) {
             return;
           }
