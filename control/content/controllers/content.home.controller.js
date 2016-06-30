@@ -32,6 +32,7 @@
         var header = {
               title : 'Item Title',
               summary : "Item Summary",
+              SelectedCategories : "Selected Categories",
               Categories : "Categories",
               listImage : 'List Image',
               carouselImages : 'Carousel images',
@@ -51,7 +52,7 @@
               googlePlusURL : 'Google+ URL',
               linkedinURL : 'Linkedin URL'
             }
-            , headerRow = ["title", "summary" , "Categories" , "listImage", "carouselImages", "preRedemptionText" , "postRedemptionText" , "startOn" , "expiresOn" , "addressTitle", "location", "webURL", "sendToEmail", "smsTextNumber", "phoneNumber", "facebookURL", "twitterURL", "instagramURL", "googlePlusURL", "linkedinURL"];
+            , headerRow = ["title", "summary" ,"SelectedCategories", "Categories" , "listImage", "carouselImages", "preRedemptionText" , "postRedemptionText" , "startOn" , "expiresOn" , "addressTitle", "location", "webURL", "sendToEmail", "smsTextNumber", "phoneNumber", "facebookURL", "twitterURL", "instagramURL", "googlePlusURL", "linkedinURL"];
 
 
         var today = new Date();
@@ -263,27 +264,7 @@
               if (Number.isInteger(index)) {
                 ContentHome.filters[index].data.title = response.title;
               } else {
-                ContentHome.filter = {
-                  data: {
-                    title: response.title,
-                    rank: RankOfLastFilter.getRank() + 10,
-                    noOfItems : 0,
-                  }
-                }
-                ContentHome.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 10;
-                RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
-                ContentHome.filters.unshift(ContentHome.filter);
-                Buildfire.datastore.insert(ContentHome.filter.data, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
-                  console.log("Saved", data.id);
-                  ContentHome.isUpdating = false;
-                  ContentHome.filter.id = data.id;
-                  ContentHome.filter.data.title = data.data.title;
-                  if (err) {
-                    ContentHome.isNewItemInserted = false;
-                    return console.error('There was a problem saving your data');
-                  }
-                  $scope.$digest();
-                });
+                  insertFilter(response);
               }
             }
             if (!$scope.$apply)
@@ -293,6 +274,29 @@
           });
         }
 
+        function insertFilter(response){
+          ContentHome.filter = {
+            data: {
+              title: response.title,
+              rank: RankOfLastFilter.getRank() + 10,
+              noOfItems : 0,
+            }
+          }
+          ContentHome.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 10;
+          RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
+          ContentHome.filters.unshift(ContentHome.filter);
+          Buildfire.datastore.insert(ContentHome.filter.data, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
+            console.log("Saved", data.id);
+            ContentHome.isUpdating = false;
+            ContentHome.filter.id = data.id;
+            ContentHome.filter.data.title = data.data.title;
+            if (err) {
+              ContentHome.isNewItemInserted = false;
+              return console.error('There was a problem saving your data');
+            }
+            $scope.$digest();
+          });
+        }
 
         ContentHome.deleteFilter = function (index) {
           Modals.removePopupModal({'item': 'filter'}).then(function (result) {
@@ -306,6 +310,19 @@
                 $scope.$digest();
               });
             }
+          });
+        }
+        ContentHome.showFilter = function (index, itemId, selectedItems, categories) {
+          Modals.showFilterPopupModal({
+            index: index,
+            itemId: itemId,
+            selectedItems: selectedItems,
+            categories: categories
+          }).then(function (response) {
+            if (!$scope.$apply)
+              $scope.$digest();
+          }, function (err) {
+
           });
         }
 
@@ -653,6 +670,12 @@
           $csv.import(headerRow).then(function (rows) {
             ContentHome.loading = true;
             if (rows && rows.length > 1) {
+              var categoryList=rows[1].Categories.split(',');
+              categoryList.forEach(function(category){
+                var obj={};
+                obj.title=category;
+                insertFilter(obj);
+              })
 
               var columns = rows.shift();
 
@@ -668,12 +691,20 @@
                 return;
 
               var rank =  ContentHome.data.content.rankOfLastItem || 0;
+              RankOfLastItem.setRank(rank);
               for (var index = 0; index < rows.length; index++) {
                 rank += 10;
                 rows[index].dateCreated = +new Date();
                 rows[index].links = [];
                 rows[index].rank = rank;
                 rows[index].body = "";
+
+                if(rows[index].carouselImages){
+                  rows[index].carouselImages=rows[index].carouselImages.split(',')
+                }
+                //rows[index].body.SelectedCategories
+                //rows[index].body.Categories
+                //rows[index].body.location
               }
               if (validateCsv(rows)) {
 
@@ -747,6 +778,40 @@
           });
         }
 
+
+        function returnCommaSepratedListOfEntity(entities,param){
+          if(entities.length && Array.isArray(entities)){
+            var tmpURLstr="";
+            entities.forEach(function(entity){
+              if(tmpURLstr)
+                tmpURLstr=tmpURLstr+','+entity[param];
+              else
+                tmpURLstr=entity[param];
+            })
+           return tmpURLstr;
+          }else{
+            return entities;
+          }
+        }
+
+        function returnCommaSepratedListOfCategories(Categories, selectedCategories){
+          if(selectedCategories.length && Array.isArray(selectedCategories)){
+            var tmpList=""
+            selectedCategories.forEach(function(selCategory){
+              Categories.forEach(function(category){
+                  if(selCategory==category.id){
+                    if(!tmpList)
+                    tmpList=category.title
+                    else
+                      tmpList=tmpList+","+category.title;
+                  }
+              });
+            })
+            return tmpList;
+         }
+
+        }
+
         /**
          * ContentHome.exportCSV() used to export item list data to CSV
          */
@@ -764,6 +829,12 @@
                     delete value.data.links;
                     delete value.data.rank;
                     delete value.data.body;
+
+                    value.data.carouselImages=returnCommaSepratedListOfEntity(value.data.carouselImages,'iconUrl')
+                    value.data.SelectedCategories=returnCommaSepratedListOfCategories(value.data.Categories,value.data.SelectedCategories);
+                    value.data.Categories=returnCommaSepratedListOfEntity(value.data.Categories,'title');
+                    value.data.location=value.data.location.addressTitle;
+
                     items.push(value.data);
                   });
                   var csv = $csv.jsonToCsv(angular.toJson(items), {
@@ -774,7 +845,7 @@
                 else {
                   ContentHome.getTemplate();
                 }
-                records = [];
+               // records = [];
               });
         };
 

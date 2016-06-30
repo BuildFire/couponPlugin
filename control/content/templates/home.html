@@ -82,7 +82,7 @@
         <span class="title ellipsis pull-left">{{filter.data.title}}</span>
       </div>
       <div class="col-md-6 padding-right-zero pull-left">
-        <span class="title ellipsis">Includes {{filter.data.items || 0}} Items</span>
+        <span class="title ellipsis">Includes {{filter.data.noOfItems || 0}} Items</span>
       </div>
       <div class="pull-right">
         <span class="btn-icon btn-edit-icon btn-primary" ng-click="ContentHome.addEditFilter(filter, true , $index)"></span>
@@ -185,7 +185,7 @@
       </div>
       <div class="col-md-3 padding-right-zero pull-left">
         <span class="title pull-left ellipsis">Included in <br><a
-            class="text-primary">{{item.data.SelectedCategories.length || 0}} Categories</a></span>
+            class="text-primary" ng-click="ContentHome.showFilter($index, item.id, item.data.SelectedCategories, item.data.Categories)">{{item.data.SelectedCategories.length || 0}} Categories</a></span>
       </div>
       <div class="col-md-3 pull-left padding-right-zero">
         <span
