@@ -45,8 +45,12 @@
                  * */
                 var getInfoInitData = function () {
                     var success = function (result) {
-                          ContentItem.data = result.data;
-                          console.log("============aaaa", ContentItem.data)
+                          ContentItem.data = result;
+                          if(!ContentItem.data.content){
+                              ContentItem.data.content = {
+                                  rankOfLastItem:""
+                              }
+                          }
                       }
                       , error = function (err) {
                               console.error('Error while getting data', err);
