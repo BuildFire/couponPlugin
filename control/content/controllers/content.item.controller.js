@@ -45,8 +45,12 @@
                  * */
                 var getInfoInitData = function () {
                     var success = function (result) {
-                          ContentItem.data = result.data;
-                          console.log("============aaaa", ContentItem.data)
+                          ContentItem.data = result;
+                          if(!ContentItem.data.content){
+                              ContentItem.data.content = {
+                                  rankOfLastItem:""
+                              }
+                          }
                       }
                       , error = function (err) {
                               console.error('Error while getting data', err);
@@ -275,8 +279,8 @@
 
                 ContentItem.setDraggedLocation = function (data) {
                     ContentItem.item.data.address = {
-                        lng: data.coordinates[0],
-                        lat: data.coordinates[1],
+                        lng: data.coordinates.lng,
+                        lat: data.coordinates.lat,
                         aName: data.location
                     };
                     ContentItem.currentAddress = data.location;
