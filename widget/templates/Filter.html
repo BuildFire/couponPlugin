@@ -1,74 +1,81 @@
-
-<div class="no-scroll holder padding-zero has-bottom" ng-controller="WidgetFilterCtrl as WidgetFilter">
-	<div class="scrollable">
-		<div class="coupon filter layout3">
-	  		<div class="form-holder">
-			  	<input type="text" class="border-none form-control bodyTextTheme" placeholder="Enter keywords or phrase">	
-				<span class="clear-icon dangerBackgroundTheme"></span>
-		     	<hr class="small margin-zero">
-			</div>
-			<div class="well well-sm text-center margin-top-twenty margin-left-ten margin-right-ten hidden">
-				<p class="margin-top-ten">No search results found.</p>
-			</div>
-			<div class="filters margin-top-ten">
-				<div class="item active distance">
-					<div class="clearfix">
-						<div class="col-xs-12 pull-left text-left">
-							<span>Distance</span>
-						</div>
-					</div>
-					<div class="filter-content">
-						places range slider
-					</div>
-				</div>
-				<hr class="small">
-				<div class="item active sorting">
-					<div class="clearfix">
-						<div class="col-xs-12 pull-left text-left">
-							<span>Sorting Options</span>
-						</div>
-					</div>
-					<div class="filter-content">
-						<div class="toggle-btns border-radius-four overflow-hidden border-primary">
-						 	<div class="col-xs-6 padding-zero text-center bg-primary primaryBackgroundTheme">
-	                            <a class="whiteTheme">Default</a>
-	                        </div>
-	                        <div class="col-xs-6 padding-zero text-center">
-	                            <a>Closest to Me</a>
-	                        </div>
-	                    </div>
-					</div>
-				</div>
-				<hr class="small">
-				<div class="item active">
-					<div class="clearfix">
-						<div class="col-xs-12 pull-left text-left">
-							<span>Categories</span>
-						</div>
-					</div>
-					<div class="filter-content">
-						<hr class="small">
-						<p class="margin-zero">All Items</p>
-						<hr class="small">
-						<p class="margin-zero text-primary">Clothing</p>
-						<hr class="small">
-						<p class="margin-zero">Food</p>
-						<hr class="small">
-						<p class="margin-zero">Category Title</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="bottom fixed-bottom">
-		<div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch" ng-click="WidgetFilter.back()">Cancel</a>
-		</div>
-		<div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch active">Apply</a>
-		</div>
-		<div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch">Reset</a>
-		</div>
-	</div>
+<div class="no-scroll holder padding-zero has-bottom"
+     ng-controller="WidgetFilterCtrl as WidgetFilter">
+  <div class="scrollable">
+    <div class="coupon filter layout3">
+      <div class="form-holder">
+        <input type="text" class="border-none form-control bodyTextTheme"
+               placeholder="Enter keywords or phrase"
+               ng-model="WidgetFilter.filter.text">
+        <span class="clear-icon dangerBackgroundTheme" ng-if="WidgetFilter.filter.text"></span>
+        <hr class="small margin-zero">
+      </div>
+      <div class="filters margin-top-ten">
+        <div class="item active distance">
+          <div class="clearfix">
+            <div class="col-xs-12 pull-left text-left">
+              <span>Distance</span>
+            </div>
+          </div>
+          <div class="filter-content">
+            <rzslider rz-slider-tpl-url="templates/Slider-Template.html"
+                      rz-slider-floor="WidgetFilter.distanceSlider.floor"
+                      rz-slider-ceil="WidgetFilter.distanceSlider.ceil"
+                      rz-slider-model="WidgetFilter.distanceSlider.min"
+                      rz-slider-high="WidgetFilter.distanceSlider.max"
+                      rz-slider-step="5"
+                      data-ciel-label="{{WidgetFilter.data.settings.showDistanceIn}}"
+                      rz-slider-on-change=""
+                      rz-slider-hide-limit-labels="true"></rzslider>
+          </div>
+        </div>
+        <hr class="small">
+        <div class="item active sorting">
+          <div class="clearfix">
+            <div class="col-xs-12 pull-left text-left">
+              <span>Sorting Options</span>
+            </div>
+          </div>
+          <div class="filter-content">
+            <div
+                class="toggle-btns border-radius-four overflow-hidden border-primary">
+              <div
+                  class="col-xs-6 padding-zero text-center bg-primary primaryBackgroundTheme">
+                <a class="whiteTheme">Default</a>
+              </div>
+              <div class="col-xs-6 padding-zero text-center">
+                <a>Closest to Me</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr class="small">
+        <div class="item active" ng-if="WidgetFilter.categories.length">
+          <div class="clearfix">
+            <div class="col-xs-12 pull-left text-left">
+              <span>Categories</span>
+            </div>
+          </div>
+          <div class="filter-content">
+            <hr class="small">
+            <p class="margin-zero">All Items</p>
+            <span ng-repeat="category in WidgetFilter.categories">
+            <hr class="small">
+						<p class="margin-zero text-primary">{{category.data.title}}</p>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom fixed-bottom">
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch" ng-click="WidgetFilter.back()">Cancel</a>
+    </div>
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch active">Apply</a>
+    </div>
+    <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch">Reset</a>
+    </div>
+  </div>
 </div>
