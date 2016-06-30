@@ -24,8 +24,8 @@
           "settings": {
             "defaultView": "list",
             "distanceIn": "mi",
-            mapView: "show",
-            filterPage: "show"
+            "mapView": "show",
+            "filterPage": "show"
           }
         };
 
@@ -266,7 +266,8 @@
                 ContentHome.filter = {
                   data: {
                     title: response.title,
-                    rank: RankOfLastFilter.getRank() + 10
+                    rank: RankOfLastFilter.getRank() + 10,
+                    noOfItems : 0,
                   }
                 }
                 ContentHome.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 10;
@@ -721,6 +722,93 @@
           });
 
         }
+
+        /**
+         * getRecords function get the  all items from DB
+         * @param searchOption
+         * @param records
+         * @param callback
+         */
+        function getRecords(searchOption, records, callback) {
+          Buildfire.datastore.search(searchOption, TAG_NAMES.COUPON_ITEMS, function (err, result) {
+
+            if (result.length <= SORT._maxLimit) {// to indicate there are more
+              records = records.concat(result);
+              return callback(records);
+            }
+            else {
+              result.pop();
+              searchOption.skip = searchOption.skip + SORT._maxLimit;
+              records = records.concat(result);
+              return getRecords(searchOption, records, callback);
+            }
+          }, function (error) {
+            throw (error);
+          });
+        }
+
+        /**
+         * ContentHome.exportCSV() used to export item list data to CSV
+         */
+        ContentHome.exportCSV = function () {
+          var search = angular.copy(ContentHome.searchOptions);
+          search.skip = 0;
+          search.limit =  SORT._maxLimit + 1;
+          getRecords(search,
+              []
+              , function (data) {
+                if (data && data.length) {
+                  var items = [];
+                  angular.forEach(angular.copy(data), function (value) {
+                    delete value.data.dateCreated;
+                    delete value.data.links;
+                    delete value.data.rank;
+                    delete value.data.body;
+                    items.push(value.data);
+                  });
+                  var csv = $csv.jsonToCsv(angular.toJson(items), {
+                    header: header
+                  });
+                  $csv.download(csv, "Export.csv");
+                }
+                else {
+                  ContentHome.getTemplate();
+                }
+                records = [];
+              });
+        };
+
+        /**
+         * ContentHome.getTemplate() used to download csv template
+         */
+        ContentHome.getTemplate = function () {
+          var templateData = [{
+            title : '',
+            summary : "",
+            Categories : "",
+            listImage : '',
+            carouselImages : '',
+            preRedemptionText : '',
+            postRedemptionText : '',
+            startOn : '',
+            expiresOn : '',
+            addressTitle : '',
+            location : '',
+            webURL : '',
+            sendToEmail : '',
+            smsTextNumber : '',
+            phoneNumber : '',
+            facebookURL : '',
+            twitterURL : '',
+            instagramURL : '',
+            googlePlusURL : '',
+            linkedinURL : ''
+          }];
+          var csv = $csv.jsonToCsv(angular.toJson(templateData), {
+            header: header
+          });
+          $csv.download(csv, "Template.csv");
+        };
 
         /*
          * Call the datastore to save the data object

@@ -164,9 +164,7 @@
                 }
 
                 function init() {
-                    //if ($routeParams.id) {
-                    //}
-                    //else {
+
                         var searchOptions={
                             "filter":{"$json.title": {"$regex": '/*'}},
                             "sort": {"title": 1},
@@ -404,7 +402,8 @@
                             //if index is there it means filter update operation is performed
                             ContentItem.filter = {
                                 title: response.title,
-                                rank: RankOfLastFilter.getRank() + 10
+                                rank: RankOfLastFilter.getRank() + 10,
+                                noOfItems : 0,
                             };
                             //ContentItem.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 1;
                            // RankOfLastFilter.setRank(ContentItem.data.content.rankOfLastFilter);
