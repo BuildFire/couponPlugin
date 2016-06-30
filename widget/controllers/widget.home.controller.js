@@ -13,7 +13,7 @@
             itemListLayout: LAYOUTS.itemListLayout[0].name
           }
         };
-        var currentListLayout = null;
+        var currentListLayout, currentDistanceUnit = null;
         WidgetHome.locationData = {};
         WidgetHome.busy = false;
         WidgetHome.items = [];
@@ -99,7 +99,9 @@
               }
               if (!WidgetHome.data.content)
                 WidgetHome.data.content = {};
-              console.log("==============", WidgetHome.data.design)
+
+              if (WidgetHome.data.settings.distanceIn)
+                currentDistanceUnit = WidgetHome.data.settings.distanceIn;
             }
             , error = function (err) {
               Buildfire.spinner.hide();
@@ -202,6 +204,14 @@
                 WidgetHome.data.design = {};
               if (!WidgetHome.data.content)
                 WidgetHome.data.content = {};
+              if (!WidgetHome.data.settings)
+                WidgetHome.data.settings = {};
+              if (currentDistanceUnit && WidgetHome.data.settings.distanceIn) {
+                if (currentDistanceUnit != WidgetHome.data.settings.distanceIn){
+                  getItemsDistance(WidgetHome.items);
+                  currentDistanceUnit = WidgetHome.data.settings.distanceIn;
+                }
+              }
             }
             else if (event && event.tag === TAG_NAMES.COUPON_ITEMS) {
               WidgetHome.items = [];

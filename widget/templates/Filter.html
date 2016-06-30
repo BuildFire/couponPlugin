@@ -1,5 +1,5 @@
 
-<div class="no-scroll holder padding-zero has-bottom">
+<div class="no-scroll holder padding-zero has-bottom" ng-controller="WidgetFilterCtrl as WidgetFilter">
 	<div class="scrollable">
 		<div class="coupon filter layout3">
 	  		<div class="form-holder">
@@ -62,7 +62,7 @@
 	</div>
 	<div class="bottom fixed-bottom">
 		<div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-			<a class="whiteTheme stretch">Cancel</a>
+			<a class="whiteTheme stretch" ng-click="WidgetFilter.back()">Cancel</a>
 		</div>
 		<div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
 			<a class="whiteTheme stretch active">Apply</a>

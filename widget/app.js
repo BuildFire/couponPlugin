@@ -98,12 +98,14 @@
         link: function (scope, element, attrs) {
           element.attr("src", "../../../styles/media/holder-" + attrs.loadImage + ".gif");
 
-          var elem = $("<img>");
-          elem[0].onload = function () {
-            element.attr("src", attrs.finalSrc);
-            elem.remove();
-          };
-          elem.attr("src", attrs.finalSrc);
+          attrs.$observe('finalSrc', function() {
+            var elem = $("<img>");
+            elem[0].onload = function () {
+              element.attr("src", attrs.finalSrc);
+              elem.remove();
+            };
+            elem.attr("src", attrs.finalSrc);
+          });
         }
       };
     }])
