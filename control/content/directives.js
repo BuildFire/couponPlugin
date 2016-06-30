@@ -253,7 +253,10 @@
                                         scope.draggedGeoData({
                                             data: {
                                                 location: scope.location,
-                                                coordinates: scope.coordinates
+                                                coordinates: {
+                                                   lng: scope.coordinates[0],
+                                                   lat: scope.coordinates[1]
+                                                }
                                             }
                                         });
                                     } else {

@@ -275,8 +275,8 @@
 
                 ContentItem.setDraggedLocation = function (data) {
                     ContentItem.item.data.address = {
-                        lng: data.coordinates[0],
-                        lat: data.coordinates[1],
+                        lng: data.coordinates.lng,
+                        lat: data.coordinates.lat,
                         aName: data.location
                     };
                     ContentItem.currentAddress = data.location;
