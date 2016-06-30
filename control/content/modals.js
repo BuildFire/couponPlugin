@@ -47,6 +47,26 @@
                         removePopupDeferred.reject(err);
                     });
                     return removePopupDeferred.promise;
+                },
+                showFilterPopupModal: function (info) {
+                    var showFilterPopupDeferred = $q.defer();
+                    var showFilterPopupModal = $modal
+                      .open({
+                          templateUrl: './templates/modals/filters.html',
+                          controller: 'ShowFilterPopupCtrl',
+                          controllerAs: 'ShowFilterPopup',
+                          size: 'sm',
+                          resolve:{
+                              Info:function(){return info;},
+                          }
+                      });
+                    showFilterPopupModal.result.then(function (data) {
+                        showFilterPopupDeferred.resolve(data);
+                    }, function (err) {
+                        //do something on cancel
+                        showFilterPopupDeferred.reject(err);
+                    });
+                    return showFilterPopupDeferred.promise;
                 }
 
             };
@@ -81,6 +101,42 @@
             RemovePopup.cancel = function () {
                 $modalInstance.dismiss('no');
             };
-        }]);
+        }]).controller('ShowFilterPopupCtrl', ['$scope', '$modalInstance','Info', 'Buildfire',  function ($scope, $modalInstance, Info, Buildfire) {
+          var ShowFilterPopup = this;
+          ShowFilterPopup.data = {};
+          if(Info && Info.item)
+              $scope.item = Info.item;
+          else
+              $scope.item = '';
+
+          $scope.ok = function () {
+              $modalInstance.close('yes');
+
+          };
+          console.log("KMTKMTKMT", Info);
+          ShowFilterPopup.data = Info;
+          if(!ShowFilterPopup.data.selectedItems)
+          ShowFilterPopup.selection = [];
+          else
+          ShowFilterPopup.selection = ShowFilterPopup.data.selectedItems;
+
+
+          ShowFilterPopup.toggleCategoriesSelection = function toggleCategoriesSelection(category) {
+              var idx = ShowFilterPopup.selection.indexOf(category);
+              // is currently selected
+              if (idx > -1) {
+                  ShowFilterPopup.selection.splice(idx, 1);
+              }
+
+              // is newly selected
+              else {
+                  ShowFilterPopup.selection.push(category);
+              }
+            }
+
+          $scope.cancel = function () {
+              $modalInstance.dismiss('no');
+          };
+      }]);
 
 })(window.angular, window.buildfire);

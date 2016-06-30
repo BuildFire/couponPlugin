@@ -308,6 +308,19 @@
             }
           });
         }
+        ContentHome.showFilter = function (index, itemId, selectedItems, categories) {
+          Modals.showFilterPopupModal({
+            index: index,
+            itemId: itemId,
+            selectedItems: selectedItems,
+            categories: categories
+          }).then(function (response) {
+            if (!$scope.$apply)
+              $scope.$digest();
+          }, function (err) {
+
+          });
+        }
 
         ContentHome.deleteItem = function (index) {
           Modals.removePopupModal({'item': 'item'}).then(function (result) {

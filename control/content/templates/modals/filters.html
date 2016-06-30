@@ -1,7 +1,7 @@
 <!-- Filter Categories Modal -->
 <div class="header clearfix border-bottom-grey">
   <h4 class="margin-zero">Categories</h4>
-  <span class="icon icon-cross2 close-modal" ng-click="closeDialog()"></span>
+  <span class="icon icon-cross2 close-modal" ng-click="cancel()"></span>
 </div>
 <div class="padded clearfix">
   <div class="content row clearfix">
@@ -9,35 +9,10 @@
       <p class="margin-zero">Include this item in the following categories:</p>
     </div>
     <div class="col-xs-12 pull-left">
-      <div
-          class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
-        <input id="nolabel" type="checkbox">
-        <label for="nolabel" class="padding-left-ten">Category Name</label>
-      </div>
-      <div
-          class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
-        <input id="nolabel" type="checkbox">
-        <label for="nolabel" class="padding-left-ten">Category Name</label>
-      </div>
-      <div
-          class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
-        <input id="nolabel" type="checkbox">
-        <label for="nolabel" class="padding-left-ten">Category Name</label>
-      </div>
-      <div
-          class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
-        <input id="nolabel" type="checkbox">
-        <label for="nolabel" class="padding-left-ten">Category Name</label>
-      </div>
-      <div
-          class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
-        <input id="nolabel" type="checkbox">
-        <label for="nolabel" class="padding-left-ten">Category Name</label>
-      </div>
-      <div
-          class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten">
-        <input id="nolabel" type="checkbox">
-        <label for="nolabel" class="padding-left-ten">Category Name</label>
+      <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten" ng-repeat="category in ShowFilterPopup.data.categories">
+        <input id="{{category.id}}" type="checkbox"    ng-checked="ShowFilterPopup.selection.indexOf(category.id) > -1"
+               ng-click="ShowFilterPopup.toggleCategoriesSelection(category.id)">
+        <label for="{{category.id}}" class="item padding-left-ten">{{category.title}}</label>
       </div>
     </div>
   </div>
@@ -45,10 +20,10 @@
 <div class="bottom border-top-grey clearfix">
   <div class="col-md-6 pull-left text-center">
     <a class="text-default default-background-hover transition-third"
-       ng-click="closeDialog('cancel')">Cancel</a>
+       ng-click="cancel()">Cancel</a>
   </div>
   <div class="col-md-6 pull-right text-center border-left-grey">
     <a class="text-danger default-background-hover transition-third"
-       ng-click="closeDialog()">Delete</a>
+       ng-click="ok()">Delete</a>
   </div>
 </div>
