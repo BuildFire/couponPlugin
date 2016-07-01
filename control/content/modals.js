@@ -147,6 +147,7 @@
               // is currently selected
               if (idx > -1) {
                   ShowFilterPopup.selection.splice(idx, 1);
+                  if(category.noOfItems!=0)
                   category.noOfItems= category.noOfItems-1;
               }
 
@@ -158,6 +159,7 @@
               Buildfire.datastore.update(category.id, category, TAG_NAMES.COUPON_CATEGORIES, function (err) {
                   if (err)
                       return console.error('There was a problem saving your data');
+                  $scope.$digest();
               })
             }
 
