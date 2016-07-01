@@ -143,16 +143,22 @@
 
 
           ShowFilterPopup.toggleCategoriesSelection = function toggleCategoriesSelection(category) {
-              var idx = ShowFilterPopup.selection.indexOf(category);
+              var idx = ShowFilterPopup.selection.indexOf(category.id);
               // is currently selected
               if (idx > -1) {
                   ShowFilterPopup.selection.splice(idx, 1);
+                  category.noOfItems= category.noOfItems-1;
               }
 
               // is newly selected
               else {
-                  ShowFilterPopup.selection.push(category);
+                  ShowFilterPopup.selection.push(category.id);
+                  category.noOfItems= category.noOfItems+1;
               }
+              Buildfire.datastore.update(category.id, category, TAG_NAMES.COUPON_CATEGORIES, function (err) {
+                  if (err)
+                      return console.error('There was a problem saving your data');
+              })
             }
 
            $scope.ok = function () {

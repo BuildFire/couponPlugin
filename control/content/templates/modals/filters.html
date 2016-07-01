@@ -11,7 +11,7 @@
     <div class="col-xs-12 pull-left">
       <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten" ng-repeat="category in ShowFilterPopup.data.categories">
         <input id="{{category.id}}" type="checkbox"    ng-checked="ShowFilterPopup.selection.indexOf(category.id) > -1"
-               ng-click="ShowFilterPopup.toggleCategoriesSelection(category.id)">
+               ng-click="ShowFilterPopup.toggleCategoriesSelection(category)">
         <label for="{{category.id}}" class="item padding-left-ten">{{category.title}}</label>
       </div>
     </div>
