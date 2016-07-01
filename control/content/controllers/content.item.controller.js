@@ -69,19 +69,28 @@
                 ContentItem.selection = [];
 
                 ContentItem.toggleCategoriesSelection = function toggleCategoriesSelection(category) {
-                    var idx = ContentItem.selection.indexOf(category);
+                    var idx = ContentItem.selection.indexOf(category.id);
                     // is currently selected
                     if (idx > -1) {
                         ContentItem.selection.splice(idx, 1);
+                        category.noOfItems= category.noOfItems-1;
                     }
 
                     // is newly selected
                     else {
-                        ContentItem.selection.push(category);
+                        ContentItem.selection.push(category.id);
+                        category.noOfItems= category.noOfItems+1;
                     }
+                    Buildfire.datastore.update(category.id, category, TAG_NAMES.COUPON_CATEGORIES, function (err) {
+                        ContentItem.isUpdating = false;
+                        init();
+                        if (err)
+                            return console.error('There was a problem saving your data');
+                    })
                     ContentItem.item.data.SelectedCategories = ContentItem.selection;
                     //insertAndUpdate(ContentItem.item)
                 }
+
                 function isUnChanged(item) {
                     return angular.equals(item, ContentItem.masterItem);
                 }
@@ -104,34 +113,13 @@
                     }
                 }
 
-                function updateFilterData(selectedCategories ,categories){
-                    categories.forEach(function(category){
-                        if(selectedCategories){
-                            selectedCategories.forEach(function(selectedCategory){
-                                if(selectedCategory==category.id){
-                                    if(!category.noOfItems)
-                                        category.noOfItems=0;
-                                    category.noOfItems=category.noOfItems+1;
-                                    Buildfire.datastore.update(category.id, category, TAG_NAMES.COUPON_CATEGORIES, function (err) {
-                                        ContentItem.isUpdating = false;
-                                        init();
-                                        if (err)
-                                            return console.error('There was a problem saving your data');
-                                    })
-                                }
-                            })
-                        }
-                    })
-
-                }
-
                 function insertAndUpdate(_item) {
                     updating = true;
                     if (_item.id) {
                         DataStore.update(_item.id, _item.data, TAG_NAMES.COUPON_ITEMS).then(function (data) {
                             console.log('Item updated successfully-----', data);
                             updateMasterItem(data);
-                            updateFilterData(data.data.SelectedCategories,data.data.Categories);
+                           // updateFilterData(data.data.SelectedCategories,data.data.Categories);
                             updating = false;
                         }, function (err) {
                             console.error('Error: while updating item--:', err);
@@ -389,26 +377,7 @@
                         else if (ContentItem.currentAddress && ContentItem.currentAddress.split(',').length) {
                             console.log('Location found---------------------', ContentItem.currentAddress.split(',').length, ContentItem.currentAddress.split(','));
                             ContentItem.setCoordinates();
-                            /*var geocoder = new google.maps.Geocoder();
-                             geocoder.geocode({
-                             "latLng": {
-                             "lat": parseInt(ContentItem.currentAddress.split(',')[0]),
-                             "lng": parseInt(ContentItem.currentAddress.split(',')[1])
-                             }
-                             }, function (results, status) {
-                             console.log('Got Address based on coordinates--------------------', results, status);
-                             if (status == google.maps.GeocoderStatus.OK) {
-                             var lat = results[0].geometry.location.lat(),
-                             lng = results[0].geometry.location.lng();
-                             ContentItem.setLocation({location: ContentItem.currentAddress, coordinates: [lng, lat]});
-                             $("#googleMapAutocomplete").blur();
-                             }
-                             else {
-                             console.error('' +
-                             'Error else parts of google');
-                             error();
-                             }
-                             });*/
+
                         }
                         else {
                             error();
@@ -432,8 +401,7 @@
                                 rank: RankOfLastFilter.getRank() + 10,
                                 noOfItems : 0,
                             };
-                            //ContentItem.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 1;
-                           // RankOfLastFilter.setRank(ContentItem.data.content.rankOfLastFilter);
+
                             ContentItem.filters.unshift(ContentItem.filter);
                             Buildfire.datastore.insert(ContentItem.filter, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
                                 console.log("Saved", data.id);
