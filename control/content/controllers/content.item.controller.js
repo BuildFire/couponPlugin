@@ -45,11 +45,22 @@
                  * */
                 var getInfoInitData = function () {
                     var success = function (result) {
-                          ContentItem.data = result;
+                          ContentItem.data = result.data;
+                          console.log("+++++++++++++++SSSSSSS", ContentItem.data )
                           if(!ContentItem.data.content){
                               ContentItem.data.content = {
                                   rankOfLastItem:""
                               }
+                          }
+                          if(!ContentItem.data.settings){
+                              ContentItem.data.settings = {
+                                  "defaultView": "list",
+                                  "distanceIn": "mi",
+                                  "mapView": "show",
+                                  "filterPage": "show"}
+                          }
+                          if(!ContentItem.data.design){
+
                           }
                       }
                       , error = function (err) {

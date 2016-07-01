@@ -321,12 +321,17 @@
             itemData: itemData
           }).then(function (response) {
             ContentHome.items = [];
+            ContentHome.filters = []
             ContentHome.isBusy = false;
             ContentHome.searchOptionsForItems.skip = 0;
 
             ContentHome.loadMoreItems('items');//, {"$json.title": {"$regex": '/*'}}
+            ContentHome.loadMore('filter');
+          //  ContentHome.loadMore()
               if (!$scope.$apply)
               $scope.$digest();
+
+
           }, function (err) {
 
           });
