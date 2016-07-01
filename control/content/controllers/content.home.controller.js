@@ -312,14 +312,15 @@
             }
           });
         }
-        ContentHome.showFilter = function (index, itemId, selectedItems, categories) {
+        ContentHome.showFilter = function (index, itemId, selectedItems, categories, itemData) {
           Modals.showFilterPopupModal({
             index: index,
             itemId: itemId,
             selectedItems: selectedItems,
-            categories: categories
+            categories: categories,
+            itemData: itemData
           }).then(function (response) {
-            if (!$scope.$apply)
+              if (!$scope.$apply)
               $scope.$digest();
           }, function (err) {
 

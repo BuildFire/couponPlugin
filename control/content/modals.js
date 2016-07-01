@@ -101,7 +101,7 @@
             RemovePopup.cancel = function () {
                 $modalInstance.dismiss('no');
             };
-        }]).controller('ShowFilterPopupCtrl', ['$scope', '$modalInstance','Info', 'Buildfire',  function ($scope, $modalInstance, Info, Buildfire) {
+        }]).controller('ShowFilterPopupCtrl', ['$scope', '$modalInstance','Info', 'Buildfire', 'TAG_NAMES', 'DataStore', function ($scope, $modalInstance, Info, Buildfire, TAG_NAMES, DataStore) {
           var ShowFilterPopup = this;
           ShowFilterPopup.data = {};
           if(Info && Info.item)
@@ -109,12 +109,33 @@
           else
               $scope.item = '';
 
-          $scope.ok = function () {
-              $modalInstance.close('yes');
 
-          };
           console.log("KMTKMTKMT", Info);
           ShowFilterPopup.data = Info;
+          var searchOptions={
+              "filter":{"$json.title": {"$regex": '/*'}},
+              "sort": {"title": 1},
+              "skip":"0",
+              "limit":"50"
+          };
+
+          Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
+
+              if (err) {
+                  Buildfire.spinner.hide();
+                  return console.error('-----------err in getting list-------------', err);
+              }
+              var tmpArray=[];
+              var lastIndex=result.length;
+              result.forEach(function(res,index){
+                  tmpArray.push({'title' : res.data.title,
+                      id:res.id,
+                      noOfItems: res.data.noOfItems});
+              });
+
+              ShowFilterPopup.data.categories = tmpArray;
+              $scope.$digest();
+          });
           if(!ShowFilterPopup.data.selectedItems)
           ShowFilterPopup.selection = [];
           else
@@ -134,6 +155,18 @@
               }
             }
 
+           $scope.ok = function () {
+              ShowFilterPopup.data.itemData.selectedCategories = ShowFilterPopup.selection;
+              if (ShowFilterPopup.data.itemId) {
+                  DataStore.update(ShowFilterPopup.data.itemId, ShowFilterPopup.data.itemData, TAG_NAMES.COUPON_ITEMS).then(function (data) {
+                      console.log('Item updated successfully-----', data);
+                  }, function (err) {
+                      console.error('Error: while updating item--:', err);
+                  });
+              }
+              $modalInstance.close({status:'yes', selection:ShowFilterPopup.selection});
+
+          };
           $scope.cancel = function () {
               $modalInstance.dismiss('no');
           };
