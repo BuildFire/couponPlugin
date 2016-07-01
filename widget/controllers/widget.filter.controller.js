@@ -8,6 +8,8 @@
 
         WidgetFilter.filter = {};
 
+        WidgetFilter.allSelected = true;
+
         WidgetFilter.back = function () {
           ViewStack.pop();
         };
@@ -27,6 +29,40 @@
             };
           DataStore.search({}, TAG_NAMES.COUPON_CATEGORIES).then(success, error);
         };
+
+        WidgetFilter.setFilter = function () {
+          WidgetFilter.filter.isApplied = true;
+        };
+
+        WidgetFilter.setCategories = function (category, selectAll, index) {
+          console.log("????????????", category, selectAll);
+          if (!WidgetFilter.filter.categories)
+            WidgetFilter.filter.categories = [];
+          if (selectAll) {
+            WidgetFilter.filter.categories = [];
+            WidgetFilter.allSelected = true;
+            for (var i = 0; i < WidgetFilter.categories.length; i++) {
+              WidgetFilter.categories[i].isSelected = false;
+            }
+          }
+          else {
+            if (category.isSelected) {
+              var idx = WidgetFilter.filter.categories.indexOf(category.id);
+              if (idx != -1) {
+                WidgetFilter.filter.categories.splice(idx);
+                WidgetFilter.categories[index].isSelected = false;
+              }
+              if (WidgetFilter.filter.categories.length < 1)
+                WidgetFilter.allSelected = true;
+            } else {
+              WidgetFilter.allSelected = false;
+              WidgetFilter.filter.categories.push(category.id);
+              WidgetFilter.categories[index].isSelected = true;
+            }
+          }
+        };
+
+
         /*
          * Fetch user's data from datastore
          */
