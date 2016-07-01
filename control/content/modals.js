@@ -101,7 +101,7 @@
             RemovePopup.cancel = function () {
                 $modalInstance.dismiss('no');
             };
-        }]).controller('ShowFilterPopupCtrl', ['$scope', '$modalInstance','Info', 'Buildfire', 'TAG_NAMES', 'DataStore', function ($scope, $modalInstance, Info, Buildfire, TAG_NAMES, DataStore) {
+        }]).controller('ShowFilterPopupCtrl', ['$scope','$rootScope', '$modalInstance','Info', 'Buildfire', 'TAG_NAMES', 'DataStore', function ($scope,$rootScope, $modalInstance, Info, Buildfire, TAG_NAMES, DataStore) {
           var ShowFilterPopup = this;
           ShowFilterPopup.data = {};
           if(Info && Info.item)
@@ -159,7 +159,6 @@
               Buildfire.datastore.update(category.id, category, TAG_NAMES.COUPON_CATEGORIES, function (err) {
                   if (err)
                       return console.error('There was a problem saving your data');
-                  $scope.$digest();
               })
             }
 
