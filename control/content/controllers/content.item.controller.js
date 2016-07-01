@@ -46,7 +46,22 @@
                 var getInfoInitData = function () {
                     var success = function (result) {
                           ContentItem.data = result.data;
-                          console.log("============aaaa", ContentItem.data)
+                          console.log("+++++++++++++++SSSSSSS", ContentItem.data )
+                          if(!ContentItem.data.content){
+                              ContentItem.data.content = {
+                                  rankOfLastItem:""
+                              }
+                          }
+                          if(!ContentItem.data.settings){
+                              ContentItem.data.settings = {
+                                  "defaultView": "list",
+                                  "distanceIn": "mi",
+                                  "mapView": "show",
+                                  "filterPage": "show"}
+                          }
+                          if(!ContentItem.data.design){
+
+                          }
                       }
                       , error = function (err) {
                               console.error('Error while getting data', err);
@@ -65,19 +80,28 @@
                 ContentItem.selection = [];
 
                 ContentItem.toggleCategoriesSelection = function toggleCategoriesSelection(category) {
-                    var idx = ContentItem.selection.indexOf(category);
+                    var idx = ContentItem.selection.indexOf(category.id);
                     // is currently selected
                     if (idx > -1) {
                         ContentItem.selection.splice(idx, 1);
+                        category.noOfItems= category.noOfItems-1;
                     }
 
                     // is newly selected
                     else {
-                        ContentItem.selection.push(category);
+                        ContentItem.selection.push(category.id);
+                        category.noOfItems= category.noOfItems+1;
                     }
+                    Buildfire.datastore.update(category.id, category, TAG_NAMES.COUPON_CATEGORIES, function (err) {
+                        ContentItem.isUpdating = false;
+                        init();
+                        if (err)
+                            return console.error('There was a problem saving your data');
+                    })
                     ContentItem.item.data.SelectedCategories = ContentItem.selection;
                     //insertAndUpdate(ContentItem.item)
                 }
+
                 function isUnChanged(item) {
                     return angular.equals(item, ContentItem.masterItem);
                 }
@@ -106,6 +130,7 @@
                         DataStore.update(_item.id, _item.data, TAG_NAMES.COUPON_ITEMS).then(function (data) {
                             console.log('Item updated successfully-----', data);
                             updateMasterItem(data);
+                           // updateFilterData(data.data.SelectedCategories,data.data.Categories);
                             updating = false;
                         }, function (err) {
                             console.error('Error: while updating item--:', err);
@@ -164,9 +189,7 @@
                 }
 
                 function init() {
-                    //if ($routeParams.id) {
-                    //}
-                    //else {
+
                         var searchOptions={
                             "filter":{"$json.title": {"$regex": '/*'}},
                             "sort": {"title": 1},
@@ -188,7 +211,8 @@
                             var lastIndex=result.length;
                             result.forEach(function(res,index){
                                 tmpArray.push({'title' : res.data.title,
-                                    id:res.id});
+                                    id:res.id,
+                                    noOfItems: res.data.noOfItems});
                             });
 
                             ContentItem.item.data.Categories = tmpArray;
@@ -263,7 +287,10 @@
                 ContentItem.setLocation = function (data) {
                     console.log('setLocation-------------------method called-----------', data);
                     ContentItem.item.data.location = {
-                        coordinates: data.coordinates,
+                        coordinates: {
+                          lng: data.coordinates.lng,
+                          lat: data.coordinates.lat
+                        },
                         addressTitle: data.location
                     };
                     $timeout(function () {
@@ -274,8 +301,8 @@
 
                 ContentItem.setDraggedLocation = function (data) {
                     ContentItem.item.data.address = {
-                        lng: data.coordinates[0],
-                        lat: data.coordinates[1],
+                        lng: data.coordinates.lng,
+                        lat: data.coordinates.lat,
                         aName: data.location
                     };
                     ContentItem.currentAddress = data.location;
@@ -348,7 +375,7 @@
                                 if (status == google.maps.GeocoderStatus.OK) {
                                     var lat = results[0].geometry.location.lat(),
                                         lng = results[0].geometry.location.lng();
-                                    ContentItem.setLocation({location: firstResult, coordinates: [lng, lat]});
+                                    ContentItem.setLocation({location: firstResult, coordinates: {lng:lng, lat:lat}});
                                     $("#googleMapAutocomplete").blur();
                                 }
                                 else {
@@ -361,26 +388,7 @@
                         else if (ContentItem.currentAddress && ContentItem.currentAddress.split(',').length) {
                             console.log('Location found---------------------', ContentItem.currentAddress.split(',').length, ContentItem.currentAddress.split(','));
                             ContentItem.setCoordinates();
-                            /*var geocoder = new google.maps.Geocoder();
-                             geocoder.geocode({
-                             "latLng": {
-                             "lat": parseInt(ContentItem.currentAddress.split(',')[0]),
-                             "lng": parseInt(ContentItem.currentAddress.split(',')[1])
-                             }
-                             }, function (results, status) {
-                             console.log('Got Address based on coordinates--------------------', results, status);
-                             if (status == google.maps.GeocoderStatus.OK) {
-                             var lat = results[0].geometry.location.lat(),
-                             lng = results[0].geometry.location.lng();
-                             ContentItem.setLocation({location: ContentItem.currentAddress, coordinates: [lng, lat]});
-                             $("#googleMapAutocomplete").blur();
-                             }
-                             else {
-                             console.error('' +
-                             'Error else parts of google');
-                             error();
-                             }
-                             });*/
+
                         }
                         else {
                             error();
@@ -401,10 +409,10 @@
                             //if index is there it means filter update operation is performed
                             ContentItem.filter = {
                                 title: response.title,
-                                rank: RankOfLastFilter.getRank() + 10
+                                rank: RankOfLastFilter.getRank() + 10,
+                                noOfItems : 0,
                             };
-                            //ContentItem.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 1;
-                           // RankOfLastFilter.setRank(ContentItem.data.content.rankOfLastFilter);
+
                             ContentItem.filters.unshift(ContentItem.filter);
                             Buildfire.datastore.insert(ContentItem.filter, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
                                 console.log("Saved", data.id);

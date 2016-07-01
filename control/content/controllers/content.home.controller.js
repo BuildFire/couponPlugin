@@ -24,14 +24,15 @@
           "settings": {
             "defaultView": "list",
             "distanceIn": "mi",
-            mapView: "show",
-            filterPage: "show"
+            "mapView": "show",
+            "filterPage": "show"
           }
         };
 
         var header = {
               title : 'Item Title',
               summary : "Item Summary",
+              SelectedCategories : "Selected Categories",
               Categories : "Categories",
               listImage : 'List Image',
               carouselImages : 'Carousel images',
@@ -51,7 +52,7 @@
               googlePlusURL : 'Google+ URL',
               linkedinURL : 'Linkedin URL'
             }
-            , headerRow = ["title", "summary" , "Categories" , "listImage", "carouselImages", "preRedemptionText" , "postRedemptionText" , "startOn" , "expiresOn" , "addressTitle", "location", "webURL", "sendToEmail", "smsTextNumber", "phoneNumber", "facebookURL", "twitterURL", "instagramURL", "googlePlusURL", "linkedinURL"];
+            , headerRow = ["title", "summary" ,"SelectedCategories", "Categories" , "listImage", "carouselImages", "preRedemptionText" , "postRedemptionText" , "startOn" , "expiresOn" , "addressTitle", "location", "webURL", "sendToEmail", "smsTextNumber", "phoneNumber", "facebookURL", "twitterURL", "instagramURL", "googlePlusURL", "linkedinURL"];
 
 
         var today = new Date();
@@ -263,26 +264,7 @@
               if (Number.isInteger(index)) {
                 ContentHome.filters[index].data.title = response.title;
               } else {
-                ContentHome.filter = {
-                  data: {
-                    title: response.title,
-                    rank: RankOfLastFilter.getRank() + 10
-                  }
-                }
-                ContentHome.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 10;
-                RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
-                ContentHome.filters.unshift(ContentHome.filter);
-                Buildfire.datastore.insert(ContentHome.filter.data, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
-                  console.log("Saved", data.id);
-                  ContentHome.isUpdating = false;
-                  ContentHome.filter.id = data.id;
-                  ContentHome.filter.data.title = data.data.title;
-                  if (err) {
-                    ContentHome.isNewItemInserted = false;
-                    return console.error('There was a problem saving your data');
-                  }
-                  $scope.$digest();
-                });
+                  insertFilter(response);
               }
             }
             if (!$scope.$apply)
@@ -292,6 +274,29 @@
           });
         }
 
+        function insertFilter(response){
+          ContentHome.filter = {
+            data: {
+              title: response.title,
+              rank: RankOfLastFilter.getRank() + 10,
+              noOfItems : 0,
+            }
+          }
+          ContentHome.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 10;
+          RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
+          ContentHome.filters.unshift(ContentHome.filter);
+          Buildfire.datastore.insert(ContentHome.filter.data, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
+            console.log("Saved", data.id);
+            ContentHome.isUpdating = false;
+            ContentHome.filter.id = data.id;
+            ContentHome.filter.data.title = data.data.title;
+            if (err) {
+              ContentHome.isNewItemInserted = false;
+              return console.error('There was a problem saving your data');
+            }
+            $scope.$digest();
+          });
+        }
 
         ContentHome.deleteFilter = function (index) {
           Modals.removePopupModal({'item': 'filter'}).then(function (result) {
@@ -305,6 +310,30 @@
                 $scope.$digest();
               });
             }
+          });
+        }
+        ContentHome.showFilter = function (index, itemId, selectedItems, categories, itemData) {
+          Modals.showFilterPopupModal({
+            index: index,
+            itemId: itemId,
+            selectedItems: selectedItems,
+            categories: categories,
+            itemData: itemData
+          }).then(function (response) {
+            ContentHome.items = [];
+            ContentHome.filters = []
+            ContentHome.isBusy = false;
+            ContentHome.searchOptionsForItems.skip = 0;
+
+            ContentHome.loadMoreItems('items');//, {"$json.title": {"$regex": '/*'}}
+            ContentHome.loadMore('filter');
+          //  ContentHome.loadMore()
+              if (!$scope.$apply)
+              $scope.$digest();
+
+
+          }, function (err) {
+
           });
         }
 
@@ -652,6 +681,12 @@
           $csv.import(headerRow).then(function (rows) {
             ContentHome.loading = true;
             if (rows && rows.length > 1) {
+              var categoryList=rows[1].Categories.split(',');
+              categoryList.forEach(function(category){
+                var obj={};
+                obj.title=category;
+                insertFilter(obj);
+              })
 
               var columns = rows.shift();
 
@@ -667,12 +702,20 @@
                 return;
 
               var rank =  ContentHome.data.content.rankOfLastItem || 0;
+              RankOfLastItem.setRank(rank);
               for (var index = 0; index < rows.length; index++) {
                 rank += 10;
                 rows[index].dateCreated = +new Date();
                 rows[index].links = [];
                 rows[index].rank = rank;
                 rows[index].body = "";
+
+                if(rows[index].carouselImages){
+                  rows[index].carouselImages=rows[index].carouselImages.split(',')
+                }
+                //rows[index].body.SelectedCategories
+                //rows[index].body.Categories
+                //rows[index].body.location
               }
               if (validateCsv(rows)) {
 
@@ -721,6 +764,133 @@
           });
 
         }
+
+        /**
+         * getRecords function get the  all items from DB
+         * @param searchOption
+         * @param records
+         * @param callback
+         */
+        function getRecords(searchOption, records, callback) {
+          Buildfire.datastore.search(searchOption, TAG_NAMES.COUPON_ITEMS, function (err, result) {
+
+            if (result.length <= SORT._maxLimit) {// to indicate there are more
+              records = records.concat(result);
+              return callback(records);
+            }
+            else {
+              result.pop();
+              searchOption.skip = searchOption.skip + SORT._maxLimit;
+              records = records.concat(result);
+              return getRecords(searchOption, records, callback);
+            }
+          }, function (error) {
+            throw (error);
+          });
+        }
+
+
+        function returnCommaSepratedListOfEntity(entities,param){
+          if(entities.length && Array.isArray(entities)){
+            var tmpURLstr="";
+            entities.forEach(function(entity){
+              if(tmpURLstr)
+                tmpURLstr=tmpURLstr+','+entity[param];
+              else
+                tmpURLstr=entity[param];
+            })
+           return tmpURLstr;
+          }else{
+            return entities;
+          }
+        }
+
+        function returnCommaSepratedListOfCategories(Categories, selectedCategories){
+          if(selectedCategories.length && Array.isArray(selectedCategories)){
+            var tmpList=""
+            selectedCategories.forEach(function(selCategory){
+              Categories.forEach(function(category){
+                  if(selCategory==category.id){
+                    if(!tmpList)
+                    tmpList=category.title
+                    else
+                      tmpList=tmpList+","+category.title;
+                  }
+              });
+            })
+            return tmpList;
+         }
+
+        }
+
+        /**
+         * ContentHome.exportCSV() used to export item list data to CSV
+         */
+        ContentHome.exportCSV = function () {
+          var search = angular.copy(ContentHome.searchOptions);
+          search.skip = 0;
+          search.limit =  SORT._maxLimit + 1;
+          getRecords(search,
+              []
+              , function (data) {
+                if (data && data.length) {
+                  var items = [];
+                  angular.forEach(angular.copy(data), function (value) {
+                    delete value.data.dateCreated;
+                    delete value.data.links;
+                    delete value.data.rank;
+                    delete value.data.body;
+
+                    value.data.carouselImages=returnCommaSepratedListOfEntity(value.data.carouselImages,'iconUrl')
+                    value.data.SelectedCategories=returnCommaSepratedListOfCategories(value.data.Categories,value.data.SelectedCategories);
+                    value.data.Categories=returnCommaSepratedListOfEntity(value.data.Categories,'title');
+                    value.data.location=value.data.location.addressTitle;
+
+                    items.push(value.data);
+                  });
+                  var csv = $csv.jsonToCsv(angular.toJson(items), {
+                    header: header
+                  });
+                  $csv.download(csv, "Export.csv");
+                }
+                else {
+                  ContentHome.getTemplate();
+                }
+               // records = [];
+              });
+        };
+
+        /**
+         * ContentHome.getTemplate() used to download csv template
+         */
+        ContentHome.getTemplate = function () {
+          var templateData = [{
+            title : '',
+            summary : "",
+            Categories : "",
+            listImage : '',
+            carouselImages : '',
+            preRedemptionText : '',
+            postRedemptionText : '',
+            startOn : '',
+            expiresOn : '',
+            addressTitle : '',
+            location : '',
+            webURL : '',
+            sendToEmail : '',
+            smsTextNumber : '',
+            phoneNumber : '',
+            facebookURL : '',
+            twitterURL : '',
+            instagramURL : '',
+            googlePlusURL : '',
+            linkedinURL : ''
+          }];
+          var csv = $csv.jsonToCsv(angular.toJson(templateData), {
+            header: header
+          });
+          $csv.download(csv, "Template.csv");
+        };
 
         /*
          * Call the datastore to save the data object

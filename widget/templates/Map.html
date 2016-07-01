@@ -28,7 +28,9 @@
                   &nbsp;
                 </p>
                 <p class="small ellipsis margin-zero bodyTextTheme">
-                  <i>Exp. {{WidgetMap.selectedItem.data.expiresOn | date}} <span
+                  <i><span ng-if="WidgetMap.selectedItem.data.expiresOn">Exp. {{WidgetMap.selectedItem.data.expiresOn |
+                    date}} </span>
+                    <span
                       class="dot bodyTextBackgroundTheme"></span>{{WidgetMap.selectedItemDistance}}</i>
                 </p>
               </div>

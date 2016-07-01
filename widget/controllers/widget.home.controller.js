@@ -5,6 +5,7 @@
     .controller('WidgetHomeCtrl', ['$scope', 'TAG_NAMES', 'LAYOUTS', 'DataStore', 'PAGINATION', 'Buildfire', 'Location', '$rootScope', 'ViewStack', '$sce', 'UserData', '$modal', '$timeout', 'SORT', 'GeoDistance',
       function ($scope, TAG_NAMES, LAYOUTS, DataStore, PAGINATION, Buildfire, Location, $rootScope, ViewStack, $sce, UserData, $modal, $timeout, SORT, GeoDistance) {
         var WidgetHome = this;
+        WidgetHome.listeners = {};
         $rootScope.deviceHeight = window.innerHeight;
         $rootScope.deviceWidth = window.innerWidth || 320;
         WidgetHome.data = {
@@ -12,7 +13,7 @@
             itemListLayout: LAYOUTS.itemListLayout[0].name
           }
         };
-        var currentListLayout = null;
+        var currentListLayout, currentDistanceUnit = null;
         WidgetHome.locationData = {};
         WidgetHome.busy = false;
         WidgetHome.items = [];
@@ -98,7 +99,9 @@
               }
               if (!WidgetHome.data.content)
                 WidgetHome.data.content = {};
-              console.log("==============", WidgetHome.data.design)
+
+              if (WidgetHome.data.settings.distanceIn)
+                currentDistanceUnit = WidgetHome.data.settings.distanceIn;
             }
             , error = function (err) {
               Buildfire.spinner.hide();
@@ -201,6 +204,14 @@
                 WidgetHome.data.design = {};
               if (!WidgetHome.data.content)
                 WidgetHome.data.content = {};
+              if (!WidgetHome.data.settings)
+                WidgetHome.data.settings = {};
+              if (currentDistanceUnit && WidgetHome.data.settings.distanceIn) {
+                if (currentDistanceUnit != WidgetHome.data.settings.distanceIn){
+                  getItemsDistance(WidgetHome.items);
+                  currentDistanceUnit = WidgetHome.data.settings.distanceIn;
+                }
+              }
             }
             else if (event && event.tag === TAG_NAMES.COUPON_ITEMS) {
               WidgetHome.items = [];
@@ -451,6 +462,10 @@
         $scope.$watch(function () {
           return WidgetHome.items;
         }, getItemsDistance);
+
+        WidgetHome.listeners['ITEM_SAVED_UPDATED'] = $rootScope.$on('ITEM_SAVED_UPDATED', function (e) {
+          WidgetHome.getSavedData(true);
+        });
 
       }])
 })(window.angular, window.buildfire);
