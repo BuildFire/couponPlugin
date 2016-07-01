@@ -40,7 +40,7 @@
               if (!WidgetFilter.data.settings)
                 WidgetFilter.data.settings = {};
               WidgetFilter.getAllCategories();
-              if (WidgetFilter.data.settings && WidgetFilter.data.settings.showDistanceIn == 'mi')
+              if (WidgetFilter.data.settings && WidgetFilter.data.settings.distanceIn == 'mi')
                 WidgetFilter.distanceSlider = {
                   min: 0,
                   max: 300,
