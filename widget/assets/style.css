@@ -522,7 +522,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .map-layout .layout3 .list-layout .list-item-media .list-item-copy{
 	padding:0 !important;
 	margin-top:-3px;
-	min-height:inherit;
+	/*min-height:inherit;*/
 }
 .map-layout .layout3 .list-layout .list-item-media .list-item-copy .copy-holder{
 	position:relative;
