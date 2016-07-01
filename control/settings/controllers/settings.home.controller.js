@@ -7,6 +7,7 @@
       function ($scope, $timeout, DEFAULT_INFO, STATUS_CODE, DataStore, TAG_NAMES) {
         var SettingsHome = this;
         var tmrDelay = null;
+        SettingsHome.couponInfo = {};
 
         function updateMasterItem(data) {
           SettingsHome.masterInfo = angular.copy(data);
