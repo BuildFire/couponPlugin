@@ -156,10 +156,11 @@
             }
 
            $scope.ok = function () {
-              ShowFilterPopup.data.itemData.selectedCategories = ShowFilterPopup.selection;
-              if (ShowFilterPopup.data.itemId) {
+
+               ShowFilterPopup.data.itemData.SelectedCategories = ShowFilterPopup.selection;
+               if (ShowFilterPopup.data.itemId) {
                   DataStore.update(ShowFilterPopup.data.itemId, ShowFilterPopup.data.itemData, TAG_NAMES.COUPON_ITEMS).then(function (data) {
-                      console.log('Item updated successfully-----', data);
+                      console.log('Item updated successfully-----', data, ShowFilterPopup.data.itemData);
                   }, function (err) {
                       console.error('Error: while updating item--:', err);
                   });
