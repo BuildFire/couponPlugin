@@ -320,6 +320,11 @@
             categories: categories,
             itemData: itemData
           }).then(function (response) {
+            ContentHome.items = [];
+            ContentHome.isBusy = false;
+            ContentHome.searchOptionsForItems.skip = 0;
+
+            ContentHome.loadMoreItems('items');//, {"$json.title": {"$regex": '/*'}}
               if (!$scope.$apply)
               $scope.$digest();
           }, function (err) {
