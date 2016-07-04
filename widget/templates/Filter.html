@@ -36,16 +36,27 @@
             </div>
           </div>
           <div class="filter-content">
-            <div
-                class="toggle-btns border-radius-four overflow-hidden border-primary">
-              <div
-                  class="col-xs-6 padding-zero text-center bg-primary primaryBackgroundTheme">
-                <a class="whiteTheme">Default</a>
+            <div class="toggle-btns border-radius-four overflow-hidden">
+              <div ng-click="WidgetFilter.sortOnClosest = false"
+                   class="col-xs-6 padding-zero text-center"
+                   ng-class="WidgetFilter.sortOnClosest ? '' : 'primaryBackgroundTheme'">
+                <a ng-class="WidgetFilter.sortOnClosest ? '' : 'whiteTheme'">Default</a>
               </div>
-              <div class="col-xs-6 padding-zero text-center">
-                <a>Closest to Me</a>
+              <div ng-hide="WidgetFilter.locationData.currentCoordinates == null"
+                   ng-class="!WidgetFilter.sortOnClosest ? '' : 'primaryBackgroundTheme'"
+                   ng-class="WidgetFilter.sortOnClosest ? '' : 'active'"
+                   ng-click="WidgetFilter.sortOnClosest = true" class="col-xs-6 padding-zero text-center">
+                <a ng-class="WidgetFilter.sortOnClosest ? 'whiteTheme' : ''">Closest to Me</a>
+              </div>
+              <div ng-show="WidgetFilter.locationData.currentCoordinates == null"
+                   class="col-xs-6 padding-zero text-center">
+                <a class="opacity-forty" ng-class="WidgetFilter.sortOnClosest ? 'active' : ''">Closest to
+                  Me</a>
               </div>
             </div>
+            <p class="location-share-msg margin-bottom-five margin-top-five" ng-show="WidgetFilter.locationData.currentCoordinates == null">
+              Enable Location sharing to activate Closest to Me.
+            </p>
           </div>
         </div>
         <hr class="small">
@@ -79,7 +90,8 @@
       <a class="whiteTheme stretch active">Apply</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch">Reset</a>
+      <a class="whiteTheme stretch" ng-click="WidgetFilter.resetFilters()">
+        Reset</a>
     </div>
   </div>
 </div>
