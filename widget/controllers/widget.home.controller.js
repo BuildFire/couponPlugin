@@ -13,7 +13,7 @@
             itemListLayout: LAYOUTS.itemListLayout[0].name
           }
         };
-        var currentListLayout, currentDistanceUnit = null;
+        var currentListLayout, currentDistanceUnit,currentSortOrder = null;
         WidgetHome.locationData = {};
         WidgetHome.busy = false;
         WidgetHome.items = [];
@@ -99,7 +99,9 @@
               }
               if (!WidgetHome.data.content)
                 WidgetHome.data.content = {};
-
+              if (WidgetHome.data.content.sortBy) {
+                currentSortOrder = WidgetHome.data.content.sortItemBy;
+              }
               if (WidgetHome.data.settings.distanceIn)
                 currentDistanceUnit = WidgetHome.data.settings.distanceIn;
             }
@@ -206,6 +208,13 @@
                 WidgetHome.data.content = {};
               if (!WidgetHome.data.settings)
                 WidgetHome.data.settings = {};
+              if (event.data.content.sortItemBy && currentSortOrder != event.data.content.sortItemBy) {
+                WidgetHome.data.content.sortItemBy = event.data.content.sortItemBy;
+                WidgetHome.items = [];
+                searchOptions.skip = 0;
+                WidgetHome.busy = false;
+                WidgetHome.loadMore();
+              }
               if (currentDistanceUnit && WidgetHome.data.settings.distanceIn) {
                 if (currentDistanceUnit != WidgetHome.data.settings.distanceIn){
                   getItemsDistance(WidgetHome.items);
@@ -265,8 +274,8 @@
               console.log("error", error)
             };
           console.log("***********", WidgetHome.data.content);
-          if (WidgetHome.data && WidgetHome.data.content && WidgetHome.data.content.sortBy) {
-            searchOptions = WidgetHome.getSearchOptions(WidgetHome.data.content.sortBy);
+          if (WidgetHome.data && WidgetHome.data.content && WidgetHome.data.content.sortItemBy) {
+            searchOptions = WidgetHome.getSearchOptions(WidgetHome.data.content.sortItemBy);
           }
           DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
         };
