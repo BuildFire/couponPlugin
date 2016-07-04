@@ -16,7 +16,7 @@
             "rankOfLastFilter": '',
             "rankOfLastItem": '',
             "sortItemBy": SORT.MANUALLY,
-            "sortFilterBy": SORT_FILTER.MANUALLY,
+            "sortFilterBy": SORT_FILTER.MANUALLY
           },
           "design": {
             "itemListLayout": LAYOUTS.itemListLayout[0].name
@@ -272,16 +272,16 @@
           }, function (err) {
 
           });
-        }
+        };
 
         function insertFilter(response){
           ContentHome.filter = {
             data: {
               title: response.title,
               rank: RankOfLastFilter.getRank() + 10,
-              noOfItems : 0,
+              noOfItems : 0
             }
-          }
+          };
           ContentHome.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 10;
           RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
           ContentHome.filters.unshift(ContentHome.filter);
@@ -311,7 +311,7 @@
               });
             }
           });
-        }
+        };
         ContentHome.showFilter = function (index, itemId, selectedItems, categories, itemData) {
           Modals.showFilterPopupModal({
             index: index,
@@ -321,7 +321,7 @@
             itemData: itemData
           }).then(function (response) {
             ContentHome.items = [];
-            ContentHome.filters = []
+            ContentHome.filters = [];
             ContentHome.isBusy = false;
             ContentHome.searchOptionsForItems.skip = 0;
 
@@ -335,7 +335,7 @@
           }, function (err) {
 
           });
-        }
+        };
 
         ContentHome.deleteItem = function (index) {
           Modals.removePopupModal({'item': 'item'}).then(function (result) {
@@ -350,7 +350,7 @@
               });
             }
           });
-        }
+        };
 
         ContentHome.sortFilterBy = function (value) {
           if (!value) {
@@ -382,20 +382,26 @@
         ContentHome.chooseFilter = function (value, title) {
           ContentHome.data.content.selectedFilter = {"title": title, "id": value};
           ContentHome.data.content.selectedStatus = "All Statuses";
+          ContentHome.searchValue="";
           ContentHome.items = [];
           ContentHome.searchOptionsForItems.skip = 0;
-          ContentHome.searchOptionsForItems.filter = {
-            "$and": [{
-              "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
-            }, {"$json.title": {"$regex": '/*'}}]
-          }
+          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!=='All Categories') {
+            ContentHome.searchOptionsForItems.filter = {
+              "$and": [{
+                "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
+              }, {"$json.title": {"$regex": '/*'}}]
+            };
+          }else{
+            ContentHome.searchOptionsForItems.filter = {"$json.title": {"$regex": '/*'}};
+          };
           ContentHome.loadMoreItems('items');//, {"$json.title": {"$regex": '/*'}}
         };
 
         ContentHome.chooseStatus = function (status) {
+          ContentHome.searchValue ="";
           ContentHome.data.content.selectedStatus = status;
           ContentHome.couponActiveDate = ContentHome.currentDate;
-          if (ContentHome.data.content.selectedFilter) {
+          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!=='All Categories') {
             if (ContentHome.data.content.selectedStatus == 'Active') {
               ContentHome.searchOptionsForItems.filter =
               {
@@ -413,6 +419,13 @@
                     "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
                   }, {"$json.title": {"$regex": '/*'}}]
                 }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
+              }
+            }else if (ContentHome.data.content.selectedStatus == 'All Statuses') {
+              ContentHome.searchOptionsForItems.filter =
+              {
+                "$and": [{
+                  "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
+                }, {"$json.title": {"$regex": '/*'}}]
               }
             }
           } else {
@@ -431,6 +444,9 @@
                 }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
               }
             }
+            else if (ContentHome.data.content.selectedStatus == 'All Statuses') {
+              ContentHome.searchOptionsForItems.filter = {"$json.title": {"$regex": '/*'}};
+            }
           }
 
 
@@ -443,7 +459,8 @@
 
         ContentHome.searchItem = function () {
           ContentHome.couponActiveDate = ContentHome.currentDate;
-          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedStatus) {
+          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!='All Categories' && ContentHome.data.content.selectedStatus && ContentHome.data.content.selectedStatus !== 'All Statuses') {
+
             if (ContentHome.data.content.selectedStatus == 'Active') {
               ContentHome.searchOptionsForItems.filter =
               {
@@ -454,6 +471,7 @@
                 }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
               }
             } else if (ContentHome.data.content.selectedStatus == 'Expired') {
+
               ContentHome.searchOptionsForItems.filter =
               {
                 "$and": [{
@@ -463,7 +481,7 @@
                 }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
               }
             }
-          } else if(ContentHome.data.content.selectedStatus){
+          } else if(ContentHome.data.content.selectedStatus && ContentHome.data.content.selectedStatus!=="All Statuses"){
             if (ContentHome.data.content.selectedStatus == 'Active') {
               ContentHome.searchOptionsForItems.filter =
               {
@@ -479,13 +497,14 @@
                 }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
               }
             }
-          }else if(ContentHome.data.content.selectedFilter){
+          }else if(ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!=='All Categories'){
             ContentHome.searchOptionsForItems.filter = {
               "$and": [{
                 "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
               }, {"$json.title": {"$regex": ContentHome.searchValue}}]
             }
           }else{
+
             ContentHome.searchOptionsForItems.filter = { "$or": [{
               "$json.title": {
                 "$regex": ContentHome.searchValue,
@@ -496,7 +515,7 @@
           ContentHome.items = [];
           ContentHome.searchOptionsForItems.skip = 0;
           ContentHome.loadMoreItems('items');
-        }
+        };
         /**
          * getSearchOptions(value) is used to get searchOptions with one more key sort which decide the order of sorting.
          * @param value is used to filter sort option.
@@ -686,7 +705,7 @@
                 var obj={};
                 obj.title=category;
                 insertFilter(obj);
-              })
+              });
 
               var columns = rows.shift();
 
@@ -887,7 +906,7 @@
             //do something on cancel
           });
 
-        }
+        };
 
         function bulkInserItem(rows,rank){
 
@@ -956,7 +975,7 @@
                 tmpURLstr=tmpURLstr+','+entity[param];
               else
                 tmpURLstr=entity[param];
-            })
+            });
            return tmpURLstr;
           }else{
             return entities;
@@ -965,17 +984,17 @@
 
         function returnCommaSepratedListOfCategories(Categories, selectedCategories){
           if(selectedCategories.length && Array.isArray(selectedCategories)){
-            var tmpList=""
+            var tmpList="";
             selectedCategories.forEach(function(selCategory){
               Categories.forEach(function(category){
                   if(selCategory==category.id){
                     if(!tmpList)
-                    tmpList=category.title
+                    tmpList=category.title;
                     else
                       tmpList=tmpList+","+category.title;
                   }
               });
-            })
+            });
             return tmpList;
          }
 
@@ -1145,9 +1164,9 @@
                 ContentHome.searchOptions.skip = 0;
                 ContentHome.busyFilter = false;
                 ContentHome.busy = false;
-                ContentHome.data.content.selectedFilter = null
-                ContentHome.data.content.selectedStatus = null
-                console.log("-------------------llll", ContentHome.data.content)
+                ContentHome.data.content.selectedFilter = null;
+                ContentHome.data.content.selectedStatus = null;
+                console.log("-------------------llll", ContentHome.data.content);
                 RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter || 0);
                 RankOfLastItem.setRank(ContentHome.data.content.rankOfLastItem || 0);
               }

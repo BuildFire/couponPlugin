@@ -6,7 +6,36 @@
       function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, $modal, $timeout) {
         var WidgetFilter = this;
 
-        WidgetFilter.filter = {};
+        // default value
+        WidgetFilter.filter = {
+          sortOnClosest: false,
+          categories : []
+        };
+
+        WidgetFilter.locationData = {};
+
+        WidgetFilter.allSelected = true;
+
+        function getGeoLocation() {
+          Buildfire.geo.getCurrentPosition(
+            null,
+            function (err, position) {
+              if (err) {
+                console.error(err);
+              }
+              else if (position && position.coords) {
+                $scope.$apply(function () {
+                  WidgetFilter.locationData.currentCoordinates = [position.coords.longitude, position.coords.latitude];
+                  localStorage.setItem('user_location', JSON.stringify(WidgetFilter.locationData.currentCoordinates));
+                  WidgetFilter.refreshData += 1;
+                });
+              }
+              else {
+                getGeoLocation();
+              }
+            }
+          );
+        }
 
         WidgetFilter.back = function () {
           ViewStack.pop();
@@ -27,6 +56,83 @@
             };
           DataStore.search({}, TAG_NAMES.COUPON_CATEGORIES).then(success, error);
         };
+
+        WidgetFilter.setFilter = function () {
+          console.log("==============", WidgetFilter.distanceSlider);
+          WidgetFilter.filter.isApplied = true;
+          WidgetFilter.filter.distanceRange = {
+            min: WidgetFilter.distanceSlider.min,
+            max: WidgetFilter.distanceSlider.max
+          }
+        };
+
+        WidgetFilter.setCategories = function (category, selectAll, index) {
+          if (!WidgetFilter.filter.categories)
+            WidgetFilter.filter.categories = [];
+          if (selectAll) {
+            WidgetFilter.filter.categories = [];
+            WidgetFilter.allSelected = true;
+            for (var i = 0; i < WidgetFilter.categories.length; i++) {
+              WidgetFilter.categories[i].isSelected = false;
+            }
+          }
+          else {
+            if (category.isSelected) {
+              var idx = WidgetFilter.filter.categories.indexOf(category.id);
+              if (idx != -1) {
+                WidgetFilter.filter.categories.splice(idx);
+                WidgetFilter.categories[index].isSelected = false;
+              }
+              if (WidgetFilter.filter.categories.length < 1)
+                WidgetFilter.allSelected = true;
+            } else {
+              WidgetFilter.allSelected = false;
+              WidgetFilter.filter.categories.push(category.id);
+              WidgetFilter.categories[index].isSelected = true;
+            }
+            WidgetFilter.filter.isApplied = true;
+          }
+        };
+
+        WidgetFilter.resetFilters = function () {
+          WidgetFilter.filter.sortOnClosest = false;
+          WidgetFilter.allSelected = true;
+          WidgetFilter.filter.text = null;
+          WidgetFilter.filter.isApplied = false;
+          WidgetFilter.filter.categories = [];
+          WidgetFilter.allSelected = true;
+          for (var i = 0; i < WidgetFilter.categories.length; i++) {
+            WidgetFilter.categories[i].isSelected = false;
+          }
+          if (WidgetFilter.data.settings && WidgetFilter.data.settings.distanceIn == 'mi')
+            WidgetFilter.distanceSlider = {
+              min: 0,
+              max: 300,
+              ceil: 310, //upper limit
+              floor: 0
+            };
+          else
+            WidgetFilter.distanceSlider = {
+              min: 0,
+              max: 483,
+              ceil: 499, //upper limit
+              floor: 0
+            };
+        };
+
+        WidgetFilter.applyFilter = function () {
+          if (WidgetFilter.filter.sortOnClosest || WidgetFilter.filter.categories.length || WidgetFilter.filter.text)
+            WidgetFilter.filter.isApplied = true;
+          ViewStack.push({
+            template: WidgetFilter.data.design.itemListLayout,
+            params: {
+              controller: "WidgetHomeCtrl as WidgetHome",
+              isFilterApplied: WidgetFilter.filter.isApplied,
+              filter: WidgetFilter.filter
+            }
+          });
+        };
+
         /*
          * Fetch user's data from datastore
          */
@@ -60,6 +166,19 @@
               console.error('Error while getting data', err);
             };
           DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
+          // Fetch user location
+
+          if (typeof(Storage) !== "undefined") {
+            var userLocation = localStorage.getItem('user_location');
+            if (userLocation) {
+              WidgetFilter.locationData.currentCoordinates = JSON.parse(userLocation);
+            }
+            else
+              getGeoLocation(); // get data if not in cache
+          }
+          else {
+            getGeoLocation(); // get data if localStorage is not supported
+          }
         };
 
         init();

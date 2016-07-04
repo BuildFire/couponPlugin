@@ -24,7 +24,7 @@
                       rz-slider-high="WidgetFilter.distanceSlider.max"
                       rz-slider-step="5"
                       data-ciel-label="{{WidgetFilter.data.settings.distanceIn}}"
-                      rz-slider-on-change=""
+                      rz-slider-on-change="WidgetFilter.setFilter()"
                       rz-slider-hide-limit-labels="true"></rzslider>
           </div>
         </div>
@@ -36,16 +36,28 @@
             </div>
           </div>
           <div class="filter-content">
-            <div
-                class="toggle-btns border-radius-four overflow-hidden border-primary">
-              <div
-                  class="col-xs-6 padding-zero text-center bg-primary primaryBackgroundTheme">
-                <a class="whiteTheme">Default</a>
+            <div class="toggle-btns border-radius-four overflow-hidden">
+              <div ng-click="WidgetFilter.filter.sortOnClosest = false"
+                   class="col-xs-6 padding-zero text-center"
+                   ng-class="WidgetFilter.filter.sortOnClosest ? '' : 'primaryBackgroundTheme'">
+                <a ng-class="WidgetFilter.filter.sortOnClosest ? '' : 'whiteTheme'">Default</a>
               </div>
-              <div class="col-xs-6 padding-zero text-center">
-                <a>Closest to Me</a>
+              <div ng-hide="WidgetFilter.locationData.currentCoordinates == null"
+                   ng-class="!WidgetFilter.filter.sortOnClosest ? '' : 'primaryBackgroundTheme'"
+                   ng-class="WidgetFilter.filter.sortOnClosest ? '' : 'active'"
+                   ng-click="WidgetFilter.filter.sortOnClosest = true" class="col-xs-6 padding-zero text-center">
+                <a ng-class="WidgetFilter.filter.sortOnClosest ? 'whiteTheme' : ''">Closest to Me</a>
+              </div>
+              <div ng-show="WidgetFilter.locationData.currentCoordinates == null"
+                   class="col-xs-6 padding-zero text-center">
+                <a class="opacity-forty" ng-class="WidgetFilter.filter.sortOnClosest ? 'active' : ''">Closest to
+                  Me</a>
               </div>
             </div>
+            <p class="location-share-msg margin-bottom-five margin-top-five"
+               ng-if="WidgetFilter.locationData.currentCoordinates == null">
+              Enable Location sharing to activate Closest to Me.
+            </p>
           </div>
         </div>
         <hr class="small">
@@ -57,10 +69,14 @@
           </div>
           <div class="filter-content">
             <hr class="small">
-            <p class="margin-zero">All Items</p>
+            <p class="margin-zero"
+               ng-class="WidgetFilter.allSelected?'text-primary':''"
+               ng-click="WidgetFilter.setCategories('ALL', true)">All
+              Items</p>
             <span ng-repeat="category in WidgetFilter.categories">
             <hr class="small">
-						<p class="margin-zero text-primary">{{category.data.title}}</p>
+						<p class="margin-zero" ng-class="category.isSelected?'text-primary':''"
+               ng-click="WidgetFilter.setCategories(category, false, $index)">{{category.data.title}}</p>
             </span>
           </div>
         </div>
@@ -72,10 +88,12 @@
       <a class="whiteTheme stretch" ng-click="WidgetFilter.back()">Cancel</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch active">Apply</a>
+      <a class="whiteTheme stretch active" ng-click="WidgetFilter.applyFilter()">
+        Apply</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch">Reset</a>
+      <a class="whiteTheme stretch" ng-click="WidgetFilter.resetFilters()">
+        Reset</a>
     </div>
   </div>
 </div>

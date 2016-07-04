@@ -172,6 +172,8 @@
                       console.error('Error: while updating item--:', err);
                   });
               }
+               if(!$scope.$$phase)
+               $scope.$digest();
               $modalInstance.close({status:'yes', selection:ShowFilterPopup.selection});
 
           };

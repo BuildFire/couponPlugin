@@ -109,6 +109,7 @@
         <span class="chevron icon-chevron-down pull-right"></span>
       </button>
       <ul class="dropdown-menu extended" role="menu">
+        <li ng-click="ContentHome.chooseFilter('All Categories')"><a>All Categories</a></li>
         <li ng-repeat="filter in ContentHome.filters"  ng-click="ContentHome.chooseFilter(filter.id, filter.data.title)"><a>{{filter.data.title}}</a></li>
       </ul>
     </div>
@@ -122,6 +123,7 @@
         <span class="chevron icon-chevron-down pull-right"></span>
       </button>
       <ul class="dropdown-menu extended" role="menu">
+        <li><a  ng-click="ContentHome.chooseStatus('All Statuses')">All Statuses</a></li>
         <li><a ng-click="ContentHome.chooseStatus('Active')">Active</a></li>
         <li><a ng-click="ContentHome.chooseStatus('Expired')">Expired</a></li>
       </ul>
@@ -185,7 +187,7 @@
       </div>
       <div class="col-md-3 padding-right-zero pull-left">
         <span class="title pull-left ellipsis">Included in <br><a
-            class="text-primary" ng-click="ContentHome.showFilter($index, item.id, item.data.SelectedCategories, item.data.Categories, item.data)">{{::item.data.SelectedCategories.length || 0}} Categories</a></span>
+            class="text-primary" ng-click="ContentHome.showFilter($index, item.id, item.data.SelectedCategories, item.data.Categories, item.data)">{{item.data.SelectedCategories.length || 0}} Categories</a></span>
       </div>
       <div class="col-md-3 pull-left padding-right-zero">
         <span
