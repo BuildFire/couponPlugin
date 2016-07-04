@@ -8,58 +8,68 @@
                 replace: true,
                 scope: {images: '='},
                 link: function (scope, elem, attrs) {
-                    var editor = new buildfire.components.carousel.editor("#carousel");
-                    if(scope.images && scope.images.length>0)
-                        editor.loadItems(scope.images);
-                    // this method will be called when a new item added to the list
-                    editor.onAddItems = function (items) {
-                        if (!scope.images)
-                            scope.images = [];
-                        $timeout(function(){
-                            scope.$apply(function () {
-                                scope.images.push.apply(scope.images, items);
-                            });
-                        },0);
-                    };
-                    // this method will be called when an item deleted from the list
-                    editor.onDeleteItem = function (item, index) {
-                        $timeout(function(){
-                            scope.$apply(function () {
-                                scope.images.splice(index, 1);
-                            });
-                        },0);
-                    };
-                    // this method will be called when you edit item details
-                    editor.onItemChange = function (item, index) {
-                        $timeout(function(){
-                            scope.$apply(function () {
-                                scope.images.splice(index, 1, item);
-                            });
-                        },0);
-                    };
-                    // this method will be called when you change the order of items
-                    editor.onOrderChange = function (item, oldIndex, newIndex) {
-                        $timeout(function(){
-                            scope.$apply(function () {
-                                var items = scope.images;
+                    function initCarousel(){
+                        var editor = new buildfire.components.carousel.editor("#carousel");
+                        if(scope.images && scope.images.length>0)
+                            editor.loadItems(scope.images);
+                        // this method will be called when a new item added to the list
+                        editor.onAddItems = function (items) {
+                            if (!scope.images)
+                                scope.images = [];
+                            $timeout(function(){
+                                scope.$apply(function () {
+                                    scope.images.push.apply(scope.images, items);
+                                });
+                            },0);
+                        };
+                        // this method will be called when an item deleted from the list
+                        editor.onDeleteItem = function (item, index) {
+                            $timeout(function(){
+                                scope.$apply(function () {
+                                    scope.images.splice(index, 1);
+                                });
+                            },0);
+                        };
+                        // this method will be called when you edit item details
+                        editor.onItemChange = function (item, index) {
+                            $timeout(function(){
+                                scope.$apply(function () {
+                                    scope.images.splice(index, 1, item);
+                                });
+                            },0);
+                        };
+                        // this method will be called when you change the order of items
+                        editor.onOrderChange = function (item, oldIndex, newIndex) {
+                            $timeout(function(){
+                                scope.$apply(function () {
+                                    var items = scope.images;
 
-                                var tmp = items[oldIndex];
+                                    var tmp = items[oldIndex];
 
-                                if (oldIndex < newIndex) {
-                                    for (var i = oldIndex + 1; i <= newIndex; i++) {
-                                        items[i - 1] = items[i];
+                                    if (oldIndex < newIndex) {
+                                        for (var i = oldIndex + 1; i <= newIndex; i++) {
+                                            items[i - 1] = items[i];
+                                        }
+                                    } else {
+                                        for (var i = oldIndex - 1; i >= newIndex; i--) {
+                                            items[i + 1] = items[i];
+                                        }
                                     }
-                                } else {
-                                    for (var i = oldIndex - 1; i >= newIndex; i--) {
-                                        items[i + 1] = items[i];
-                                    }
-                                }
-                                items[newIndex] = tmp;
+                                    items[newIndex] = tmp;
 
-                                scope.images = items;
-                            });
-                        },0);
-                    };
+                                    scope.images = items;
+                                });
+                            },0);
+                        };
+                    }
+                    initCarousel();
+                    scope.$watch("images", function (newVal, oldVal) {
+                        if (newVal) {
+                            if (scope.images) {
+                                initCarousel();
+                            }
+                        }
+                    });
                 }
             };
         }])
