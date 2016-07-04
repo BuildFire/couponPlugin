@@ -37,24 +37,25 @@
           </div>
           <div class="filter-content">
             <div class="toggle-btns border-radius-four overflow-hidden">
-              <div ng-click="WidgetFilter.sortOnClosest = false"
+              <div ng-click="WidgetFilter.filter.sortOnClosest = false"
                    class="col-xs-6 padding-zero text-center"
-                   ng-class="WidgetFilter.sortOnClosest ? '' : 'primaryBackgroundTheme'">
-                <a ng-class="WidgetFilter.sortOnClosest ? '' : 'whiteTheme'">Default</a>
+                   ng-class="WidgetFilter.filter.sortOnClosest ? '' : 'primaryBackgroundTheme'">
+                <a ng-class="WidgetFilter.filter.sortOnClosest ? '' : 'whiteTheme'">Default</a>
               </div>
               <div ng-hide="WidgetFilter.locationData.currentCoordinates == null"
-                   ng-class="!WidgetFilter.sortOnClosest ? '' : 'primaryBackgroundTheme'"
-                   ng-class="WidgetFilter.sortOnClosest ? '' : 'active'"
-                   ng-click="WidgetFilter.sortOnClosest = true" class="col-xs-6 padding-zero text-center">
-                <a ng-class="WidgetFilter.sortOnClosest ? 'whiteTheme' : ''">Closest to Me</a>
+                   ng-class="!WidgetFilter.filter.sortOnClosest ? '' : 'primaryBackgroundTheme'"
+                   ng-class="WidgetFilter.filter.sortOnClosest ? '' : 'active'"
+                   ng-click="WidgetFilter.filter.sortOnClosest = true" class="col-xs-6 padding-zero text-center">
+                <a ng-class="WidgetFilter.filter.sortOnClosest ? 'whiteTheme' : ''">Closest to Me</a>
               </div>
               <div ng-show="WidgetFilter.locationData.currentCoordinates == null"
                    class="col-xs-6 padding-zero text-center">
-                <a class="opacity-forty" ng-class="WidgetFilter.sortOnClosest ? 'active' : ''">Closest to
+                <a class="opacity-forty" ng-class="WidgetFilter.filter.sortOnClosest ? 'active' : ''">Closest to
                   Me</a>
               </div>
             </div>
-            <p class="location-share-msg margin-bottom-five margin-top-five" ng-show="WidgetFilter.locationData.currentCoordinates == null">
+            <p class="location-share-msg margin-bottom-five margin-top-five"
+               ng-if="WidgetFilter.locationData.currentCoordinates == null">
               Enable Location sharing to activate Closest to Me.
             </p>
           </div>
@@ -87,7 +88,8 @@
       <a class="whiteTheme stretch" ng-click="WidgetFilter.back()">Cancel</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch active">Apply</a>
+      <a class="whiteTheme stretch active" ng-click="WidgetFilter.applyFilter()">
+        Apply</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch" ng-click="WidgetFilter.resetFilters()">

@@ -6,11 +6,13 @@
       function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, $modal, $timeout) {
         var WidgetFilter = this;
 
-        WidgetFilter.filter = {};
+        // default value
+        WidgetFilter.filter = {
+          sortOnClosest: false,
+          categories : []
+        };
 
         WidgetFilter.locationData = {};
-
-        WidgetFilter.sortOnClosest = false; // default value
 
         WidgetFilter.allSelected = true;
 
@@ -56,7 +58,12 @@
         };
 
         WidgetFilter.setFilter = function () {
+          console.log("==============", WidgetFilter.distanceSlider);
           WidgetFilter.filter.isApplied = true;
+          WidgetFilter.filter.distanceRange = {
+            min: WidgetFilter.distanceSlider.min,
+            max: WidgetFilter.distanceSlider.max
+          }
         };
 
         WidgetFilter.setCategories = function (category, selectAll, index) {
@@ -83,11 +90,12 @@
               WidgetFilter.filter.categories.push(category.id);
               WidgetFilter.categories[index].isSelected = true;
             }
+            WidgetFilter.filter.isApplied = true;
           }
         };
 
         WidgetFilter.resetFilters = function () {
-          WidgetFilter.sortOnClosest = false;
+          WidgetFilter.filter.sortOnClosest = false;
           WidgetFilter.allSelected = true;
           WidgetFilter.filter.text = null;
           WidgetFilter.filter.isApplied = false;
@@ -112,6 +120,18 @@
             };
         };
 
+        WidgetFilter.applyFilter = function () {
+          if (WidgetFilter.filter.sortOnClosest || WidgetFilter.filter.categories.length || WidgetFilter.filter.text)
+            WidgetFilter.filter.isApplied = true;
+          ViewStack.push({
+            template: WidgetFilter.data.design.itemListLayout,
+            params: {
+              controller: "WidgetHomeCtrl as WidgetHome",
+              isFilterApplied: WidgetFilter.filter.isApplied,
+              filter: WidgetFilter.filter
+            }
+          });
+        };
 
         /*
          * Fetch user's data from datastore
