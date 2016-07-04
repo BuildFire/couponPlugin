@@ -20,6 +20,7 @@
         $rootScope.$on('FILTER_ITEMS', function (e, view) {
           if (view && view.isFilterApplied) {
             WidgetHome.isFilterApplied = true;
+            WidgetHome.getItems(view.filter)
           }
         });
 
@@ -256,7 +257,7 @@
 
         DataStore.onUpdate().then(null, null, onUpdateCallback);
 
-        WidgetHome.getItems = function () {
+        WidgetHome.getItems = function (filter) {
           Buildfire.spinner.show();
           var successAll = function (resultAll) {
               Buildfire.spinner.hide();
@@ -283,7 +284,28 @@
           if (WidgetHome.data && WidgetHome.data.content && WidgetHome.data.content.sortItemBy) {
             searchOptions = WidgetHome.getSearchOptions(WidgetHome.data.content.sortItemBy);
           }
-          DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
+          if(filter){
+            var itemFilter;
+            if(filter.categories && filter.categories.length){
+              searchOptions= {
+                skip: 0,
+                filter: {
+                  "$and": [{
+                    "$or": [{
+                      "$json.expiresOn": {$gte: WidgetHome.currentDate}
+                    }, {"$json.expiresOn": ""}]
+                  }, {"$json.location.coordinates": {$exists: true}}]
+                }
+              }
+              itemFilter = {'$json.SelectedCategories': {'$in': filter.categories}};
+              searchOptions.filter.$and.push(itemFilter);
+              WidgetHome.items=[];
+            }
+            DataStore.search(searchOptions  , TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
+          }else{
+            DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
+          }
+
         };
 
         WidgetHome.loadMore = function () {
