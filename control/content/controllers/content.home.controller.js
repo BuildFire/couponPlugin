@@ -382,20 +382,26 @@
         ContentHome.chooseFilter = function (value, title) {
           ContentHome.data.content.selectedFilter = {"title": title, "id": value};
           ContentHome.data.content.selectedStatus = "All Statuses";
+          ContentHome.searchValue="";
           ContentHome.items = [];
           ContentHome.searchOptionsForItems.skip = 0;
-          ContentHome.searchOptionsForItems.filter = {
-            "$and": [{
-              "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
-            }, {"$json.title": {"$regex": '/*'}}]
+          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!=='All Categories') {
+            ContentHome.searchOptionsForItems.filter = {
+              "$and": [{
+                "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
+              }, {"$json.title": {"$regex": '/*'}}]
+            };
+          }else{
+            ContentHome.searchOptionsForItems.filter = {"$json.title": {"$regex": '/*'}};
           };
           ContentHome.loadMoreItems('items');//, {"$json.title": {"$regex": '/*'}}
         };
 
         ContentHome.chooseStatus = function (status) {
+          ContentHome.searchValue ="";
           ContentHome.data.content.selectedStatus = status;
           ContentHome.couponActiveDate = ContentHome.currentDate;
-          if (ContentHome.data.content.selectedFilter) {
+          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!=='All Categories') {
             if (ContentHome.data.content.selectedStatus == 'Active') {
               ContentHome.searchOptionsForItems.filter =
               {
@@ -413,6 +419,13 @@
                     "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
                   }, {"$json.title": {"$regex": '/*'}}]
                 }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
+              }
+            }else if (ContentHome.data.content.selectedStatus == 'All Statuses') {
+              ContentHome.searchOptionsForItems.filter =
+              {
+                "$and": [{
+                  "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
+                }, {"$json.title": {"$regex": '/*'}}]
               }
             }
           } else {
@@ -431,6 +444,9 @@
                 }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
               }
             }
+            else if (ContentHome.data.content.selectedStatus == 'All Statuses') {
+              ContentHome.searchOptionsForItems.filter = {"$json.title": {"$regex": '/*'}};
+            }
           }
 
 
@@ -443,7 +459,8 @@
 
         ContentHome.searchItem = function () {
           ContentHome.couponActiveDate = ContentHome.currentDate;
-          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedStatus) {
+          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!='All Categories' && ContentHome.data.content.selectedStatus && ContentHome.data.content.selectedStatus !== 'All Statuses') {
+
             if (ContentHome.data.content.selectedStatus == 'Active') {
               ContentHome.searchOptionsForItems.filter =
               {
@@ -454,6 +471,7 @@
                 }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
               }
             } else if (ContentHome.data.content.selectedStatus == 'Expired') {
+
               ContentHome.searchOptionsForItems.filter =
               {
                 "$and": [{
@@ -463,7 +481,7 @@
                 }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
               }
             }
-          } else if(ContentHome.data.content.selectedStatus){
+          } else if(ContentHome.data.content.selectedStatus && ContentHome.data.content.selectedStatus!=="All Statuses"){
             if (ContentHome.data.content.selectedStatus == 'Active') {
               ContentHome.searchOptionsForItems.filter =
               {
@@ -479,13 +497,14 @@
                 }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
               }
             }
-          }else if(ContentHome.data.content.selectedFilter){
+          }else if(ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!=='All Categories'){
             ContentHome.searchOptionsForItems.filter = {
               "$and": [{
                 "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
               }, {"$json.title": {"$regex": ContentHome.searchValue}}]
             }
           }else{
+
             ContentHome.searchOptionsForItems.filter = { "$or": [{
               "$json.title": {
                 "$regex": ContentHome.searchValue,
