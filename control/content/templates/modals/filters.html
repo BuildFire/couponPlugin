@@ -9,7 +9,7 @@
       <p class="margin-zero">Include this item in the following categories:</p>
     </div>
     <div class="col-xs-12 pull-left">
-      <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten" ng-repeat="category in ShowFilterPopup.data.categories">
+      <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten" ng-repeat="category in ShowFilterPopup.data.categories track by $index">
         <input id="{{category.id}}" type="checkbox"    ng-checked="ShowFilterPopup.selection.indexOf(category.id) > -1"
                ng-click="ShowFilterPopup.toggleCategoriesSelection(category)">
         <label for="{{category.id}}" class="item padding-left-ten">{{category.title}}</label>
