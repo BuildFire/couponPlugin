@@ -34,7 +34,7 @@
     <div class="col-xs-12 pull-left padding-zero margin-bottom-ten">
       <a class="text-success" ng-click="ContentItem.addFilter()">Add New Category</a>
     </div>
-    <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten" ng-repeat="category in ContentItem.item.data.Categories">
+    <div class="checkbox checkbox-primary no-label col-xs-6 margin-top-zero margin-bottom-ten" ng-repeat="category in ContentItem.item.data.Categories track by $index">
       <input id="{{category.id}}" type="checkbox"    ng-checked="ContentItem.selection.indexOf(category.id) > -1"
              ng-click="ContentItem.toggleCategoriesSelection(category)">
       <label for="{{category.id}}" class="item padding-left-ten">{{category.title}}</label>
@@ -64,6 +64,7 @@
 </div>
 <hr class="none">
     <div id="carousel" carousel-component images="ContentItem.item.data.carouselImages"></div>
+        {{ContentItem.item.data.carouselImages.length}}
 <hr class="none">
 <div class="item clearfix row">
   <div class="col-md-12 labels pull-left">

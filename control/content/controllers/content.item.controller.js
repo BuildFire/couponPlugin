@@ -233,10 +233,13 @@
                               ContentItem.currentAddress = ContentItem.item.data.location.addressTitle;
                               ContentItem.currentCoordinates = ContentItem.item.data.location.coordinates;
                           }
-                          if(!ContentItem.item.data.SelectedCategories)
+                          if(!ContentItem.item.data.SelectedCategories){
                               ContentItem.selection =[];
-                          else
-                          ContentItem.selection = ContentItem.item.data.SelectedCategories;
+                          }
+                          else{
+                              ContentItem.selection = ContentItem.item.data.SelectedCategories;
+                          }
+
 
                           init();
                       },

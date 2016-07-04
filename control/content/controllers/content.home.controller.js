@@ -722,6 +722,7 @@
 
               var rank =  ContentHome.data.content.rankOfLastItem || 0;
               RankOfLastItem.setRank(rank);
+
               for (var index = 0; index < rows.length; index++) {
                 rank += 10;
                 rows[index].dateCreated = +new Date();
@@ -730,59 +731,216 @@
                 rows[index].body = "";
 
                 if(rows[index].carouselImages){
-                  rows[index].carouselImages=rows[index].carouselImages.split(',')
+                 var carousalImageUrlArray=rows[index].carouselImages.split(',')
+                  rows[index].carouselImages=[];
+
+                  carousalImageUrlArray.forEach(function(url){
+                    var obj={
+                      action: "noAction",
+                      iconUrl: url,
+                      title: "image"
+                    }
+                    rows[index].carouselImages.push(obj);
+                  })
                 }
-                //rows[index].body.SelectedCategories
-                //rows[index].body.Categories
-                //rows[index].body.location
-              }
-              if (validateCsv(rows)) {
 
-                buildfire.datastore.bulkInsert(rows, TAG_NAMES.COUPON_ITEMS,function(err,data){
-                  if(err){
-                    console.error(error);
-                    ContentHome.loading = false;
-                    $scope.$apply();
+                  asycronouseProcess(index, function(index) {
+
+                    if(rows[index].SelectedCategories.length && rows[index].location){
+
+                      var categoryList = rows[index].SelectedCategories.split(',');
+
+                      var searchOptions = {
+                        filter: {"$json.title": {"$regex": '/*'}},
+                      }
+                      Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, data) {
+                        console.log("Saved", data.id);
+                        var tmpCategoryIds=[];
+                        data.forEach(function(categoryObj){
+                          categoryList.forEach(function(categoryTitle){
+                            if(categoryTitle==categoryObj.data.title){
+                              tmpCategoryIds.push(categoryObj.id);
+                            }
+                          })
+                        })
+                        rows[index].SelectedCategories=tmpCategoryIds;
+
+
+                        var geocoder = new google.maps.Geocoder();
+                        geocoder.geocode({"address": rows[index].location}, function (results, status) {
+                          if (status == google.maps.GeocoderStatus.OK) {
+                            var lat = results[0].geometry.location.lat(),
+                                lng = results[0].geometry.location.lng();
+                            // ContentHome.setLocation({location: rows[index].location, coordinates: {lng:lng, lat:lat}});
+                            rows[index].location = {
+                              coordinates: {
+                                lng: lng,
+                                lat: lat
+                              },
+                              addressTitle: rows[index].location
+                            };
+                            bulkInserItem(rows,rank);
+                          }
+                          else {
+                            console.error('' +
+                            'Error else parts of google');
+                            error();
+                          }
+                        });
+                        $scope.$digest();
+
+                      });
+
+
+                    }else if ((!rows[index].SelectedCategories.length) && rows[index].location){
+
+
+                      var geocoder = new google.maps.Geocoder();
+                      geocoder.geocode({"address": rows[index].location}, function (results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                          var lat = results[0].geometry.location.lat(),
+                              lng = results[0].geometry.location.lng();
+                          // ContentHome.setLocation({location: rows[index].location, coordinates: {lng:lng, lat:lat}});
+                          rows[index].location = {
+                            coordinates: {
+                              lng: lng,
+                              lat: lat
+                            },
+                            addressTitle: rows[index].location
+                          };
+                          bulkInserItem(rows,rank);
+                        }
+                        else {
+                          console.error('' +
+                          'Error else parts of google');
+                          error();
+                        }
+                      });
+                      $scope.$digest();
+
+                    }else if(rows[index].SelectedCategories.length && (!rows[index].location)){
+                      var categoryList = rows[index].SelectedCategories.split(',');
+
+                      var searchOptions = {
+                        filter: {"$json.title": {"$regex": '/*'}},
+                      }
+                      Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, data) {
+                        console.log("Saved", data.id);
+                        var tmpCategoryIds=[];
+                        data.forEach(function(categoryObj){
+                          categoryList.forEach(function(categoryTitle){
+                            if(categoryTitle==categoryObj.data.title){
+                              tmpCategoryIds.push(categoryObj.id);
+                            }
+                          })
+                        })
+                        rows[index].SelectedCategories=tmpCategoryIds;
+                        bulkInserItem(rows,rank)
+                        $scope.$digest();
+
+                      });
+                    }else{
+                      bulkInserItem(rows,rank)
+                    }
+
+                   /* if(rows[index].SelectedCategories.length) {
+                      var categoryList = rows[index].SelectedCategories.split(',');
+
+                      var searchOptions = {
+                        filter: {"$json.title": {"$regex": '*//*'}},
+                      }
+                      Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, data) {
+                        console.log("Saved", data.id);
+                        var tmpCategoryIds=[];
+                        data.forEach(function(categoryObj){
+                          categoryList.forEach(function(categoryTitle){
+                            if(categoryTitle==categoryObj.data.title){
+                              tmpCategoryIds.push(categoryObj.id);
+                            }
+                          })
+                        })
+                        rows[index].SelectedCategories=tmpCategoryIds;
+                        $scope.$digest();
+
+                      });
+                      }*/
+
+                    /*if(rows[index].location) {
+                      var geocoder = new google.maps.Geocoder();
+                      geocoder.geocode({"address": rows[index].location}, function (results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                          var lat = results[0].geometry.location.lat(),
+                              lng = results[0].geometry.location.lng();
+                          // ContentHome.setLocation({location: rows[index].location, coordinates: {lng:lng, lat:lat}});
+                          rows[index].location = {
+                            coordinates: {
+                              lng: lng,
+                              lat: lat
+                            },
+                            addressTitle: rows[index].location
+                          };
+                        }
+                        else {
+                          console.error('' +
+                          'Error else parts of google');
+                          error();
+                        }
+                      });
+                    }*/
+                  });
+                    function asycronouseProcess(index, cb){
+                    cb(index);
+                    console.log('completed');
                   }
-                  else{
-                    ContentHome.loading = false;
-                    ContentHome.isBusy = false;
-                    ContentHome.items = [];
-                    ContentHome.data.content.rankOfLastItem = rank;
-                    RankOfLastItem.setRank(rank);
-                    ContentHome.loadMoreItems('js');
-                  }
 
-                });
-
-             /*   DataStore.insert(rows,TAG_NAMES.COUPON_ITEMS).then(function (data) {
-                }, function errorHandler(error) {
-
-                });*/
-              } else {
-                ContentHome.loading = false;
-                ContentHome.csvDataInvalid = true;
-                $timeout(function hideCsvDataError() {
-                  ContentHome.csvDataInvalid = false;
-                }, 2000);
               }
             }
             else {
               ContentHome.loading = false;
               ContentHome.csvDataInvalid = true;
-              /*
-               $timeout(function hideCsvDataError() {
-               ContentHome.csvDataInvalid = false;
-               }, 2000);*/
               $scope.$apply();
             }
           }, function (error) {
             ContentHome.loading = false;
-            $scope.apply();
+            $scope.$apply();
             //do something on cancel
           });
 
         };
+
+        function bulkInserItem(rows,rank){
+
+          if (validateCsv(rows)) {
+
+            buildfire.datastore.bulkInsert(rows, TAG_NAMES.COUPON_ITEMS,function(err,data){
+              if(err){
+                console.error(error);
+                ContentHome.loading = false;
+                $scope.$apply();
+              }
+              else{
+                ContentHome.loading = false;
+                ContentHome.isBusy = false;
+                ContentHome.items = [];
+                ContentHome.data.content.rankOfLastItem = rank;
+                RankOfLastItem.setRank(rank);
+                ContentHome.loadMoreItems('js');
+              }
+
+            });
+
+            /*   DataStore.insert(rows,TAG_NAMES.COUPON_ITEMS).then(function (data) {
+             }, function errorHandler(error) {
+
+             });*/
+          } else {
+            ContentHome.loading = false;
+            ContentHome.csvDataInvalid = true;
+            $timeout(function hideCsvDataError() {
+              ContentHome.csvDataInvalid = false;
+            }, 2000);
+          }
+        }
 
         /**
          * getRecords function get the  all items from DB
@@ -861,6 +1019,7 @@
                     delete value.data.body;
 
                     value.data.carouselImages=returnCommaSepratedListOfEntity(value.data.carouselImages,'iconUrl')
+                    if(value.data.SelectedCategories)
                     value.data.SelectedCategories=returnCommaSepratedListOfCategories(value.data.Categories,value.data.SelectedCategories);
                     value.data.Categories=returnCommaSepratedListOfEntity(value.data.Categories,'title');
                     value.data.location=value.data.location.addressTitle;
