@@ -54,14 +54,16 @@
           if (typeof newObj === 'undefined') {
             return;
           }
-          if (newObj.data.settings && newObj.data.settings.mapView == 'hide') {
+          if (newObj.data && newObj.data.settings && newObj.data.settings.mapView == 'hide') {
             SettingsHome.couponInfo.data.settings.defaultView = 'list';
             SettingsHome.showMessage = true;
             setTimeout(function(){
               SettingsHome.showMessage = false;
             },2000);
           }
-          DataStore.save(newObj.data, tag).then(saveSuccess, SaveError);
+          if(newObj.data) {
+            DataStore.save(newObj.data, tag).then(saveSuccess, SaveError);
+          }
         }
 
         function saveDataWithDelay(newObj) {

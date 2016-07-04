@@ -105,7 +105,7 @@
               }
               if (!WidgetHome.data.content)
                 WidgetHome.data.content = {};
-              if (WidgetHome.data.content.sortBy) {
+              if (WidgetHome.data.content.sortItemBy) {
                 currentSortOrder = WidgetHome.data.content.sortItemBy;
               }
               if (WidgetHome.data.settings.distanceIn)
@@ -118,7 +118,7 @@
             };
           DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
 
-          // Fecth user location
+          // Fetch user location
 
           if (typeof(Storage) !== "undefined") {
             var userLocation = localStorage.getItem('user_location');
@@ -149,7 +149,6 @@
          */
         $rootScope.$on("Carousel:LOADED", function () {
           WidgetHome.view = null;
-          console.log("****************", WidgetHome.data.content.carouselImages);
           if (!WidgetHome.view) {
             WidgetHome.view = new Buildfire.components.carousel.view("#carousel", []);
           }
@@ -203,7 +202,6 @@
         WidgetHome.init();
 
         var onUpdateCallback = function (event) {
-          console.log(event);
           setTimeout(function () {
             $scope.$digest();
             if (event && event.tag === TAG_NAMES.COUPON_INFO) {
@@ -238,7 +236,8 @@
             if (!WidgetHome.data.design.itemListLayout) {
               WidgetHome.data.design.itemListLayout = LAYOUTS.itemListLayout[0].name;
             }
-            if (currentListLayout != WidgetHome.data.design.itemListLayout && WidgetHome.view && WidgetHome.data.content.carouselImages) {
+
+            if (currentListLayout && currentListLayout != WidgetHome.data.design.itemListLayout && WidgetHome.view && WidgetHome.data.content.carouselImages) {
               WidgetHome.view._destroySlider();
               WidgetHome.view = null;
               console.log("==========1")
