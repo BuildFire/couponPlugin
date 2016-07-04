@@ -267,12 +267,6 @@
                 });
               }
 
-                  resultAll.forEach(function (_item) {
-                    _item.data.distance = 0; // default distance value
-                    _item.data.distanceText = (WidgetHome.locationData.currentCoordinates) ? 'Fetching..' : 'NA';
-                  });
-                }
-
               WidgetHome.items = WidgetHome.items.length ? WidgetHome.items.concat(resultAll) : resultAll;
               searchOptions.skip = searchOptions.skip + PAGINATION.itemCount;
               if (resultAll.length == PAGINATION.itemCount) {

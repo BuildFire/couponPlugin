@@ -64,12 +64,6 @@
                   _item.data.distance = 0; // default distance value
                 });
               }
-                if(filter){
-                  var filteredItemList=[];
-                  if(filter.categories && filter.categories){
-
-                  }
-                }
 
               WidgetMap.locationData.items = resultAll;
               if (WidgetMap.currentLoggedInUser)
@@ -80,7 +74,28 @@
               console.log("error getting items", error)
             };
           console.log("***********", WidgetMap.data.content);
-          DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
+
+          if(filter){
+            var itemFilter;
+            if(filter.categories && filter.categories.length){
+              searchOptions= {
+                skip: 0,
+                    filter: {
+                "$and": [{
+                  "$or": [{
+                    "$json.expiresOn": {$gte: WidgetMap.currentDate}
+                  }, {"$json.expiresOn": ""}]
+                }, {"$json.location.coordinates": {$exists: true}}]
+              }
+              }
+              itemFilter = {'$json.SelectedCategories': {'$in': filter.categories}};
+              searchOptions.filter.$and.push(itemFilter);
+            }
+            DataStore.search(searchOptions  , TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
+          }else{
+            DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
+          }
+
         };
 
         WidgetMap.showSavedItems = function () {
