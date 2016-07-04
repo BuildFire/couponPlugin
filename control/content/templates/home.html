@@ -172,6 +172,9 @@
       data-infinite-container=".infinite-scroll-parent-items"
       infinite-scroll-disabled="ContentHome.noMore"
       class="draggable-list-view wide-list has-btn links-list" >
+  <div class="well text-center margin-bottom-zero border-none" ng-if="!ContentHome.items.length">
+    <p class="margin-zero">No items found.</p>
+  </div>
   <div class="d-item double-line square-icon clearfix" ng-repeat="item in ContentHome.items">
     <span class="icon icon-menu pull-left cursor-grab-item"></span>
 
