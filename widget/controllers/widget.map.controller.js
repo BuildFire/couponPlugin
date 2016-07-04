@@ -22,6 +22,7 @@
         $rootScope.$on('FILTER_ITEMS', function (e, view) {
           if (view && view.isFilterApplied) {
             WidgetMap.isFilterApplied = true;
+            WidgetMap.getAllItems(view.filter);
           }
         });
         function getGeoLocation() {
@@ -54,7 +55,7 @@
           });
         };
 
-        WidgetMap.getAllItems = function () {
+        WidgetMap.getAllItems = function (filter) {
           Buildfire.spinner.show();
           var successAll = function (resultAll) {
               Buildfire.spinner.hide();
@@ -63,6 +64,13 @@
                   _item.data.distance = 0; // default distance value
                 });
               }
+                if(filter){
+                  var filteredItemList=[];
+                  if(filter.categories && filter.categories){
+
+                  }
+                }
+
               WidgetMap.locationData.items = resultAll;
               if (WidgetMap.currentLoggedInUser)
                 WidgetMap.getSavedItems();
