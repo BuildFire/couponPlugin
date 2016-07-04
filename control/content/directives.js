@@ -8,8 +8,9 @@
                 replace: true,
                 scope: {images: '='},
                 link: function (scope, elem, attrs) {
+                    var editor = new buildfire.components.carousel.editor("#carousel");
                     function initCarousel(){
-                        var editor = new buildfire.components.carousel.editor("#carousel");
+
                         if(scope.images && scope.images.length>0)
                             editor.loadItems(scope.images);
                         // this method will be called when a new item added to the list
