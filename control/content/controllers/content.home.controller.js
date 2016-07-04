@@ -16,7 +16,7 @@
             "rankOfLastFilter": '',
             "rankOfLastItem": '',
             "sortItemBy": SORT.MANUALLY,
-            "sortFilterBy": SORT_FILTER.MANUALLY,
+            "sortFilterBy": SORT_FILTER.MANUALLY
           },
           "design": {
             "itemListLayout": LAYOUTS.itemListLayout[0].name
@@ -272,16 +272,16 @@
           }, function (err) {
 
           });
-        }
+        };
 
         function insertFilter(response){
           ContentHome.filter = {
             data: {
               title: response.title,
               rank: RankOfLastFilter.getRank() + 10,
-              noOfItems : 0,
+              noOfItems : 0
             }
-          }
+          };
           ContentHome.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 10;
           RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
           ContentHome.filters.unshift(ContentHome.filter);
@@ -311,7 +311,7 @@
               });
             }
           });
-        }
+        };
         ContentHome.showFilter = function (index, itemId, selectedItems, categories, itemData) {
           Modals.showFilterPopupModal({
             index: index,
@@ -321,7 +321,7 @@
             itemData: itemData
           }).then(function (response) {
             ContentHome.items = [];
-            ContentHome.filters = []
+            ContentHome.filters = [];
             ContentHome.isBusy = false;
             ContentHome.searchOptionsForItems.skip = 0;
 
@@ -335,7 +335,7 @@
           }, function (err) {
 
           });
-        }
+        };
 
         ContentHome.deleteItem = function (index) {
           Modals.removePopupModal({'item': 'item'}).then(function (result) {
@@ -350,7 +350,7 @@
               });
             }
           });
-        }
+        };
 
         ContentHome.sortFilterBy = function (value) {
           if (!value) {
@@ -390,10 +390,10 @@
               "$and": [{
                 "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
               }, {"$json.title": {"$regex": '/*'}}]
-            }
+            };
           }else{
             ContentHome.searchOptionsForItems.filter = {"$json.title": {"$regex": '/*'}};
-          }
+          };
           ContentHome.loadMoreItems('items');//, {"$json.title": {"$regex": '/*'}}
         };
 
@@ -515,7 +515,7 @@
           ContentHome.items = [];
           ContentHome.searchOptionsForItems.skip = 0;
           ContentHome.loadMoreItems('items');
-        }
+        };
         /**
          * getSearchOptions(value) is used to get searchOptions with one more key sort which decide the order of sorting.
          * @param value is used to filter sort option.
@@ -705,7 +705,7 @@
                 var obj={};
                 obj.title=category;
                 insertFilter(obj);
-              })
+              });
 
               var columns = rows.shift();
 
@@ -782,7 +782,7 @@
             //do something on cancel
           });
 
-        }
+        };
 
         /**
          * getRecords function get the  all items from DB
@@ -817,7 +817,7 @@
                 tmpURLstr=tmpURLstr+','+entity[param];
               else
                 tmpURLstr=entity[param];
-            })
+            });
            return tmpURLstr;
           }else{
             return entities;
@@ -826,17 +826,17 @@
 
         function returnCommaSepratedListOfCategories(Categories, selectedCategories){
           if(selectedCategories.length && Array.isArray(selectedCategories)){
-            var tmpList=""
+            var tmpList="";
             selectedCategories.forEach(function(selCategory){
               Categories.forEach(function(category){
                   if(selCategory==category.id){
                     if(!tmpList)
-                    tmpList=category.title
+                    tmpList=category.title;
                     else
                       tmpList=tmpList+","+category.title;
                   }
               });
-            })
+            });
             return tmpList;
          }
 
@@ -1005,9 +1005,9 @@
                 ContentHome.searchOptions.skip = 0;
                 ContentHome.busyFilter = false;
                 ContentHome.busy = false;
-                ContentHome.data.content.selectedFilter = null
-                ContentHome.data.content.selectedStatus = null
-                console.log("-------------------llll", ContentHome.data.content)
+                ContentHome.data.content.selectedFilter = null;
+                ContentHome.data.content.selectedStatus = null;
+                console.log("-------------------llll", ContentHome.data.content);
                 RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter || 0);
                 RankOfLastItem.setRank(ContentHome.data.content.rankOfLastItem || 0);
               }
