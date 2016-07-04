@@ -13,10 +13,16 @@
             itemListLayout: LAYOUTS.itemListLayout[0].name
           }
         };
-        var currentListLayout, currentDistanceUnit,currentSortOrder = null;
+        var currentListLayout, currentDistanceUnit, currentSortOrder = null;
         WidgetHome.locationData = {};
         WidgetHome.busy = false;
         WidgetHome.items = [];
+        $rootScope.$on('FILTER_ITEMS', function (e, view) {
+          if (view && view.isFilterApplied) {
+            WidgetHome.isFilterApplied = true;
+          }
+        });
+
         WidgetHome.currentDate = +new Date();
         var searchOptions = {
           skip: 0,
@@ -216,7 +222,7 @@
                 WidgetHome.loadMore();
               }
               if (currentDistanceUnit && WidgetHome.data.settings.distanceIn) {
-                if (currentDistanceUnit != WidgetHome.data.settings.distanceIn){
+                if (currentDistanceUnit != WidgetHome.data.settings.distanceIn) {
                   getItemsDistance(WidgetHome.items);
                   currentDistanceUnit = WidgetHome.data.settings.distanceIn;
                 }

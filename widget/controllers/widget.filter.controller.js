@@ -9,7 +9,7 @@
         // default value
         WidgetFilter.filter = {
           sortOnClosest: false,
-          categories : []
+          categories: []
         };
 
         WidgetFilter.locationData = {};
@@ -123,14 +123,11 @@
         WidgetFilter.applyFilter = function () {
           if (WidgetFilter.filter.sortOnClosest || WidgetFilter.filter.categories.length || WidgetFilter.filter.text)
             WidgetFilter.filter.isApplied = true;
-          ViewStack.push({
-            template: WidgetFilter.data.design.itemListLayout,
-            params: {
-              controller: "WidgetHomeCtrl as WidgetHome",
-              isFilterApplied: WidgetFilter.filter.isApplied,
-              filter: WidgetFilter.filter
-            }
+          $rootScope.$broadcast('FILTER_ITEMS', {
+            isFilterApplied: WidgetFilter.filter.isApplied,
+            filter: WidgetFilter.filter
           });
+          ViewStack.pop();
         };
 
         /*

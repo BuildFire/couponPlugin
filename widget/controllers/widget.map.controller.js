@@ -19,7 +19,11 @@
           }
         };
         var currentDistanceUnit = null;
-
+        $rootScope.$on('FILTER_ITEMS', function (e, view) {
+          if (view && view.isFilterApplied) {
+            WidgetMap.isFilterApplied = true;
+          }
+        });
         function getGeoLocation() {
           Buildfire.geo.getCurrentPosition(
             null,
