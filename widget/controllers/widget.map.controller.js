@@ -71,11 +71,11 @@
               }
 
               WidgetMap.locationData.items = resultAll;
-                WidgetMap.refreshData += 1
-
 
               if (WidgetMap.currentLoggedInUser)
                 WidgetMap.getSavedItems();
+              else
+                WidgetMap.formatItems();
             },
             errorAll = function (error) {
               Buildfire.spinner.hide();
@@ -276,10 +276,7 @@
             return;
           }
           WidgetMap.selectedItem = WidgetMap.locationData.items[itemIndex];
-          console.log("...................", WidgetMap.selectedItem);
-
           GeoDistance.getDistance(WidgetMap.locationData.currentCoordinates, [WidgetMap.selectedItem], WidgetMap.data.settings.distanceIn).then(function (result) {
-            console.log('Distance---------------------', result);
             if (result.rows.length && result.rows[0].elements.length && result.rows[0].elements[0].distance && result.rows[0].elements[0].distance.text) {
               WidgetMap.selectedItemDistance = result.rows[0].elements[0].distance.text;
             } else {
