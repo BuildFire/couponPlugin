@@ -402,7 +402,7 @@
                 if (_items && _items[_ind]) {
                   _items[_ind].data.distance = (result.rows[0].elements[_ind].status != 'OK') ? -1 : result.rows[0].elements[_ind].distance.value;
 
-                  if(WidgetMap.isFilterApplied){
+                  if(WidgetMap.isFilterApplied && WidgetMap.filter.distanceRange){
 
                     var sortFilterCond = (Number(_items[_ind].data.distance) >=  WidgetMap.filter.distanceRange.min && Number(_items[_ind].data.distance) <=  WidgetMap.filter.distanceRange.max);
                     if(!sortFilterCond){
