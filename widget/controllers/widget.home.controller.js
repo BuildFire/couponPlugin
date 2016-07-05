@@ -19,8 +19,8 @@
         WidgetHome.items = [];
         WidgetHome.filter={};
         $rootScope.$on('FILTER_ITEMS', function (e, view) {
+          WidgetHome.isFilterApplied = view.isFilterApplied;
           if (view && view.isFilterApplied) {
-            WidgetHome.isFilterApplied = true;
             WidgetHome.filter=view.filter;
             WidgetHome.getItems(view.filter)
           }
@@ -501,7 +501,7 @@
 
                 }
               }
-              WidgetHome.isFilterApplied=false;
+          //    WidgetHome.isFilterApplied=false;
             }, function (err) {
               console.error('distance err', err);
             });

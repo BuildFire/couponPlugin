@@ -21,8 +21,9 @@
         };
         var currentDistanceUnit = null;
         $rootScope.$on('FILTER_ITEMS', function (e, view) {
+          WidgetMap.isFilterApplied = view.isFilterApplied;
           if (view && view.isFilterApplied) {
-            WidgetMap.isFilterApplied = true;
+
             WidgetMap.filter=view.filter;
             WidgetMap.getAllItems(view.filter);
           }
@@ -413,7 +414,7 @@
 
                 }
               }
-              WidgetMap.isFilterApplied=false;
+            //  WidgetMap.isFilterApplied=false;
             }, function (err) {
               console.error('distance err', err);
             });
