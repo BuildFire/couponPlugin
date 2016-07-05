@@ -3,7 +3,7 @@
     ng-controller="WidgetMapCtrl as WidgetMap">
   <div class="scrollable">
     <div class="google-map" style="height:100%; background:#eef0f0;"
-         ng-if="WidgetMap.data && WidgetMap.locationData.items">
+         ng-if="WidgetMap.data && WidgetMap.locationData.items && WidgetMap.allItemsFormatted">
       <div google-map class="google-map-fix"
            location-data="WidgetMap.locationData"
            marker-callback="WidgetMap.selectedMarker"
@@ -78,7 +78,7 @@
           </div>
         </div>
       </div>
-      <div class="close-bar bg-primary primaryBackgroundTheme" ng-if="WidgetMap.selectedItem.multiCoupons">
+      <div class="close-bar bg-primary primaryBackgroundTheme" ng-if="WidgetMap.selectedItem.multiCoupons" ng-click="WidgetMap.closeCouponList()">
         <p class="whiteTheme stretch text-center margin-zero small">Close</p>
       </div>
     </div>

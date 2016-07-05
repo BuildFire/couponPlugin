@@ -211,7 +211,7 @@
                       map: map,
                       icon: placeLocationIcon,
                       shape: shape,
-                      title: _place.data.title,
+                      title: _place.couponContained ? (_place.couponContained.length + " coupons") : _place.data.title,
                       zIndex: _index,
                       optimized: false,
                       dist: _place.data.distanceText

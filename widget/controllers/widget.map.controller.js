@@ -173,6 +173,7 @@
           console.log("IIIIIII", WidgetMap.locationData.items);
           if (isChanged)
             WidgetMap.refreshData += 1;
+          WidgetMap.allItemsFormatted = true;
         };
 
         WidgetMap.setSavedItem = function () {
@@ -449,21 +450,9 @@
           }
         }
 
-      /*  *//* Filters the items based on the range of distance slider *//*
-        WidgetMap.sortFilter = function (item) {
-
-          if (WidgetSections.filterUnapplied || WidgetSections.locationData.currentCoordinates == null || !item.data.distanceText || item.data.distanceText == 'Fetching..' || item.data.distanceText == 'NA') {
-            return true;
-          }
-          var sortFilterCond;
-          try {
-            sortFilterCond = (Number(item.data.distanceText.split(' ')[0]) >= $scope.distanceSlider.min && Number(item.data.distanceText.split(' ')[0]) <= $scope.distanceSlider.max);
-          }
-          catch (e) {
-            sortFilterCond = true;
-          }
-          return sortFilterCond;
-        };*/
+        WidgetMap.closeCouponList = function(){
+          WidgetMap.selectedItem = null;
+        };
 
         $scope.$watch(function () {
           return WidgetMap.locationData.items;
