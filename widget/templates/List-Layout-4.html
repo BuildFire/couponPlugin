@@ -1,4 +1,4 @@
-<div class="holder padding-zero has-bottom sticky-bottom-menu clearfix">
+<div class="holder padding-zero has-bottom sticky-bottom-menu clearfix" ng-controller="WidgetHomeCtrl as WidgetHome" >
   <div class="scrollable infinite-scroll-parent">
     <div class="coupon layout4">
       <div id="carousel" ng-if="WidgetHome.data.content.carouselImages.length"
@@ -55,9 +55,10 @@
   <!-- The default bottom sticky menu -->
   <div class="bottom fixed-bottom"
        ng-if="WidgetHome.data.settings.mapView == 'show' && WidgetHome.data.settings.filterPage == 'show'">
-    <!--<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
+    <div
+        class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme" ng-if="WidgetHome.isFilterApplied">
       <span class="whiteTheme small">Filter Applied</span>
-    </div>-->
+    </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch active">List</a>
     </div>
@@ -76,9 +77,10 @@
   <!-- If map is hidden-->
   <div class="bottom fixed-bottom"
        ng-if="WidgetHome.data.settings.mapView == 'hide' && WidgetHome.data.settings.filterPage == 'show'">
-    <!--<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
+    <div
+        class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme" ng-if="WidgetHome.isFilterApplied">
       <span class="whiteTheme small">Filter Applied</span>
-    </div>-->
+    </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch active">List</a>
     </div>
@@ -93,9 +95,10 @@
   <!-- If filter is hidden-->
   <div class="bottom fixed-bottom"
        ng-if="WidgetHome.data.settings.filterPage == 'hide' && WidgetHome.data.settings.mapView == 'show'">
-    <!--<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
+    <div
+        class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme" ng-if="WidgetHome.isFilterApplied">
       <span class="whiteTheme small">Filter Applied</span>
-    </div>-->
+    </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch active">List</a>
     </div>
@@ -110,9 +113,10 @@
   <!-- If both  filter and map are hidden-->
   <div class="bottom fixed-bottom"
        ng-if="WidgetHome.data.settings.filterPage == 'hide' && WidgetHome.data.settings.mapView == 'hide'">
-    <!--<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
+    <div
+        class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme" ng-if="WidgetHome.isFilterApplied">
       <span class="whiteTheme small">Filter Applied</span>
-    </div>-->
+    </div>
     <div class="col-xs-6 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch active">List</a>
     </div>

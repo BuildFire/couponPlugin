@@ -3,16 +3,20 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter', 'RankOfLastItem',
-      function ($scope, TAG_NAMES,SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem) {
+    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter', 'RankOfLastItem', '$csv','Utils',
+      function ($scope, TAG_NAMES,SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem , $csv , Utils) {
 
         var ContentHome = this;
-        ContentHome.filter=null;
+        ContentHome.searchValue = "";
+        ContentHome.filter = null;
         var _data = {
           "content": {
             "carouselImages": [],
-            "description":'',
-            "rankOfLastFilter" :''
+            "description": '',
+            "rankOfLastFilter": '',
+            "rankOfLastItem": '',
+            "sortItemBy": SORT.MANUALLY,
+            "sortFilterBy": SORT_FILTER.MANUALLY
           },
           "design": {
             "itemListLayout": LAYOUTS.itemListLayout[0].name
@@ -20,22 +24,52 @@
           "settings": {
             "defaultView": "list",
             "distanceIn": "mi",
-            mapView: "show",
-            filterPage: "show"
+            "mapView": "show",
+            "filterPage": "show"
           }
         };
 
-        ContentHome.filters=[];
+        var header = {
+              title : 'Item Title',
+              summary : "Item Summary",
+              SelectedCategories : "Selected Categories",
+              Categories : "Categories",
+              listImage : 'List Image',
+              carouselImages : 'Carousel images',
+              preRedemptionText : 'Pre-Redemption Body Content',
+              postRedemptionText : 'Post-Redemption Body Content',
+              startOn : 'Start Date',
+              expiresOn : 'Expiration Date',
+              addressTitle : 'Address Title',
+              location : 'Coupon Location',
+              webURL : 'Web URL',
+              sendToEmail : 'Send to Email',
+              smsTextNumber : 'SMS Text Number',
+              phoneNumber : 'Phone Number',
+              facebookURL : 'Facebook URL',
+              twitterURL : 'Twitter URL',
+              instagramURL : 'Instagram URL',
+              googlePlusURL : 'Google+ URL',
+              linkedinURL : 'Linkedin URL'
+            }
+            , headerRow = ["title", "summary" ,"SelectedCategories", "Categories" , "listImage", "carouselImages", "preRedemptionText" , "postRedemptionText" , "startOn" , "expiresOn" , "addressTitle", "location", "webURL", "sendToEmail", "smsTextNumber", "phoneNumber", "facebookURL", "twitterURL", "instagramURL", "googlePlusURL", "linkedinURL"];
 
-        ContentHome.items=[];
 
-        ContentHome.sortFilterOptions=[
+        var today = new Date();
+        var month = new Date().getMonth() + 1
+        ContentHome.currentDate = +new Date("'" + month + "/" + today.getDate() + "/" + today.getFullYear() + "'");
+
+        ContentHome.filters = [];
+
+        ContentHome.items = [];
+
+        ContentHome.sortFilterOptions = [
           SORT_FILTER.MANUALLY,
           SORT_FILTER.CATEGORY_NAME_A_Z,
           SORT_FILTER.CATEGORY_NAME_Z_A
         ];
 
-        ContentHome.sortItemOptions=[
+        ContentHome.sortItemOptions = [
           SORT.MANUALLY,
           SORT.ITEM_TITLE_A_Z,
           SORT.ITEM_TITLE_Z_A,
@@ -62,7 +96,8 @@
          * */
         var tmrDelay = null;
 
-        ContentHome.busy=false;
+        ContentHome.busyFilter = false;
+        ContentHome.busy = false;
         RankOfLastFilter.setRank(0);
         RankOfLastItem.setRank(0);
 
@@ -133,12 +168,12 @@
           disabled: true,
           stop: function (e, ui) {
             var endIndex = ui.item.sortable.dropindex,
-                maxRank = 0,
-                draggedItem = ContentHome.filters[endIndex];
+              maxRank = 0,
+              draggedItem = ContentHome.filters[endIndex];
 
             if (draggedItem) {
               var prev = ContentHome.filters[endIndex - 1],
-                  next = ContentHome.filters[endIndex + 1];
+                next = ContentHome.filters[endIndex + 1];
               var isRankChanged = false;
               if (next) {
                 if (prev) {
@@ -156,13 +191,13 @@
                 }
               }
               if (isRankChanged) {
-                DataStore.update(draggedItem.id, draggedItem.data, TAG_NAMES.COUPON_CATEGORIES).then( function (success) {
-                 if (ContentHome.data.content.rankOfLastFilter < maxRank) {
+                DataStore.update(draggedItem.id, draggedItem.data, TAG_NAMES.COUPON_CATEGORIES).then(function (success) {
+                  if (ContentHome.data.content.rankOfLastFilter < maxRank) {
                     ContentHome.data.content.rankOfLastFilter = maxRank;
                     RankOfLastFilter.setRank(maxRank);
                   }
-                },function(error) {
-                    console.error('Error during updating rank');
+                }, function (error) {
+                  console.error('Error during updating rank');
 
 
                 })
@@ -199,12 +234,12 @@
                 }
               }
               if (isRankChanged) {
-                DataStore.update(draggedItem.id, draggedItem.data, TAG_NAMES.COUPON_ITEMS).then( function (success) {
+                DataStore.update(draggedItem.id, draggedItem.data, TAG_NAMES.COUPON_ITEMS).then(function (success) {
                   if (ContentHome.data.content.rankOfLastItem < maxRank) {
                     ContentHome.data.content.rankOfLastItem = maxRank;
                     RankOfLastItem.setRank(maxRank);
                   }
-                },function(error) {
+                }, function (error) {
                   console.error('Error during updating rank');
 
 
@@ -215,52 +250,56 @@
         };
         //ContentHome.itemSortableOptions.disabled = !(ContentHome.data.content.sortFilterBy === SORT_FILTER.MANUALLY);
 
-        ContentHome.addEditFilter=function(filter, editFlag , index){
-          var tempTitle='';
-          if(filter)
-            tempTitle=filter.title;
+        ContentHome.addEditFilter = function (filter, editFlag, index) {
+          var tempTitle = '';
+          if (filter)
+            tempTitle = filter.title;
           Modals.addFilterModal({
             title: tempTitle,
-            isEdit:editFlag
+            isEdit: editFlag
           }).then(function (response) {
             if (!(response.title === null || response.title.match(/^ *$/) !== null)) {
 
               //if index is there it means filter update operation is performed
-              if(Number.isInteger(index)){
-                ContentHome.filters[index].data.title= response.title;
-              }else{
-                ContentHome.filter={
-                  data: {
-                    title: response.title,
-                    rank: RankOfLastFilter.getRank() + 10
-                  }
-                }
-                ContentHome.data.content.rankOfLastFilter=RankOfLastFilter.getRank()+10;
-                RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
-                ContentHome.filters.unshift(ContentHome.filter);
-                Buildfire.datastore.insert(ContentHome.filter.data, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
-                  console.log("Saved", data.id);
-                  ContentHome.isUpdating = false;
-                  ContentHome.filter.id=data.id;
-                  ContentHome.filter.data.title=data.data.title;
-                  if (err) {
-                    ContentHome.isNewItemInserted = false;
-                    return console.error('There was a problem saving your data');
-                  }
-                  $scope.$digest();
-                });
+              if (Number.isInteger(index)) {
+                ContentHome.filters[index].data.title = response.title;
+              } else {
+                  insertFilter(response);
               }
             }
-            if(!$scope.$apply)
-                $scope.$digest();
+            if (!$scope.$apply)
+              $scope.$digest();
           }, function (err) {
 
           });
+        };
+
+        function insertFilter(response){
+          ContentHome.filter = {
+            data: {
+              title: response.title,
+              rank: RankOfLastFilter.getRank() + 10,
+              noOfItems : 0
+            }
+          };
+          ContentHome.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 10;
+          RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
+          ContentHome.filters.unshift(ContentHome.filter);
+          Buildfire.datastore.insert(ContentHome.filter.data, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
+            console.log("Saved", data.id);
+            ContentHome.isUpdating = false;
+            ContentHome.filter.id = data.id;
+            ContentHome.filter.data.title = data.data.title;
+            if (err) {
+              ContentHome.isNewItemInserted = false;
+              return console.error('There was a problem saving your data');
+            }
+            $scope.$digest();
+          });
         }
 
-
-        ContentHome.deleteFilter=function(index){
-          Modals.removePopupModal({'item':'filter'}).then(function (result) {
+        ContentHome.deleteFilter = function (index) {
+          Modals.removePopupModal({'item': 'filter'}).then(function (result) {
             if (result) {
 
               Buildfire.datastore.delete(ContentHome.filters[index].id, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
@@ -272,10 +311,34 @@
               });
             }
           });
-        }
+        };
+        ContentHome.showFilter = function (index, itemId, selectedItems, categories, itemData) {
+          Modals.showFilterPopupModal({
+            index: index,
+            itemId: itemId,
+            selectedItems: selectedItems,
+            categories: categories,
+            itemData: itemData
+          }).then(function (response) {
+            ContentHome.items = [];
+            ContentHome.filters = [];
+            ContentHome.isBusy = false;
+            ContentHome.searchOptionsForItems.skip = 0;
 
-        ContentHome.deleteItem=function(index){
-          Modals.removePopupModal({'item':'item'}).then(function (result) {
+            ContentHome.loadMoreItems('items');//, {"$json.title": {"$regex": '/*'}}
+            ContentHome.loadMore('filter');
+          //  ContentHome.loadMore()
+              if (!$scope.$apply)
+              $scope.$digest();
+
+
+          }, function (err) {
+
+          });
+        };
+
+        ContentHome.deleteItem = function (index) {
+          Modals.removePopupModal({'item': 'item'}).then(function (result) {
             if (result) {
 
               Buildfire.datastore.delete(ContentHome.items[index].id, TAG_NAMES.COUPON_ITEMS, function (err, result) {
@@ -287,16 +350,16 @@
               });
             }
           });
-        }
+        };
 
         ContentHome.sortFilterBy = function (value) {
           if (!value) {
             console.info('There was a problem sorting your data');
           } else {
-           // ContentHome.data.content.filters=null;
+            // ContentHome.data.content.filters=null;
             ContentHome.filters = [];
             ContentHome.searchOptions.skip = 0;
-            ContentHome.busy = false;
+            ContentHome.busyFilter = false;
             ContentHome.data.content.sortFilterBy = value;
             ContentHome.loadMore('filter');
           }
@@ -311,27 +374,148 @@
             ContentHome.searchOptionsForItems.skip = 0;
             ContentHome.busy = false;
             ContentHome.data.content.sortItemBy = value;
-            ContentHome.loadMore('items');
+            ContentHome.loadMoreItems('items');
           }
         };
 
 
-        ContentHome.chooseFilter=function (value, title) {
-          if (!value) {
-            console.info('There was a problem sorting your data');
-          } else {
-            ContentHome.data.content.selectedFilter = {"title":title, "id":value};
-            ContentHome.items = [];
-            ContentHome.searchOptionsForItems.skip = 0;
-            ContentHome.searchOptionsForItems.filter= {
-              "$or": [{
+        ContentHome.chooseFilter = function (value, title) {
+          ContentHome.data.content.selectedFilter = {"title": title, "id": value};
+          ContentHome.data.content.selectedStatus = "All Statuses";
+          ContentHome.searchValue="";
+          ContentHome.items = [];
+          ContentHome.searchOptionsForItems.skip = 0;
+          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!=='All Categories') {
+            ContentHome.searchOptionsForItems.filter = {
+              "$and": [{
                 "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
-              }]
-            }
-            ContentHome.loadMore('items');
-          }
+              }, {"$json.title": {"$regex": '/*'}}]
+            };
+          }else{
+            ContentHome.searchOptionsForItems.filter = {"$json.title": {"$regex": '/*'}};
+          };
+          ContentHome.loadMoreItems('items');//, {"$json.title": {"$regex": '/*'}}
         };
 
+        ContentHome.chooseStatus = function (status) {
+          ContentHome.searchValue ="";
+          ContentHome.data.content.selectedStatus = status;
+          ContentHome.couponActiveDate = ContentHome.currentDate;
+          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!=='All Categories') {
+            if (ContentHome.data.content.selectedStatus == 'Active') {
+              ContentHome.searchOptionsForItems.filter =
+              {
+                "$and": [{
+                  "$and": [{
+                    "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
+                  }, {"$json.title": {"$regex": '/*'}}]
+                }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
+              }
+            } else if (ContentHome.data.content.selectedStatus == 'Expired') {
+              ContentHome.searchOptionsForItems.filter =
+              {
+                "$and": [{
+                  "$and": [{
+                    "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
+                  }, {"$json.title": {"$regex": '/*'}}]
+                }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
+              }
+            }else if (ContentHome.data.content.selectedStatus == 'All Statuses') {
+              ContentHome.searchOptionsForItems.filter =
+              {
+                "$and": [{
+                  "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
+                }, {"$json.title": {"$regex": '/*'}}]
+              }
+            }
+          } else {
+            if (ContentHome.data.content.selectedStatus == 'Active') {
+              ContentHome.searchOptionsForItems.filter =
+              {
+                "$and": [{
+                  "$and": [{"$json.title": {"$regex": '/*'}}]
+                }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
+              }
+            } else if (ContentHome.data.content.selectedStatus == 'Expired') {
+              ContentHome.searchOptionsForItems.filter =
+              {
+                "$and": [{
+                  "$and": [ {"$json.title": {"$regex": '/*'}}]
+                }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
+              }
+            }
+            else if (ContentHome.data.content.selectedStatus == 'All Statuses') {
+              ContentHome.searchOptionsForItems.filter = {"$json.title": {"$regex": '/*'}};
+            }
+          }
+
+
+          ContentHome.items = [];
+          ContentHome.searchOptionsForItems.skip = 0;
+
+          ContentHome.loadMoreItems('items');//, {"$json.title": {"$regex": '/*'}}
+          console.log("-------------------llll", ContentHome.searchOptionsForItems.filter)
+        };
+
+        ContentHome.searchItem = function () {
+          ContentHome.couponActiveDate = ContentHome.currentDate;
+          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!='All Categories' && ContentHome.data.content.selectedStatus && ContentHome.data.content.selectedStatus !== 'All Statuses') {
+
+            if (ContentHome.data.content.selectedStatus == 'Active') {
+              ContentHome.searchOptionsForItems.filter =
+              {
+                "$and": [{
+                  "$and": [{
+                    "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
+                  }, {"$json.title": {"$regex": ContentHome.searchValue}}]
+                }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
+              }
+            } else if (ContentHome.data.content.selectedStatus == 'Expired') {
+
+              ContentHome.searchOptionsForItems.filter =
+              {
+                "$and": [{
+                  "$and": [{
+                    "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
+                  }, {"$json.title": {"$regex": ContentHome.searchValue}}]
+                }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
+              }
+            }
+          } else if(ContentHome.data.content.selectedStatus && ContentHome.data.content.selectedStatus!=="All Statuses"){
+            if (ContentHome.data.content.selectedStatus == 'Active') {
+              ContentHome.searchOptionsForItems.filter =
+              {
+                "$and": [{
+                  "$and": [{"$json.title": {"$regex": ContentHome.searchValue}}]
+                }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
+              }
+            } else if (ContentHome.data.content.selectedStatus == 'Expired') {
+              ContentHome.searchOptionsForItems.filter =
+              {
+                "$and": [{
+                  "$and": [ {"$json.title": {"$regex":ContentHome.searchValue}}]
+                }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
+              }
+            }
+          }else if(ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!=='All Categories'){
+            ContentHome.searchOptionsForItems.filter = {
+              "$and": [{
+                "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
+              }, {"$json.title": {"$regex": ContentHome.searchValue}}]
+            }
+          }else{
+
+            ContentHome.searchOptionsForItems.filter = { "$or": [{
+              "$json.title": {
+                "$regex": ContentHome.searchValue,
+                "$options": "i"
+              }
+            }]}
+          }
+          ContentHome.items = [];
+          ContentHome.searchOptionsForItems.skip = 0;
+          ContentHome.loadMoreItems('items');
+        };
         /**
          * getSearchOptions(value) is used to get searchOptions with one more key sort which decide the order of sorting.
          * @param value is used to filter sort option.
@@ -386,12 +570,14 @@
         };
 
         ContentHome.loadMore = function (str) {
+          console.log("------------------>>>>>>>>>>>>>>>>>>>>in",str)
+
           Buildfire.spinner.show();
-          if (ContentHome.busy) {
+          if (ContentHome.busyFilter) {
             return;
           }
 
-          ContentHome.busy = true;
+          ContentHome.busyFilter = true;
           if (ContentHome.data && ContentHome.data.content.sortFilterBy) {
             ContentHome.searchOptions = getSearchOptions(ContentHome.data.content.sortFilterBy);
           }else{
@@ -404,12 +590,12 @@
               return console.error('-----------err in getting list-------------', err);
             }
             if (result.length <= SORT_FILTER._limit) {// to indicate there are more
-              ContentHome.noMore = true;
+              ContentHome.noMoreFilter = true;
               Buildfire.spinner.hide();
             } else {
               result.pop();
               ContentHome.searchOptions.skip = ContentHome.searchOptions.skip + SORT_FILTER._limit;
-              ContentHome.noMore = false;
+              ContentHome.noMoreFilter = false;
             }
             var tmpArray=[];
             var lastIndex=result.length;
@@ -420,49 +606,469 @@
             });
 
             ContentHome.filters = ContentHome.filters ? ContentHome.filters.concat(result) : result;
-            ContentHome.busy = false;
-            Buildfire.spinner.hide();
-            $scope.$digest();
-          });
-
-          if (ContentHome.data && ContentHome.data.content.sortItemBy) {
-            ContentHome.searchOptionsForItems = getItemSearchOptions(ContentHome.data.content.sortItemBy);
-          }else{
-            return;
-          }
-          if(str!=='filter')
-            Buildfire.datastore.search(ContentHome.searchOptionsForItems, TAG_NAMES.COUPON_ITEMS, function (err, result) {
-            if (err) {
-              Buildfire.spinner.hide();
-              return console.error('-----------err in getting list-------------', err);
-            }
-            if (result.length <= SORT._limit) {// to indicate there are more
-              ContentHome.noMore = true;
-              Buildfire.spinner.hide();
-            } else {
-              result.pop();
-              ContentHome.searchOptionsForItems.skip = ContentHome.searchOptionsForItems.skip + SORT._limit;
-              ContentHome.noMore = false;
-            }
-            var tmpArray=[];
-            var lastIndex=result.length;
-            result.forEach(function(res,index){
-              tmpArray.push({'title' : res.data.title,
-                rank:index +1,
-                summary : res.data.summary,
-                categories : res.data.Categories.length,
-                expiresOn : res.data.expiresOn,
-                listImage  : res.data.listImage,
-                id:res.id});
-            });
-
-            ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
-            ContentHome.busy = false;
+            ContentHome.busyFilter = false;
             Buildfire.spinner.hide();
             $scope.$digest();
           });
         };
 
+
+        ContentHome.loadMoreItems = function(str){
+          console.log("------------------>>>>>>>>>>>>>>>>>>>>",str)
+
+          Buildfire.spinner.show();
+          if (ContentHome.busy) {
+            return;
+          }
+          if (ContentHome.data && ContentHome.data.content.sortItemBy) {
+            ContentHome.searchOptionsForItems = getItemSearchOptions(ContentHome.data.content.sortItemBy);
+          }else{
+            return;
+          }
+          ContentHome.busy = true;
+          if(str!=='filter')
+            Buildfire.datastore.search(ContentHome.searchOptionsForItems, TAG_NAMES.COUPON_ITEMS, function (err, result) {
+              if (err) {
+                Buildfire.spinner.hide();
+                return console.error('-----------err in getting list-------------', err);
+              }
+              if (result.length <= SORT._limit) {// to indicate there are more
+                ContentHome.noMore = true;
+                Buildfire.spinner.hide();
+              } else {
+                result.pop();
+                ContentHome.searchOptionsForItems.skip = ContentHome.searchOptionsForItems.skip + SORT._limit;
+                ContentHome.noMore = false;
+              }
+              var tmpArray=[];
+              var lastIndex=result.length;
+              result.forEach(function(res,index){
+                tmpArray.push({'title' : res.data.title,
+                  rank:index +1,
+                  summary : res.data.summary,
+                  categories : res.data.Categories.length,
+                  expiresOn : res.data.expiresOn,
+                  listImage  : res.data.listImage,
+                  id:res.id});
+              });
+
+              ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
+              ContentHome.busy = false;
+              console.log("-------------------llll",ContentHome.items )
+            Buildfire.spinner.hide();
+            $scope.$digest();
+          });
+        };
+
+
+
+       /* *//**
+         * ContentHome.getMore is used to load the items
+         *//*
+        ContentHome.getMore = function () {
+          if (ContentHome.isBusy && !ContentHome.noMore) {
+            return;
+          }
+         // updateSearchOptions();
+          ContentHome.isBusy = true;
+          DataStore.search(searchOptions,TAG_NAMES.COUPON_ITEMS).then(function success(result) {
+            if (result.length <= _limit) {// to indicate there are more
+              ContentHome.noMore = true;
+            }
+            else {
+              result.pop();
+              searchOptions.skip = searchOptions.skip + _limit;
+              ContentHome.noMore = false;
+            }
+            ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
+            ContentHome.isBusy = false;
+          }, function fail() {
+            ContentHome.isBusy = false;
+          });
+        };*/
+
+
+        function validateCsv(items) {
+          if (!Array.isArray(items) || !items.length) {
+            return false;
+          }
+          return items.every(isValidItem);
+        }
+
+        ContentHome.openImportCSVDialog = function () {
+
+          $csv.import(headerRow).then(function (rows) {
+            ContentHome.loading = true;
+            if (rows && rows.length > 1) {
+              var categoryList=rows[1].Categories.split(',');
+              categoryList.forEach(function(category){
+                var obj={};
+                obj.title=category;
+                insertFilter(obj);
+              });
+
+              var columns = rows.shift();
+
+              for (var _index = 0; _index < headerRow.length; _index++) {
+                if (header[headerRow[_index]] != columns[headerRow[_index]]) {
+                  ContentHome.loading = false;
+                  ContentHome.csvDataInvalid = true;
+                  break;
+                }
+              }
+
+              if (!ContentHome.loading)
+                return;
+
+              var rank =  ContentHome.data.content.rankOfLastItem || 0;
+              RankOfLastItem.setRank(rank);
+
+              for (var index = 0; index < rows.length; index++) {
+                rank += 10;
+                rows[index].dateCreated = +new Date();
+                rows[index].links = [];
+                rows[index].rank = rank;
+                rows[index].body = "";
+
+                if(rows[index].carouselImages){
+                 var carousalImageUrlArray=rows[index].carouselImages.split(',');
+                  rows[index].carouselImages=[];
+
+                  carousalImageUrlArray.forEach(function(url){
+                    var obj={
+                      action: "noAction",
+                      iconUrl: url,
+                      title: "image"
+                    };
+                    rows[index].carouselImages.push(obj);
+                  })
+                }
+
+                  asycronouseProcess(index, function(index) {
+
+                    if(rows[index].SelectedCategories.length && rows[index].location){
+
+                      var categoryList = rows[index].SelectedCategories.split(',');
+
+                      var searchOptions = {
+                        filter: {"$json.title": {"$regex": '/*'}}
+                      };
+                      Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, data) {
+                        console.log("Saved", data.id);
+                        var tmpCategoryIds=[];
+                        data.forEach(function(categoryObj){
+                          categoryList.forEach(function(categoryTitle){
+                            if(categoryTitle==categoryObj.data.title){
+                              tmpCategoryIds.push(categoryObj.id);
+                            }
+                          })
+                        });
+                        rows[index].SelectedCategories=tmpCategoryIds;
+
+
+                        var geocoder = new google.maps.Geocoder();
+                        geocoder.geocode({"address": rows[index].location}, function (results, status) {
+                          if (status == google.maps.GeocoderStatus.OK) {
+                            var lat = results[0].geometry.location.lat(),
+                                lng = results[0].geometry.location.lng();
+                            // ContentHome.setLocation({location: rows[index].location, coordinates: {lng:lng, lat:lat}});
+                            rows[index].location = {
+                              coordinates: {
+                                lng: lng,
+                                lat: lat
+                              },
+                              addressTitle: rows[index].location
+                            };
+                            bulkInserItem(rows,rank);
+                          }
+                          else {
+                            console.error('' +
+                            'Error else parts of google');
+                            error();
+                          }
+                        });
+                        $scope.$digest();
+
+                      });
+
+
+                    }else if ((!rows[index].SelectedCategories.length) && rows[index].location){
+
+
+                      var geocoder = new google.maps.Geocoder();
+                      geocoder.geocode({"address": rows[index].location}, function (results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                          var lat = results[0].geometry.location.lat(),
+                              lng = results[0].geometry.location.lng();
+                          // ContentHome.setLocation({location: rows[index].location, coordinates: {lng:lng, lat:lat}});
+                          rows[index].location = {
+                            coordinates: {
+                              lng: lng,
+                              lat: lat
+                            },
+                            addressTitle: rows[index].location
+                          };
+                          bulkInserItem(rows,rank);
+                        }
+                        else {
+                          console.error('' +
+                          'Error else parts of google');
+                          error();
+                        }
+                      });
+                      $scope.$digest();
+
+                    }else if(rows[index].SelectedCategories.length && (!rows[index].location)){
+                      var categoryList = rows[index].SelectedCategories.split(',');
+
+                      var searchOptions = {
+                        filter: {"$json.title": {"$regex": '/*'}}
+                      };
+                      Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, data) {
+                        console.log("Saved", data.id);
+                        var tmpCategoryIds=[];
+                        data.forEach(function(categoryObj){
+                          categoryList.forEach(function(categoryTitle){
+                            if(categoryTitle==categoryObj.data.title){
+                              tmpCategoryIds.push(categoryObj.id);
+                            }
+                          })
+                        });
+                        rows[index].SelectedCategories=tmpCategoryIds;
+                        bulkInserItem(rows,rank);
+                        $scope.$digest();
+
+                      });
+                    }else{
+                      bulkInserItem(rows,rank)
+                    }
+
+                   /* if(rows[index].SelectedCategories.length) {
+                      var categoryList = rows[index].SelectedCategories.split(',');
+
+                      var searchOptions = {
+                        filter: {"$json.title": {"$regex": '*//*'}},
+                      }
+                      Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, data) {
+                        console.log("Saved", data.id);
+                        var tmpCategoryIds=[];
+                        data.forEach(function(categoryObj){
+                          categoryList.forEach(function(categoryTitle){
+                            if(categoryTitle==categoryObj.data.title){
+                              tmpCategoryIds.push(categoryObj.id);
+                            }
+                          })
+                        })
+                        rows[index].SelectedCategories=tmpCategoryIds;
+                        $scope.$digest();
+
+                      });
+                      }*/
+
+                    /*if(rows[index].location) {
+                      var geocoder = new google.maps.Geocoder();
+                      geocoder.geocode({"address": rows[index].location}, function (results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                          var lat = results[0].geometry.location.lat(),
+                              lng = results[0].geometry.location.lng();
+                          // ContentHome.setLocation({location: rows[index].location, coordinates: {lng:lng, lat:lat}});
+                          rows[index].location = {
+                            coordinates: {
+                              lng: lng,
+                              lat: lat
+                            },
+                            addressTitle: rows[index].location
+                          };
+                        }
+                        else {
+                          console.error('' +
+                          'Error else parts of google');
+                          error();
+                        }
+                      });
+                    }*/
+                  });
+                    function asycronouseProcess(index, cb){
+                    cb(index);
+                    console.log('completed');
+                  }
+
+              }
+            }
+            else {
+              ContentHome.loading = false;
+              ContentHome.csvDataInvalid = true;
+              $scope.$apply();
+            }
+          }, function (error) {
+            ContentHome.loading = false;
+            $scope.$apply();
+            //do something on cancel
+          });
+
+        };
+
+        function bulkInserItem(rows,rank){
+
+          if (validateCsv(rows)) {
+
+            buildfire.datastore.bulkInsert(rows, TAG_NAMES.COUPON_ITEMS,function(err,data){
+              if(err){
+                console.error(error);
+                ContentHome.loading = false;
+                $scope.$apply();
+              }
+              else{
+                ContentHome.loading = false;
+                ContentHome.isBusy = false;
+                ContentHome.items = [];
+                ContentHome.data.content.rankOfLastItem = rank;
+                RankOfLastItem.setRank(rank);
+                ContentHome.loadMoreItems('js');
+              }
+
+            });
+
+            /*   DataStore.insert(rows,TAG_NAMES.COUPON_ITEMS).then(function (data) {
+             }, function errorHandler(error) {
+
+             });*/
+          } else {
+            ContentHome.loading = false;
+            ContentHome.csvDataInvalid = true;
+            $timeout(function hideCsvDataError() {
+              ContentHome.csvDataInvalid = false;
+            }, 2000);
+          }
+        }
+
+        /**
+         * getRecords function get the  all items from DB
+         * @param searchOption
+         * @param records
+         * @param callback
+         */
+        function getRecords(searchOption, records, callback) {
+          Buildfire.datastore.search(searchOption, TAG_NAMES.COUPON_ITEMS, function (err, result) {
+
+            if (result.length <= SORT._maxLimit) {// to indicate there are more
+              records = records.concat(result);
+              return callback(records);
+            }
+            else {
+              result.pop();
+              searchOption.skip = searchOption.skip + SORT._maxLimit;
+              records = records.concat(result);
+              return getRecords(searchOption, records, callback);
+            }
+          }, function (error) {
+            throw (error);
+          });
+        }
+
+
+        function returnCommaSepratedListOfEntity(entities,param){
+          if(entities.length && Array.isArray(entities)){
+            var tmpURLstr="";
+            entities.forEach(function(entity){
+              if(tmpURLstr)
+                tmpURLstr=tmpURLstr+','+entity[param];
+              else
+                tmpURLstr=entity[param];
+            });
+           return tmpURLstr;
+          }else{
+            return entities;
+          }
+        }
+
+        function returnCommaSepratedListOfCategories(Categories, selectedCategories){
+          if(selectedCategories.length && Array.isArray(selectedCategories)){
+            var tmpList="";
+            selectedCategories.forEach(function(selCategory){
+              Categories.forEach(function(category){
+                  if(selCategory==category.id){
+                    if(!tmpList)
+                    tmpList=category.title;
+                    else
+                      tmpList=tmpList+","+category.title;
+                  }
+              });
+            });
+            return tmpList;
+         }
+
+        }
+
+        /**
+         * ContentHome.exportCSV() used to export item list data to CSV
+         */
+        ContentHome.exportCSV = function () {
+          var search = angular.copy(ContentHome.searchOptions);
+          search.skip = 0;
+          search.limit =  SORT._maxLimit + 1;
+          getRecords(search,
+              []
+              , function (data) {
+                if (data && data.length) {
+                  var items = [];
+                  angular.forEach(angular.copy(data), function (value) {
+                    delete value.data.dateCreated;
+                    delete value.data.links;
+                    delete value.data.rank;
+                    delete value.data.body;
+
+                    value.data.carouselImages=returnCommaSepratedListOfEntity(value.data.carouselImages,'iconUrl')
+                    if(value.data.SelectedCategories)
+                    value.data.SelectedCategories=returnCommaSepratedListOfCategories(value.data.Categories,value.data.SelectedCategories);
+                    value.data.Categories=returnCommaSepratedListOfEntity(value.data.Categories,'title');
+                    value.data.location=value.data.location.addressTitle;
+
+                    items.push(value.data);
+                  });
+                  var csv = $csv.jsonToCsv(angular.toJson(items), {
+                    header: header
+                  });
+                  $csv.download(csv, "Export.csv");
+                }
+                else {
+                  ContentHome.getTemplate();
+                }
+               // records = [];
+              });
+        };
+
+        /**
+         * ContentHome.getTemplate() used to download csv template
+         */
+        ContentHome.getTemplate = function () {
+          var templateData = [{
+            title : '',
+            summary : "",
+            Categories : "",
+            listImage : '',
+            carouselImages : '',
+            preRedemptionText : '',
+            postRedemptionText : '',
+            startOn : '',
+            expiresOn : '',
+            addressTitle : '',
+            location : '',
+            webURL : '',
+            sendToEmail : '',
+            smsTextNumber : '',
+            phoneNumber : '',
+            facebookURL : '',
+            twitterURL : '',
+            instagramURL : '',
+            googlePlusURL : '',
+            linkedinURL : ''
+          }];
+          var csv = $csv.jsonToCsv(angular.toJson(templateData), {
+            header: header
+          });
+          $csv.download(csv, "Template.csv");
+        };
 
         /*
          * Call the datastore to save the data object
@@ -539,7 +1145,7 @@
           var success = function (result) {
               console.info('Init success result:', result);
               ContentHome.data = result.data;
-              if (!ContentHome.data) {
+              if (!ContentHome.data.content) {
                 ContentHome.data = angular.copy(_data);
               } else {
                 if (!ContentHome.data.content)
@@ -552,15 +1158,22 @@
                   editor.loadItems(ContentHome.data.content.carouselImages);
                 if(!ContentHome.data.content.sortFilterBy)
                   ContentHome.data.content.sortFilterBy=ContentHome.sortFilterOptions[0];
+                if(!ContentHome.data.content.sortItemBy)
+                  ContentHome.data.content.sortItemBy=ContentHome.sortItemOptions[0];
                 ContentHome.filters = [];
                 ContentHome.searchOptions.skip = 0;
+                ContentHome.busyFilter = false;
                 ContentHome.busy = false;
+                ContentHome.data.content.selectedFilter = null;
+                ContentHome.data.content.selectedStatus = null;
+                console.log("-------------------llll", ContentHome.data.content);
                 RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter || 0);
                 RankOfLastItem.setRank(ContentHome.data.content.rankOfLastItem || 0);
               }
               updateMasterItem(ContentHome.data);
               if (tmrDelay)clearTimeout(tmrDelay);
                 ContentHome.loadMore('js');
+                ContentHome.loadMoreItems('js');
             }
             , error = function (err) {
               if (err && err.code !== STATUS_CODE.NOT_FOUND) {

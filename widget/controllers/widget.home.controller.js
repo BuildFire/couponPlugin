@@ -5,6 +5,7 @@
     .controller('WidgetHomeCtrl', ['$scope', 'TAG_NAMES', 'LAYOUTS', 'DataStore', 'PAGINATION', 'Buildfire', 'Location', '$rootScope', 'ViewStack', '$sce', 'UserData', '$modal', '$timeout', 'SORT', 'GeoDistance',
       function ($scope, TAG_NAMES, LAYOUTS, DataStore, PAGINATION, Buildfire, Location, $rootScope, ViewStack, $sce, UserData, $modal, $timeout, SORT, GeoDistance) {
         var WidgetHome = this;
+        WidgetHome.listeners = {};
         $rootScope.deviceHeight = window.innerHeight;
         $rootScope.deviceWidth = window.innerWidth || 320;
         WidgetHome.data = {
@@ -12,10 +13,21 @@
             itemListLayout: LAYOUTS.itemListLayout[0].name
           }
         };
-        var currentListLayout = null;
+        var currentListLayout, currentDistanceUnit, currentSortOrder = null;
         WidgetHome.locationData = {};
         WidgetHome.busy = false;
         WidgetHome.items = [];
+        WidgetHome.filter={};
+        $rootScope.$on('FILTER_ITEMS', function (e, view) {
+          WidgetHome.isFilterApplied = view.isFilterApplied;
+          if (view && view.isFilterApplied) {
+            WidgetHome.filter=view.filter;
+            WidgetHome.getItems(view.filter);
+          }else{
+            WidgetHome.getItems(view.filter);
+          }
+        });
+
         WidgetHome.currentDate = +new Date();
         var searchOptions = {
           skip: 0,
@@ -98,7 +110,11 @@
               }
               if (!WidgetHome.data.content)
                 WidgetHome.data.content = {};
-              console.log("==============", WidgetHome.data.design)
+              if (WidgetHome.data.content.sortItemBy) {
+                currentSortOrder = WidgetHome.data.content.sortItemBy;
+              }
+              if (WidgetHome.data.settings.distanceIn)
+                currentDistanceUnit = WidgetHome.data.settings.distanceIn;
             }
             , error = function (err) {
               Buildfire.spinner.hide();
@@ -107,7 +123,7 @@
             };
           DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
 
-          // Fecth user location
+          // Fetch user location
 
           if (typeof(Storage) !== "undefined") {
             var userLocation = localStorage.getItem('user_location');
@@ -138,7 +154,6 @@
          */
         $rootScope.$on("Carousel:LOADED", function () {
           WidgetHome.view = null;
-          console.log("****************", WidgetHome.data.content.carouselImages);
           if (!WidgetHome.view) {
             WidgetHome.view = new Buildfire.components.carousel.view("#carousel", []);
           }
@@ -192,7 +207,6 @@
         WidgetHome.init();
 
         var onUpdateCallback = function (event) {
-          console.log(event);
           setTimeout(function () {
             $scope.$digest();
             if (event && event.tag === TAG_NAMES.COUPON_INFO) {
@@ -201,6 +215,21 @@
                 WidgetHome.data.design = {};
               if (!WidgetHome.data.content)
                 WidgetHome.data.content = {};
+              if (!WidgetHome.data.settings)
+                WidgetHome.data.settings = {};
+              if (event.data.content.sortItemBy && currentSortOrder != event.data.content.sortItemBy) {
+                WidgetHome.data.content.sortItemBy = event.data.content.sortItemBy;
+                WidgetHome.items = [];
+                searchOptions.skip = 0;
+                WidgetHome.busy = false;
+                WidgetHome.loadMore();
+              }
+              if (currentDistanceUnit && WidgetHome.data.settings.distanceIn) {
+                if (currentDistanceUnit != WidgetHome.data.settings.distanceIn) {
+                  getItemsDistance(WidgetHome.items);
+                  currentDistanceUnit = WidgetHome.data.settings.distanceIn;
+                }
+              }
             }
             else if (event && event.tag === TAG_NAMES.COUPON_ITEMS) {
               WidgetHome.items = [];
@@ -212,7 +241,8 @@
             if (!WidgetHome.data.design.itemListLayout) {
               WidgetHome.data.design.itemListLayout = LAYOUTS.itemListLayout[0].name;
             }
-            if (currentListLayout != WidgetHome.data.design.itemListLayout && WidgetHome.view && WidgetHome.data.content.carouselImages) {
+
+            if (currentListLayout && currentListLayout != WidgetHome.data.design.itemListLayout && WidgetHome.view && WidgetHome.data.content.carouselImages) {
               WidgetHome.view._destroySlider();
               WidgetHome.view = null;
               console.log("==========1")
@@ -231,7 +261,7 @@
 
         DataStore.onUpdate().then(null, null, onUpdateCallback);
 
-        WidgetHome.getItems = function () {
+        WidgetHome.getItems = function (filter) {
           Buildfire.spinner.show();
           var successAll = function (resultAll) {
               Buildfire.spinner.hide();
@@ -241,6 +271,7 @@
                   _item.data.distanceText = (WidgetHome.locationData.currentCoordinates) ? 'Fetching..' : 'NA';
                 });
               }
+
               WidgetHome.items = WidgetHome.items.length ? WidgetHome.items.concat(resultAll) : resultAll;
               searchOptions.skip = searchOptions.skip + PAGINATION.itemCount;
               if (resultAll.length == PAGINATION.itemCount) {
@@ -254,10 +285,42 @@
               console.log("error", error)
             };
           console.log("***********", WidgetHome.data.content);
-          if (WidgetHome.data && WidgetHome.data.content && WidgetHome.data.content.sortBy) {
-            searchOptions = WidgetHome.getSearchOptions(WidgetHome.data.content.sortBy);
+          if (WidgetHome.data && WidgetHome.data.content && WidgetHome.data.content.sortItemBy) {
+            searchOptions = WidgetHome.getSearchOptions(WidgetHome.data.content.sortItemBy);
           }
-          DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
+          if(filter){
+            var itemFilter;
+            if(filter.categories && filter.categories.length){
+              searchOptions= {
+                skip: 0,
+                filter: {
+                  "$and": [{
+                    "$or": [{
+                      "$json.expiresOn": {$gte: WidgetHome.currentDate}
+                    }, {"$json.expiresOn": ""}]
+                  }, {"$json.location.coordinates": {$exists: true}}]
+                }
+              }
+              itemFilter = {'$json.SelectedCategories': {'$in': filter.categories}};
+              searchOptions.filter.$and.push(itemFilter);
+            }else{
+              searchOptions= {
+                skip: 0,
+                filter: {
+                  "$and": [{
+                    "$or": [{
+                      "$json.expiresOn": {$gte: WidgetHome.currentDate}
+                    }, {"$json.expiresOn": ""}]
+                  }, {"$json.location.coordinates": {$exists: true}}]
+                }
+              }
+            }
+            WidgetHome.items=[];
+            DataStore.search(searchOptions  , TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
+          }else{
+            DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
+          }
+
         };
 
         WidgetHome.loadMore = function () {
@@ -268,6 +331,7 @@
         };
 
         WidgetHome.showMapView = function () {
+          WidgetHome.isFilterApplied = false;
           ViewStack.push({
             template: 'Map',
             params: {
@@ -439,9 +503,25 @@
                 if (_items && _items[_ind]) {
                   _items[_ind].data.distanceText = (result.rows[0].elements[_ind].status != 'OK') ? 'NA' : result.rows[0].elements[_ind].distance.text;
                   _items[_ind].data.distance = (result.rows[0].elements[_ind].status != 'OK') ? -1 : result.rows[0].elements[_ind].distance.value;
+
+                  if(WidgetHome.isFilterApplied && WidgetHome.filter.distanceRange){
+
+                    var sortFilterCond = (Number(_items[_ind].data.distanceText.split(' ')[0]) >=  WidgetHome.filter.distanceRange.min && Number(_items[_ind].data.distanceText.split(' ')[0]) <=  WidgetHome.filter.distanceRange.max);
+                    if(!sortFilterCond){
+                      _items.splice(_ind, 1);
+                    }
+                  }
+
                 }
               }
 
+              if(WidgetHome.isFilterApplied && WidgetHome.filter.sortOnClosest) {
+                  _items = _items.sort(function (a, b) {
+                 return a.data.distance - b.data.distance;
+                 });
+              }
+
+                //    WidgetHome.isFilterApplied=false;
             }, function (err) {
               console.error('distance err', err);
             });
@@ -451,6 +531,10 @@
         $scope.$watch(function () {
           return WidgetHome.items;
         }, getItemsDistance);
+
+        WidgetHome.listeners['ITEM_SAVED_UPDATED'] = $rootScope.$on('ITEM_SAVED_UPDATED', function (e) {
+          WidgetHome.getSavedData(true);
+        });
 
       }])
 })(window.angular, window.buildfire);

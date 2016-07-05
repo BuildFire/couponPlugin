@@ -5,8 +5,16 @@
     .controller('WidgetItemCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'LAYOUTS', '$sce', '$rootScope', 'Buildfire', 'ViewStack', 'UserData', 'PAGINATION', '$modal', '$timeout', '$location',
       function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, PAGINATION, $modal, $timeout, $location) {
         var WidgetItem = this;
+        WidgetItem.listeners = {};
 
         var currentView = ViewStack.getCurrentView();
+
+        if (currentView.params && currentView.params.itemId && !currentView.params.stopSwitch) {
+          buildfire.messaging.sendMessageToControl({
+            id: currentView.params.itemId,
+            type: 'OpenItem'
+          });
+        }
 
         WidgetItem.getItemDetails = function () {
           Buildfire.spinner.show();
@@ -84,6 +92,15 @@
           }
         });
 
+        $scope.$on("$destroy", function () {
+          for (var i in WidgetItem.listeners) {
+            if (WidgetItem.listeners.hasOwnProperty(i)) {
+              WidgetItem.listeners[i]();
+            }
+          }
+          DataStore.clearListener();
+        });
+
         WidgetItem.setSavedItem = function () {
           if (WidgetItem.item) {
             for (var save in WidgetItem.saved) {
@@ -149,6 +166,7 @@
               $timeout(function () {
                 removeSavedModal.close();
               }, 3000);
+              $rootScope.$broadcast("ITEM_SAVED_UPDATED");
 
             }, errorRemove = function () {
               Buildfire.spinner.hide();
@@ -174,6 +192,7 @@
               $timeout(function () {
                 addedSavedModal.close();
               }, 3000);
+              $rootScope.$broadcast("ITEM_SAVED_UPDATED");
             }, errorItem = function () {
               Buildfire.spinner.hide();
               return console.error('There was a problem saving your data');

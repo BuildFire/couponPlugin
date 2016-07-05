@@ -9,57 +9,68 @@
                 scope: {images: '='},
                 link: function (scope, elem, attrs) {
                     var editor = new buildfire.components.carousel.editor("#carousel");
-                    if(scope.images && scope.images.length>0)
-                        editor.loadItems(scope.images);
-                    // this method will be called when a new item added to the list
-                    editor.onAddItems = function (items) {
-                        if (!scope.images)
-                            scope.images = [];
-                        $timeout(function(){
-                            scope.$apply(function () {
-                                scope.images.push.apply(scope.images, items);
-                            });
-                        },0);
-                    };
-                    // this method will be called when an item deleted from the list
-                    editor.onDeleteItem = function (item, index) {
-                        $timeout(function(){
-                            scope.$apply(function () {
-                                scope.images.splice(index, 1);
-                            });
-                        },0);
-                    };
-                    // this method will be called when you edit item details
-                    editor.onItemChange = function (item, index) {
-                        $timeout(function(){
-                            scope.$apply(function () {
-                                scope.images.splice(index, 1, item);
-                            });
-                        },0);
-                    };
-                    // this method will be called when you change the order of items
-                    editor.onOrderChange = function (item, oldIndex, newIndex) {
-                        $timeout(function(){
-                            scope.$apply(function () {
-                                var items = scope.images;
+                    function initCarousel(){
 
-                                var tmp = items[oldIndex];
+                        if(scope.images && scope.images.length>0)
+                            editor.loadItems(scope.images);
+                        // this method will be called when a new item added to the list
+                        editor.onAddItems = function (items) {
+                            if (!scope.images)
+                                scope.images = [];
+                            $timeout(function(){
+                                scope.$apply(function () {
+                                    scope.images.push.apply(scope.images, items);
+                                });
+                            },0);
+                        };
+                        // this method will be called when an item deleted from the list
+                        editor.onDeleteItem = function (item, index) {
+                            $timeout(function(){
+                                scope.$apply(function () {
+                                    scope.images.splice(index, 1);
+                                });
+                            },0);
+                        };
+                        // this method will be called when you edit item details
+                        editor.onItemChange = function (item, index) {
+                            $timeout(function(){
+                                scope.$apply(function () {
+                                    scope.images.splice(index, 1, item);
+                                });
+                            },0);
+                        };
+                        // this method will be called when you change the order of items
+                        editor.onOrderChange = function (item, oldIndex, newIndex) {
+                            $timeout(function(){
+                                scope.$apply(function () {
+                                    var items = scope.images;
 
-                                if (oldIndex < newIndex) {
-                                    for (var i = oldIndex + 1; i <= newIndex; i++) {
-                                        items[i - 1] = items[i];
+                                    var tmp = items[oldIndex];
+
+                                    if (oldIndex < newIndex) {
+                                        for (var i = oldIndex + 1; i <= newIndex; i++) {
+                                            items[i - 1] = items[i];
+                                        }
+                                    } else {
+                                        for (var i = oldIndex - 1; i >= newIndex; i--) {
+                                            items[i + 1] = items[i];
+                                        }
                                     }
-                                } else {
-                                    for (var i = oldIndex - 1; i >= newIndex; i--) {
-                                        items[i + 1] = items[i];
-                                    }
-                                }
-                                items[newIndex] = tmp;
+                                    items[newIndex] = tmp;
 
-                                scope.images = items;
-                            });
-                        },0);
-                    };
+                                    scope.images = items;
+                                });
+                            },0);
+                        };
+                    }
+                    initCarousel();
+                    scope.$watch("images", function (newVal, oldVal) {
+                        if (newVal) {
+                            if (scope.images) {
+                                initCarousel();
+                            }
+                        }
+                    });
                 }
             };
         }])
@@ -136,7 +147,7 @@
                     google.maps.event.addListener(autocomplete, 'place_changed', function () {
                         var location = autocomplete.getPlace().formatted_address;
                         if (autocomplete.getPlace().geometry) {
-                            var coordinates = [autocomplete.getPlace().geometry.location.lng(), autocomplete.getPlace().geometry.location.lat()];
+                            var coordinates = {lat: autocomplete.getPlace().geometry.location.lat(), lng: autocomplete.getPlace().geometry.location.lng()};
                             scope.setLocationInController({
                                 data: {
                                     location: location,
@@ -215,9 +226,9 @@
                     scope.$watch('coordinates', function (newValue, oldValue) {
                         if (newValue) {
                             scope.coordinates = newValue;
-                            if (scope.coordinates.length) {
+                            if (scope.coordinates) {
                                 var map = new google.maps.Map(elem[0], {
-                                    center: new google.maps.LatLng(scope.coordinates[1], scope.coordinates[0]),
+                                    center: new google.maps.LatLng(scope.coordinates.lat, scope.coordinates.lng),
                                     zoomControl: false,
                                     streetViewControl: false,
                                     mapTypeControl: false,
@@ -225,7 +236,7 @@
                                     mapTypeId: google.maps.MapTypeId.ROADMAP
                                 });
                                 var marker = new google.maps.Marker({
-                                    position: new google.maps.LatLng(scope.coordinates[1], scope.coordinates[0]),
+                                    position: new google.maps.LatLng(scope.coordinates.lat, scope.coordinates.lng),
                                     map: map,
                                     draggable: true
                                 });
@@ -253,7 +264,10 @@
                                         scope.draggedGeoData({
                                             data: {
                                                 location: scope.location,
-                                                coordinates: scope.coordinates
+                                                coordinates: {
+                                                   lng: scope.coordinates[0],
+                                                   lat: scope.coordinates[1]
+                                                }
                                             }
                                         });
                                     } else {
