@@ -121,8 +121,10 @@
         };
 
         WidgetFilter.applyFilter = function () {
-          if (WidgetFilter.filter.sortOnClosest || WidgetFilter.filter.categories.length || WidgetFilter.filter.text)
+          if (WidgetFilter.filter.sortOnClosest || WidgetFilter.filter.categories.length || WidgetFilter.filter.text || WidgetFilter.filter.distanceRange )
             WidgetFilter.filter.isApplied = true;
+          else
+            WidgetFilter.filter.isApplied = false;
           $rootScope.$broadcast('FILTER_ITEMS', {
             isFilterApplied: WidgetFilter.filter.isApplied,
             filter: WidgetFilter.filter

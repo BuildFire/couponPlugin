@@ -21,9 +21,12 @@
         };
         var currentDistanceUnit = null;
         $rootScope.$on('FILTER_ITEMS', function (e, view) {
+          WidgetMap.isFilterApplied = view.isFilterApplied;
           if (view && view.isFilterApplied) {
-            WidgetMap.isFilterApplied = true;
+
             WidgetMap.filter=view.filter;
+            WidgetMap.getAllItems(view.filter);
+          }else{
             WidgetMap.getAllItems(view.filter);
           }
         });
@@ -68,11 +71,8 @@
               }
 
               WidgetMap.locationData.items = resultAll;
+                WidgetMap.refreshData += 1
 
-                if(WidgetMap.isFilterApplied){
-                   WidgetMap.refreshData += 1;
-                 /* WidgetMap.locationData.items= getItemsSortOnDistance(resultAll);*/
-                }
 
               if (WidgetMap.currentLoggedInUser)
                 WidgetMap.getSavedItems();
@@ -95,9 +95,20 @@
                   }, {"$json.expiresOn": ""}]
                 }, {"$json.location.coordinates": {$exists: true}}]
               }
-              }
+              };
               itemFilter = {'$json.SelectedCategories': {'$in': filter.categories}};
               searchOptions.filter.$and.push(itemFilter);
+            }else{
+              searchOptions= {
+                skip: 0,
+                filter: {
+                  "$and": [{
+                    "$or": [{
+                      "$json.expiresOn": {$gte: WidgetMap.currentDate}
+                    }, {"$json.expiresOn": ""}]
+                  }, {"$json.location.coordinates": {$exists: true}}]
+                }
+              }
             }
             DataStore.search(searchOptions  , TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
           }else{
@@ -434,7 +445,7 @@
 
                 }
               }
-              WidgetMap.isFilterApplied=false;
+            //  WidgetMap.isFilterApplied=false;
             }, function (err) {
               console.error('distance err', err);
             });
