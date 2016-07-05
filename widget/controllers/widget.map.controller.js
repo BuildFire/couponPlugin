@@ -66,6 +66,7 @@
               }
 
               WidgetMap.locationData.items = resultAll;
+                WidgetMap.refreshData += 1;
               if (WidgetMap.currentLoggedInUser)
                 WidgetMap.getSavedItems();
             },
