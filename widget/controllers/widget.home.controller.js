@@ -17,9 +17,11 @@
         WidgetHome.locationData = {};
         WidgetHome.busy = false;
         WidgetHome.items = [];
+        WidgetHome.filter={};
         $rootScope.$on('FILTER_ITEMS', function (e, view) {
           if (view && view.isFilterApplied) {
             WidgetHome.isFilterApplied = true;
+            WidgetHome.filter=view.filter;
             WidgetHome.getItems(view.filter)
           }
         });
@@ -316,6 +318,7 @@
         };
 
         WidgetHome.showMapView = function () {
+          WidgetHome.isFilterApplied = false;
           ViewStack.push({
             template: 'Map',
             params: {
@@ -487,9 +490,18 @@
                 if (_items && _items[_ind]) {
                   _items[_ind].data.distanceText = (result.rows[0].elements[_ind].status != 'OK') ? 'NA' : result.rows[0].elements[_ind].distance.text;
                   _items[_ind].data.distance = (result.rows[0].elements[_ind].status != 'OK') ? -1 : result.rows[0].elements[_ind].distance.value;
+
+                  if(WidgetHome.isFilterApplied){
+
+                    var sortFilterCond = (Number(_items[_ind].data.distanceText.split(' ')[0]) >=  WidgetHome.filter.distanceRange.min && Number(_items[_ind].data.distanceText.split(' ')[0]) <=  WidgetHome.filter.distanceRange.max);
+                    if(!sortFilterCond){
+                      _items.splice(_ind, 1);
+                    }
+                  }
+
                 }
               }
-
+              WidgetHome.isFilterApplied=false;
             }, function (err) {
               console.error('distance err', err);
             });
