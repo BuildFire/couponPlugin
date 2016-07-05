@@ -205,7 +205,7 @@
                     map.setCenter(new google.maps.LatLng(_place.data.location.coordinates.lat, _place.data.location.coordinates.lng));
                   }
 
-                  if (_place.data && _place.data.location && _place.data.location.coordinates && _place.data.location.coordinates.lng && _place.data.location.coordinates.lat) {
+                  if (_place.data && _place.data.location && _place.data.location.coordinates && _place.data.location.coordinates.lng && _place.data.location.coordinates.lat && !_place.alreadySet) {
                     marker = new google.maps.Marker({
                       position: {lat: _place.data.location.coordinates.lat, lng: _place.data.location.coordinates.lng},
                       map: map,

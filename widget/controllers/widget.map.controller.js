@@ -7,7 +7,7 @@
         var WidgetMap = this;
         WidgetMap.locationData = {};
         WidgetMap.currentDate = +new Date();
-        WidgetMap.refreshData = 1
+        WidgetMap.refreshData = 1;
         WidgetMap.filter={};
         var searchOptions = {
           skip: 0,
@@ -70,7 +70,7 @@
               WidgetMap.locationData.items = resultAll;
 
                 if(WidgetMap.isFilterApplied){
-                   WidgetMap.refreshData += 1
+                   WidgetMap.refreshData += 1;
                  /* WidgetMap.locationData.items= getItemsSortOnDistance(resultAll);*/
                 }
 
@@ -142,6 +142,28 @@
             });
         };
 
+        WidgetMap.formatItems = function () {
+          var isChanged = false;
+          for (var i = 0; i < WidgetMap.locationData.items.length; i++) {
+            for (var j = i+1 ; j < WidgetMap.locationData.items.length; j++) {
+              if (!WidgetMap.locationData.items[i].alreadySet && !WidgetMap.locationData.items[j].alreadySet && (angular.equals(WidgetMap.locationData.items[i].data.location, WidgetMap.locationData.items[j].data.location))) {
+                isChanged = true;
+                WidgetMap.locationData.items[j].alreadySet = true;
+                WidgetMap.locationData.items[i].multiCoupons = true;
+                if(!WidgetMap.locationData.items[i].couponContained)
+                  WidgetMap.locationData.items[i].couponContained = [];
+
+                if(WidgetMap.locationData.items[i].couponContained.length == 0)
+                  WidgetMap.locationData.items[i].couponContained.push(angular.copy(WidgetMap.locationData.items[i]));
+                WidgetMap.locationData.items[i].couponContained.push(angular.copy(WidgetMap.locationData.items[j]));
+              }
+            }
+          }
+          console.log("IIIIIII", WidgetMap.locationData.items);
+          if (isChanged)
+            WidgetMap.refreshData += 1;
+        };
+
         WidgetMap.setSavedItem = function () {
           var isChanged = false;
           for (var item = 0; item < WidgetMap.locationData.items.length; item++) {
@@ -154,8 +176,7 @@
               }
             }
           }
-          if (isChanged)
-            WidgetMap.refreshData += 1;
+          WidgetMap.formatItems();
         };
 
         WidgetMap.getSavedItems = function () {
