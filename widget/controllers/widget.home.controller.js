@@ -514,7 +514,14 @@
 
                 }
               }
-          //    WidgetHome.isFilterApplied=false;
+
+              if(WidgetHome.isFilterApplied && WidgetHome.filter.sortOnClosest) {
+                  _items = _items.sort(function (a, b) {
+                 return a.data.distance - b.data.distance;
+                 });
+              }
+
+                //    WidgetHome.isFilterApplied=false;
             }, function (err) {
               console.error('distance err', err);
             });
