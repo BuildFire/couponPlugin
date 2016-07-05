@@ -26,6 +26,8 @@
 
             WidgetMap.filter=view.filter;
             WidgetMap.getAllItems(view.filter);
+          }else{
+            WidgetMap.getAllItems(view.filter);
           }
         });
         function getGeoLocation() {
@@ -69,11 +71,8 @@
               }
 
               WidgetMap.locationData.items = resultAll;
+                WidgetMap.refreshData += 1
 
-                if(WidgetMap.isFilterApplied){
-                   WidgetMap.refreshData += 1
-                 /* WidgetMap.locationData.items= getItemsSortOnDistance(resultAll);*/
-                }
 
               if (WidgetMap.currentLoggedInUser)
                 WidgetMap.getSavedItems();
@@ -99,6 +98,17 @@
               }
               itemFilter = {'$json.SelectedCategories': {'$in': filter.categories}};
               searchOptions.filter.$and.push(itemFilter);
+            }else{
+              searchOptions= {
+                skip: 0,
+                filter: {
+                  "$and": [{
+                    "$or": [{
+                      "$json.expiresOn": {$gte: WidgetMap.currentDate}
+                    }, {"$json.expiresOn": ""}]
+                  }, {"$json.location.coordinates": {$exists: true}}]
+                }
+              }
             }
             DataStore.search(searchOptions  , TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
           }else{

@@ -22,7 +22,9 @@
           WidgetHome.isFilterApplied = view.isFilterApplied;
           if (view && view.isFilterApplied) {
             WidgetHome.filter=view.filter;
-            WidgetHome.getItems(view.filter)
+            WidgetHome.getItems(view.filter);
+          }else{
+            WidgetHome.getItems(view.filter);
           }
         });
 
@@ -301,8 +303,19 @@
               }
               itemFilter = {'$json.SelectedCategories': {'$in': filter.categories}};
               searchOptions.filter.$and.push(itemFilter);
-              WidgetHome.items=[];
+            }else{
+              searchOptions= {
+                skip: 0,
+                filter: {
+                  "$and": [{
+                    "$or": [{
+                      "$json.expiresOn": {$gte: WidgetHome.currentDate}
+                    }, {"$json.expiresOn": ""}]
+                  }, {"$json.location.coordinates": {$exists: true}}]
+                }
+              }
             }
+            WidgetHome.items=[];
             DataStore.search(searchOptions  , TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
           }else{
             DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
