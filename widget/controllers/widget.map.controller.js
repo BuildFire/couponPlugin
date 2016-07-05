@@ -288,13 +288,18 @@
           });
         };
 
-        WidgetMap.addRemoveSavedItem = function (item) {
+        WidgetMap.addRemoveSavedItem = function (item, multipleCoupons, index) {
           if (item.isSaved && item.savedId) {
             Buildfire.spinner.show();
             var successRemove = function (result) {
               Buildfire.spinner.hide();
-              WidgetMap.selectedItem.isSaved = false;
-              WidgetMap.selectedItem.savedId = null;
+              if(multipleCoupons){
+                WidgetMap.selectedItem.couponContained[index].isSaved = false;
+                WidgetMap.selectedItem.couponContained[index].savedId = null;
+              }else{
+                WidgetMap.selectedItem.isSaved = false;
+                WidgetMap.selectedItem.savedId = null;
+              }
               if (!$scope.$$phase)
                 $scope.$digest();
               var removeSavedModal = $modal.open({
@@ -323,8 +328,14 @@
             var successItem = function (result) {
               Buildfire.spinner.hide();
               console.log("Inserted", result);
-              WidgetMap.selectedItem.isSaved = true;
-              WidgetMap.selectedItem.savedId = result.id;
+              if(multipleCoupons){
+                WidgetMap.selectedItem.couponContained[index].isSaved = true;
+                WidgetMap.selectedItem.couponContained[index].savedId = result.id;
+              }
+              else {
+                WidgetMap.selectedItem.isSaved = true;
+                WidgetMap.selectedItem.savedId = result.id;
+              }
               if (!$scope.$$phase)
                 $scope.$digest();
 
