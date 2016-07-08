@@ -19,7 +19,6 @@
         WidgetItem.getItemDetails = function () {
           Buildfire.spinner.show();
           var success = function (result) {
-              console.log(">>>>>>>>>>", result);
               Buildfire.spinner.hide();
               WidgetItem.item = result;
             }
@@ -68,7 +67,7 @@
         /**
          * This event listener is bound for "Carousel:LOADED" event broadcast
          */
-        $rootScope.$on("Carousel2:LOADED", function () {
+        WidgetItem.listeners["CarouselLoaded"] = $rootScope.$on("Carousel2:LOADED", function () {
           //  WidgetItem.view = null;
           if (WidgetItem.view)
             WidgetItem.view._destroySlider();
@@ -271,12 +270,11 @@
                   break;
               }
               $scope.$digest();
-              $rootScope.$apply();
             }
           }, 500);
         };
 
-        DataStore.onUpdate().then(null, null, onUpdateCallback);
+        DataStore.onUpdate("item").then(null, null, onUpdateCallback);
 
         /*
          * Fetch user's data from datastore
@@ -307,6 +305,17 @@
             };
           DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
         };
+
+        $scope.$on("$destroy", function() {
+
+          for(var i in WidgetItem.listeners) {
+            if(WidgetItem.listeners.hasOwnProperty(i)) {
+              WidgetItem.listeners[i]();
+            }
+          }
+          DataStore.clearListener("item");
+
+        });
 
         init();
       }]);

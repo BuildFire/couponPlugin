@@ -9,8 +9,9 @@
       };
       return Buildfire;
     }])
+
     .factory("DataStore", ['Buildfire', '$q', 'STATUS_CODE', 'STATUS_MESSAGES', function (Buildfire, $q, STATUS_CODE, STATUS_MESSAGES) {
-      var onUpdateListeners = [];
+      var onUpdateListeners = {};
       return {
         get: function (_tagName) {
           var deferred = $q.defer();
@@ -22,8 +23,7 @@
             }
           });
           return deferred.promise;
-        },
-        getById: function (_id, _tagName) {
+        }, getById: function (_id, _tagName) {
           var deferred = $q.defer();
           if (typeof _id == 'undefined') {
             return deferred.reject(new Error({
@@ -39,8 +39,7 @@
             }
           });
           return deferred.promise;
-        },
-        save: function (_item, _tagName) {
+        }, save: function (_item, _tagName) {
           var deferred = $q.defer();
           if (typeof _item == 'undefined') {
             return deferred.reject(new Error({
@@ -56,8 +55,7 @@
             }
           });
           return deferred.promise;
-        },
-        search: function (options, _tagName) {
+        }, search: function (options, _tagName) {
           var deferred = $q.defer();
           if (typeof options == 'undefined') {
             return deferred.reject(new Error({
@@ -73,8 +71,7 @@
             }
           });
           return deferred.promise;
-        },
-        onUpdate: function () {
+        }, onUpdate: function (viewName) {
           var deferred = $q.defer();
           var onUpdateFn = Buildfire.datastore.onUpdate(function (event) {
             if (!event) {
@@ -86,14 +83,24 @@
               return deferred.notify(event);
             }
           }, true);
-          onUpdateListeners.push(onUpdateFn);
+          onUpdateListeners[viewName] = onUpdateFn;
           return deferred.promise;
-        },
-        clearListener: function () {
-          onUpdateListeners.forEach(function (listner) {
-            listner.clear();
-          });
-          onUpdateListeners = [];
+        }, clearListener: function (viewName, clearAll) {
+          if (clearAll) {
+            for (var i in onUpdateListeners) {
+              if (onUpdateListeners.hasOwnProperty(i)) {
+                onUpdateListeners[i].clear();
+              }
+            }
+            onUpdateListeners = {};
+          }
+          if (viewName) {
+            var listener = onUpdateListeners[viewName];
+            if (listener) {
+              listener.clear();
+            }
+            delete onUpdateListeners[viewName];
+          }
         }
       }
     }])
@@ -167,7 +174,7 @@
         update: function (id, _item, _tagName, _userToken) {
 
           var deferred = $q.defer();
-          if (typeof _item == 'undefined'  || typeof id == 'undefined') {
+          if (typeof _item == 'undefined' || typeof id == 'undefined') {
             return deferred.reject(new Error({
               code: STATUS_CODE.UNDEFINED_OPTIONS,
               message: STATUS_MESSAGES.UNDEFINED_OPTIONS
@@ -227,7 +234,7 @@
           return views.length && views[views.length - 1] || {};
         },
         popAllViews: function (noAnimation) {
-          $rootScope.$broadcast('VIEW_CHANGED', 'POPALL', views,noAnimation);
+          $rootScope.$broadcast('VIEW_CHANGED', 'POPALL', views, noAnimation);
           views = [];
           viewMap = {};
         },
@@ -262,7 +269,10 @@
 
         items.forEach(function (_dest) {
           if (_dest && _dest.data && _dest.data.location && _dest.data.location.coordinates && _dest.data.location.coordinates.lat && _dest.data.location.coordinates.lng)
-            destinationsMap.push({lat: _dest.data.location.coordinates.lat, lng: _dest.data.location.coordinates.lng});
+            destinationsMap.push({
+              lat: _dest.data.location.coordinates.lat,
+              lng: _dest.data.location.coordinates.lng
+            });
           else
             destinationsMap.push({lat: 0, lng: 0});
         });

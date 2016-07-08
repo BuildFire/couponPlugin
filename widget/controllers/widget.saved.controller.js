@@ -227,13 +227,11 @@
         };
 
         $scope.$on("$destroy", function () {
-          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>destroyed");
           for (var i in WidgetSaved.listeners) {
             if (WidgetSaved.listeners.hasOwnProperty(i)) {
               WidgetSaved.listeners[i]();
             }
           }
-          DataStore.clearListener();
         });
 
         $scope.$watch(function () {
