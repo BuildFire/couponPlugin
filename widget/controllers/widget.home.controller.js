@@ -152,7 +152,7 @@
         /**
          * This event listener is bound for "Carousel:LOADED" event broadcast
          */
-        $rootScope.$on("Carousel:LOADED", function () {
+        WidgetHome.listeners['CarouselLoaded'] = $rootScope.$on("Carousel:LOADED", function () {
           WidgetHome.view = null;
           if (!WidgetHome.view) {
             WidgetHome.view = new Buildfire.components.carousel.view("#carousel", []);
@@ -208,7 +208,6 @@
 
         var onUpdateCallback = function (event) {
           setTimeout(function () {
-            $scope.$digest();
             if (event && event.tag === TAG_NAMES.COUPON_INFO) {
               WidgetHome.data = event.data;
               if (!WidgetHome.data.design)
@@ -245,21 +244,18 @@
             if (currentListLayout && currentListLayout != WidgetHome.data.design.itemListLayout && WidgetHome.view && WidgetHome.data.content.carouselImages) {
               WidgetHome.view._destroySlider();
               WidgetHome.view = null;
-              console.log("==========1")
             }
             else {
               if (WidgetHome.view) {
                 WidgetHome.view.loadItems(WidgetHome.data.content.carouselImages);
-                console.log("==========2")
               }
             }
             currentListLayout = WidgetHome.data.design.itemListLayout;
             $scope.$digest();
-            $rootScope.$digest();
           }, 0);
         };
 
-        DataStore.onUpdate().then(null, null, onUpdateCallback);
+        DataStore.onUpdate("home").then(null, null, onUpdateCallback);
 
         WidgetHome.getItems = function (filter) {
           Buildfire.spinner.show();
@@ -534,6 +530,17 @@
 
         WidgetHome.listeners['ITEM_SAVED_UPDATED'] = $rootScope.$on('ITEM_SAVED_UPDATED', function (e) {
           WidgetHome.getSavedData(true);
+        });
+
+        $scope.$on("$destroy", function() {
+
+          for(var i in WidgetHome.listeners) {
+            if(WidgetHome.listeners.hasOwnProperty(i)) {
+              WidgetHome.listeners[i]();
+            }
+          }
+          DataStore.clearListener("home");
+
         });
 
       }])
