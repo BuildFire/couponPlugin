@@ -52,6 +52,14 @@
           );
         }
 
+        //Refresh items on pulling the tile bar
+
+        buildfire.datastore.onRefresh(function () {
+          WidgetMap.init(function(err){
+              console.log(">>>>>>Refreshed map");
+          });
+        });
+
         /**
          * Method to open buildfire auth login pop up and allow user to login using credentials.
          */
@@ -206,7 +214,7 @@
           UserData.search({}, TAG_NAMES.COUPON_SAVED).then(result, err);
         };
 
-        WidgetMap.init = function () {
+        WidgetMap.init = function (cb) {
           Buildfire.spinner.show();
           var success = function (result) {
             Buildfire.spinner.hide();
@@ -247,11 +255,13 @@
             if (WidgetMap.data.settings.distanceIn)
               currentDistanceUnit = WidgetMap.data.settings.distanceIn;
             WidgetMap.getAllItems();
+            cb();
           }
             , error = function (err) {
             Buildfire.spinner.hide();
             WidgetMap.data = {design: {itemListLayout: LAYOUTS.itemListLayout[0].name}};
             console.error('Error while getting data', err);
+            cb();
           };
           DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
 
@@ -362,7 +372,7 @@
           getGeoLocation();
         };
 
-        WidgetMap.init();
+        WidgetMap.init(function(){});
 
         var onUpdateCallback = function (event) {
           setTimeout(function () {
@@ -479,6 +489,19 @@
           }
           DataStore.clearListener("map");
 
+        });
+
+        WidgetMap.listeners['CHANGED'] = $rootScope.$on('VIEW_CHANGED', function (e, type, view) {
+
+          if (ViewStack.getCurrentView().template == 'Map') {
+            //bind on refresh again
+
+            buildfire.datastore.onRefresh(function () {
+              WidgetMap.init(function(err){
+                console.log(">>>>>>Refreshed map");
+              });
+            });
+          }
         });
 
       }]);

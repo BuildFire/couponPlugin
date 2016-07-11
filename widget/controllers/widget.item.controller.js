@@ -16,6 +16,10 @@
           });
         }
 
+        buildfire.datastore.onRefresh(function () {
+          // Do nothing
+        });
+
         WidgetItem.getItemDetails = function () {
           Buildfire.spinner.show();
           var success = function (result) {
