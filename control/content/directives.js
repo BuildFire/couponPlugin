@@ -143,6 +143,17 @@
                     var options = {
                         types: ['geocode']
                     };
+                    var $el,
+                      styleTag = document.createElement('style'),
+                      appended = false,
+                      hgt = $(element).outerHeight(),
+                      offset = $(element).offset();
+                    
+                    styleTag.id = 'GAC-PAC';
+                    $(styleTag).text(".pac-container.pac-container { top: " + (offset.top + 34) + "px !important;}");
+
+                    document.getElementsByTagName('head')[0].appendChild( styleTag );
+
                     var autocomplete = new google.maps.places.Autocomplete(element[0], options);
                     google.maps.event.addListener(autocomplete, 'place_changed', function () {
                         var location = autocomplete.getPlace().formatted_address;
