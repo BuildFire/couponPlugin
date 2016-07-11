@@ -41,6 +41,19 @@
         WidgetHome.couponInfo = null;
         $scope.isFetchedAllData = false;
 
+        //Refresh list of items on pulling the tile bar
+
+        buildfire.datastore.onRefresh(function () {
+          WidgetHome.init(function(err){
+            if(!err){
+              console.log(">>>>>>Refreshed home list");
+              WidgetHome.items = [];
+              searchOptions.skip = 0;
+              WidgetHome.busy = false;
+              WidgetHome.loadMore();
+            }
+          });
+        });
 
         /**
          * getSearchOptions(value) is used to get searchOptions with one more key sort which decide the order of sorting.
@@ -72,7 +85,7 @@
           return searchOptions;
         };
 
-        WidgetHome.init = function () {
+        WidgetHome.init = function (cb) {
           Buildfire.spinner.show();
           var success = function (result) {
               Buildfire.spinner.hide();
@@ -115,11 +128,13 @@
               }
               if (WidgetHome.data.settings.distanceIn)
                 currentDistanceUnit = WidgetHome.data.settings.distanceIn;
+            cb();
             }
             , error = function (err) {
               Buildfire.spinner.hide();
               WidgetHome.data = {design: {itemListLayout: LAYOUTS.itemListLayout[0].name}};
               console.error('Error while getting data', err);
+            cb(err);
             };
           DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
 
@@ -204,7 +219,7 @@
           );
         }
 
-        WidgetHome.init();
+        WidgetHome.init(function(){});
 
         var onUpdateCallback = function (event) {
           setTimeout(function () {
@@ -543,5 +558,19 @@
 
         });
 
+        WidgetHome.listeners['CHANGED'] = $rootScope.$on('VIEW_CHANGED', function (e, type, view) {
+            // bind on refresh again
+            buildfire.datastore.onRefresh(function () {
+              WidgetHome.init(function(err){
+                if(!err){
+                  console.log(">>>>>>Refreshed home list");
+                  WidgetHome.items = [];
+                  searchOptions.skip = 0;
+                  WidgetHome.busy = false;
+                  WidgetHome.loadMore();
+                }
+              });
+            });
+        });
       }])
 })(window.angular, window.buildfire);

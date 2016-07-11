@@ -16,6 +16,10 @@
 
         WidgetFilter.allSelected = true;
 
+        buildfire.datastore.onRefresh(function () {
+          // Do nothing
+        });
+
         function getGeoLocation() {
           Buildfire.geo.getCurrentPosition(
             null,

@@ -15,17 +15,33 @@
           limit: PAGINATION.itemCount
         };
 
-        WidgetSaved.init = function () {
+        //Refresh list of saved items on pulling the tile bar
+
+        buildfire.datastore.onRefresh(function () {
+          WidgetSaved.init(function(err){
+            if(!err){
+              console.log(">>>>>>Refreshed saved list");
+              WidgetSaved.items = [];
+              searchOptions.skip = 0;
+              WidgetSaved.busy = false;
+              WidgetSaved.loadMore();
+            }
+          });
+        });
+
+        WidgetSaved.init = function (cb) {
           Buildfire.spinner.show();
           var success = function (result) {
               Buildfire.spinner.hide();
               if (result && result.data) {
                 WidgetSaved.data = result.data;
               }
+            cb();
             }
             , error = function (err) {
               Buildfire.spinner.hide();
               console.error('Error while getting data', err);
+            cb();
             };
           DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
         };
@@ -248,7 +264,26 @@
           WidgetSaved.loadMore();
         };
 
-        WidgetSaved.init();
+        WidgetSaved.init(function(){});
+
+        WidgetSaved.listeners['CHANGED'] = $rootScope.$on('VIEW_CHANGED', function (e, type, view) {
+
+          if (ViewStack.getCurrentView().template == 'Saved') {
+            //bind on refresh again
+
+            buildfire.datastore.onRefresh(function () {
+              WidgetSaved.init(function(err){
+                if(!err){
+                  console.log(">>>>>>Refreshed saved list");
+                  WidgetSaved.items = [];
+                  searchOptions.skip = 0;
+                  WidgetSaved.busy = false;
+                  WidgetSaved.loadMore();
+                }
+              });
+            });
+          }
+        });
 
       }]);
 })(window.angular, window.buildfire, window);
