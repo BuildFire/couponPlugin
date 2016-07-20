@@ -17,8 +17,8 @@
 					<div class="plugin-slide border-grey border-radius-four">
 						<img ng-if="!item.data.listImage"
                  src="../../../styles/media/holder-16x9.png" ng-click="WidgetHome.openDetails(item.id)">
-						<img ng-if="item.data.listImage" load-image="16x9"
-                 data-final-src="{{item.data.listImage | getImageUrl : 147:83}}" ng-click="WidgetHome.openDetails(item.id)">
+						<img ng-if="item.data.listImage" load-image="16x9" crop-width="147" crop-height="83" crop-type="crop"
+                 data-final-src="{{item.data.listImage}}" ng-click="WidgetHome.openDetails(item.id)">
 						<div class="item-text" ng-click="WidgetHome.openDetails(item.id)">
 							<p class="item-title margin-zero text-center text-primary primaryTheme ellipsis">{{item.data.title}}</p>
 							<p class="item-summary margin-zero text-center ellipsis"> {{item.data.summary}}</p>
