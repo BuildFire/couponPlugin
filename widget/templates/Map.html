@@ -14,7 +14,7 @@
         <div class="list-item" ng-repeat="coupon in WidgetMap.selectedItem.couponContained">
           <div class="list-item-media text-left overflow-hidden">
             <div class="square-icon list-media-holder pull-left" ng-if="coupon.data.listImage">
-              <img load-image="4x3" data-final-src="{{coupon.data.listImage | getImageUrl : 96:72}}">
+              <img load-image="4x3" crop-width="96" crop-height="72" crop-type="crop" data-final-src="{{coupon.data.listImage}}">
             </div>
             <div class="list-item-copy text-left padding-left-ten padding-right-ten">
               <div class="copy-holder" ng-class="{'padding-left-ten': !coupon.data.listImage}">
@@ -48,7 +48,7 @@
         <div class="list-item">
           <div class="list-item-media text-left overflow-hidden">
             <div class="square-icon list-media-holder pull-left" ng-if="WidgetMap.selectedItem.data.listImage">
-              <img load-image="4x3" data-final-src="{{WidgetMap.selectedItem.data.listImage | getImageUrl : 96:72}}">
+              <img load-image="4x3" crop-width="96" crop-height="72" crop-type="crop" data-final-src="{{WidgetMap.selectedItem.data.listImage}}">
             </div>
             <div class="list-item-copy text-left padding-left-ten padding-right-ten">
               <div class="copy-holder" ng-class="{'padding-left-ten': !WidgetMap.selectedItem.data.listImage}">
