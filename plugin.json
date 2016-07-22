@@ -2,7 +2,8 @@
   "author":"BuildFire"
 ,"pluginName":"Coupon Plugin"
 ,"pluginDescription":"This plugin will have coupons."
-,"supportEmail":"[Your support Email]"
+,"supportEmail":"support@buildfire.com"
+,"offlineModeEnabled": true
 ,"control":{
   "content":{
     "enabled":true
