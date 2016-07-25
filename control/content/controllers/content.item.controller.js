@@ -351,6 +351,9 @@
                             aName: ''
                         };
                         ContentItem.currentCoordinates = null;
+                        ContentItem.item.data.location.addressTitle = "";
+                        ContentItem.item.data.location.coordinates = null;
+
                     }
                 };
 
