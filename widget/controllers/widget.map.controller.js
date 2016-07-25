@@ -476,6 +476,18 @@
           WidgetMap.selectedItem = null;
         };
 
+        WidgetMap.openDetailsPage = function (coupon) {
+          if(coupon){
+            ViewStack.push({
+              template: 'Item',
+              params: {
+                controller: "WidgetItemCtrl as WidgetItem",
+                itemId: coupon.id
+              }
+            });
+          }
+        };
+
         $scope.$watch(function () {
           return WidgetMap.locationData.items;
         }, getItemsDistance);
