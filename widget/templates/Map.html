@@ -37,8 +37,8 @@
               <div class="bookmark-holder primaryBackgroundTheme" ng-class="coupon.isSaved?'bg-primary':''"
                    ng-if="WidgetMap.currentLoggedInUser"
                    ng-click="WidgetMap.addRemoveSavedItem(coupon, true, $index)">
-                <span class="icon icon-star-empty"
-                      ng-class="coupon.isSaved?'whiteTheme':''"></span>
+                <span class="icon"
+                      ng-class="coupon.isSaved?'whiteTheme icon-star':' icon-star-empty'"></span>
               </div>
             </div>
           </div>
@@ -71,8 +71,8 @@
               <div class="bookmark-holder primaryBackgroundTheme" ng-class="WidgetMap.selectedItem.isSaved?'bg-primary':''"
                    ng-if="WidgetMap.currentLoggedInUser"
                    ng-click="WidgetMap.addRemoveSavedItem(WidgetMap.selectedItem)">
-                <span class="icon icon-star-empty"
-                      ng-class="WidgetMap.selectedItem.isSaved?'whiteTheme':''"></span>
+                <span class="icon"
+                      ng-class="WidgetMap.selectedItem.isSaved?'whiteTheme icon-star':' icon-star-empty'"></span>
               </div>
             </div>
           </div>

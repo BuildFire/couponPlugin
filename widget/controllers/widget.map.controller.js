@@ -477,7 +477,7 @@
         };
 
         WidgetMap.openDetailsPage = function (coupon) {
-          if(coupon){
+          if(coupon && coupon.id){
             ViewStack.push({
               template: 'Item',
               params: {
