@@ -12,6 +12,8 @@
           categories: []
         };
 
+        WidgetFilter.searchOptions={}
+
         WidgetFilter.locationData = {};
 
         WidgetFilter.allSelected = true;
@@ -19,6 +21,8 @@
         buildfire.datastore.onRefresh(function () {
           // Do nothing
         });
+
+        var tmrDelay = null;
 
         function getGeoLocation() {
           Buildfire.geo.getCurrentPosition(
@@ -185,6 +189,102 @@
         };
 
         init();
+
+        /*
+         * Call the datastore to save the data object
+         */
+        var searchData = function (newValue, tag) {
+          Buildfire.spinner.show();
+          var searchTerm = '';
+          if (typeof newValue === 'undefined') {
+            return;
+          }
+          var success = function (result) {
+                Buildfire.spinner.hide();
+                console.info('Searched data result:=================== ', result);
+                WidgetFilter.categories = result;
+               // WidgetFilter.getBookmarks();
+              }
+              , error = function (err) {
+                Buildfire.spinner.hide();
+                console.error('Error while searching data : ', err);
+              };
+          if (newValue) {
+            newValue = newValue.trim();
+            if (newValue.indexOf(' ') !== -1) {
+              searchTerm = newValue.split(' ');
+              WidgetFilter.searchOptions.filter = {
+                "$or": [{
+                  "$json.title": {
+                    "$regex": searchTerm[0],
+                    "$options": "i"
+                  }
+                }, {
+                  "$json.summary": {
+                    "$regex": searchTerm[0],
+                    "$options": "i"
+                  }
+                }, {
+                  "$json.title": {
+                    "$regex": searchTerm[1],
+                    "$options": "i"
+                  }
+                }, {
+                  "$json.summary": {
+                    "$regex": searchTerm[1],
+                    "$options": "i"
+                  }
+                }
+                ]
+              };
+            } else {
+              searchTerm = newValue;
+              WidgetFilter.searchOptions.filter = {
+                "$or": [{
+                  "$json.title": {
+                    "$regex": searchTerm,
+                    "$options": "i"
+                  }
+                }, {"$json.summary": {"$regex": searchTerm, "$options": "i"}}]
+              };
+            }
+          }
+          DataStore.search(WidgetFilter.searchOptions, tag).then(success, error);
+
+        };
+
+        function getFilteredCategoryData(newObj){
+          console.log("******************", newObj);
+          if (newObj) {
+            if (tmrDelay) {
+              clearTimeout(tmrDelay);
+            }
+            tmrDelay = setTimeout(function () {
+              if (newObj)
+                searchData(newObj, TAG_NAMES.COUPON_CATEGORIES);
+            }, 500);
+          }
+          else {
+            var success = function (result) {
+                  Buildfire.spinner.hide();
+                  console.info('Searched data result:=================== ', result);
+                  WidgetFilter.categories = result;
+                  // WidgetFilter.getBookmarks();
+                }
+                , error = function (err) {
+                  WidgetFilter.categories = [];
+                  Buildfire.spinner.hide();
+                  console.error('Error while searching data : ', err);
+                };
+
+            DataStore.search({},TAG_NAMES.COUPON_CATEGORIES).then(success, error);
+
+          }
+        }
+
+        $scope.$watch(function () {
+          return WidgetFilter.filter.text;
+        }, getFilteredCategoryData, true);
 
       }]);
 })(window.angular, window.buildfire, window);
