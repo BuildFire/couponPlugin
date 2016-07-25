@@ -7,7 +7,8 @@
         var WidgetMap = this;
         WidgetMap.locationData = {};
         WidgetMap.listeners = {};
-        WidgetMap.currentDate = +new Date();
+        WidgetMap.currentDate = new Date();
+        WidgetMap.yesterdayDate = +WidgetMap.currentDate.setDate(WidgetMap.currentDate.getDate() - 1);
         WidgetMap.refreshData = 1;
         WidgetMap.filter = {};
         var searchOptions = {
@@ -15,7 +16,7 @@
           filter: {
             "$and": [{
               "$or": [{
-                "$json.expiresOn": {$gte: WidgetMap.currentDate}
+                "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
               }, {"$json.expiresOn": ""}]
             }, {"$json.location.coordinates": {$exists: true}}]
           }
@@ -100,7 +101,7 @@
                 filter: {
                   "$and": [{
                     "$or": [{
-                      "$json.expiresOn": {$gte: WidgetMap.currentDate}
+                      "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
                     }, {"$json.expiresOn": ""}]
                   }, {"$json.location.coordinates": {$exists: true}}]
                 }
@@ -113,7 +114,7 @@
                 filter: {
                   "$and": [{
                     "$or": [{
-                      "$json.expiresOn": {$gte: WidgetMap.currentDate}
+                      "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
                     }, {"$json.expiresOn": ""}]
                   }, {"$json.location.coordinates": {$exists: true}}]
                 }
