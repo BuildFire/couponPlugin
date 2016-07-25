@@ -10,6 +10,9 @@
                     , updating = false;
                 ContentItem.filters=[];
 
+                if (buildfire.navigation.scrollTop) {
+                    buildfire.navigation.scrollTop();
+                }
                 /**
                  * This updateMasterItem will update the ContentMedia.masterItem with passed item
                  * @param item
@@ -351,6 +354,9 @@
                             aName: ''
                         };
                         ContentItem.currentCoordinates = null;
+                        ContentItem.item.data.location.addressTitle = "";
+                        ContentItem.item.data.location.coordinates = null;
+
                     }
                 };
 
