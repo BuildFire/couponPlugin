@@ -7,10 +7,8 @@
         var WidgetFilter = this;
 
         // default value
-        WidgetFilter.filter = {
-          sortOnClosest: false,
-          categories: []
-        };
+        WidgetFilter.filter={};
+        WidgetFilter.filter.text = '';
 
         WidgetFilter.searchOptions={}
 
@@ -45,16 +43,28 @@
           );
         }
 
+
+       function saveFilterDataInLocalStorage(){
+         if (typeof(Storage) !== "undefined") {
+           localStorage.setItem("filter" , JSON.stringify(WidgetFilter.filter));
+         } else {
+          console.error("LOCAL STORAGE NOT SUPPORTED TO SAVE FILTERED DATA");
+         }
+       }
+
+
         WidgetFilter.back = function () {
           ViewStack.pop();
+          saveFilterDataInLocalStorage();
         };
 
         WidgetFilter.getAllCategories = function () {
           Buildfire.spinner.show();
           var success = function (result) {
               Buildfire.spinner.hide();
-              if (result && result.length)
+              if (result && result.length){
                 WidgetFilter.categories = result;
+              }
               else
                 WidgetFilter.categories = [];
             }
@@ -138,6 +148,7 @@
             filter: WidgetFilter.filter
           });
           ViewStack.pop();
+          saveFilterDataInLocalStorage();
         };
 
         /*
@@ -167,6 +178,43 @@
                   ceil: 499, //upper limit
                   floor: 0
                 };
+
+                if (typeof(Storage) !== "undefined") {
+                  var obj =localStorage.getItem("filter")
+                  if(obj){
+                    WidgetFilter.filter =JSON.parse(localStorage.getItem("filter"));
+                    WidgetFilter.filter.categories = WidgetFilter.filter.categories.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
+                    WidgetFilter.distanceSlider.min=WidgetFilter.filter.distanceRange.min;
+                    WidgetFilter.distanceSlider.max=WidgetFilter.filter.distanceRange.max;
+
+
+                    setTimeout(function(){
+                      WidgetFilter.filter.categories.forEach(function(f_category){
+                        WidgetFilter.categories.forEach(function(category){
+                          if(category.id==f_category){
+                            category.isSelected=true;
+                            WidgetFilter.allSelected = false;
+                            if(!$scope.$$phase) {
+                              $scope.$digest();
+                            }
+                          }
+                        })
+                      })
+                    },1000);
+                  }
+                  else{
+                    WidgetFilter.filter = {
+                      sortOnClosest: false,
+                      categories: []
+                    };
+                  }
+                } else {
+                  WidgetFilter.filter = {
+                    sortOnClosest: false,
+                    categories: []
+                  };
+                  console.error("LOCAL STORAGE NOT SUPPORTED TO SAVE FILTERED DATA");
+                }
             }
             , error = function (err) {
               Buildfire.spinner.hide();
@@ -278,7 +326,6 @@
                 };
 
             DataStore.search({},TAG_NAMES.COUPON_CATEGORIES).then(success, error);
-
           }
         }
 
