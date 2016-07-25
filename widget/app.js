@@ -121,10 +121,10 @@
             attrs.$observe('finalSrc', function() {
               var elem = $("<img>");
               elem[0].onload = function () {
-                element.attr("src", attrs.finalSrc);
+                element.attr("src", finalSrc);
                 elem.remove();
               };
-              elem.attr("src", attrs.finalSrc);
+              elem.attr("src", finalSrc);
             });
           }
         }
