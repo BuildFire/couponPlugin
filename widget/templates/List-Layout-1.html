@@ -18,15 +18,14 @@
             </div>
             <div class="list-item-copy text-left padding-left-ten padding-right-ten">
               <div class="copy-holder" ng-click="WidgetHome.openDetails(item.id)">
-                <p class="ellipsis margin-zero text-primary margin-top-five">
+                <p class="ellipsis margin-zero text-primary">
                   {{item.data.title}}
                 </p>
                 <p class="ellipsis margin-zero bodyTextTheme">
                  {{item.data.summary}}
                 </p>
-                <p
-                    class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-                  <i  ng-if="item.data.expiresOn">Expires {{item.data.expiresOn | date}}</i>
+                <p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
+                  <i ng-if="item.data.expiresOn">Expires {{item.data.expiresOn | date}}</i>
                   <i ng-if="!item.data.expiresOn">No expiration date</i>
                 </p>
                 <p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
@@ -34,11 +33,8 @@
                 </p>
               </div>
               <div class="bookmark-holder" ng-if="WidgetHome.currentLoggedInUser">
-                <span class="icon icon-star text-primary"
-                      ng-if="item.isSaved"
-                      ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
-                 <span class="icon icon-star-empty text-default" ng-if="!item.isSaved"
-                       ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
+                 <span class="icon icon-star text-primary" ng-if="item.isSaved" ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
+                 <span class="icon icon-star-empty text-default" ng-if="!item.isSaved" ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
               </div>
             </div>
           </div>

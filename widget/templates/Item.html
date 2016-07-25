@@ -8,11 +8,11 @@
            ng-style="WidgetItem.item.data.carouselImages.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}"></div>
       <div class="padded" ng-if="WidgetItem.item.data">
         <div class="clearfix row intro">
-          <div class="col-xs-7 pull-left">
-            <p class="margin-zero ellipsis" style="font-size:15px;">
+          <div class="col-xs-7 pull-left padding-right-zero">
+            <p class="margin-zero" style="font-size:15px;">
               {{WidgetItem.item.data.title}}</p>
 
-            <p class="margin-zero ellipsis">{{WidgetItem.item.data.summary}}</p>
+            <p class="margin-zero">{{WidgetItem.item.data.summary}}</p>
 
             <p class="margin-zero small ellipsis"
                ng-if="WidgetItem.item.data.expiresOn"><i>Expires
