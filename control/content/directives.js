@@ -82,6 +82,7 @@
                 link: function (scope, elem, attrs) {
                     // create a new instance of the buildfire action Items
                     var linkEditor = new buildfire.components.actionItems.sortableList("#actionItems");
+                    function initDynamicLinks(){
                     if(scope.links && scope.links.length>0)
                         linkEditor.loadItems(scope.links);
                     // this method will be called when a new item added to the list
@@ -132,6 +133,15 @@
                             });
                         },0);
                     };
+                    }
+                    initDynamicLinks();
+                    scope.$watch("links", function (newVal, oldVal) {
+                        if (newVal) {
+                            if (scope.links) {
+                                initDynamicLinks();
+                            }
+                        }
+                    });
                 }
             };
         }])
