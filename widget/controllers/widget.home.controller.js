@@ -28,13 +28,14 @@
           }
         });
 
-        WidgetHome.currentDate = +new Date();
+        WidgetHome.currentDate = new Date();
+        WidgetHome.yesterdayDate = +WidgetHome.currentDate.setDate(WidgetHome.currentDate.getDate() - 1);
         var searchOptions = {
           skip: 0,
           limit: PAGINATION.itemCount,
           filter: {
             "$or": [{
-              "$json.expiresOn": {$gte: WidgetHome.currentDate}
+              "$json.expiresOn": {$gte: WidgetHome.yesterdayDate}
             }, {"$json.expiresOn": ""}]
           }
         };
@@ -307,11 +308,11 @@
                 filter: {
                   "$and": [{
                     "$or": [{
-                      "$json.expiresOn": {$gte: WidgetHome.currentDate}
+                      "$json.expiresOn": {$gte: WidgetHome.yesterdayDate}
                     }, {"$json.expiresOn": ""}]
                   }, {"$json.location.coordinates": {$exists: true}}]
                 }
-              }
+              };
               itemFilter = {'$json.SelectedCategories': {'$in': filter.categories}};
               searchOptions.filter.$and.push(itemFilter);
             }else{
@@ -320,7 +321,7 @@
                 filter: {
                   "$and": [{
                     "$or": [{
-                      "$json.expiresOn": {$gte: WidgetHome.currentDate}
+                      "$json.expiresOn": {$gte: WidgetHome.yesterdayDate}
                     }, {"$json.expiresOn": ""}]
                   }, {"$json.location.coordinates": {$exists: true}}]
                 }

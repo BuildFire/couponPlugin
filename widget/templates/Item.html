@@ -19,7 +19,7 @@
               {{WidgetItem.item.data.expiresOn | date}}</i></p>
           </div>
           <div class="col-xs-5 pull-right text-right">
-            <img src="assets/media/map-icon.png"
+            <img ng-if="WidgetItem.item.data.location.coordinates && WidgetItem.item.data.location.coordinates.lng" src="assets/media/map-icon.png"
                  ng-click="WidgetItem.onAddressClick(WidgetItem.item.data.location.coordinates.lng,WidgetItem.item.data.location.coordinates.lat)">
 
             <div
@@ -27,8 +27,8 @@
                 ng-class="WidgetItem.item.isSaved?'bg-primary':''"
                 ng-if="WidgetItem.currentLoggedInUser"
                 ng-click="WidgetItem.addToSaved(WidgetItem.item, WidgetItem.item.isSaved)">
-              <span class="icon icon-star-empty"
-                    ng-class="WidgetItem.item.isSaved?'whiteTheme':''"></span>
+              <span class="icon"
+                    ng-class="WidgetItem.item.isSaved?'whiteTheme icon-star':' icon-star-empty'"></span>
             </div>
           </div>
         </div>

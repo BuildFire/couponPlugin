@@ -7,10 +7,10 @@
         var WidgetFilter = this;
 
         // default value
-        WidgetFilter.filter = {
-          sortOnClosest: false,
-          categories: []
-        };
+        WidgetFilter.filter={};
+        WidgetFilter.filter.text = '';
+
+        WidgetFilter.searchOptions={}
 
         WidgetFilter.locationData = {};
 
@@ -19,6 +19,8 @@
         buildfire.datastore.onRefresh(function () {
           // Do nothing
         });
+
+        var tmrDelay = null;
 
         function getGeoLocation() {
           Buildfire.geo.getCurrentPosition(
@@ -41,16 +43,28 @@
           );
         }
 
+
+       function saveFilterDataInLocalStorage(){
+         if (typeof(Storage) !== "undefined") {
+           localStorage.setItem("filter" , JSON.stringify(WidgetFilter.filter));
+         } else {
+          console.error("LOCAL STORAGE NOT SUPPORTED TO SAVE FILTERED DATA");
+         }
+       }
+
+
         WidgetFilter.back = function () {
           ViewStack.pop();
+          saveFilterDataInLocalStorage();
         };
 
         WidgetFilter.getAllCategories = function () {
           Buildfire.spinner.show();
           var success = function (result) {
               Buildfire.spinner.hide();
-              if (result && result.length)
+              if (result && result.length){
                 WidgetFilter.categories = result;
+              }
               else
                 WidgetFilter.categories = [];
             }
@@ -134,6 +148,7 @@
             filter: WidgetFilter.filter
           });
           ViewStack.pop();
+          saveFilterDataInLocalStorage();
         };
 
         /*
@@ -163,6 +178,43 @@
                   ceil: 499, //upper limit
                   floor: 0
                 };
+
+                if (typeof(Storage) !== "undefined") {
+                  var obj =localStorage.getItem("filter")
+                  if(obj){
+                    WidgetFilter.filter =JSON.parse(localStorage.getItem("filter"));
+                    WidgetFilter.filter.categories = WidgetFilter.filter.categories.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
+                    WidgetFilter.distanceSlider.min=WidgetFilter.filter.distanceRange.min;
+                    WidgetFilter.distanceSlider.max=WidgetFilter.filter.distanceRange.max;
+
+
+                    setTimeout(function(){
+                      WidgetFilter.filter.categories.forEach(function(f_category){
+                        WidgetFilter.categories.forEach(function(category){
+                          if(category.id==f_category){
+                            category.isSelected=true;
+                            WidgetFilter.allSelected = false;
+                            if(!$scope.$$phase) {
+                              $scope.$digest();
+                            }
+                          }
+                        })
+                      })
+                    },1000);
+                  }
+                  else{
+                    WidgetFilter.filter = {
+                      sortOnClosest: false,
+                      categories: []
+                    };
+                  }
+                } else {
+                  WidgetFilter.filter = {
+                    sortOnClosest: false,
+                    categories: []
+                  };
+                  console.error("LOCAL STORAGE NOT SUPPORTED TO SAVE FILTERED DATA");
+                }
             }
             , error = function (err) {
               Buildfire.spinner.hide();
@@ -185,6 +237,101 @@
         };
 
         init();
+
+        /*
+         * Call the datastore to save the data object
+         */
+        var searchData = function (newValue, tag) {
+          Buildfire.spinner.show();
+          var searchTerm = '';
+          if (typeof newValue === 'undefined') {
+            return;
+          }
+          var success = function (result) {
+                Buildfire.spinner.hide();
+                console.info('Searched data result:=================== ', result);
+                WidgetFilter.categories = result;
+               // WidgetFilter.getBookmarks();
+              }
+              , error = function (err) {
+                Buildfire.spinner.hide();
+                console.error('Error while searching data : ', err);
+              };
+          if (newValue) {
+            newValue = newValue.trim();
+            if (newValue.indexOf(' ') !== -1) {
+              searchTerm = newValue.split(' ');
+              WidgetFilter.searchOptions.filter = {
+                "$or": [{
+                  "$json.title": {
+                    "$regex": searchTerm[0],
+                    "$options": "i"
+                  }
+                }, {
+                  "$json.summary": {
+                    "$regex": searchTerm[0],
+                    "$options": "i"
+                  }
+                }, {
+                  "$json.title": {
+                    "$regex": searchTerm[1],
+                    "$options": "i"
+                  }
+                }, {
+                  "$json.summary": {
+                    "$regex": searchTerm[1],
+                    "$options": "i"
+                  }
+                }
+                ]
+              };
+            } else {
+              searchTerm = newValue;
+              WidgetFilter.searchOptions.filter = {
+                "$or": [{
+                  "$json.title": {
+                    "$regex": searchTerm,
+                    "$options": "i"
+                  }
+                }, {"$json.summary": {"$regex": searchTerm, "$options": "i"}}]
+              };
+            }
+          }
+          DataStore.search(WidgetFilter.searchOptions, tag).then(success, error);
+
+        };
+
+        function getFilteredCategoryData(newObj){
+          console.log("******************", newObj);
+          if (newObj) {
+            if (tmrDelay) {
+              clearTimeout(tmrDelay);
+            }
+            tmrDelay = setTimeout(function () {
+              if (newObj)
+                searchData(newObj, TAG_NAMES.COUPON_CATEGORIES);
+            }, 500);
+          }
+          else {
+            var success = function (result) {
+                  Buildfire.spinner.hide();
+                  console.info('Searched data result:=================== ', result);
+                  WidgetFilter.categories = result;
+                  // WidgetFilter.getBookmarks();
+                }
+                , error = function (err) {
+                  WidgetFilter.categories = [];
+                  Buildfire.spinner.hide();
+                  console.error('Error while searching data : ', err);
+                };
+
+            DataStore.search({},TAG_NAMES.COUPON_CATEGORIES).then(success, error);
+          }
+        }
+
+        $scope.$watch(function () {
+          return WidgetFilter.filter.text;
+        }, getFilteredCategoryData, true);
 
       }]);
 })(window.angular, window.buildfire, window);
