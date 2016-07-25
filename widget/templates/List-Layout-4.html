@@ -37,10 +37,10 @@
 
             <div class="item clearfix row"
                  ng-click="WidgetHome.openDetails(item.id)">
-              <div class="col-xs-7 pull-left text-left"
-                   ng-if="item.data.expiresOn">
-                <p class="date ellipsis margin-zero">Expires
+              <div class="col-xs-7 pull-left text-left">
+                <p ng-if="item.data.expiresOn" class="date ellipsis margin-zero">Expires
                   {{item.data.expiresOn | date}}</p>
+                <p ng-if="!item.data.expiresOn" class="date ellipsis margin-zero">No expiration date</p>
               </div>
               <div class="col-xs-5 pull-right text-right">
                 <p class="date margin-zero">{{item.data.distanceText}}</p>
