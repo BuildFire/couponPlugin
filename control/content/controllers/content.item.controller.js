@@ -355,7 +355,6 @@
                 };
                 ContentItem.setCoordinates = function () {
                     var latlng = '';
-                    console.log('ng-enter---------------------called------------------', ContentItem.currentAddress);
                     function successCallback(resp) {
                         console.error('Successfully validated coordinates-----------', resp);
                         if (resp) {
