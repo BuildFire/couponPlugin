@@ -165,7 +165,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	position:relative;
 }
 .layout3 .list-layout .list-item-copy{
-	padding:6px 10px 5px;
+	padding:6px 10px 5px 5px;
 }
 
 .holder .plugin-banner{
@@ -509,11 +509,16 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	top:50% !important;
 	transform:translateY(-50%) !important;	
 	width:95%;
-	padding-left:71px;
+	padding-left:75px;
 }
 .coupon.layout2 .list-item-copy .copy-holder{
-	padding-left:115px;
+	padding-left:119px;
 }
+.coupon.layout3 .list-item-copy .copy-holder.no-padding,
+.coupon.layout2 .list-item-copy .copy-holder.no-padding{
+	padding-left:0 !important;
+}
+
 
 /* Map Layout */
 .map-layout .overlay-list{
