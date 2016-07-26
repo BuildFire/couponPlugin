@@ -10,6 +10,9 @@
                     , updating = false;
                 ContentItem.filters=[];
 
+                // Hide the top plugin info part when inside item detail view
+                Buildfire.appearance.setHeaderVisibility(false);
+
                 if (buildfire.navigation.scrollTop) {
                     buildfire.navigation.scrollTop();
                 }

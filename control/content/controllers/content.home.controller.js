@@ -29,6 +29,9 @@
           }
         };
 
+        // Show the top plugin info part when on home view
+        Buildfire.appearance.setHeaderVisibility(true);
+        
         var header = {
               title : 'Item Title',
               summary : "Item Summary",
