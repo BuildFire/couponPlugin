@@ -503,19 +503,19 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 
 /* Layout 1-2 */
-.coupon.layout3 .list-item-copy .copy-holder,
-.coupon.layout2 .list-item-copy .copy-holder{
+.coupon.layout3.valign .list-item-copy .copy-holder,
+.coupon.layout2.valign .list-item-copy .copy-holder{
 	position:absolute;
 	top:50% !important;
 	transform:translateY(-50%) !important;	
 	width:95%;
 	padding-left:75px;
 }
-.coupon.layout2 .list-item-copy .copy-holder{
+.coupon.layout2.valign .list-item-copy .copy-holder{
 	padding-left:119px;
 }
-.coupon.layout3 .list-item-copy .copy-holder.no-padding,
-.coupon.layout2 .list-item-copy .copy-holder.no-padding{
+.coupon.layout3.valign .list-item-copy .copy-holder.no-padding,
+.coupon.layout2.valign .list-item-copy .copy-holder.no-padding{
 	padding-left:0 !important;
 }
 
