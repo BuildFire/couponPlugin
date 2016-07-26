@@ -248,16 +248,16 @@
                       },
                       error = function(err){
                           console.log("There is error in fetching data", err);
-                      }
+                      };
                     DataStore.getById(itemId, TAG_NAMES.COUPON_ITEMS).then(success, error);
-                 }
+                 };
 
                  /*
                   Send message to widget that this page has been opened
                 */
 
                 if ($routeParams.id) {
-                    ContentItem.getItemData($routeParams.id)
+                    ContentItem.getItemData($routeParams.id);
                     buildfire.messaging.sendMessageToWidget({
                         id: $routeParams.id,
                         type: 'OpenItem'
@@ -266,6 +266,8 @@
                 else{
                     init();
                 }
+
+                //Methods to add and remove list image
 
                 ContentItem.addListImage = function () {
                     var options = {showIcons: false, multiSelection: false},
@@ -281,6 +283,42 @@
                 };
                 ContentItem.removeListImage = function () {
                     ContentItem.item.data.listImage = null;
+                };
+
+                //Methods to add and remove pre redemption image
+
+                ContentItem.addPreRedemptionImage = function () {
+                    var options = {showIcons: false, multiSelection: false},
+                      listImgCB = function (error, result) {
+                          if (error) {
+                              console.error('Error:', error);
+                          } else {
+                              ContentItem.item.data.preRedemptionImage = result && result.selectedFiles && result.selectedFiles[0] || null;
+                              if (!$scope.$$phase)$scope.$digest();
+                          }
+                      };
+                    buildfire.imageLib.showDialog(options, listImgCB);
+                };
+                ContentItem.removePreRedemptionImage = function () {
+                    ContentItem.item.data.preRedemptionImage = null;
+                };
+
+                //Methods to add and remove post redemption image
+
+                ContentItem.addPostRedemptionImage = function () {
+                    var options = {showIcons: false, multiSelection: false},
+                      listImgCB = function (error, result) {
+                          if (error) {
+                              console.error('Error:', error);
+                          } else {
+                              ContentItem.item.data.postRedemptionImage = result && result.selectedFiles && result.selectedFiles[0] || null;
+                              if (!$scope.$$phase)$scope.$digest();
+                          }
+                      };
+                    buildfire.imageLib.showDialog(options, listImgCB);
+                };
+                ContentItem.removePostRedemptionImage = function () {
+                    ContentItem.item.data.postRedemptionImage = null;
                 };
 
                 /**
