@@ -184,9 +184,11 @@
                   if(obj){
                     WidgetFilter.filter =JSON.parse(localStorage.getItem("filter"));
                     WidgetFilter.filter.categories = WidgetFilter.filter.categories.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
-                    WidgetFilter.distanceSlider.min=WidgetFilter.filter.distanceRange.min;
-                    WidgetFilter.distanceSlider.max=WidgetFilter.filter.distanceRange.max;
+                      if(WidgetFilter.filter.distanceRange){
+                          WidgetFilter.distanceSlider.min=WidgetFilter.filter.distanceRange.min;
+                          WidgetFilter.distanceSlider.max=WidgetFilter.filter.distanceRange.max;
 
+                      }
 
                     setTimeout(function(){
                       WidgetFilter.filter.categories.forEach(function(f_category){
