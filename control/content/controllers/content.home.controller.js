@@ -59,8 +59,10 @@
 
 
         var today = new Date();
-        var month = new Date().getMonth() + 1
+        var month = new Date().getMonth() + 1;
         ContentHome.currentDate = +new Date("'" + month + "/" + today.getDate() + "/" + today.getFullYear() + "'");
+
+        ContentHome.currentDateTimestamp = +new Date();
 
         ContentHome.filters = [];
 
@@ -87,7 +89,6 @@
           skip: SORT_FILTER._skip,
           limit: SORT_FILTER._limit + 1 // the plus one is to check if there are any more
         };
-
 
         ContentHome.searchOptionsForItems = {
           filter: {"$json.title": {"$regex": '/*'}},

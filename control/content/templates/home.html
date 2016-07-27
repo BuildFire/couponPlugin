@@ -194,7 +194,7 @@
       </div>
       <div class="col-md-3 pull-left padding-right-zero">
         <span
-            class="title pull-left ellipsis" ng-show="item.data.expiresOn!=''">Expires On<br>{{item.data.expiresOn | date :'mediumDate'}}</span>
+            class="title pull-left ellipsis" ng-show="item.data.expiresOn!=''" ng-class="{'expired-item' : (ContentHome.currentDateTimestamp - item.data.expiresOn) > 1}">Expires On<br>{{item.data.expiresOn | date :'mediumDate'}}</span>
         <span
             class="title pull-left ellipsis" ng-hide="item.data.expiresOn!=''">Expires On<br>No Expiration</span>
       </div>
