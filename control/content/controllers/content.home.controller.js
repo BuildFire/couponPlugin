@@ -352,9 +352,8 @@
         };
 
         ContentHome.deleteItem = function (index) {
-          Modals.removePopupModal({'item': 'item'}).then(function (result) {
+          Modals.removeItemPopupModal({'item': 'item'}).then(function (result) {
             if (result) {
-
               Buildfire.datastore.delete(ContentHome.items[index].id, TAG_NAMES.COUPON_ITEMS, function (err, result) {
                 if (err)
                   return;
