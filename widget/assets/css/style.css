@@ -292,6 +292,9 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .coupon .form-holder .form-control.border-none{
 	height:38px;
 }
+.coupon .form-holder .form-control.border-none.has-clear{
+	padding-right:48px;
+}
 .coupon .list-item-copy p span.selected{
 	font-weight:500;
 }
@@ -313,20 +316,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	right:10px;
 	top:10px;
 	display:inline-block;
-	width:18px;
-	height:18px;
-	border-radius:100%;
-	background:#ed4b4b;
-}
-.coupon .form-holder .clear-icon:after{
-	content:'+';
-	color:#fff;
-	position:absolute;
-	top:-2px;
-	top:-2.5px;
-	left:3px;
-	font-size:19px;
-	transform:rotate(45deg);
+	font-size:12px;
 }
 .coupon .well p{
 	font-size:13px;

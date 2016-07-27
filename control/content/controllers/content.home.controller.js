@@ -310,6 +310,17 @@
                   return;
                 //ContentHome.items.splice(_index, 1);
                 ContentHome.filters.splice(index, 1);
+                var tmpArray = [];
+                ContentHome.filters.forEach(function(res,index){
+                  tmpArray.push(res.id);
+                });
+                ContentHome.items.forEach(function(resItem,index){
+                  // tmpArray.push(res.data.SelectedCategories);
+                  var  intersectedCategories =  tmpArray.filter(function(value) {
+                    return resItem.data.SelectedCategories.indexOf(value) > -1;
+                  });
+                  ContentHome.items[index].SelectedCommonCategories = intersectedCategories;
+                });
                 $scope.$digest();
               });
             }
@@ -616,6 +627,13 @@
         };
 
 
+        var searchOptionsFilterForItemList={
+          "filter":{"$json.title": {"$regex": '/*'}},
+          "sort": {"title": 1},
+          "skip":"0",
+          "limit":"50"
+        };
+
         ContentHome.loadMoreItems = function(str){
           console.log("------------------>>>>>>>>>>>>>>>>>>>>",str)
 
@@ -656,6 +674,26 @@
               });
 
               ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
+              Buildfire.datastore.search(searchOptionsFilterForItemList, TAG_NAMES.COUPON_CATEGORIES, function (err, resultFilter) {
+
+                if (err) {
+                  Buildfire.spinner.hide();
+                  return console.error('-----------err in getting list-------------', err);
+                }
+                var tmpArray=[];
+                var lastIndex=result.length;
+                resultFilter.forEach(function(res,index){
+                  tmpArray.push(res.id);
+                });
+                ContentHome.items.forEach(function(resItem,index){
+                  // tmpArray.push(res.data.SelectedCategories);
+                  var  intersectedCategories =  tmpArray.filter(function(value) {
+                    return resItem.data.SelectedCategories.indexOf(value) > -1;
+                  });
+                  ContentHome.items[index].SelectedCommonCategories = intersectedCategories;
+                });
+                $scope.$digest();
+              });
               ContentHome.busy = false;
               console.log("-------------------llll",ContentHome.items )
             Buildfire.spinner.hide();
