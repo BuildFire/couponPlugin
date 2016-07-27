@@ -327,8 +327,48 @@
                 }
               }
             }
+
+            if(filter.text){
+              var newValue=filter.text;
+              if (newValue) {
+                newValue = newValue.trim();
+                if (newValue.indexOf(' ') !== -1) {
+                  var searchTerm = newValue.split(' ');
+                  searchOptions.filter.$or=[];
+                  searchOptions.filter.$or.push({
+                    "$json.title": {
+                      "$regex": searchTerm[0],
+                      "$options": "i"
+                    }
+                  }, {
+                    "$json.summary": {
+                      "$regex": searchTerm[0],
+                      "$options": "i"
+                    }
+                  }, {
+                    "$json.title": {
+                      "$regex": searchTerm[1],
+                      "$options": "i"
+                    }
+                  }, {
+                    "$json.summary": {
+                      "$regex": searchTerm[1],
+                      "$options": "i"
+                    }
+                  });
+                } else {
+                 var searchTerm = newValue;
+                  searchOptions.filter.$or.push({
+                    "$json.title": {
+                      "$regex": searchTerm,
+                      "$options": "i"
+                    }
+                  }, {"$json.summary": {"$regex": searchTerm, "$options": "i"}})
+                }
+              }
+            }
             WidgetHome.items=[];
-            DataStore.search(searchOptions  , TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
+            DataStore.search(searchOptions , TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
           }else{
             DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
           }
@@ -513,7 +553,7 @@
               console.log('distance result', result);
               for (var _ind = 0; _ind < WidgetHome.items.length; _ind++) {
                 if (_items && _items[_ind]) {
-                  _items[_ind].data.distanceText = (result.rows[0].elements[_ind].status != 'OK') ? 'NA' : result.rows[0].elements[_ind].distance.text;
+                  _items[_ind].data.distanceText = (result.rows[0].elements[_ind].status != 'OK') ? 'NA' : result.rows[0].elements[_ind].distance.text + ' away';
                   _items[_ind].data.distance = (result.rows[0].elements[_ind].status != 'OK') ? -1 : result.rows[0].elements[_ind].distance.value;
 
                   if(WidgetHome.isFilterApplied && WidgetHome.filter.distanceRange){

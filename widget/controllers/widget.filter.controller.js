@@ -10,7 +10,7 @@
         WidgetFilter.filter={};
         WidgetFilter.filter.text = '';
 
-        WidgetFilter.searchOptions={}
+     //   WidgetFilter.searchOptions={}
 
         WidgetFilter.locationData = {};
 
@@ -20,7 +20,7 @@
           // Do nothing
         });
 
-        var tmrDelay = null;
+     //   var tmrDelay = null;
 
         function getGeoLocation() {
           Buildfire.geo.getCurrentPosition(
@@ -184,9 +184,11 @@
                   if(obj){
                     WidgetFilter.filter =JSON.parse(localStorage.getItem("filter"));
                     WidgetFilter.filter.categories = WidgetFilter.filter.categories.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
-                    WidgetFilter.distanceSlider.min=WidgetFilter.filter.distanceRange.min;
-                    WidgetFilter.distanceSlider.max=WidgetFilter.filter.distanceRange.max;
+                      if(WidgetFilter.filter.distanceRange){
+                          WidgetFilter.distanceSlider.min=WidgetFilter.filter.distanceRange.min;
+                          WidgetFilter.distanceSlider.max=WidgetFilter.filter.distanceRange.max;
 
+                      }
 
                     setTimeout(function(){
                       WidgetFilter.filter.categories.forEach(function(f_category){
@@ -238,9 +240,10 @@
 
         init();
 
-        /*
+/*
+
          * Call the datastore to save the data object
-         */
+
         var searchData = function (newValue, tag) {
           Buildfire.spinner.show();
           var searchTerm = '';
@@ -300,8 +303,9 @@
           DataStore.search(WidgetFilter.searchOptions, tag).then(success, error);
 
         };
+*/
 
-        function getFilteredCategoryData(newObj){
+   /*     function getFilteredCategoryData(newObj){
           console.log("******************", newObj);
           if (newObj) {
             if (tmrDelay) {
@@ -327,11 +331,11 @@
 
             DataStore.search({},TAG_NAMES.COUPON_CATEGORIES).then(success, error);
           }
-        }
+        }*/
 
-        $scope.$watch(function () {
+      /*  $scope.$watch(function () {
           return WidgetFilter.filter.text;
-        }, getFilteredCategoryData, true);
+        }, getFilteredCategoryData, true);*/
 
       }]);
 })(window.angular, window.buildfire, window);
