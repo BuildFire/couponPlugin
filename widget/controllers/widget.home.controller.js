@@ -327,8 +327,48 @@
                 }
               }
             }
+
+            if(filter.text){
+              var newValue=filter.text;
+              if (newValue) {
+                newValue = newValue.trim();
+                if (newValue.indexOf(' ') !== -1) {
+                  var searchTerm = newValue.split(' ');
+                  searchOptions.filter.$or=[];
+                  searchOptions.filter.$or.push({
+                    "$json.title": {
+                      "$regex": searchTerm[0],
+                      "$options": "i"
+                    }
+                  }, {
+                    "$json.summary": {
+                      "$regex": searchTerm[0],
+                      "$options": "i"
+                    }
+                  }, {
+                    "$json.title": {
+                      "$regex": searchTerm[1],
+                      "$options": "i"
+                    }
+                  }, {
+                    "$json.summary": {
+                      "$regex": searchTerm[1],
+                      "$options": "i"
+                    }
+                  });
+                } else {
+                 var searchTerm = newValue;
+                  searchOptions.filter.$or.push({
+                    "$json.title": {
+                      "$regex": searchTerm,
+                      "$options": "i"
+                    }
+                  }, {"$json.summary": {"$regex": searchTerm, "$options": "i"}})
+                }
+              }
+            }
             WidgetHome.items=[];
-            DataStore.search(searchOptions  , TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
+            DataStore.search(searchOptions , TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
           }else{
             DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
           }
