@@ -553,7 +553,7 @@
               console.log('distance result', result);
               for (var _ind = 0; _ind < WidgetHome.items.length; _ind++) {
                 if (_items && _items[_ind]) {
-                  _items[_ind].data.distanceText = (result.rows[0].elements[_ind].status != 'OK') ? 'NA' : result.rows[0].elements[_ind].distance.text;
+                  _items[_ind].data.distanceText = (result.rows[0].elements[_ind].status != 'OK') ? 'NA' : result.rows[0].elements[_ind].distance.text + ' away';
                   _items[_ind].data.distance = (result.rows[0].elements[_ind].status != 'OK') ? -1 : result.rows[0].elements[_ind].distance.value;
 
                   if(WidgetHome.isFilterApplied && WidgetHome.filter.distanceRange){
