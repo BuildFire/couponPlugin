@@ -10,7 +10,7 @@
         WidgetFilter.filter={};
         WidgetFilter.filter.text = '';
 
-        WidgetFilter.searchOptions={}
+     //   WidgetFilter.searchOptions={}
 
         WidgetFilter.locationData = {};
 
@@ -20,7 +20,7 @@
           // Do nothing
         });
 
-        var tmrDelay = null;
+     //   var tmrDelay = null;
 
         function getGeoLocation() {
           Buildfire.geo.getCurrentPosition(
@@ -238,9 +238,9 @@
 
         init();
 
-        /*
+     /*   *//*
          * Call the datastore to save the data object
-         */
+         *//*
         var searchData = function (newValue, tag) {
           Buildfire.spinner.show();
           var searchTerm = '';
@@ -299,9 +299,9 @@
           }
           DataStore.search(WidgetFilter.searchOptions, tag).then(success, error);
 
-        };
+        };*/
 
-        function getFilteredCategoryData(newObj){
+   /*     function getFilteredCategoryData(newObj){
           console.log("******************", newObj);
           if (newObj) {
             if (tmrDelay) {
@@ -327,11 +327,11 @@
 
             DataStore.search({},TAG_NAMES.COUPON_CATEGORIES).then(success, error);
           }
-        }
+        }*/
 
-        $scope.$watch(function () {
+      /*  $scope.$watch(function () {
           return WidgetFilter.filter.text;
-        }, getFilteredCategoryData, true);
+        }, getFilteredCategoryData, true);*/
 
       }]);
 })(window.angular, window.buildfire, window);
