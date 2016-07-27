@@ -9,7 +9,7 @@
            marker-callback="WidgetMap.selectedMarker"
            refresh-data="WidgetMap.refreshData"></div>
     </div>
-    <div class="overlay-list coupon layout3 bodyBackgroundTheme active" ng-if="WidgetMap.selectedItem">
+    <div class="overlay-list coupon layout3 bodyBackgroundTheme" ng-class="WidgetMap.selectedItem? 'active' : ''">
       <div class="list-layout" ng-if="WidgetMap.selectedItem.multiCoupons">
         <div class="list-item" ng-repeat="coupon in WidgetMap.selectedItem.couponContained">
           <div class="list-item-media text-left overflow-hidden">
@@ -78,7 +78,7 @@
           </div>
         </div>
       </div>
-      <div class="close-bar bg-primary primaryBackgroundTheme" ng-if="WidgetMap.selectedItem.multiCoupons" ng-click="WidgetMap.closeCouponList()">
+      <div class="close-bar bg-primary primaryBackgroundTheme" ng-click="WidgetMap.closeCouponList()">
         <p class="whiteTheme stretch text-center margin-zero small">Close</p>
       </div>
     </div>

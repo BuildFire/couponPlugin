@@ -3,15 +3,13 @@
   <div class="scrollable infinite-scroll-parent">
     <div class="coupon layout3">
       <div class="form-holder">
-        <input type="text" class="border-none form-control bodyTextTheme"
-               placeholder="Search item name or summary..." ng-model="WidgetSaved.keyword">
-        <span class="clear-icon dangerBackgroundTheme" ng-if="WidgetSaved.keyword"
-              ng-click="WidgetSaved.clearSearchResult()" ></span>
+        <input type="text" class="border-none form-control bodyTextTheme has-clear" placeholder="Search item name or summary..." ng-model="WidgetSaved.keyword">
+        <span class="clear-icon text-danger" ng-if="WidgetSaved.keyword" ng-click="WidgetSaved.clearSearchResult()">Clear</span>
         <hr class="small margin-zero">
       </div>
       <div
           class="well well-sm text-center margin-top-twenty margin-left-ten margin-right-ten hidde" ng-if="!WidgetSaved.hasAtleastOneSaved">
-        <p class="margin-top-ten">No coupons saved yet.</p>
+        <p class="margin-top-ten">No coupons saved.</p>
       </div>
       <div class="list-layout" infinite-scroll="WidgetSaved.loadMore()"
            infinite-scroll-distance="1"

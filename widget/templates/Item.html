@@ -8,11 +8,11 @@
            ng-style="WidgetItem.item.data.carouselImages.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}"></div>
       <div class="padded" ng-if="WidgetItem.item.data">
         <div class="clearfix row intro">
-          <div class="col-xs-7 pull-left">
-            <p class="margin-zero ellipsis" style="font-size:15px;">
+          <div class="col-xs-7 pull-left padding-right-zero">
+            <p class="margin-zero" style="font-size:15px;">
               {{WidgetItem.item.data.title}}</p>
 
-            <p class="margin-zero ellipsis">{{WidgetItem.item.data.summary}}</p>
+            <p class="margin-zero">{{WidgetItem.item.data.summary}}</p>
 
             <p class="margin-zero small ellipsis"
                ng-if="WidgetItem.item.data.expiresOn"><i>Expires
@@ -39,10 +39,13 @@
             More Options</a>
         </div>
         <hr class="small">
-        <!--Pre redemption image is in phase 2-->
-        <!--<div class="redeem-photo text-center margin-top-five margin-bottom-ten">
-          <img src="../../../styles/media/holder-4x1.png">
-        </div>-->
+        <div class="redeem-photo text-center margin-top-five margin-bottom-ten" ng-if="!WidgetItem.item.isRedeemed && WidgetItem.item.data.preRedemptionImage">
+          <img load-image="16x9" crop-width="312" crop-height="156" crop-type="crop"  src="{{WidgetItem.item.data.preRedemptionImage}}">
+        </div>
+
+        <div class="redeem-photo text-center margin-top-five margin-bottom-ten" ng-if="WidgetItem.item.isRedeemed && WidgetItem.item.data.postRedemptionImage">
+          <img load-image="16x9" crop-width="312" crop-height="156" crop-type="crop"  src="{{WidgetItem.item.data.postRedemptionImage}}">
+        </div>
         <p class="margin-zero"
            ng-bind-html="WidgetItem.safeHtml(WidgetItem.item.data.preRedemptionText)" ng-if="!WidgetItem.item.isRedeemed"></p>
         <p class="margin-zero"

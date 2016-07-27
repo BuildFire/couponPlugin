@@ -129,23 +129,24 @@
 }
 .layout3 .list-layout .list-item-media .list-media-holder{
 	width:96px;
+	width:114px;
 	height:72px;
 	line-height:70px;
 	margin:inherit;
 	margin-right:10px;
 	/*background:#efefef;*/
 	border-radius:4px;
-	margin:5px 10px 5px 5px;
+	margin:4px 8px 3px 5px;
 	text-align:center;
 }
 .media-center-plugin.layout3 .list-layout .list-item-media .list-media-holder{
 	background:none;
 }
 html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holder{
-	line-height:72px;
+	line-height:70px;
 }
 .layout3 .list-layout .list-item-media .list-media-holder.square-icon{
-	width:72px;
+	width:70px;
 }
 .layout3 .list-layout .list-item-media .list-media-holder img{
 	max-width:100%;
@@ -164,7 +165,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	position:relative;
 }
 .layout3 .list-layout .list-item-copy{
-	padding:6px 10px 5px;
+	padding:6px 10px 5px 5px;
 }
 
 .holder .plugin-banner{
@@ -291,6 +292,9 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .coupon .form-holder .form-control.border-none{
 	height:38px;
 }
+.coupon .form-holder .form-control.border-none.has-clear{
+	padding-right:48px;
+}
 .coupon .list-item-copy p span.selected{
 	font-weight:500;
 }
@@ -312,20 +316,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	right:10px;
 	top:10px;
 	display:inline-block;
-	width:18px;
-	height:18px;
-	border-radius:100%;
-	background:#ed4b4b;
-}
-.coupon .form-holder .clear-icon:after{
-	content:'+';
-	color:#fff;
-	position:absolute;
-	top:-2px;
-	top:-2.5px;
-	left:3px;
-	font-size:19px;
-	transform:rotate(45deg);
+	font-size:12px;
 }
 .coupon .well p{
 	font-size:13px;
@@ -467,11 +458,13 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	position:relative;
 }
 .coupon.layout4 .panel .panel-heading .media{
-	width:30px;
-	height:30px;
+	width:34px;
+	height:34px;
 	border-radius:100%;
-	border:2px solid #fff;
+	border:1px solid #fff;
 	margin-right:13px;
+	position:relative;
+	top:-2px;
 }
 .coupon.layout4 .panel .panel-heading p{
 	position:relative;
@@ -498,6 +491,24 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	line-height:17px;
 	margin-bottom:3px;
 }
+
+/* Layout 1-2 */
+.coupon.layout3.valign .list-item-copy .copy-holder,
+.coupon.layout2.valign .list-item-copy .copy-holder{
+	position:absolute;
+	top:50% !important;
+	transform:translateY(-50%) !important;	
+	width:95%;
+	padding-left:75px;
+}
+.coupon.layout2.valign .list-item-copy .copy-holder{
+	padding-left:119px;
+}
+.coupon.layout3.valign .list-item-copy .copy-holder.no-padding,
+.coupon.layout2.valign .list-item-copy .copy-holder.no-padding{
+	padding-left:0 !important;
+}
+
 
 /* Map Layout */
 .map-layout .overlay-list{

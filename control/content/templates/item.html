@@ -54,16 +54,29 @@
           <img ng-if="ContentItem.item.data.listImage" ng-src="{{ContentItem.item.data.listImage | getImageUrl : 82:110 :'resize'}}">
         </a>
         <span ng-if="ContentItem.item.data.listImage" class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentItem.removeListImage()"></span>
-        <!--<a class="border-radius-three default-background-hover">
-          <span class="add-icon">+</span>
-          <img ng-src="{{ tools.resizeImage(info.logoUrl,{width:300}) }}">
-        </a>-->
       </div>
     </div>
   </div>
 </div>
 <hr class="none">
     <div id="carousel" carousel-component images="ContentItem.item.data.carouselImages"></div>
+<hr class="none">
+<div class="item clearfix row">
+  <div class="col-md-3 labels pull-left">
+    <span>Pre-Redemption Image</span>
+  </div>
+  <div class="col-md-9 main pull-right">
+    <div class="screens clearfix">
+      <div class="screen logoicon pull-left text-center">
+        <a class="border-grey border-radius-three default-background-hover" ng-click="ContentItem.addPreRedemptionImage()">
+          <span ng-if="!ContentItem.item.data.preRedemptionImage" class="add-icon">+</span>
+          <img ng-if="ContentItem.item.data.preRedemptionImage" ng-src="{{ContentItem.item.data.preRedemptionImage | getImageUrl : 82:110 :'resize'}}">
+        </a>
+        <span ng-if="ContentItem.item.data.preRedemptionImage" class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentItem.removePreRedemptionImage()"></span>
+      </div>
+    </div>
+  </div>
+</div>
 <hr class="none">
 <div class="item clearfix row">
   <div class="col-md-12 labels pull-left">
@@ -73,6 +86,23 @@
 <div class="item clearfix row margin-top-ten">
   <div class="col-md-12 main pull-left">
     <textarea placeholder="WYSIWYG" class="form-control" ui-tinymce="ContentItem.bodyWYSIWYGOptions" ng-model="ContentItem.item.data.preRedemptionText"></textarea>
+  </div>
+</div>
+<hr class="none">
+<div class="item clearfix row">
+  <div class="col-md-3 labels pull-left">
+    <span>Post-Redemption Image</span>
+  </div>
+  <div class="col-md-9 main pull-right">
+    <div class="screens clearfix">
+      <div class="screen logoicon pull-left text-center">
+        <a class="border-grey border-radius-three default-background-hover" ng-click="ContentItem.addPostRedemptionImage()">
+          <span ng-if="!ContentItem.item.data.postRedemptionImage" class="add-icon">+</span>
+          <img ng-if="ContentItem.item.data.postRedemptionImage" ng-src="{{ContentItem.item.data.postRedemptionImage | getImageUrl : 82:110 :'resize'}}">
+        </a>
+        <span ng-if="ContentItem.item.data.postRedemptionImage" class="icon btn-delete-icon btn-danger transition-third" ng-click="ContentItem.removePostRedemptionImage()"></span>
+      </div>
+    </div>
   </div>
 </div>
 <hr class="none">
