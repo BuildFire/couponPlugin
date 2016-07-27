@@ -688,6 +688,7 @@
                 ContentHome.items.forEach(function(resItem,index){
                   // tmpArray.push(res.data.SelectedCategories);
                   var  intersectedCategories =  tmpArray.filter(function(value) {
+                    if(resItem.data.SelectedCategories && resItem.data.SelectedCategories.length)
                     return resItem.data.SelectedCategories.indexOf(value) > -1;
                   });
                   ContentHome.items[index].SelectedCommonCategories = intersectedCategories;
