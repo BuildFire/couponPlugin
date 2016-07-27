@@ -257,12 +257,6 @@
 
         WidgetSaved.clearSearchResult = function () {
           WidgetSaved.keyword = null;
-          WidgetSaved.busy = false;
-          searchOptions.skip = 0;
-          searchOptions.filter = {};
-          WidgetSaved.items = [];
-          WidgetSaved.savedItems = {};
-          WidgetSaved.loadMore();
         };
 
         WidgetSaved.init(function(){});
