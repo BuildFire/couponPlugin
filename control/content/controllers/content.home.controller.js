@@ -256,7 +256,7 @@
         ContentHome.addEditFilter = function (filter, editFlag, index) {
           var tempTitle = '';
           if (filter)
-            tempTitle = filter.title;
+            tempTitle = filter.data.title;
           Modals.addFilterModal({
             title: tempTitle,
             isEdit: editFlag
