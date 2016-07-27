@@ -238,9 +238,10 @@
 
         init();
 
-     /*   *//*
+/*
+
          * Call the datastore to save the data object
-         *//*
+
         var searchData = function (newValue, tag) {
           Buildfire.spinner.show();
           var searchTerm = '';
@@ -299,7 +300,8 @@
           }
           DataStore.search(WidgetFilter.searchOptions, tag).then(success, error);
 
-        };*/
+        };
+*/
 
    /*     function getFilteredCategoryData(newObj){
           console.log("******************", newObj);
