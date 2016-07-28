@@ -256,6 +256,8 @@
 
         ContentHome.addEditFilter = function (filter, editFlag, index) {
           var tempTitle = '';
+          if(Number.isInteger(index))
+          var filterIndex=index;
           if (filter)
             tempTitle = filter.data.title;
           Modals.addFilterModal({
@@ -265,8 +267,8 @@
             if (!(response.title === null || response.title.match(/^ *$/) !== null)) {
 
               //if index is there it means filter update operation is performed
-              if (Number.isInteger(index)) {
-                ContentHome.filters[index].data.title = response.title;
+              if (Number.isInteger(filterIndex)) {
+                ContentHome.filters[filterIndex].data.title = response.title;
               } else {
                 var filterResponse=response;
                 var notFound=true;
