@@ -93,16 +93,24 @@
   <!-- If filter is hidden, use col-xs-4 like below-->
   <div class="bottom fixed-bottom"
        ng-if="WidgetSaved.data.settings.filterPage == 'hide'">
-    <!--<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
-      <span class="whiteTheme small">Filter Applied</span>
-    </div>-->
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch active" ng-click="WidgetSaved.showListItems()">List</a>
+      <a class="whiteTheme stretch" ng-click="WidgetSaved.showListItems()">List</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch" ng-click="WidgetSaved.showMapView()">Map</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch active">Saved</a>
+    </div>
+  </div>
+
+  <!-- If both  filter and map are hidden-->
+  <div class="bottom fixed-bottom"
+       ng-if="WidgetSaved.data.settings.filterPage == 'hide' && WidgetSaved.data.settings.mapView == 'hide'">
+    <div class="col-xs-6 pull-left text-center primaryBackgroundTheme">
+      <a class="whiteTheme stretch" ng-click="WidgetSaved.showListItems()">List</a>
+    </div>
+    <div class="col-xs-6 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch active">Saved</a>
     </div>
   </div>
