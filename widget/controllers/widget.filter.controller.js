@@ -2,15 +2,29 @@
 
 (function (angular, buildfire, window) {
   angular.module('couponPluginWidget')
-    .controller('WidgetFilterCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'LAYOUTS', '$sce', '$rootScope', 'Buildfire', 'ViewStack', 'UserData', '$modal', '$timeout',
-      function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, $modal, $timeout) {
+    .controller('WidgetFilterCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'LAYOUTS', '$sce', '$rootScope', 'Buildfire', 'ViewStack', 'UserData', '$modal', '$timeout','SORT_FILTER',
+      function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, $modal, $timeout,SORT_FILTER) {
         var WidgetFilter = this;
 
         // default value
         WidgetFilter.filter={};
         WidgetFilter.filter.text = '';
+        var searchOptions = {};
 
-     //   WidgetFilter.searchOptions={}
+        WidgetFilter.getSearchOptions = function (value) {
+          switch (value) {
+            case SORT_FILTER.CATEGORY_NAME_A_Z:
+              searchOptions.sort = {"title": 1};
+              break;
+            case SORT_FILTER.CATEGORY_NAME_Z_A:
+              searchOptions.sort = {"title": -1};
+              break;
+            default :
+              searchOptions.sort = {"rank": 1};
+              break;
+          }
+          return searchOptions;
+        };
 
         WidgetFilter.locationData = {};
 
@@ -72,7 +86,9 @@
               Buildfire.spinner.hide();
               console.error('Error while getting data', err);
             };
-          DataStore.search({}, TAG_NAMES.COUPON_CATEGORIES).then(success, error);
+          if(WidgetFilter.data.content && WidgetFilter.data.content.sortFilterBy)
+            WidgetFilter.getSearchOptions(WidgetFilter.data.content.sortFilterBy);
+          DataStore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES).then(success, error);
         };
 
         WidgetFilter.setFilter = function () {
