@@ -2,15 +2,29 @@
 
 (function (angular, buildfire, window) {
   angular.module('couponPluginWidget')
-    .controller('WidgetFilterCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'LAYOUTS', '$sce', '$rootScope', 'Buildfire', 'ViewStack', 'UserData', '$modal', '$timeout',
-      function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, $modal, $timeout) {
+    .controller('WidgetFilterCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'LAYOUTS', '$sce', '$rootScope', 'Buildfire', 'ViewStack', 'UserData', '$modal', '$timeout','SORT_FILTER',
+      function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, $modal, $timeout,SORT_FILTER) {
         var WidgetFilter = this;
 
         // default value
         WidgetFilter.filter={};
         WidgetFilter.filter.text = '';
+        var searchOptions = {};
 
-        WidgetFilter.searchOptions={}
+        WidgetFilter.getSearchOptions = function (value) {
+          switch (value) {
+            case SORT_FILTER.CATEGORY_NAME_A_Z:
+              searchOptions.sort = {"title": 1};
+              break;
+            case SORT_FILTER.CATEGORY_NAME_Z_A:
+              searchOptions.sort = {"title": -1};
+              break;
+            default :
+              searchOptions.sort = {"rank": 1};
+              break;
+          }
+          return searchOptions;
+        };
 
         WidgetFilter.locationData = {};
 
@@ -20,7 +34,7 @@
           // Do nothing
         });
 
-        var tmrDelay = null;
+     //   var tmrDelay = null;
 
         function getGeoLocation() {
           Buildfire.geo.getCurrentPosition(
@@ -54,6 +68,10 @@
 
 
         WidgetFilter.back = function () {
+            WidgetFilter.filter.isApplied = false;
+            $rootScope.$broadcast('FILTER_ITEMS', {
+                isFilterApplied: WidgetFilter.filter.isApplied
+            });
           ViewStack.pop();
           saveFilterDataInLocalStorage();
         };
@@ -72,7 +90,9 @@
               Buildfire.spinner.hide();
               console.error('Error while getting data', err);
             };
-          DataStore.search({}, TAG_NAMES.COUPON_CATEGORIES).then(success, error);
+          if(WidgetFilter.data.content && WidgetFilter.data.content.sortFilterBy)
+            WidgetFilter.getSearchOptions(WidgetFilter.data.content.sortFilterBy);
+          DataStore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES).then(success, error);
         };
 
         WidgetFilter.setFilter = function () {
@@ -98,7 +118,7 @@
             if (category.isSelected) {
               var idx = WidgetFilter.filter.categories.indexOf(category.id);
               if (idx != -1) {
-                WidgetFilter.filter.categories.splice(idx);
+                WidgetFilter.filter.categories.splice(idx,1);
                 WidgetFilter.categories[index].isSelected = false;
               }
               if (WidgetFilter.filter.categories.length < 1)
@@ -119,9 +139,12 @@
           WidgetFilter.filter.isApplied = false;
           WidgetFilter.filter.categories = [];
           WidgetFilter.allSelected = true;
-          for (var i = 0; i < WidgetFilter.categories.length; i++) {
-            WidgetFilter.categories[i].isSelected = false;
-          }
+            if(WidgetFilter.categories){
+                for (var i = 0; i < WidgetFilter.categories.length; i++) {
+                    WidgetFilter.categories[i].isSelected = false;
+                }
+            }
+
           if (WidgetFilter.data.settings && WidgetFilter.data.settings.distanceIn == 'mi')
             WidgetFilter.distanceSlider = {
               min: 0,
@@ -136,6 +159,8 @@
               ceil: 499, //upper limit
               floor: 0
             };
+            WidgetFilter.filter.distanceRange=WidgetFilter.distanceSlider;
+            saveFilterDataInLocalStorage();
         };
 
         WidgetFilter.applyFilter = function () {
@@ -179,14 +204,16 @@
                   floor: 0
                 };
 
-                if (typeof(Storage) !== "undefined") {
+               /* if (typeof(Storage) !== "undefined") {
                   var obj =localStorage.getItem("filter")
                   if(obj){
                     WidgetFilter.filter =JSON.parse(localStorage.getItem("filter"));
                     WidgetFilter.filter.categories = WidgetFilter.filter.categories.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
-                    WidgetFilter.distanceSlider.min=WidgetFilter.filter.distanceRange.min;
-                    WidgetFilter.distanceSlider.max=WidgetFilter.filter.distanceRange.max;
+                      if(WidgetFilter.filter.distanceRange){
+                          WidgetFilter.distanceSlider.min=WidgetFilter.filter.distanceRange.min;
+                          WidgetFilter.distanceSlider.max=WidgetFilter.filter.distanceRange.max;
 
+                      }
 
                     setTimeout(function(){
                       WidgetFilter.filter.categories.forEach(function(f_category){
@@ -214,7 +241,7 @@
                     categories: []
                   };
                   console.error("LOCAL STORAGE NOT SUPPORTED TO SAVE FILTERED DATA");
-                }
+                }*/
             }
             , error = function (err) {
               Buildfire.spinner.hide();
@@ -238,9 +265,10 @@
 
         init();
 
-        /*
+/*
+
          * Call the datastore to save the data object
-         */
+
         var searchData = function (newValue, tag) {
           Buildfire.spinner.show();
           var searchTerm = '';
@@ -300,8 +328,9 @@
           DataStore.search(WidgetFilter.searchOptions, tag).then(success, error);
 
         };
+*/
 
-        function getFilteredCategoryData(newObj){
+   /*     function getFilteredCategoryData(newObj){
           console.log("******************", newObj);
           if (newObj) {
             if (tmrDelay) {
@@ -327,11 +356,11 @@
 
             DataStore.search({},TAG_NAMES.COUPON_CATEGORIES).then(success, error);
           }
-        }
+        }*/
 
-        $scope.$watch(function () {
+      /*  $scope.$watch(function () {
           return WidgetFilter.filter.text;
-        }, getFilteredCategoryData, true);
+        }, getFilteredCategoryData, true);*/
 
       }]);
 })(window.angular, window.buildfire, window);

@@ -59,8 +59,10 @@
 
 
         var today = new Date();
-        var month = new Date().getMonth() + 1
+        var month = new Date().getMonth() + 1;
         ContentHome.currentDate = +new Date("'" + month + "/" + today.getDate() + "/" + today.getFullYear() + "'");
+
+        ContentHome.currentDateTimestamp = +new Date();
 
         ContentHome.filters = [];
 
@@ -87,7 +89,6 @@
           skip: SORT_FILTER._skip,
           limit: SORT_FILTER._limit + 1 // the plus one is to check if there are any more
         };
-
 
         ContentHome.searchOptionsForItems = {
           filter: {"$json.title": {"$regex": '/*'}},
@@ -255,8 +256,10 @@
 
         ContentHome.addEditFilter = function (filter, editFlag, index) {
           var tempTitle = '';
+          if(Number.isInteger(index))
+          var filterIndex=index;
           if (filter)
-            tempTitle = filter.title;
+            tempTitle = filter.data.title;
           Modals.addFilterModal({
             title: tempTitle,
             isEdit: editFlag
@@ -264,10 +267,29 @@
             if (!(response.title === null || response.title.match(/^ *$/) !== null)) {
 
               //if index is there it means filter update operation is performed
-              if (Number.isInteger(index)) {
-                ContentHome.filters[index].data.title = response.title;
+              if (Number.isInteger(filterIndex)) {
+                ContentHome.filters[filterIndex].data.title = response.title;
               } else {
-                  insertFilter(response);
+                var filterResponse=response;
+                var notFound=true;
+                if(ContentHome.filters && ContentHome.filters.length){
+                  for(var index=0; index<ContentHome.filters.length ;index++){
+                    if(ContentHome.filters[index].data.title==response.title){
+                      notFound=false;
+                      confirmFilterAdd(filterResponse);
+                      break;
+                    }
+                    if(ContentHome.filters.length-1==index){
+                      if(notFound)
+                      insertFilter(filterResponse);
+                      break;
+                    }
+                  }
+                }else{
+                  insertFilter(filterResponse);
+                }
+
+
               }
             }
             if (!$scope.$apply)
@@ -276,6 +298,16 @@
 
           });
         };
+
+        function confirmFilterAdd(filterResponse){
+          Modals.removePopupFilterModal({}).then(function(response){
+            console.log(response);
+            if(response)
+            {
+              insertFilter(filterResponse);
+            }
+          });
+        }
 
         function insertFilter(response){
           ContentHome.filter = {
@@ -310,6 +342,17 @@
                   return;
                 //ContentHome.items.splice(_index, 1);
                 ContentHome.filters.splice(index, 1);
+                var tmpArray = [];
+                ContentHome.filters.forEach(function(res,index){
+                  tmpArray.push(res.id);
+                });
+                ContentHome.items.forEach(function(resItem,index){
+                  // tmpArray.push(res.data.SelectedCategories);
+                  var  intersectedCategories =  tmpArray.filter(function(value) {
+                    return resItem.data.SelectedCategories.indexOf(value) > -1;
+                  });
+                  ContentHome.items[index].SelectedCommonCategories = intersectedCategories;
+                });
                 $scope.$digest();
               });
             }
@@ -341,9 +384,8 @@
         };
 
         ContentHome.deleteItem = function (index) {
-          Modals.removePopupModal({'item': 'item'}).then(function (result) {
+          Modals.removeItemPopupModal({'item': 'item'}).then(function (result) {
             if (result) {
-
               Buildfire.datastore.delete(ContentHome.items[index].id, TAG_NAMES.COUPON_ITEMS, function (err, result) {
                 if (err)
                   return;
@@ -616,6 +658,13 @@
         };
 
 
+        var searchOptionsFilterForItemList={
+          "filter":{"$json.title": {"$regex": '/*'}},
+          "sort": {"title": 1},
+          "skip":"0",
+          "limit":"50"
+        };
+
         ContentHome.loadMoreItems = function(str){
           console.log("------------------>>>>>>>>>>>>>>>>>>>>",str)
 
@@ -656,6 +705,27 @@
               });
 
               ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
+              Buildfire.datastore.search(searchOptionsFilterForItemList, TAG_NAMES.COUPON_CATEGORIES, function (err, resultFilter) {
+
+                if (err) {
+                  Buildfire.spinner.hide();
+                  return console.error('-----------err in getting list-------------', err);
+                }
+                var tmpArray=[];
+                var lastIndex=result.length;
+                resultFilter.forEach(function(res,index){
+                  tmpArray.push(res.id);
+                });
+                ContentHome.items.forEach(function(resItem,index){
+                  // tmpArray.push(res.data.SelectedCategories);
+                  var  intersectedCategories =  tmpArray.filter(function(value) {
+                    if(resItem.data.SelectedCategories && resItem.data.SelectedCategories.length)
+                    return resItem.data.SelectedCategories.indexOf(value) > -1;
+                  });
+                  ContentHome.items[index].SelectedCommonCategories = intersectedCategories;
+                });
+                $scope.$digest();
+              });
               ContentHome.busy = false;
               console.log("-------------------llll",ContentHome.items )
             Buildfire.spinner.hide();

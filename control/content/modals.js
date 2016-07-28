@@ -37,7 +37,7 @@
                             controllerAs: 'RemovePopup',
                             size: 'sm',
                             resolve:{
-                                Info:function(){return info;},
+                                Info:function(){return info;}
                             }
                         });
                     removePopupModal.result.then(function (imageInfo) {
@@ -48,6 +48,46 @@
                     });
                     return removePopupDeferred.promise;
                 },
+                removePopupFilterModal: function (info) {
+                    var removePopupDeferred = $q.defer();
+                    var removePopupModal = $modal
+                        .open({
+                            templateUrl: './templates/modals/confirm-add-filter.html',
+                            controller: 'RemovePopupCtrl',
+                            controllerAs: 'RemovePopup',
+                            size: 'sm',
+                            resolve:{
+                                Info:function(){return info;}
+                            }
+                        });
+                    removePopupModal.result.then(function (imageInfo) {
+                        removePopupDeferred.resolve(imageInfo);
+                    }, function (err) {
+                        //do something on cancel
+                        removePopupDeferred.reject(err);
+                    });
+                    return removePopupDeferred.promise;
+                },
+                removeItemPopupModal: function (info) {
+                var removePopupDeferred = $q.defer();
+                var removeItemPopupModal = $modal
+                  .open({
+                    templateUrl: './templates/modals/remove-item.html',
+                    controller: 'RemovePopupCtrl',
+                    controllerAs: 'RemovePopup',
+                    size: 'sm',
+                    resolve:{
+                      Info:function(){return info;}
+                    }
+                  });
+                  removeItemPopupModal.result.then(function (imageInfo) {
+                  removePopupDeferred.resolve(imageInfo);
+                }, function (err) {
+                  //do something on cancel
+                  removePopupDeferred.reject(err);
+                });
+                return removePopupDeferred.promise;
+              },
                 showFilterPopupModal: function (info) {
                     var showFilterPopupDeferred = $q.defer();
                     var showFilterPopupModal = $modal
@@ -68,7 +108,6 @@
                     });
                     return showFilterPopupDeferred.promise;
                 }
-
             };
         }])
         .controller('AddEditPopupCtrl', ['$scope', '$modalInstance','Info', function ($scope, $modalInstance,Info) {

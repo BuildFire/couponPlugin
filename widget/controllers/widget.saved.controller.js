@@ -66,6 +66,9 @@
               Buildfire.spinner.hide();
               WidgetSaved.items = WidgetSaved.items.length ? WidgetSaved.items.concat(resultAll) : resultAll;
               console.log("***************** ==============", WidgetSaved.items);
+              if(WidgetSaved.items.length < 1){
+                WidgetSaved.hasAtleastOneSaved = false;
+              }
               searchOptions.skip = searchOptions.skip + PAGINATION.itemCount;
               if (resultAll.length == PAGINATION.itemCount) {
                 WidgetSaved.busy = false;
@@ -80,8 +83,6 @@
                 WidgetSaved.getSavedItems();
               };
               UserData.search({}, TAG_NAMES.COUPON_SAVED).then(result, err);
-
-
             },
             errorAll = function (error) {
               Buildfire.spinner.hide();
@@ -222,7 +223,7 @@
 
         var tmrDelay = null;
 
-        var saveDataWithDelay = function (newObj) {
+        var searchDataWithDelay = function (newObj) {
           if (newObj) {
             if (tmrDelay) {
               clearTimeout(tmrDelay);
@@ -252,16 +253,29 @@
 
         $scope.$watch(function () {
           return WidgetSaved.keyword;
-        }, saveDataWithDelay, true);
+        }, searchDataWithDelay, true);
+
+        var onUpdateCallback = function (event) {
+          setTimeout(function () {
+            if (event && event.tag === TAG_NAMES.COUPON_INFO) {
+              WidgetSaved.data = event.data;
+              if (!WidgetSaved.data.design)
+                WidgetSaved.data.design = {};
+              if (!WidgetSaved.data.content)
+                WidgetSaved.data.content = {};
+              if (!WidgetSaved.data.settings)
+                WidgetSaved.data.settings = {};
+            }
+            else if (event && event.tag === TAG_NAMES.COUPON_ITEMS) {
+            }
+            $scope.$digest();
+          }, 0);
+        };
+
+        DataStore.onUpdate("saved").then(null, null, onUpdateCallback);
 
         WidgetSaved.clearSearchResult = function () {
           WidgetSaved.keyword = null;
-          WidgetSaved.busy = false;
-          searchOptions.skip = 0;
-          searchOptions.filter = {};
-          WidgetSaved.items = [];
-          WidgetSaved.savedItems = {};
-          WidgetSaved.loadMore();
         };
 
         WidgetSaved.init(function(){});

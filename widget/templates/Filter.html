@@ -1,10 +1,10 @@
-<div class="no-scroll holder padding-zero has-bottom"
+<div class="holder padding-zero has-bottom sticky-bottom-menu clearfix"
      ng-controller="WidgetFilterCtrl as WidgetFilter">
   <div class="scrollable">
     <div class="coupon filter layout3">
       <div class="form-holder">
         <input type="text" class="border-none form-control bodyTextTheme has-clear" placeholder="Enter keywords or phrase" ng-model="WidgetFilter.filter.text">
-        <span class="clear-icon text-danger" ng-if="WidgetFilter.filter.text">Clear</span>
+        <span class="clear-icon text-danger" ng-if="WidgetFilter.filter.text" ng-click="WidgetFilter.filter.text=''">Clear</span>
         <hr class="small margin-zero">
       </div>
       <div class="filters margin-top-ten">
