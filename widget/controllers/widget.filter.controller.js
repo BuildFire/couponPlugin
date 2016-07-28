@@ -68,6 +68,10 @@
 
 
         WidgetFilter.back = function () {
+            WidgetFilter.filter.isApplied = false;
+            $rootScope.$broadcast('FILTER_ITEMS', {
+                isFilterApplied: WidgetFilter.filter.isApplied
+            });
           ViewStack.pop();
           saveFilterDataInLocalStorage();
         };
@@ -114,7 +118,7 @@
             if (category.isSelected) {
               var idx = WidgetFilter.filter.categories.indexOf(category.id);
               if (idx != -1) {
-                WidgetFilter.filter.categories.splice(idx);
+                WidgetFilter.filter.categories.splice(idx,1);
                 WidgetFilter.categories[index].isSelected = false;
               }
               if (WidgetFilter.filter.categories.length < 1)
@@ -135,9 +139,12 @@
           WidgetFilter.filter.isApplied = false;
           WidgetFilter.filter.categories = [];
           WidgetFilter.allSelected = true;
-          for (var i = 0; i < WidgetFilter.categories.length; i++) {
-            WidgetFilter.categories[i].isSelected = false;
-          }
+            if(WidgetFilter.categories){
+                for (var i = 0; i < WidgetFilter.categories.length; i++) {
+                    WidgetFilter.categories[i].isSelected = false;
+                }
+            }
+
           if (WidgetFilter.data.settings && WidgetFilter.data.settings.distanceIn == 'mi')
             WidgetFilter.distanceSlider = {
               min: 0,
@@ -152,6 +159,8 @@
               ceil: 499, //upper limit
               floor: 0
             };
+            WidgetFilter.filter.distanceRange=WidgetFilter.distanceSlider;
+            saveFilterDataInLocalStorage();
         };
 
         WidgetFilter.applyFilter = function () {
@@ -195,7 +204,7 @@
                   floor: 0
                 };
 
-                if (typeof(Storage) !== "undefined") {
+               /* if (typeof(Storage) !== "undefined") {
                   var obj =localStorage.getItem("filter")
                   if(obj){
                     WidgetFilter.filter =JSON.parse(localStorage.getItem("filter"));
@@ -232,7 +241,7 @@
                     categories: []
                   };
                   console.error("LOCAL STORAGE NOT SUPPORTED TO SAVE FILTERED DATA");
-                }
+                }*/
             }
             , error = function (err) {
               Buildfire.spinner.hide();
