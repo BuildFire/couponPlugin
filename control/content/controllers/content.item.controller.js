@@ -103,20 +103,27 @@
                         init();
                         if (err)
                             return console.error('There was a problem saving your data');
-                    })
+                    });
                     ContentItem.item.data.SelectedCategories = ContentItem.selection;
                     //insertAndUpdate(ContentItem.item)
-                }
+                };
 
                 function isUnChanged(item) {
                     return angular.equals(item, ContentItem.masterItem);
                 }
 
                 function isValidItem(item) {
-                    if(item){
-                        return item.title;
+                    if (item) {
+                        if (item.startOn && item.expiresOn){
+                            if((item.expiresOn - item.startOn) > 0)
+                              return item.title && true;
+                            else
+                              return false;
+                        }
+                        else
+                            return item.title;
                     }
-                    else{
+                    else {
                         return false;
                     }
                 }

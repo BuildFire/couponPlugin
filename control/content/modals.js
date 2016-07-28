@@ -48,6 +48,26 @@
                     });
                     return removePopupDeferred.promise;
                 },
+                removePopupFilterModal: function (info) {
+                    var removePopupDeferred = $q.defer();
+                    var removePopupModal = $modal
+                        .open({
+                            templateUrl: './templates/modals/confirm-add-filter.html',
+                            controller: 'RemovePopupCtrl',
+                            controllerAs: 'RemovePopup',
+                            size: 'sm',
+                            resolve:{
+                                Info:function(){return info;}
+                            }
+                        });
+                    removePopupModal.result.then(function (imageInfo) {
+                        removePopupDeferred.resolve(imageInfo);
+                    }, function (err) {
+                        //do something on cancel
+                        removePopupDeferred.reject(err);
+                    });
+                    return removePopupDeferred.promise;
+                },
                 removeItemPopupModal: function (info) {
                 var removePopupDeferred = $q.defer();
                 var removeItemPopupModal = $modal

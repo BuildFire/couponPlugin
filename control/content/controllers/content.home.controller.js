@@ -256,6 +256,8 @@
 
         ContentHome.addEditFilter = function (filter, editFlag, index) {
           var tempTitle = '';
+          if(Number.isInteger(index))
+          var filterIndex=index;
           if (filter)
             tempTitle = filter.data.title;
           Modals.addFilterModal({
@@ -265,10 +267,29 @@
             if (!(response.title === null || response.title.match(/^ *$/) !== null)) {
 
               //if index is there it means filter update operation is performed
-              if (Number.isInteger(index)) {
-                ContentHome.filters[index].data.title = response.title;
+              if (Number.isInteger(filterIndex)) {
+                ContentHome.filters[filterIndex].data.title = response.title;
               } else {
-                  insertFilter(response);
+                var filterResponse=response;
+                var notFound=true;
+                if(ContentHome.filters && ContentHome.filters.length){
+                  for(var index=0; index<ContentHome.filters.length ;index++){
+                    if(ContentHome.filters[index].data.title==response.title){
+                      notFound=false;
+                      confirmFilterAdd(filterResponse);
+                      break;
+                    }
+                    if(ContentHome.filters.length-1==index){
+                      if(notFound)
+                      insertFilter(filterResponse);
+                      break;
+                    }
+                  }
+                }else{
+                  insertFilter(filterResponse);
+                }
+
+
               }
             }
             if (!$scope.$apply)
@@ -277,6 +298,16 @@
 
           });
         };
+
+        function confirmFilterAdd(filterResponse){
+          Modals.removePopupFilterModal({}).then(function(response){
+            console.log(response);
+            if(response)
+            {
+              insertFilter(filterResponse);
+            }
+          });
+        }
 
         function insertFilter(response){
           ContentHome.filter = {

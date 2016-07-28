@@ -255,6 +255,25 @@
           return WidgetSaved.keyword;
         }, searchDataWithDelay, true);
 
+        var onUpdateCallback = function (event) {
+          setTimeout(function () {
+            if (event && event.tag === TAG_NAMES.COUPON_INFO) {
+              WidgetSaved.data = event.data;
+              if (!WidgetSaved.data.design)
+                WidgetSaved.data.design = {};
+              if (!WidgetSaved.data.content)
+                WidgetSaved.data.content = {};
+              if (!WidgetSaved.data.settings)
+                WidgetSaved.data.settings = {};
+            }
+            else if (event && event.tag === TAG_NAMES.COUPON_ITEMS) {
+            }
+            $scope.$digest();
+          }, 0);
+        };
+
+        DataStore.onUpdate("saved").then(null, null, onUpdateCallback);
+
         WidgetSaved.clearSearchResult = function () {
           WidgetSaved.keyword = null;
         };
