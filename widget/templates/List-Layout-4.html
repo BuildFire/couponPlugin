@@ -14,29 +14,20 @@
            infinite-scroll-distance="1"
            data-infinite-container=".infinite-scroll-parent"
            infinite-scroll-disabled="WidgetHome.busy">
-        <div class="panel" ng-repeat="item in WidgetHome.items">
-          <div
-              class="panel-heading bg-primary primaryBackgroundTheme clearfix">
-            <div class="media pull-left" ng-if="item.data.listImage"
-                 ng-click="WidgetHome.openDetails(item.id)">
+        <div class="panel backgroundColorTheme" ng-repeat="item in WidgetHome.items">
+          <div class="panel-heading bg-primary primaryBackgroundTheme clearfix">
+            <div class="media pull-left" ng-if="item.data.listImage" ng-click="WidgetHome.openDetails(item.id)">
               <img load-image="1x1" crop-width="60" crop-height="60" crop-type="crop" data-final-src="{{item.data.listImage}}">
             </div>
             <p class="ellipsis margin-zero whiteTheme" ng-click="WidgetHome.openDetails(item.id)">{{item.data.title}}</p>
-
             <div class="save-icon">
-							<span class="icon icon-star whiteTheme" ng-if="item.isSaved"
-                    ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
-              <span class="icon icon-star-empty whiteTheme"
-                    ng-if="!item.isSaved"
-                    ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
+				<span class="icon icon-star whiteTheme" ng-if="item.isSaved" ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
+              	<span class="icon icon-star-empty whiteTheme" ng-if="!item.isSaved" ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
             </div>
           </div>
           <div class="panel-body border-grey" ng-click="WidgetHome.openDetails(item.id)">
-            <p ng-click="WidgetHome.openDetails(item.id)">
-              {{item.data.summary}}</p>
-
-            <div class="item clearfix row"
-                 ng-click="WidgetHome.openDetails(item.id)">
+            <p ng-click="WidgetHome.openDetails(item.id)">{{item.data.summary}}</p>
+            <div class="item clearfix row" ng-click="WidgetHome.openDetails(item.id)">
               <div class="col-xs-7 pull-left text-left">
                 <p ng-if="item.data.expiresOn" class="date ellipsis margin-zero">Expires
                   {{item.data.expiresOn | date}}</p>
