@@ -18,7 +18,7 @@
   <div class="labels col-md-12">
     <div class="alert alert-warning">
       <a href="javascript:void(0)" class="close" data-ng-click="ContentHome.csvDataInvalid=false">×</a>
-      <strong>Note!</strong>Uploaded CSV data is incomplete.Title/Summary is required.
+      <strong>Note!</strong>Uploaded CSV file data is either incomplete or is not a CSV file.
     </div>
   </div>
 </div>
@@ -165,7 +165,7 @@
   </div>
 </div>
 <hr class="none">
-<div class="infinite-scroll-parent-items" ng-style="ContentHome.items.length>9? {'height': '450px'}:{'height':'100%'}" style=";overflow-y: auto;">
+<div class="infinite-scroll-parent-items" ng-style="ContentHome.items.length>9? {'height': '450px'}:{'height':'100%'}"  style="min-height: 250px;overflow-y: auto;">
 <div ui-sortable="ContentHome.itemSortableOptions" ng-model="ContentHome.items"
      infinite-scroll='ContentHome.loadMoreItems("html")'
       infinite-scroll-distance='1'
