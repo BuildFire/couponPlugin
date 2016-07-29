@@ -241,6 +241,7 @@
                 ContentItem.getItemData = function(itemId){
                     var success = function(result){
                           console.log("------------->>>>", result, itemId);
+                            updating=true;
                           ContentItem.item = result;
                           if (ContentItem.item.data.location && ContentItem.item.data.location.addressTitle) {
                               ContentItem.currentAddress = ContentItem.item.data.location.addressTitle;
@@ -255,6 +256,7 @@
 
 
                           init();
+                            updating=false;
                       },
                       error = function(err){
                           console.log("There is error in fetching data", err);
