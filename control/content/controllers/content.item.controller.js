@@ -9,6 +9,7 @@
                     , isNewItemInserted = false
                     , updating = false;
                 ContentItem.filters=[];
+                ContentItem.validCoordinatesFailure = false;
 
                 // Hide the top plugin info part when inside item detail view
                 Buildfire.appearance.setHeaderVisibility(false);
@@ -366,7 +367,7 @@
                 ContentItem.setCoordinates = function () {
                     var latlng = '';
                     function successCallback(resp) {
-                        console.error('Successfully validated coordinates-----------', resp);
+                        console.log('Successfully validated coordinates-----------', resp);
                         if (resp) {
                             ContentItem.item.data.address = {
                                 lng: ContentItem.currentAddress.split(",")[1].trim(),
@@ -375,7 +376,7 @@
                             };
                             ContentItem.currentCoordinates = [ContentItem.currentAddress.split(",")[1].trim(), ContentItem.currentAddress.split(",")[0].trim()];
                         } else {
-                            //errorCallback();
+                            errorCallback();
                         }
                     }
 

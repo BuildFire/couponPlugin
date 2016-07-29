@@ -157,11 +157,27 @@
            ng-enter="ContentItem.setCoordinates()"
            ng-paste="ContentItem.locationAutocompletePaste()"
            ng-change="ContentItem.clearData()">
-    <div ng-if="ContentItem.currentCoordinates" google-map dragged-fn="ContentItem.setDraggedLocation(data)"
-         coordinates="ContentItem.currentCoordinates"
-         class="google-map-fix" style="height: 200px; width: 300px"
-            ></div>
+      <!--<hr class="none" ng-show="ContentHome.validCopyAddressFailure || ContentHome.validCoordinatesFailure">-->
+
+      <br ng-show="ContentItem.validCopyAddressFailure || ContentItem.validCoordinatesFailure"/>
+      <div class="alert alert-danger alert-sm text-center"
+           ng-show="ContentItem.validCopyAddressFailure">Please enter valid
+          address
+      </div>
+      <div class="alert alert-danger alert-sm text-center"
+           ng-show="ContentItem.validCoordinatesFailure">Please enter valid
+          coordinates
+      </div>
   </div>
+</div>
+<div class="item clearfix row" ng-if="ContentItem.currentCoordinates">
+    <div class="col-md-9 pull-right">
+        <br/>
+        <div google-map dragged-fn="ContentItem.setDraggedLocation(data)"
+             coordinates="ContentItem.currentCoordinates"
+             class="google-map-fix"
+                ></div>
+    </div>
 </div>
 <hr class="none">
 <div id="actionItems"  dynamic-link-component links="ContentItem.item.data.links"></div>
