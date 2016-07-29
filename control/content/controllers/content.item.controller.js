@@ -9,6 +9,7 @@
                     , isNewItemInserted = false
                     , updating = false;
                 ContentItem.filters=[];
+                ContentItem.validCoordinatesFailure = false;
 
                 // Hide the top plugin info part when inside item detail view
                 Buildfire.appearance.setHeaderVisibility(false);
@@ -241,6 +242,7 @@
                 ContentItem.getItemData = function(itemId){
                     var success = function(result){
                           console.log("------------->>>>", result, itemId);
+                            updating=true;
                           ContentItem.item = result;
                           if (ContentItem.item.data.location && ContentItem.item.data.location.addressTitle) {
                               ContentItem.currentAddress = ContentItem.item.data.location.addressTitle;
@@ -255,6 +257,7 @@
 
 
                           init();
+                            updating=false;
                       },
                       error = function(err){
                           console.log("There is error in fetching data", err);
@@ -366,7 +369,7 @@
                 ContentItem.setCoordinates = function () {
                     var latlng = '';
                     function successCallback(resp) {
-                        console.error('Successfully validated coordinates-----------', resp);
+                        console.log('Successfully validated coordinates-----------', resp);
                         if (resp) {
                             ContentItem.item.data.address = {
                                 lng: ContentItem.currentAddress.split(",")[1].trim(),
@@ -375,7 +378,7 @@
                             };
                             ContentItem.currentCoordinates = [ContentItem.currentAddress.split(",")[1].trim(), ContentItem.currentAddress.split(",")[0].trim()];
                         } else {
-                            //errorCallback();
+                            errorCallback();
                         }
                     }
 

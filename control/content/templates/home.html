@@ -18,7 +18,7 @@
   <div class="labels col-md-12">
     <div class="alert alert-warning">
       <a href="javascript:void(0)" class="close" data-ng-click="ContentHome.csvDataInvalid=false">×</a>
-      <strong>Note!</strong>Uploaded CSV data is incomplete.Title/Summary is required.
+      <strong>Note!</strong>Uploaded CSV file data is either incomplete or is not a CSV file.
     </div>
   </div>
 </div>
@@ -165,7 +165,7 @@
   </div>
 </div>
 <hr class="none">
-<div class="infinite-scroll-parent-items" ng-style="ContentHome.items.length>9? {'height': '450px'}:{'height':'100%'}" style=";overflow-y: auto;">
+<div class="infinite-scroll-parent-items" ng-style="ContentHome.items.length>9? {'height': '450px'}:{'height':'100%'}"  style="min-height: 250px;overflow-y: auto;">
 <div ui-sortable="ContentHome.itemSortableOptions" ng-model="ContentHome.items"
      infinite-scroll='ContentHome.loadMoreItems("html")'
       infinite-scroll-distance='1'
@@ -190,7 +190,7 @@
       </div>
       <div class="col-md-3 padding-right-zero pull-left">
         <span class="title pull-left ellipsis">Included in <br><a
-            class="text-primary" ng-click="ContentHome.showFilter($index, item.id, item.data.SelectedCategories, item.data.Categories, item.data)">{{item.SelectedCommonCategories.length || 0}} Categories</a></span>
+            class="text-primary" ng-click="ContentHome.showFilter($index, item.id, item.data.SelectedCategories, item.data.Categories, item.data)">{{item.SelectedCommonCategories.length || 0}} Category(s)</a></span>
       </div>
       <div class="col-md-3 pull-left padding-right-zero">
         <span

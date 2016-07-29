@@ -268,7 +268,14 @@
 
               //if index is there it means filter update operation is performed
               if (Number.isInteger(filterIndex)) {
+
                 ContentHome.filters[filterIndex].data.title = response.title;
+                Buildfire.datastore.update(ContentHome.filters[filterIndex].id, ContentHome.filters[filterIndex].data, TAG_NAMES.COUPON_CATEGORIES, function (err) {
+                  ContentHome.isUpdating = false;
+                  if (err)
+                    return console.error('There was a problem saving your data');
+                })
+
               } else {
                 var filterResponse=response;
                 var notFound=true;
@@ -288,8 +295,6 @@
                 }else{
                   insertFilter(filterResponse);
                 }
-
-
               }
             }
             if (!$scope.$apply)
@@ -359,6 +364,9 @@
           });
         };
         ContentHome.showFilter = function (index, itemId, selectedItems, categories, itemData) {
+
+            //categories=ContentHome.filters;
+
           Modals.showFilterPopupModal({
             index: index,
             itemId: itemId,

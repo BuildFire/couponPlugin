@@ -450,7 +450,6 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .coupon.layout4 .panel{
 	margin-bottom:10px;
 	border:none !important;
-	border-radius:0;
 }
 .coupon.layout4 .panel .panel-heading{
 	border-radius:3px 3px 0 0 !important;
