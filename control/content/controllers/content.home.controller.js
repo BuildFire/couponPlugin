@@ -394,6 +394,18 @@
         ContentHome.deleteItem = function (index) {
           Modals.removeItemPopupModal({'item': 'item'}).then(function (result) {
             if (result) {
+
+              ContentHome.items[index].data.SelectedCategories.forEach(function(category){
+               for(var index=0;index<ContentHome.filters.length;index++){
+                 if(ContentHome.filters[index].id==category){
+                    ContentHome.filter=ContentHome.filters[index];
+                   ContentHome.filter.data.noOfItems-=1;
+                   ContentHome.isItemValid=true;
+                 }
+               }
+
+              });
+
               Buildfire.datastore.delete(ContentHome.items[index].id, TAG_NAMES.COUPON_ITEMS, function (err, result) {
                 if (err)
                   return;
