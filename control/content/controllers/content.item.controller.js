@@ -254,10 +254,13 @@
                           else{
                               ContentItem.selection = ContentItem.item.data.SelectedCategories;
                           }
+                            setTimeout(function(){
+                                updating=false;
+                            },1000)
 
 
                           init();
-                            updating=false;
+
                       },
                       error = function(err){
                           console.log("There is error in fetching data", err);
