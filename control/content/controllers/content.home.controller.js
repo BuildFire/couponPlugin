@@ -3,8 +3,8 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter', 'RankOfLastItem', '$csv','Utils',
-      function ($scope, TAG_NAMES,SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem , $csv , Utils) {
+    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter', 'RankOfLastItem', '$csv','Utils','$rootScope',
+      function ($scope, TAG_NAMES,SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem , $csv , Utils,$rootScope) {
 
         var ContentHome = this;
         ContentHome.searchValue = "";
@@ -29,6 +29,11 @@
           }
         };
 
+        $rootScope.$on('ITEMS_UPDATED',function(e){
+          loadMore('filter');
+          loadMore('items');
+
+        })
         // Show the top plugin info part when on home view
         Buildfire.appearance.setHeaderVisibility(true);
         
@@ -398,8 +403,8 @@
               ContentHome.items[index].data.SelectedCategories.forEach(function(category){
                for(var index=0;index<ContentHome.filters.length;index++){
                  if(ContentHome.filters[index].id==category){
-                    ContentHome.filter=ContentHome.filters[index];
-                   ContentHome.filter.data.noOfItems-=1;
+                    ContentHome.filter=ContentHome.filters[index].data;
+                   ContentHome.filter.noOfItems-=1;
                    ContentHome.isItemValid=true;
                  }
                }

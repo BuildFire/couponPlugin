@@ -198,6 +198,9 @@
               Buildfire.datastore.update(category.id, category, TAG_NAMES.COUPON_CATEGORIES, function (err) {
                   if (err)
                       return console.error('There was a problem saving your data');
+
+                      $rootScope.$broadcast("ITEMS_UPDATED");
+
               })
             }
 
