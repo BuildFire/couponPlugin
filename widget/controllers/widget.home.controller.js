@@ -359,6 +359,7 @@
                   });
                 } else {
                  var searchTerm = newValue;
+                  searchOptions.filter.$or=[];
                   searchOptions.filter.$or.push({
                     "$json.title": {
                       "$regex": searchTerm,
