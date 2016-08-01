@@ -24,8 +24,8 @@
             WidgetHome.filter=view.filter;
             WidgetHome.getItems(view.filter);
           }else{
-          //  WidgetHome.items=[];
-            WidgetHome.getItems(view.filter);
+            WidgetHome.items=[];
+            WidgetHome.getItems();
           }
         });
 
@@ -575,9 +575,7 @@
                       for (var i = deleteItemArrayIndex.length -1; i >= 0; i--)
                         _items.splice(deleteItemArrayIndex[i],1);
                     }
-
                   }
-
                 }
               }
 
