@@ -172,18 +172,17 @@
               map.mapTypes.set("Report Error Hide Style", mapType);
               map.setMapTypeId("Report Error Hide Style");
 
-              function getCustomMarkerIcon(_imageUrl) {
-                return {
-                  url: _imageUrl,
-                  // This marker is 20 pixels wide by 32 pixels high.
-                  scaledSize: new google.maps.Size(20, 20),
-                  // The origin for this image is (0, 0).
-                  origin: new google.maps.Point(0, 0),
-                  // The anchor for this image is the base of the flagpole at (0, 32).
-                  anchor: new google.maps.Point(0, 32)
+                var getCustomMarkerIcon = function (_imageUrl) {
+                    return {
+                        url: _imageUrl,
+                        // This marker is 20 pixels wide by 32 pixels high.
+                        scaledSize: new google.maps.Size(20, 20),
+                        // The origin for this image is (0, 0).
+                        origin: new google.maps.Point(0, 0),
+                        // The anchor for this image is the base of the flagpole at (0, 32).
+                        anchor: new google.maps.Point(0, 32)
+                    }
                 }
-              }
-
               var selectedLocation = null;
 
               var currentLocationIconImageUrl ='http://beta.app.buildfire.com/app/media/google_marker_blue_icon.png';
