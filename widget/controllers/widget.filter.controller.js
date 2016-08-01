@@ -145,7 +145,7 @@
                 }
             }
 
-          if (WidgetFilter.data.settings && WidgetFilter.data.settings.distanceIn == 'mi')
+          if (WidgetFilter.data.settings && WidgetFilter.data.settings.distanceIn && WidgetFilter.data.settings.distanceIn == 'mi')
             WidgetFilter.distanceSlider = {
               min: 0,
               max: 300,
