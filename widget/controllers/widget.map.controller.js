@@ -73,6 +73,7 @@
         WidgetMap.getAllItems = function (filter) {
           Buildfire.spinner.show();
           var successAll = function (resultAll) {
+              console.log('GET ALL ITEMS',resultAll);
               Buildfire.spinner.hide();
               if (resultAll) {
                 resultAll.forEach(function (_item) {
@@ -86,6 +87,7 @@
                 WidgetMap.getSavedItems();
               else
                 WidgetMap.formatItems();
+                WidgetMap.refreshData += 1;
             },
             errorAll = function (error) {
               Buildfire.spinner.hide();
@@ -120,6 +122,48 @@
                 }
               }
             }
+
+            if(filter.text){
+              var newValue=filter.text;
+              if (newValue) {
+                newValue = newValue.trim();
+                if (newValue.indexOf(' ') !== -1) {
+                  var searchTerm = newValue.split(' ');
+                  searchOptions.filter.$or=[];
+                  searchOptions.filter.$or.push({
+                    "$json.title": {
+                      "$regex": searchTerm[0],
+                      "$options": "i"
+                    }
+                  }, {
+                    "$json.summary": {
+                      "$regex": searchTerm[0],
+                      "$options": "i"
+                    }
+                  }, {
+                    "$json.title": {
+                      "$regex": searchTerm[1],
+                      "$options": "i"
+                    }
+                  }, {
+                    "$json.summary": {
+                      "$regex": searchTerm[1],
+                      "$options": "i"
+                    }
+                  });
+                } else {
+                  var searchTerm = newValue;
+                  searchOptions.filter.$or=[];
+                  searchOptions.filter.$or.push({
+                    "$json.title": {
+                      "$regex": searchTerm,
+                      "$options": "i"
+                    }
+                  }, {"$json.summary": {"$regex": searchTerm, "$options": "i"}})
+                }
+              }
+            }
+
             DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
           } else {
             DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
@@ -451,7 +495,12 @@
           if (_items && _items.length) {
             GeoDistance.getDistance(WidgetMap.locationData.currentCoordinates, _items, WidgetMap.data.settings.distanceIn).then(function (result) {
               console.log('WidgetMap.locationData.currentCoordinates', WidgetMap.locationData.currentCoordinates);
-              for (var _ind = 0; _ind < WidgetMap.locationData.items.length; _ind++) {
+
+              var endIndex=WidgetMap.locationData.items.length;
+              // var tempItem=_items;
+              var deleteItemArrayIndex=[];
+
+              for (var _ind = 0; _ind < endIndex; _ind++) {
                 if (_items && _items[_ind]) {
                   _items[_ind].data.distance = (result.rows[0].elements[_ind].status != 'OK') ? -1 : result.rows[0].elements[_ind].distance.value;
 
@@ -459,8 +508,11 @@
 
                     var sortFilterCond = (Number(_items[_ind].data.distance) >= WidgetMap.filter.distanceRange.min && Number(_items[_ind].data.distance) <= WidgetMap.filter.distanceRange.max);
                     if (!sortFilterCond) {
-                      _items.splice(_ind, 1);
-                      WidgetMap.refreshData += 1
+                      deleteItemArrayIndex.push(_ind);
+                    }
+                    if(_ind==endIndex-1){
+                      for (var i = deleteItemArrayIndex.length -1; i >= 0; i--)
+                        _items.splice(deleteItemArrayIndex[i],1);
                     }
                   }
 

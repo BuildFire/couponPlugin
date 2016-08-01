@@ -128,6 +128,22 @@
                         return false;
                     }
                 }
+                
+                ContentItem.checkItemValid = function(){
+                    if (ContentItem.item) {
+                        if (ContentItem.item.data.startOn && ContentItem.item.data.expiresOn){
+                            if((ContentItem.item.data.expiresOn - ContentItem.item.data.startOn) > 0)
+                                return ContentItem.item.data.title && true;
+                            else
+                                return false;
+                        }
+                        else
+                            return ContentItem.item.data.title;
+                    }
+                    else {
+                        return false;
+                    }
+                };
 
                 function isValidFilter(item) {
                     if(item){
