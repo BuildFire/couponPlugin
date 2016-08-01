@@ -54,11 +54,12 @@
           if (typeof newObj === 'undefined') {
             return;
           }
-          if (newObj.data && newObj.data.settings && newObj.data.settings.mapView == 'hide') {
+          if (newObj.data && newObj.data.settings && newObj.data.settings.mapView == 'hide' && newObj.data.settings.defaultView == 'map') {
             SettingsHome.couponInfo.data.settings.defaultView = 'list';
             SettingsHome.showMessage = true;
             setTimeout(function(){
               SettingsHome.showMessage = false;
+              $scope.$digest();
             },2000);
           }
           if(newObj.data) {

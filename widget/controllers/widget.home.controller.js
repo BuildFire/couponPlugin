@@ -583,9 +583,17 @@
 
 
               if(WidgetHome.isFilterApplied && WidgetHome.filter.sortOnClosest) {
-                  _items = _items.sort(function (a, b) {
-                 return a.data.distance - b.data.distance;
-                 });
+                _items = _items.sort(function (a, b) {
+                  if (a.data.distance > 0 && b.data.distance > 0) {
+                    return a.data.distance - b.data.distance;
+                  } else if (a.data.distance > 0 && b.data.distance < 0) {
+                    return -1;
+                  } else if (b.data.distance > 0 && a.data.distance < 0) {
+                    return 1;
+                  } else {
+                    return 1;
+                  }
+                });
               }
 
                 //    WidgetHome.isFilterApplied=false;
