@@ -25,7 +25,8 @@
             WidgetHome.filter=view.filter;
             WidgetHome.getItems(view.filter);
           }else{
-            WidgetHome.getItems(view.filter);
+            WidgetHome.items=[];
+            WidgetHome.getItems();
           }
         });
 
@@ -359,6 +360,7 @@
                   });
                 } else {
                  var searchTerm = newValue;
+                  searchOptions.filter.$or=[];
                   searchOptions.filter.$or.push({
                     "$json.title": {
                       "$regex": searchTerm,
@@ -552,21 +554,33 @@
             GeoDistance.getDistance(WidgetHome.locationData.currentCoordinates, _items, WidgetHome.data.settings.distanceIn).then(function (result) {
               console.log('WidgetHome.locationData.currentCoordinates', WidgetHome.locationData.currentCoordinates);
               console.log('distance result', result);
-              for (var _ind = 0; _ind < WidgetHome.items.length; _ind++) {
+              var endIndex=WidgetHome.items.length;
+             // var tempItem=_items;
+              var deleteItemArrayIndex=[];
+              for (var _ind = 0; _ind < endIndex; _ind++) {
                 if (_items && _items[_ind]) {
+
                   _items[_ind].data.distanceText = (result.rows[0].elements[_ind].status != 'OK') ? 'NA' : result.rows[0].elements[_ind].distance.text + ' away';
                   _items[_ind].data.distance = (result.rows[0].elements[_ind].status != 'OK') ? -1 : result.rows[0].elements[_ind].distance.value;
 
                   if(WidgetHome.isFilterApplied && WidgetHome.filter.distanceRange){
 
-                    var sortFilterCond = (Number(_items[_ind].data.distanceText.split(' ')[0]) >=  WidgetHome.filter.distanceRange.min && Number(_items[_ind].data.distanceText.split(' ')[0]) <=  WidgetHome.filter.distanceRange.max);
+                   //  var sortFilterCond = (Number(_items[_ind].data.distanceText.split(' ')[0]) >=  WidgetHome.filter.distanceRange.min && Number(_items[_ind].data.distanceText.split(' ')[0]) <=  WidgetHome.filter.distanceRange.max);
+                    var itemDistNo=Number(_items[_ind].data.distanceText.split(' ')[0]);
+                    var filterDistMin= WidgetHome.filter.distanceRange.min;
+                    var filterDistMax= WidgetHome.filter.distanceRange.max;
+                    var sortFilterCond=(itemDistNo >=filterDistMin && itemDistNo<=filterDistMax );
                     if(!sortFilterCond){
-                      _items.splice(_ind, 1);
+                      deleteItemArrayIndex.push(_ind);
+                    }
+                    if(_ind==endIndex-1){
+                      for (var i = deleteItemArrayIndex.length -1; i >= 0; i--)
+                        _items.splice(deleteItemArrayIndex[i],1);
                     }
                   }
-
                 }
               }
+
 
               if(WidgetHome.isFilterApplied && WidgetHome.filter.sortOnClosest) {
                 _items = _items.sort(function (a, b) {
