@@ -217,15 +217,17 @@
 
                     setTimeout(function(){
                       WidgetFilter.filter.categories.forEach(function(f_category){
-                        WidgetFilter.categories.forEach(function(category){
-                          if(category.id==f_category){
-                            category.isSelected=true;
-                            WidgetFilter.allSelected = false;
-                            if(!$scope.$$phase) {
-                              $scope.$digest();
-                            }
+                          if( WidgetFilter.categories &&  WidgetFilter.categories.length){
+                              WidgetFilter.categories.forEach(function(category){
+                                  if(category.id==f_category){
+                                      category.isSelected=true;
+                                      WidgetFilter.allSelected = false;
+                                      if(!$scope.$$phase) {
+                                          $scope.$digest();
+                                      }
+                                  }
+                              })
                           }
-                        })
                       })
                     },1000);
                   }
