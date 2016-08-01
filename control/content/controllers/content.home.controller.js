@@ -29,11 +29,7 @@
           }
         };
 
-        $rootScope.$on('ITEMS_UPDATED',function(e){
-          loadMore('filter');
-          loadMore('items');
 
-        })
         // Show the top plugin info part when on home view
         Buildfire.appearance.setHeaderVisibility(true);
         
@@ -72,6 +68,14 @@
         ContentHome.filters = [];
 
         ContentHome.items = [];
+
+        $rootScope.$on('ITEMS_UPDATED',function(e){
+          ContentHome.filters=[];
+          ContentHome.items = [];
+          ContentHome.loadMore('js');
+          ContentHome.loadMoreItems('js');
+
+        })
 
         ContentHome.sortFilterOptions = [
           SORT_FILTER.MANUALLY,

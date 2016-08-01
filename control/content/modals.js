@@ -142,6 +142,7 @@
             };
         }]).controller('ShowFilterPopupCtrl', ['$scope','$rootScope', '$modalInstance','Info', 'Buildfire', 'TAG_NAMES', 'DataStore', function ($scope,$rootScope, $modalInstance, Info, Buildfire, TAG_NAMES, DataStore) {
           var ShowFilterPopup = this;
+            var thatCategory;
           ShowFilterPopup.data = {};
           if(Info && Info.item)
               $scope.item = Info.item;
@@ -195,21 +196,22 @@
                   ShowFilterPopup.selection.push(category.id);
                   category.noOfItems= category.noOfItems+1;
               }
-              Buildfire.datastore.update(category.id, category, TAG_NAMES.COUPON_CATEGORIES, function (err) {
-                  if (err)
-                      return console.error('There was a problem saving your data');
-
-                      $rootScope.$broadcast("ITEMS_UPDATED");
-
-              })
+              thatCategory=category;
             }
 
+
            $scope.ok = function () {
+
+               Buildfire.datastore.update(thatCategory.id, thatCategory, TAG_NAMES.COUPON_CATEGORIES, function (err) {
+                   if (err)
+                       return console.error('There was a problem saving your data');
+               })
 
                ShowFilterPopup.data.itemData.SelectedCategories = ShowFilterPopup.selection;
                if (ShowFilterPopup.data.itemId) {
                   DataStore.update(ShowFilterPopup.data.itemId, ShowFilterPopup.data.itemData, TAG_NAMES.COUPON_ITEMS).then(function (data) {
                       console.log('Item updated successfully-----', data, ShowFilterPopup.data.itemData);
+                      $rootScope.$broadcast("ITEMS_UPDATED");
                   }, function (err) {
                       console.error('Error: while updating item--:', err);
                   });
@@ -217,7 +219,6 @@
                if(!$scope.$$phase)
                $scope.$digest();
               $modalInstance.close({status:'yes', selection:ShowFilterPopup.selection});
-
           };
           $scope.cancel = function () {
               $modalInstance.dismiss('no');
