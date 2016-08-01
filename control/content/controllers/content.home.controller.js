@@ -797,6 +797,11 @@
           return items.every(isValidItem);
         }
 
+        function asyncProcess(index, cb){
+            cb(index);
+            console.log('completed');
+        }
+
         ContentHome.openImportCSVDialog = function () {
 
           $csv.import(headerRow).then(function (rows) {
@@ -846,7 +851,7 @@
                   })
                 }
 
-                  asycronouseProcess(index, function(index) {
+                  asyncProcess(index, function(index) {
 
                     if(rows[index].SelectedCategories.length && rows[index].location){
 
@@ -990,11 +995,6 @@
                       });
                     }*/
                   });
-                    function asycronouseProcess(index, cb){
-                    cb(index);
-                    console.log('completed');
-                  }
-
               }
             }
             else {
