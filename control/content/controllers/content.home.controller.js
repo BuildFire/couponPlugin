@@ -3,8 +3,8 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', 'TAG_NAMES','SORT','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter', 'RankOfLastItem', '$csv','Utils',
-      function ($scope, TAG_NAMES,SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem , $csv , Utils) {
+    .controller('ContentHomeCtrl', ['$scope', '$timeout', 'TAG_NAMES','SORT','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter', 'RankOfLastItem', '$csv','Utils','$rootScope',
+      function ($scope, $timeout, TAG_NAMES,SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem , $csv , Utils,$rootScope) {
 
         var ContentHome = this;
         ContentHome.searchValue = "";
@@ -28,6 +28,7 @@
             "filterPage": "show"
           }
         };
+
 
         // Show the top plugin info part when on home view
         Buildfire.appearance.setHeaderVisibility(true);
@@ -67,6 +68,14 @@
         ContentHome.filters = [];
 
         ContentHome.items = [];
+
+        $rootScope.$on('ITEMS_UPDATED',function(e){
+          ContentHome.filters=[];
+          ContentHome.items = [];
+          ContentHome.loadMore('js');
+          ContentHome.loadMoreItems('js');
+
+        })
 
         ContentHome.sortFilterOptions = [
           SORT_FILTER.MANUALLY,
@@ -394,6 +403,18 @@
         ContentHome.deleteItem = function (index) {
           Modals.removeItemPopupModal({'item': 'item'}).then(function (result) {
             if (result) {
+
+              ContentHome.items[index].data.SelectedCategories.forEach(function(category){
+               for(var index=0;index<ContentHome.filters.length;index++){
+                 if(ContentHome.filters[index].id==category){
+                    ContentHome.filter=ContentHome.filters[index].data;
+                   ContentHome.filter.noOfItems-=1;
+                   ContentHome.isItemValid=true;
+                 }
+               }
+
+              });
+
               Buildfire.datastore.delete(ContentHome.items[index].id, TAG_NAMES.COUPON_ITEMS, function (err, result) {
                 if (err)
                   return;
