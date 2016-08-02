@@ -203,17 +203,17 @@
                  * @param _item
                  */
                 function updateItemsWithDelay(_item) {
-                    if (updating)
-                        return;
-                    if (tmrDelayForItem) {
-                        $timeout.cancel(tmrDelayForItem);
-                    }
-                    if(ContentItem.item) {
-                        ContentItem.isItemValid = isValidItem(ContentItem.item.data);
-                        if (_item && !isUnChanged(_item) && ContentItem.isItemValid) {
-                            tmrDelayForItem = $timeout(function () {
-                                insertAndUpdate(_item);
-                            }, 300);
+                    if (_item) {
+                        if (tmrDelayForItem) {
+                            $timeout.cancel(tmrDelayForItem);
+                        }
+                        if (ContentItem.item) {
+                            ContentItem.isItemValid = isValidItem(ContentItem.item.data);
+                            if (_item && !isUnChanged(_item) && ContentItem.isItemValid) {
+                                tmrDelayForItem = $timeout(function () {
+                                    insertAndUpdate(_item);
+                                }, 300);
+                            }
                         }
                     }
                 }
