@@ -222,7 +222,7 @@
           };
           $scope.cancel = function () {
 
-            $modalInstance.close();
+           $modalInstance.close();
               //$modalInstance.dismiss('no');
           };
       }]);
