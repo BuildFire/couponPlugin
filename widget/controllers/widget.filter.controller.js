@@ -10,6 +10,12 @@
         WidgetFilter.filter={};
         WidgetFilter.filter.text = '';
         var searchOptions = {};
+          var defaultFilterData= {
+              sortOnClosest :false ,
+              text : null,
+              isApplied : false ,
+              categories : []
+          }
 
         WidgetFilter.getSearchOptions = function (value) {
           switch (value) {
@@ -68,10 +74,6 @@
 
 
         WidgetFilter.back = function () {
-            WidgetFilter.filter.isApplied = false;
-            $rootScope.$broadcast('FILTER_ITEMS', {
-                isFilterApplied: WidgetFilter.filter.isApplied
-            });
           ViewStack.pop();
           saveFilterDataInLocalStorage();
         };
@@ -133,11 +135,13 @@
         };
 
         WidgetFilter.resetFilters = function () {
-          WidgetFilter.filter.sortOnClosest = false;
-          WidgetFilter.allSelected = true;
+
+            WidgetFilter.filter=defaultFilterData;
+         /* WidgetFilter.filter.sortOnClosest = false;
           WidgetFilter.filter.text = null;
           WidgetFilter.filter.isApplied = false;
-          WidgetFilter.filter.categories = [];
+          WidgetFilter.filter.categories = [];*/
+
           WidgetFilter.allSelected = true;
             if(WidgetFilter.categories){
                 for (var i = 0; i < WidgetFilter.categories.length; i++) {
@@ -160,14 +164,18 @@
               floor: 0
             };
             WidgetFilter.filter.distanceRange=WidgetFilter.distanceSlider;
+            defaultFilterData.distanceRange = WidgetFilter.distanceSlider;
             saveFilterDataInLocalStorage();
         };
 
         WidgetFilter.applyFilter = function () {
-          if (WidgetFilter.filter.sortOnClosest || (WidgetFilter.filter.categories && WidgetFilter.filter.categories.length) || WidgetFilter.filter.text || WidgetFilter.filter.distanceRange )
-            WidgetFilter.filter.isApplied = true;
-          else
-            WidgetFilter.filter.isApplied = false;
+
+            if(angular.equals(WidgetFilter.filter, defaultFilterData)){
+                WidgetFilter.filter.isApplied = false;
+            }else{
+                WidgetFilter.filter.isApplied = true;
+            }
+
           $rootScope.$broadcast('FILTER_ITEMS', {
             isFilterApplied: WidgetFilter.filter.isApplied,
             filter: WidgetFilter.filter
@@ -203,6 +211,7 @@
                   ceil: 499, //upper limit
                   floor: 0
                 };
+                  defaultFilterData.distanceRange = WidgetFilter.distanceSlider;
 
                if (typeof(Storage) !== "undefined") {
                   var obj =localStorage.getItem("filter")
