@@ -221,7 +221,9 @@
               $modalInstance.close({status:'yes', selection:ShowFilterPopup.selection});
           };
           $scope.cancel = function () {
-              $modalInstance.dismiss('no');
+
+            $modalInstance.close();
+              //$modalInstance.dismiss('no');
           };
       }]);
 
