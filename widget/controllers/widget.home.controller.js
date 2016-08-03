@@ -26,7 +26,7 @@
             WidgetHome.getItems(view.filter);
           }else{
             WidgetHome.items=[];
-            WidgetHome.getItems();
+            WidgetHome.getItems(view.filter);
           }
         });
 
