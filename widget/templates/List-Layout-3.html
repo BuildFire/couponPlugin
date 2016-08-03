@@ -31,9 +31,9 @@
 							<p class="item-date margin-zero text-center" ng-hide="item.data.distanceText">&nbsp;</p>
 						</div>
 						<!-- Use these theme classes when active/selected -->
-						<span class="icon icon-star text-primary primaryTheme" ng-if="item.isSaved"
+						<span class="icon icon-star text-primary primaryTheme" ng-if="WidgetHome.currentLoggedInUser" ng-if="item.isSaved"
                   ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
-             <span class="icon icon-star-empty text-default" ng-if="!item.isSaved"
+             <span class="icon icon-star-empty text-default" ng-if="WidgetHome.currentLoggedInUser" ng-if="!item.isSaved"
                    ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
 					</div>
 				</div>
