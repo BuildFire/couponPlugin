@@ -493,7 +493,7 @@
                   "$and": [{
                     "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
                   }, {"$json.title": {"$regex": '/*'}}]
-                }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
+                }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}]}]
               }
             }else if (ContentHome.data.content.selectedStatus == 'All Statuses') {
               ContentHome.searchOptionsForItems.filter =
@@ -514,9 +514,10 @@
             } else if (ContentHome.data.content.selectedStatus == 'Expired') {
               ContentHome.searchOptionsForItems.filter =
               {
-                "$and": [{
-                  "$and": [ {"$json.title": {"$regex": '/*'}}]
-                }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
+                "$and": [
+                   {"$json.title": {"$regex": '/*'}},
+                  {"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}
+                ]
               }
             }
             else if (ContentHome.data.content.selectedStatus == 'All Statuses') {
