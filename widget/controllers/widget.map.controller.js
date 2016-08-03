@@ -505,8 +505,16 @@
                   _items[_ind].data.distance = (result.rows[0].elements[_ind].status != 'OK') ? -1 : result.rows[0].elements[_ind].distance.value;
 
                   if (WidgetMap.isFilterApplied && WidgetMap.filter.distanceRange) {
-
-                    var sortFilterCond = (Number(_items[_ind].data.distance) >= WidgetMap.filter.distanceRange.min && Number(_items[_ind].data.distance) <= WidgetMap.filter.distanceRange.max);
+                      var itemDistNo = result.rows[0].elements[_ind] && result.rows[0].elements[_ind].distance && result.rows[0].elements[_ind].distance.text && Number(result.rows[0].elements[_ind].distance.text.split(' ')[0].replace(/,/g,''));
+                      var distanceUnit = result.rows[0].elements[_ind] && result.rows[0].elements[_ind].distance && result.rows[0].elements[_ind].distance.text && result.rows[0].elements[_ind].distance.text.split(' ')[1];
+                      var filterDistMin = WidgetMap.filter.distanceRange.min;
+                      var filterDistMax = WidgetMap.filter.distanceRange.max;
+                      var sortFilterCond;
+                      if ((distanceUnit == 'km' && filterDistMax > 483) || (distanceUnit == 'mi' && filterDistMax > 300))
+                          sortFilterCond = (itemDistNo >= filterDistMin);
+                      else
+                          sortFilterCond = (itemDistNo >= filterDistMin && itemDistNo <= filterDistMax);
+                   // var sortFilterCond = (Number(_items[_ind].data.distance) >= WidgetMap.filter.distanceRange.min && Number(_items[_ind].data.distance) <= WidgetMap.filter.distanceRange.max);
                     if (!sortFilterCond) {
                       deleteItemArrayIndex.push(_ind);
                     }
@@ -518,6 +526,7 @@
 
                 }
               }
+                WidgetMap.refreshData += 1;
               //  WidgetMap.isFilterApplied=false;
             }, function (err) {
               console.error('distance err', err);

@@ -566,7 +566,7 @@
                     if (WidgetHome.isFilterApplied && WidgetHome.filter.distanceRange) {
 
                         //  var sortFilterCond = (Number(_items[_ind].data.distanceText.split(' ')[0]) >=  WidgetHome.filter.distanceRange.min && Number(_items[_ind].data.distanceText.split(' ')[0]) <=  WidgetHome.filter.distanceRange.max);
-                        var itemDistNo = Number(_items[_ind].data.distanceText.split(' ')[0]).replace(/,/g,'');
+                        var itemDistNo = Number(_items[_ind].data.distanceText.split(' ')[0].replace(/,/g,''));
                         var distanceUnit = _items[_ind].data.distanceText.split(' ')[1];
                         var filterDistMin = WidgetHome.filter.distanceRange.min;
                         var filterDistMax = WidgetHome.filter.distanceRange.max;
