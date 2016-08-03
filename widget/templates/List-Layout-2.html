@@ -32,7 +32,7 @@
 									<i>{{item.data.distanceText}}</i>
 								</p>
 							</div>
-							<div class="bookmark-holder">
+							<div class="bookmark-holder" ng-if="WidgetHome.currentLoggedInUser">
 								<span class="icon icon-star text-primary" ng-if="item.isSaved" ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
                  				<span class="icon icon-star-empty text-default" ng-if="!item.isSaved" ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
 							</div>
