@@ -167,6 +167,12 @@
           }
         });
 
+        var logoutCallback = function () {
+          WidgetSaved.showListItems();
+        };
+
+        buildfire.auth.onLogout(logoutCallback);
+
         var searchData = function (newValue, tag) {
           Buildfire.spinner.show();
           var searchTerm = '';
