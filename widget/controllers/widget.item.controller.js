@@ -302,6 +302,16 @@
                 WidgetItem.getSavedItems();
                 WidgetItem.getRedeemedCoupons();
               }
+            else {
+                buildfire.auth.getCurrentUser(function (err, user) {
+                  if (user) {
+                    WidgetItem.currentLoggedInUser = user;
+                    $scope.$apply();
+                    WidgetItem.getSavedItems();
+                    WidgetItem.getRedeemedCoupons();
+                  }
+                });
+              }
             }
             , error = function (err) {
               Buildfire.spinner.hide();
