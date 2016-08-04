@@ -272,7 +272,7 @@
                           }
                             setTimeout(function(){
                                 updating=false;
-                            },1000)
+                            },2000)
 
 
                           init();
