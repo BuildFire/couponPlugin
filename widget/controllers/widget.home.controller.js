@@ -563,21 +563,26 @@
                   _items[_ind].data.distanceText = (result.rows[0].elements[_ind].status != 'OK') ? 'NA' : result.rows[0].elements[_ind].distance.text + ' away';
                   _items[_ind].data.distance = (result.rows[0].elements[_ind].status != 'OK') ? -1 : result.rows[0].elements[_ind].distance.value;
 
-                  if(WidgetHome.isFilterApplied && WidgetHome.filter.distanceRange){
+                    if (WidgetHome.isFilterApplied && WidgetHome.filter.distanceRange) {
 
-                   //  var sortFilterCond = (Number(_items[_ind].data.distanceText.split(' ')[0]) >=  WidgetHome.filter.distanceRange.min && Number(_items[_ind].data.distanceText.split(' ')[0]) <=  WidgetHome.filter.distanceRange.max);
-                    var itemDistNo=Number(_items[_ind].data.distanceText.split(' ')[0]);
-                    var filterDistMin= WidgetHome.filter.distanceRange.min;
-                    var filterDistMax= WidgetHome.filter.distanceRange.max;
-                    var sortFilterCond=(itemDistNo >=filterDistMin && itemDistNo<=filterDistMax );
-                    if(!sortFilterCond){
-                      deleteItemArrayIndex.push(_ind);
+                        //  var sortFilterCond = (Number(_items[_ind].data.distanceText.split(' ')[0]) >=  WidgetHome.filter.distanceRange.min && Number(_items[_ind].data.distanceText.split(' ')[0]) <=  WidgetHome.filter.distanceRange.max);
+                        var itemDistNo = Number(_items[_ind].data.distanceText.split(' ')[0].replace(/,/g,''));
+                        var distanceUnit = _items[_ind].data.distanceText.split(' ')[1];
+                        var filterDistMin = WidgetHome.filter.distanceRange.min;
+                        var filterDistMax = WidgetHome.filter.distanceRange.max;
+                        var sortFilterCond;
+                        if ((distanceUnit == 'km' && filterDistMax > 483) || (distanceUnit == 'mi' && filterDistMax > 300))
+                            sortFilterCond = (itemDistNo >= filterDistMin);
+                        else
+                            sortFilterCond = (itemDistNo >= filterDistMin && itemDistNo <= filterDistMax);
+                        if (!sortFilterCond) {
+                            deleteItemArrayIndex.push(_ind);
+                        }
+                        if (_ind == endIndex - 1) {
+                            for (var i = deleteItemArrayIndex.length - 1; i >= 0; i--)
+                                _items.splice(deleteItemArrayIndex[i], 1);
+                        }
                     }
-                    if(_ind==endIndex-1){
-                      for (var i = deleteItemArrayIndex.length -1; i >= 0; i--)
-                        _items.splice(deleteItemArrayIndex[i],1);
-                    }
-                  }
                 }
               }
 
