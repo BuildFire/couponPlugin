@@ -456,38 +456,6 @@
           }
         });
 
-
-        function getItemsSortOnDistance(_items) {
-          if (WidgetMap.locationData.currentCoordinates == null) {
-            return;
-          }
-          if (_items && _items.length) {
-            GeoDistance.getDistance(WidgetMap.locationData.currentCoordinates, _items, WidgetMap.data.settings.distanceIn).then(function (result) {
-              console.log('WidgetMap.locationData.currentCoordinates', WidgetMap.locationData.currentCoordinates);
-              var tmpItemArray = [];
-              for (var _ind = 0; _ind < WidgetMap.locationData.items.length; _ind++) {
-                if (_items && _items[_ind]) {
-                  _items[_ind].data.distance = (result.rows[0].elements[_ind].status != 'OK') ? -1 : result.rows[0].elements[_ind].distance.value;
-
-                  if (WidgetMap.isFilterApplied) {
-
-                    var sortFilterCond = (Number(_items[_ind].data.distance) >= WidgetMap.filter.distanceRange.min && Number(_items[_ind].data.distance) <= WidgetMap.filter.distanceRange.max);
-                    if (sortFilterCond) {
-                      tmpItemArray.push(_items[_ind]);
-                      if (_ind == WidgetMap.locationData.items.length - 1)
-                        return tmpItemArray;
-                    }
-                  }
-
-                }
-              }
-
-            }, function (err) {
-              console.error('distance err', err);
-            });
-          }
-        }
-
         function getItemsDistance(_items) {
           if (WidgetMap.locationData.currentCoordinates == null) {
             return;
