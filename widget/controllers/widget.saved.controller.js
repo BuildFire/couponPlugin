@@ -8,7 +8,7 @@
         WidgetSaved.busy = false;
         WidgetSaved.items = [];
         WidgetSaved.savedItems = {};
-        WidgetSaved.hasAtleastOneSavedItem = false;
+        WidgetSaved.hasAtleastOneSaved = false;
         WidgetSaved.listeners = {};
         var searchOptions = {
           skip: 0,
@@ -47,6 +47,7 @@
         };
 
         WidgetSaved.getSavedItems = function () {
+          WidgetSaved.hasAtleastOneSaved = false;
           for (var item = 0; item < WidgetSaved.items.length; item++) {
             WidgetSaved.items[item].isSaved = false;
             for (var saved in WidgetSaved.savedItems) {

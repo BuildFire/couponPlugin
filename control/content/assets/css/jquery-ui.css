@@ -1271,3 +1271,7 @@ body .ui-tooltip {
 	filter: Alpha(Opacity=30); /* support: IE8 */
 	border-radius: 8px;
 }
+
+.draggable-list-view.wide-list{
+	overflow: visible !important;
+}
