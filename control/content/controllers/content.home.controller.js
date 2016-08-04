@@ -543,7 +543,7 @@
                 "$and": [{
                   "$and": [{
                     "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
-                  }, {"$json.title": {"$regex": ContentHome.searchValue}}]
+                  }, { "$or":  [{"$json.title": {"$regex": ContentHome.searchValue,"$options": "i"}},{"$json.summary": {"$regex": ContentHome.searchValue,"$options": "i"}}]}]
                 }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
               }
             } else if (ContentHome.data.content.selectedStatus == 'Expired') {
@@ -553,7 +553,7 @@
                 "$and": [{
                   "$and": [{
                     "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
-                  }, {"$json.title": {"$regex": ContentHome.searchValue}}]
+                  }, { "$or":  [{"$json.title": {"$regex": ContentHome.searchValue,"$options": "i"}},{"$json.summary": {"$regex": ContentHome.searchValue,"$options": "i"}}]}]
                 }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
               }
             }
@@ -562,14 +562,14 @@
               ContentHome.searchOptionsForItems.filter =
               {
                 "$and": [{
-                  "$and": [{"$json.title": {"$regex": ContentHome.searchValue}}]
+                  "$and": [{ "$or":  [{"$json.title": {"$regex": ContentHome.searchValue,"$options": "i"}},{"$json.summary": {"$regex": ContentHome.searchValue,"$options": "i"}}]}]
                 }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
               }
             } else if (ContentHome.data.content.selectedStatus == 'Expired') {
               ContentHome.searchOptionsForItems.filter =
               {
                 "$and": [{
-                  "$and": [ {"$json.title": {"$regex":ContentHome.searchValue}}]
+                  "$and": [{ "$or":  [{"$json.title": {"$regex": ContentHome.searchValue,"$options": "i"}},{"$json.summary": {"$regex": ContentHome.searchValue,"$options": "i"}}]}]
                 }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
               }
             }
@@ -577,12 +577,17 @@
             ContentHome.searchOptionsForItems.filter = {
               "$and": [{
                 "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
-              }, {"$json.title": {"$regex": ContentHome.searchValue}}]
+              }, { "$or":  [{"$json.title": {"$regex": ContentHome.searchValue,"$options": "i"}},{"$json.summary": {"$regex": ContentHome.searchValue,"$options": "i"}}]}]
             }
           }else{
 
             ContentHome.searchOptionsForItems.filter = { "$or": [{
               "$json.title": {
+                "$regex": ContentHome.searchValue,
+                "$options": "i"
+              }
+            },{
+              "$json.summary": {
                 "$regex": ContentHome.searchValue,
                 "$options": "i"
               }

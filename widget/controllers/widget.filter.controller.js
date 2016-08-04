@@ -137,8 +137,8 @@
         WidgetFilter.resetFilters = function () {
 
             WidgetFilter.filter=defaultFilterData;
-         /* WidgetFilter.filter.sortOnClosest = false;
-          WidgetFilter.filter.text = null;
+            WidgetFilter.filter.sortOnClosest = false;
+            /* WidgetFilter.filter.text = null;
           WidgetFilter.filter.isApplied = false;
           WidgetFilter.filter.categories = [];*/
 

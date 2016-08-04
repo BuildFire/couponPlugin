@@ -217,6 +217,13 @@
 
         buildfire.auth.onLogin(loginCallback);
 
+        var logoutCallback = function () {
+          WidgetItem.currentLoggedInUser = null;
+          $scope.$apply();
+        };
+
+        buildfire.auth.onLogout(logoutCallback);
+
         WidgetItem.redeemCoupon = function(item){
           if(WidgetItem.currentLoggedInUser){
             WidgetItem.redeemedItem = {
@@ -301,6 +308,16 @@
               if(WidgetItem.currentLoggedInUser){
                 WidgetItem.getSavedItems();
                 WidgetItem.getRedeemedCoupons();
+              }
+            else {
+                buildfire.auth.getCurrentUser(function (err, user) {
+                  if (user) {
+                    WidgetItem.currentLoggedInUser = user;
+                    $scope.$apply();
+                    WidgetItem.getSavedItems();
+                    WidgetItem.getRedeemedCoupons();
+                  }
+                });
               }
             }
             , error = function (err) {

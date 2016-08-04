@@ -32,6 +32,16 @@
     <script src="directives.js"></script>
     <script src="controllers/content.home.controller.js"></script>
     <script src="controllers/content.item.controller.js"></script>
+
+    <script>
+        function clickMe(e) {
+            setTimeout(function () {
+                var top = e.pageY;
+                $('.modal-dialog.modal-sm').offset({top: top-150, left: 0});
+            }, 30);
+
+        }
+    </script>
 </head>
 
 <style type="text/css" media="screen">
