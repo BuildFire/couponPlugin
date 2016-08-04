@@ -234,7 +234,7 @@
                 WidgetHome.data.content = {};
               if (!WidgetHome.data.settings)
                 WidgetHome.data.settings = {};
-              if (event.data.content.sortItemBy && currentSortOrder != event.data.content.sortItemBy) {
+              if (event.data.content.sortItemBy && currentSortOrder && (currentSortOrder != event.data.content.sortItemBy)) {
                 WidgetHome.data.content.sortItemBy = event.data.content.sortItemBy;
                 WidgetHome.items = [];
                 searchOptions.skip = 0;
