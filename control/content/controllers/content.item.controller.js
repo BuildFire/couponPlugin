@@ -209,7 +209,7 @@
                         }
                         if (ContentItem.item) {
                             ContentItem.isItemValid = isValidItem(ContentItem.item.data);
-                            if (_item && !isUnChanged(_item) && ContentItem.isItemValid) {
+                            if (!updating && _item && !isUnChanged(_item) && ContentItem.isItemValid) {
                                 tmrDelayForItem = $timeout(function () {
                                     insertAndUpdate(_item);
                                 }, 300);
@@ -257,7 +257,7 @@
 
                 ContentItem.getItemData = function(itemId){
                     var success = function(result){
-                          console.log("------------->>>>", result, itemId);
+                            console.log("------------->>>>", result, itemId);
                             updating=true;
                           ContentItem.item = result;
                           if (ContentItem.item.data.location && ContentItem.item.data.location.addressTitle) {
