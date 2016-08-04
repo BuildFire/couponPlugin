@@ -62,7 +62,7 @@
     </div>
   </div>
   <div class="col-md-3 padding-zero pull-left">
-    <a class="btn btn-success stretch" ng-click="ContentHome.addEditFilter(null , false)">Add New Filter</a>
+    <a class="btn btn-success stretch" ng-click="ContentHome.addEditFilter(null , false)" onclick="clickMe(event)">Add New Filter</a>
   </div>
 </div>
 <hr class="none">
@@ -85,7 +85,7 @@
         <span class="title ellipsis">Includes {{filter.data.noOfItems || 0}} Items</span>
       </div>
       <div class="pull-right">
-        <span class="btn-icon btn-edit-icon btn-primary" ng-click="ContentHome.addEditFilter(filter, true , $index)"></span>
+        <span class="btn-icon btn-edit-icon btn-primary" ng-click="ContentHome.addEditFilter(filter, true , $index)"  onclick="clickMe(event)"></span>
         <span class="btn-icon btn-delete-icon btn-danger" ng-click="ContentHome.deleteFilter($index)"></span>
       </div>
     </div>
