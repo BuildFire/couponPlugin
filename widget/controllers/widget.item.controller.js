@@ -217,6 +217,13 @@
 
         buildfire.auth.onLogin(loginCallback);
 
+        var logoutCallback = function () {
+          WidgetItem.currentLoggedInUser = null;
+          $scope.$apply();
+        };
+
+        buildfire.auth.onLogout(logoutCallback);
+
         WidgetItem.redeemCoupon = function(item){
           if(WidgetItem.currentLoggedInUser){
             WidgetItem.redeemedItem = {
