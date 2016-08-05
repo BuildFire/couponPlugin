@@ -263,6 +263,14 @@
         };
         //ContentHome.itemSortableOptions.disabled = !(ContentHome.data.content.sortFilterBy === SORT_FILTER.MANUALLY);
 
+       //Polyfill for isInterger support for IE
+        Number.isInteger = Number.isInteger || function(value) {
+          return typeof value === "number" &&
+              isFinite(value) &&
+              Math.floor(value) === value;
+        };
+
+
         ContentHome.addEditFilter = function (filter, editFlag, index) {
           var tempTitle = '';
           if(Number.isInteger(index))
