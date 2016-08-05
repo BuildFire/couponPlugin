@@ -388,7 +388,6 @@
                 ContentItem.setCoordinates = function () {
                     var latlng = '';
                     function successCallback(resp) {
-                        console.log('Successfully validated coordinates-----------', resp);
                         if (resp) {
                             ContentItem.item.data.address = {
                                 lng: ContentItem.currentAddress.split(",")[1].trim(),
@@ -396,6 +395,15 @@
                                 aName: ContentItem.currentAddress
                             };
                             ContentItem.currentCoordinates = [ContentItem.currentAddress.split(",")[1].trim(), ContentItem.currentAddress.split(",")[0].trim()];
+                            console.log('Successfully validated coordinates-----------', resp, ContentItem.currentCoordinates, ContentItem.item.data);
+                            ContentItem.item.data.location = {
+                                coordinates: {
+                                    lng: Number(ContentItem.currentCoordinates[0]),
+                                    lat: Number(ContentItem.currentCoordinates[1])
+                                },addressTitle:ContentItem.currentAddress
+                            }
+                            ContentItem.currentAddress = ContentItem.item.data.location.addressTitle;
+                            ContentItem.currentCoordinates = ContentItem.item.data.location.coordinates;
                         } else {
                             errorCallback();
                         }
