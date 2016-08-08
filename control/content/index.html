@@ -41,6 +41,14 @@
             }, 30);
 
         }
+
+        function clickMeFilter(e) {
+            setTimeout(function () {
+                var top = e.pageY;
+                $('.modal-dialog.modal-sm').offset({top: top-250, left: 0});
+            }, 30);
+
+        }
     </script>
 </head>
 

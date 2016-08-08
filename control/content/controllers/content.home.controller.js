@@ -59,9 +59,13 @@
             , headerRow = ["title", "summary" ,"SelectedCategories", "Categories" , "listImage", "carouselImages", "preRedemptionText" , "postRedemptionText" , "startOn" , "expiresOn" , "addressTitle", "location", "webURL", "sendToEmail", "smsTextNumber", "phoneNumber", "facebookURL", "twitterURL", "instagramURL", "googlePlusURL", "linkedinURL"];
 
 
-        var today = new Date();
+      /*  var today = new Date();
         var month = new Date().getMonth() + 1;
         ContentHome.currentDate = +new Date("'" + month + "/" + today.getDate() + "/" + today.getFullYear() + "'");
+*/
+        ContentHome.currentDate = new Date();
+        ContentHome.yesterdayDate = +ContentHome.currentDate.setDate(ContentHome.currentDate.getDate() - 1);
+        ContentHome.tommorowDate = +ContentHome.currentDate.setDate(ContentHome.currentDate.getDate() + 1);
 
         ContentHome.currentDateTimestamp = +new Date();
 
@@ -483,7 +487,7 @@
         ContentHome.chooseStatus = function (status) {
           ContentHome.searchValue ="";
           ContentHome.data.content.selectedStatus = status;
-          ContentHome.couponActiveDate = ContentHome.currentDate;
+         // ContentHome.couponActiveDate = ContentHome.currentDate;
           if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!=='All Categories') {
             if (ContentHome.data.content.selectedStatus == 'Active') {
               ContentHome.searchOptionsForItems.filter =
@@ -492,7 +496,7 @@
                   "$and": [{
                     "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
                   }, {"$json.title": {"$regex": '/*'}}]
-                }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
+                }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.tommorowDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
               }
             } else if (ContentHome.data.content.selectedStatus == 'Expired') {
               ContentHome.searchOptionsForItems.filter =
@@ -501,7 +505,7 @@
                   "$and": [{
                     "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
                   }, {"$json.title": {"$regex": '/*'}}]
-                }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}]}]
+                }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.tommorowDate}}]}]
               }
             }else if (ContentHome.data.content.selectedStatus == 'All Statuses') {
               ContentHome.searchOptionsForItems.filter =
@@ -517,14 +521,14 @@
               {
                 "$and": [{
                   "$and": [{"$json.title": {"$regex": '/*'}}]
-                }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
+                }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.tommorowDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
               }
             } else if (ContentHome.data.content.selectedStatus == 'Expired') {
               ContentHome.searchOptionsForItems.filter =
               {
                 "$and": [
                    {"$json.title": {"$regex": '/*'}},
-                  {"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}
+                  {"$json.expiresOn": {"$lte": ContentHome.tommorowDate}}
                 ]
               }
             }
@@ -552,7 +556,7 @@
                   "$and": [{
                     "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
                   }, { "$or":  [{"$json.title": {"$regex": ContentHome.searchValue,"$options": "i"}},{"$json.summary": {"$regex": ContentHome.searchValue,"$options": "i"}}]}]
-                }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
+                }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.tommorowDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
               }
             } else if (ContentHome.data.content.selectedStatus == 'Expired') {
 
@@ -562,7 +566,7 @@
                   "$and": [{
                     "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
                   }, { "$or":  [{"$json.title": {"$regex": ContentHome.searchValue,"$options": "i"}},{"$json.summary": {"$regex": ContentHome.searchValue,"$options": "i"}}]}]
-                }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
+                }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.tommorowDate}}]}]
               }
             }
           } else if(ContentHome.data.content.selectedStatus && ContentHome.data.content.selectedStatus!=="All Statuses"){
@@ -571,14 +575,14 @@
               {
                 "$and": [{
                   "$and": [{ "$or":  [{"$json.title": {"$regex": ContentHome.searchValue,"$options": "i"}},{"$json.summary": {"$regex": ContentHome.searchValue,"$options": "i"}}]}]
-                }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
+                }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.tommorowDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
               }
             } else if (ContentHome.data.content.selectedStatus == 'Expired') {
               ContentHome.searchOptionsForItems.filter =
               {
                 "$and": [{
                   "$and": [{ "$or":  [{"$json.title": {"$regex": ContentHome.searchValue,"$options": "i"}},{"$json.summary": {"$regex": ContentHome.searchValue,"$options": "i"}}]}]
-                }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.couponActiveDate}}, {"$json.expiresOn": {"$ne": ""}}]}]
+                }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.tommorowDate}}]}]
               }
             }
           }else if(ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!=='All Categories'){
@@ -605,6 +609,7 @@
           ContentHome.searchOptionsForItems.skip = 0;
           ContentHome.loadMoreItems('items');
         };
+
         /**
          * getSearchOptions(value) is used to get searchOptions with one more key sort which decide the order of sorting.
          * @param value is used to filter sort option.
