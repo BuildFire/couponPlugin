@@ -39,7 +39,8 @@
             "$or": [{
               "$json.expiresOn": {$gte: WidgetHome.yesterdayDate}
             }, {"$json.expiresOn": ""}]
-          }
+          },
+          sort : {"rank": 1}
         };
         WidgetHome.couponInfo = null;
         $scope.isFetchedAllData = false;
