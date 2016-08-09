@@ -138,9 +138,6 @@
 
             WidgetFilter.filter=defaultFilterData;
             WidgetFilter.filter.sortOnClosest = false;
-            /* WidgetFilter.filter.text = null;
-          WidgetFilter.filter.isApplied = false;
-          WidgetFilter.filter.categories = [];*/
 
           WidgetFilter.allSelected = true;
             if(WidgetFilter.categories){
