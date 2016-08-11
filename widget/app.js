@@ -98,34 +98,35 @@
         link: function (scope, element, attrs) {
           element.attr("src", "../../../styles/media/holder-" + attrs.loadImage + ".gif");
 
-          var _img = attrs.finalSrc;
-          if (attrs.cropType == 'resize') {
-            Buildfire.imageLib.local.resizeImage(_img, {
-              width: attrs.cropWidth,
-              height: attrs.cropHeight
-            }, function (err, imgUrl) {
-              _img = imgUrl;
-              replaceImg(_img);
-            });
-          } else {
-            Buildfire.imageLib.local.cropImage(_img, {
-              width: attrs.cropWidth,
-              height: attrs.cropHeight
-            }, function (err, imgUrl) {
-              _img = imgUrl;
-              replaceImg(_img);
-            });
-          }
+          attrs.$observe('finalSrc', function() {
+            var _img = attrs.finalSrc;
+
+            if (attrs.cropType == 'resize') {
+              Buildfire.imageLib.local.resizeImage(_img, {
+                width: attrs.cropWidth,
+                height: attrs.cropHeight
+              }, function (err, imgUrl) {
+                _img = imgUrl;
+                replaceImg(_img);
+              });
+            } else {
+              Buildfire.imageLib.local.cropImage(_img, {
+                width: attrs.cropWidth,
+                height: attrs.cropHeight
+              }, function (err, imgUrl) {
+                _img = imgUrl;
+                replaceImg(_img);
+              });
+            }
+          });
 
           function replaceImg(finalSrc) {
-            attrs.$observe('finalSrc', function() {
-              var elem = $("<img>");
-              elem[0].onload = function () {
-                element.attr("src", finalSrc);
-                elem.remove();
-              };
-              elem.attr("src", finalSrc);
-            });
+            var elem = $("<img>");
+            elem[0].onload = function () {
+              element.attr("src", finalSrc);
+              elem.remove();
+            };
+            elem.attr("src", finalSrc);
           }
         }
       };
