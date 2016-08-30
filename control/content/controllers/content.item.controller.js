@@ -2,8 +2,8 @@
 (function (buildfire, angular) {
     angular
         .module('couponPluginContent')
-        .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location', 'Utils', 'Modals', 'RankOfLastFilter', 'Buildfire','RankOfLastItem',
-            function ($scope, $routeParams, $timeout, DEFAULT_DATA, DataStore, TAG_NAMES, Location, Utils, Modals, RankOfLastFilter, Buildfire, RankOfLastItem) {
+        .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', '$location', '$anchorScroll', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location', 'Utils', 'Modals', 'RankOfLastFilter', 'Buildfire','RankOfLastItem',
+            function ($scope, $routeParams, $timeout, $location, $anchorScroll, DEFAULT_DATA, DataStore, TAG_NAMES, Location, Utils, Modals, RankOfLastFilter, Buildfire, RankOfLastItem) {
                 var ContentItem = this;
                 var tmrDelayForItem = null
                     , isNewItemInserted = false
@@ -14,9 +14,15 @@
                 // Hide the top plugin info part when inside item detail view
                 Buildfire.appearance.setHeaderVisibility(false);
 
-                if (buildfire.navigation.scrollTop) {
-                    buildfire.navigation.scrollTop();
-                }
+                // the element you wish to scroll to.
+                $location.hash('top');
+
+                // call $anchorScroll()
+                $anchorScroll();
+                $timeout(function () {
+                    Buildfire.navigation.scrollTop();
+                }, 0);
+
                 /**
                  * This updateMasterItem will update the ContentMedia.masterItem with passed item
                  * @param item
