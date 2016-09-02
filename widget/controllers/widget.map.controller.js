@@ -2,8 +2,8 @@
 
 (function (angular, buildfire, window) {
   angular.module('couponPluginWidget')
-    .controller('WidgetMapCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'LAYOUTS', '$sce', '$rootScope', 'Buildfire', 'ViewStack', 'UserData', 'GeoDistance', '$timeout', '$modal',
-      function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, GeoDistance, $timeout, $modal) {
+    .controller('WidgetMapCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'LAYOUTS', '$sce', '$rootScope', 'Buildfire', 'ViewStack', 'UserData', 'GeoDistance', '$timeout', '$modal', 'globals',
+      function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, GeoDistance, $timeout, $modal, globals) {
         var WidgetMap = this;
         WidgetMap.locationData = {};
         WidgetMap.listeners = {};
@@ -40,11 +40,11 @@
                 console.error(err);
               }
               else if (position && position.coords) {
-                $scope.$apply(function () {
-                  WidgetMap.locationData.currentCoordinates = [position.coords.longitude, position.coords.latitude];
-                  localStorage.setItem('user_location', JSON.stringify(WidgetMap.locationData.currentCoordinates));
-                  WidgetMap.refreshData += 1;
-                });
+                WidgetMap.locationData.currentCoordinates = [position.coords.longitude, position.coords.latitude];
+                localStorage.setItem('user_location', JSON.stringify(WidgetMap.locationData.currentCoordinates));
+                WidgetMap.refreshData += 1;
+
+                $scope.$apply();
               }
               else {
                 getGeoLocation();
@@ -414,7 +414,8 @@
         };
 
         WidgetMap.refreshLocation = function () {
-          getGeoLocation();
+            globals.wasFinderClicked = true;
+            getGeoLocation();
         };
 
         WidgetMap.init(function(){});

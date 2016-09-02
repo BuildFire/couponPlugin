@@ -131,7 +131,10 @@
         }
       };
     }])
-    .directive("googleMap", function () {
+    .value('globals',{
+      'wasFinderClicked': false
+    })
+    .directive("googleMap", function (globals) {
       return {
         template: "<div></div>",
         replace: true,
@@ -222,7 +225,9 @@
                   var _place = scope.locationData.items[_index]
                     , marker = '';
 
-                  if (_index == 0) { // this is to center the map on the first item
+
+                  //If someone has clicked on the finder, stop centering on the item/location
+                  if (_index == 0 && !globals.wasFinderClicked) {
                     map.setCenter(new google.maps.LatLng(_place.data.location.coordinates.lat, _place.data.location.coordinates.lng));
                   }
 
