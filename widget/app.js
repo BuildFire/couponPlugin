@@ -285,7 +285,7 @@
       }
     })
     .run(['ViewStack', '$rootScope', function (ViewStack, $rootScope) {
-      buildfire.navigation.onBackButtonClick = function () {
+      buildfire.history.onPop(function () {
         if (ViewStack.hasViews()) {
           if (ViewStack.getCurrentView().template == 'Item') {
             buildfire.messaging.sendMessageToControl({
@@ -293,10 +293,8 @@
             });
           }
           ViewStack.pop();
-        } else {
-          buildfire.navigation._goBackOne();
         }
-      };
+      });
 
       buildfire.messaging.onReceivedMessage = function (msg) {
         switch (msg.type) {
@@ -309,6 +307,7 @@
                 stopSwitch: true
               }
             });
+            buildfire.history.push('Item', { itemId : msg.id });
             $rootScope.$apply();
             break;
           case 'OpenItem':
@@ -320,6 +319,7 @@
                   itemId: msg.id
                 }
               });
+              buildfire.history.push('Item', { itemId : msg.id });
               $rootScope.$apply();
             }
             break;
