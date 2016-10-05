@@ -537,6 +537,7 @@
         });
 
         WidgetHome.openDetails = function (itemId) {
+          buildfire.history.push('Item', { itemId : itemId });
           ViewStack.push({
             template: 'Item',
             params: {
