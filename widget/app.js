@@ -1,7 +1,7 @@
 'use strict';
 
 (function (angular, buildfire, window) {
-  angular.module('couponPluginWidget', ['ui.bootstrap', 'ngAnimate','infinite-scroll','ngtimeago','rzModule'])
+  angular.module('couponPluginWidget', ['ui.bootstrap', 'ngAnimate', 'infinite-scroll', 'ngtimeago', 'rzModule'])
     .config(['$compileProvider', function ($compileProvider) {
 
       /**
@@ -23,8 +23,13 @@
               if (type === 'PUSH') {
                 console.log("VIEW_CHANGED>>>>>>>>", type, view);
                 currentView = ViewStack.getPreviousView();
+                var newScope = $rootScope.$new(false);
+                $rootScope.$on("$includeContentLoaded", function (event, templateName) {
+                  if (newScope && !newScope.$$phase) {
+                    newScope.$digest();
+                  }
+                });
 
-                var newScope = $rootScope.$new();
                 var _newView = '<div  id="' + view.template + '" ><div class="slide content" ng-include="\'templates/' + view.template + '.html\'"></div></div>';
                 var parTpl = $compile(_newView)(newScope);
 
@@ -98,7 +103,7 @@
         link: function (scope, element, attrs) {
           element.attr("src", "../../../styles/media/holder-" + attrs.loadImage + ".gif");
 
-          attrs.$observe('finalSrc', function() {
+          attrs.$observe('finalSrc', function () {
             var _img = attrs.finalSrc;
 
             if (attrs.cropType == 'resize') {
@@ -131,7 +136,7 @@
         }
       };
     }])
-    .value('globals',{
+    .value('globals', {
       'wasFinderClicked': false
     })
     .directive("googleMap", function (globals) {
@@ -156,7 +161,7 @@
                 streetViewControl: false,
                 mapTypeControl: false,
                 zoom: 8,
-                center: {lat: mapCenterLat, lng: mapCenterLng},
+                center: { lat: mapCenterLat, lng: mapCenterLng },
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 zoomControlOptions: {
                   position: google.maps.ControlPosition.RIGHT_TOP
@@ -169,27 +174,27 @@
               var MAP_STYLE = [
                 {
                   stylers: [
-                    {visibility: "on"}
+                    { visibility: "on" }
                   ]
                 }];
               var mapType = new google.maps.StyledMapType(MAP_STYLE, styleOptions);
               map.mapTypes.set("Report Error Hide Style", mapType);
               map.setMapTypeId("Report Error Hide Style");
 
-                var getCustomMarkerIcon = function (_imageUrl) {
-                    return {
-                        url: _imageUrl,
-                        // This marker is 20 pixels wide by 32 pixels high.
-                        scaledSize: new google.maps.Size(20, 20),
-                        // The origin for this image is (0, 0).
-                        origin: new google.maps.Point(0, 0),
-                        // The anchor for this image is the base of the flagpole at (0, 32).
-                        anchor: new google.maps.Point(0, 32)
-                    }
+              var getCustomMarkerIcon = function (_imageUrl) {
+                return {
+                  url: _imageUrl,
+                  // This marker is 20 pixels wide by 32 pixels high.
+                  scaledSize: new google.maps.Size(20, 20),
+                  // The origin for this image is (0, 0).
+                  origin: new google.maps.Point(0, 0),
+                  // The anchor for this image is the base of the flagpole at (0, 32).
+                  anchor: new google.maps.Point(0, 32)
                 }
+              }
               var selectedLocation = null;
 
-              var currentLocationIconImageUrl ='http://beta.app.buildfire.com/app/media/google_marker_blue_icon.png';
+              var currentLocationIconImageUrl = 'http://beta.app.buildfire.com/app/media/google_marker_blue_icon.png';
               var placeLocationIconImageUrl = 'http://beta.app.buildfire.com/app/media/google_marker_red_icon.png';
               var selectedLocationIconImageUrl = 'http://beta.app.buildfire.com/app/media/google_marker_green_icon.png';
 
@@ -233,7 +238,7 @@
 
                   if (_place.data && _place.data.location && _place.data.location.coordinates && _place.data.location.coordinates.lng && _place.data.location.coordinates.lat && !_place.alreadySet) {
                     marker = new google.maps.Marker({
-                      position: {lat: _place.data.location.coordinates.lat, lng: _place.data.location.coordinates.lng},
+                      position: { lat: _place.data.location.coordinates.lat, lng: _place.data.location.coordinates.lng },
                       map: map,
                       icon: placeLocationIcon,
                       shape: shape,
@@ -270,7 +275,7 @@
                 styles: clusterStyles,
                 maxZoom: 15
               };
-             var markerCluster = new MarkerClusterer(map, placeLocationMarkers,mcOptions);
+              var markerCluster = new MarkerClusterer(map, placeLocationMarkers, mcOptions);
 
 
               map.addListener('click', function () {
@@ -307,7 +312,7 @@
                 stopSwitch: true
               }
             });
-            buildfire.history.push('Item', { itemId : msg.id });
+            buildfire.history.push('Item', { itemId: msg.id });
             $rootScope.$apply();
             break;
           case 'OpenItem':
@@ -319,7 +324,7 @@
                   itemId: msg.id
                 }
               });
-              buildfire.history.push('Item', { itemId : msg.id });
+              buildfire.history.push('Item', { itemId: msg.id });
               $rootScope.$apply();
             }
             break;
