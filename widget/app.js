@@ -23,9 +23,10 @@
               if (type === 'PUSH') {
                 console.log("VIEW_CHANGED>>>>>>>>", type, view);
                 currentView = ViewStack.getPreviousView();
-                var newScope = $rootScope.$new(false);
+                var newScope = scope; //$rootScope.$new(false);
                 $rootScope.$on("$includeContentLoaded", function (event, templateName) {
                   if (newScope && !newScope.$$phase) {
+                    console.log("Force Rebind>>>>>>>>", newScope);
                     newScope.$digest();
                   }
                 });
