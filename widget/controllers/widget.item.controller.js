@@ -62,8 +62,8 @@
         };
 
         WidgetItem.onAddressClick = function (long, lat) {
-          if (WidgetItem.device && WidgetItem.device.platform == 'ios')
-            buildfire.navigation.openWindow("maps://maps.google.com/maps?daddr=" + lat + "," + long, '_system');
+          if (WidgetItem.device && WidgetItem.device.platform.toLowerCase() == 'ios')
+            buildfire.navigation.openWindow("maps://maps.apple.com?q=" + lat + "," + long, '_system');
           else
             buildfire.navigation.openWindow("http://maps.google.com/maps?daddr=" + lat + "," + long, '_system');
         };
