@@ -417,12 +417,18 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .items-layout3 .plugin-slide .item-text p + p{
 	line-height:17px;
 }
+.items-layout3 #carousel{
+	padding-bottom: 15px;
+}
+.items-layout3 .description{
+	padding: 0px 15px 5px 15px;
+}
 .items-layout3 .notes .plugin-slide,
 .items-layout3 .notes .plugin-slide img{
 	max-height:inherit;
 }
 .items-layout3 .plugin-banner{
-	padding:0 10px 10px !important;
+	padding:0px 10px 10px !important;
 }
 .items-layout3 .plugin-banner:nth-child(1),
 .items-layout3 .plugin-banner:nth-child(2){
@@ -443,6 +449,12 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 .items-layout3 .plugin-slide span.icon{
 	font-size:20px;
+}
+.coupon.layout4 #carousel{
+	padding-bottom:15px;
+}
+.coupon.layout4 .description{
+	padding:0px 15px 5px 15px;
 }
 .coupon.layout4 .panels{
 	padding:0 10px;
