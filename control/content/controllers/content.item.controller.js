@@ -4,6 +4,7 @@
         .module('couponPluginContent')
         .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', '$location', '$anchorScroll', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location', 'Utils', 'Modals', 'RankOfLastFilter', 'Buildfire','RankOfLastItem',
             function ($scope, $routeParams, $timeout, $location, $anchorScroll, DEFAULT_DATA, DataStore, TAG_NAMES, Location, Utils, Modals, RankOfLastFilter, Buildfire, RankOfLastItem) {
+                $scope.pluginReady = false;
                 var ContentItem = this;
                 var tmrDelayForItem = null
                     , isNewItemInserted = false
@@ -136,7 +137,7 @@
                 }
                 
                 ContentItem.checkItemValid = function(){
-                    if (ContentItem.item) {
+                    if ($scope.pluginReady && ContentItem.item) {
                         if (ContentItem.item.data.startOn && ContentItem.item.data.expiresOn){
                             if((ContentItem.item.data.expiresOn - ContentItem.item.data.startOn) > 0)
                                 return ContentItem.item.data.title && true;
@@ -238,7 +239,7 @@
                                 if(!ContentItem.item)
                                     ContentItem.item = angular.copy(DEFAULT_DATA.ITEM);
                             }
-
+                            $scope.pluginReady = true;
                             if (err) {
                                 Buildfire.spinner.hide();
                                 return console.error('-----------err in getting list-------------', err);
