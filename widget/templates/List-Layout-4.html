@@ -40,7 +40,7 @@
             </div>
             <div class="item clearfix row" ng-click="WidgetHome.openDetails(item.id)">
             <div class="col-xs-12  pull-left text-left">
-              <p  ng-if="item.redeemedOn" class="date margin-zero">Redeemed {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma"}}</p>
+              <p  ng-if="item.redeemedOn" class="date margin-zero">Redeemed {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</p>
             </div>
               </div>
           </div>

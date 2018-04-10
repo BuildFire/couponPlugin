@@ -71,7 +71,7 @@
                             class="dot bodyTextBackgroundTheme"></span>{{WidgetMap.selectedItemDistance}}</i>
                 </p>
                 <p ng-if="WidgetMap.selectedItem.redeemedOn"  class="ellipsis margin-zero bodyTextTheme">
-                  Redeemed {{WidgetMap.selectedItem.redeemedOn | date:"MMM dd, yyyy 'at' h:mma"}}
+                  Redeemed {{WidgetMap.selectedItem.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}
                 </p>
               </div>
               <div class="bookmark-holder primaryBackgroundTheme" ng-class="WidgetMap.selectedItem.isSaved?'bg-primary':''"
