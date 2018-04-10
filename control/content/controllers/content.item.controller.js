@@ -4,6 +4,7 @@
         .module('couponPluginContent')
         .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', '$location', '$anchorScroll', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location', 'Utils', 'Modals', 'RankOfLastFilter', 'Buildfire','RankOfLastItem',
             function ($scope, $routeParams, $timeout, $location, $anchorScroll, DEFAULT_DATA, DataStore, TAG_NAMES, Location, Utils, Modals, RankOfLastFilter, Buildfire, RankOfLastItem) {
+                $scope.pluginReady = false;
                 var ContentItem = this;
                 var tmrDelayForItem = null
                     , isNewItemInserted = false
@@ -22,6 +23,26 @@
                 $timeout(function () {
                     Buildfire.navigation.scrollTop();
                 }, 0);
+                $scope.getReuseText=function(periodInMinuts){
+                    switch (periodInMinuts){
+                        case -1:
+                            return "Single Use";
+                        case 10:
+                            return "10 minuts";
+                        case 30:
+                            return "30 minuts";
+                        case 60:
+                            return "60 minuts";
+                        case 1440:
+                            return "1 Day";
+                        case 4320:
+                            return "3 Days";
+                        case 1080:
+                            return "7 Days";
+                        case 43200:
+                            return "30 Days";
+                    }
+                };
 
                 /**
                  * This updateMasterItem will update the ContentMedia.masterItem with passed item
@@ -136,7 +157,7 @@
                 }
                 
                 ContentItem.checkItemValid = function(){
-                    if (ContentItem.item) {
+                    if ($scope.pluginReady && ContentItem.item) {
                         if (ContentItem.item.data.startOn && ContentItem.item.data.expiresOn){
                             if((ContentItem.item.data.expiresOn - ContentItem.item.data.startOn) > 0)
                                 return ContentItem.item.data.title && true;
@@ -238,7 +259,7 @@
                                 if(!ContentItem.item)
                                     ContentItem.item = angular.copy(DEFAULT_DATA.ITEM);
                             }
-
+                            $scope.pluginReady = true;
                             if (err) {
                                 Buildfire.spinner.hide();
                                 return console.error('-----------err in getting list-------------', err);

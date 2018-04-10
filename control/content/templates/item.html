@@ -140,6 +140,33 @@
 <hr class="none">
 <div class="item clearfix row">
   <div class="col-md-3 labels pull-left">
+    <span>Reuse after</span>
+  </div>
+  <div class="col-md-9 main pull-right">
+    <div class="dropdown" dropdown>
+      <button class="btn btn-default text-left dropdown-toggle"
+              data-toggle="dropdown" dropdown-toggle aria-expanded="true">
+        <span class="pull-left">{{getReuseText(ContentItem.item.data.reuseAfterInMinutes)}}</span>
+        <span class="chevron icon-chevron-down pull-right"></span>
+      </button>
+      <ul class="dropdown-menu extended" role="menu">
+        <li>
+          <a ng-click="ContentItem.item.data.reuseAfterInMinutes = -1" class="transition-third">{{getReuseText(-1)}}</a>
+          <a ng-click="ContentItem.item.data.reuseAfterInMinutes = 10" class="transition-third">{{getReuseText(10)}}</a>
+          <a ng-click="ContentItem.item.data.reuseAfterInMinutes = 30" class="transition-third">{{getReuseText(30)}}</a>
+          <a ng-click="ContentItem.item.data.reuseAfterInMinutes = 60" class="transition-third">{{getReuseText(60)}}</a>
+          <a ng-click="ContentItem.item.data.reuseAfterInMinutes = 1440" class="transition-third">{{getReuseText(1440)}}</a>
+          <a ng-click="ContentItem.item.data.reuseAfterInMinutes = 4320" class="transition-third">{{getReuseText(4320)}}</a>
+          <a ng-click="ContentItem.item.data.reuseAfterInMinutes = 1080" class="transition-third">{{getReuseText(1080)}}</a>
+          <a ng-click="ContentItem.item.data.reuseAfterInMinutes = 43200" class="transition-third">{{getReuseText(43200)}}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<hr class="none">
+<div class="item clearfix row">
+  <div class="col-md-3 labels pull-left">
     <span>Address Title</span>
   </div>
   <div class="col-md-9 main pull-right">
@@ -179,6 +206,7 @@
                 ></div>
     </div>
 </div>
+
 <hr class="none">
 <div id="actionItems"  dynamic-link-component links="ContentItem.item.data.links"></div>
 <hr class="none">

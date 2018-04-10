@@ -83,8 +83,10 @@
 
               WidgetMap.locationData.items = resultAll;
 
-              if (WidgetMap.currentLoggedInUser)
+              if (WidgetMap.currentLoggedInUser) {
                 WidgetMap.getSavedItems();
+                WidgetMap.getRedeemedCoupons();
+              }
               else
                 WidgetMap.formatItems();
                 WidgetMap.refreshData += 1;
@@ -206,7 +208,38 @@
               }
             });
         };
-
+        WidgetMap.getRedeemedCoupons = function () {
+          Buildfire.spinner.show();
+          var err = function (error) {
+            Buildfire.spinner.hide();
+            console.log("============ There is an error in getting redeemed coupons data", error);
+          }, result = function (result) {
+            Buildfire.spinner.hide();
+            WidgetMap.redeemed = result;
+            WidgetMap.setRedeemedItems();
+          };
+          UserData.search({}, TAG_NAMES.COUPON_REDEEMED).then(result, err);
+        };
+        WidgetMap.setRedeemedItems = function () {
+          for (var item = 0; item < WidgetMap.locationData.items.length; item++) {
+            WidgetMap.locationData.items[item].isRedeemed = false;
+            for (var redeem in WidgetMap.redeemed) {
+              if (WidgetMap.locationData.items[item].id == WidgetMap.redeemed[redeem].data.itemId) {
+                WidgetMap.locationData.items[item].isRedeemed = true;
+                WidgetMap.locationData.items[item].redeemedOn = WidgetMap.redeemed[redeem].data.redeemedOn;
+              }
+            }
+          }
+          $scope.isFetchedAllData = true;
+        };
+        $scope.getRedeemedDateText=function(item){
+          if(item && item.redeemedOn) {
+            var redeemedDate = new Date(item.redeemedOn);
+            return "Redeemed  "+ redeemedDate.toDateString() + " at " + redeemedDate.getHours() + ":" + redeemedDate.getMinutes();
+          }
+          else
+            return "";
+        };
         WidgetMap.formatItems = function () {
           var isChanged = false;
           for (var i = 0; i < WidgetMap.locationData.items.length; i++) {

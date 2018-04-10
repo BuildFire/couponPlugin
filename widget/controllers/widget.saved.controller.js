@@ -82,6 +82,7 @@
                 console.log("===========search", result);
                 WidgetSaved.savedItems = result;
                 WidgetSaved.getSavedItems();
+                WidgetSaved.getRedeemedCoupons();
               };
               UserData.search({}, TAG_NAMES.COUPON_SAVED).then(result, err);
             },
@@ -98,6 +99,7 @@
             Buildfire.spinner.hide();
             WidgetSaved.items.splice(index, 1);
             WidgetSaved.getSavedItems();
+            WidgetSaved.getRedeemedCoupons();
             if (!$scope.$$phase)
               $scope.$digest();
             var removeSavedItemModal = $modal.open({
@@ -116,6 +118,38 @@
           };
           console.log("****************,", item.savedId, WidgetSaved.currentLoggedInUser._id);
           UserData.delete(item.savedId, TAG_NAMES.COUPON_SAVED, WidgetSaved.currentLoggedInUser._id).then(successRemove, errorRemove)
+        };
+        WidgetSaved.getRedeemedCoupons = function () {
+          Buildfire.spinner.show();
+          var err = function (error) {
+            Buildfire.spinner.hide();
+            console.log("============ There is an error in getting redeemed coupons data", error);
+          }, result = function (result) {
+            Buildfire.spinner.hide();
+            WidgetSaved.redeemed = result;
+            WidgetSaved.setRedeemedItems();
+          };
+          UserData.search({}, TAG_NAMES.COUPON_REDEEMED).then(result, err);
+        };
+        WidgetSaved.setRedeemedItems = function () {
+          for (var item = 0; item < WidgetSaved.items.length; item++) {
+            WidgetSaved.items[item].isRedeemed = false;
+            for (var redeem in WidgetSaved.redeemed) {
+              if (WidgetSaved.items[item].id == WidgetSaved.redeemed[redeem].data.itemId) {
+                WidgetSaved.items[item].isRedeemed = true;
+                WidgetSaved.items[item].redeemedOn = WidgetSaved.redeemed[redeem].data.redeemedOn;
+              }
+            }
+          }
+          $scope.isFetchedAllData = true;
+        };
+        $scope.getRedeemedDateText=function(item){
+          if(item && item.redeemedOn) {
+            var redeemedDate = new Date(item.redeemedOn);
+            return "Redeemed  "+ redeemedDate.toDateString() + " at " + redeemedDate.getHours() + ":" + redeemedDate.getMinutes();
+          }
+          else
+            return "";
         };
 
         WidgetSaved.loadMore = function () {

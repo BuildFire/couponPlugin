@@ -28,6 +28,9 @@
                   <i ng-if="item.data.expiresOn">Expires {{item.data.expiresOn | date}}</i>
                   <i ng-if="!item.data.expiresOn">No expiration date</i>
                 </p>
+                <p  class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
+                  <i ng-if="item.redeemedOn" >Redeemed {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma"}}</i>
+                </p>
                 <p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
                   <i>{{item.data.distanceText}}</i>
                 </p>

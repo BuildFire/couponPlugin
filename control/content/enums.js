@@ -79,7 +79,8 @@
                         addressTitle: '',
                         coordinates: {lat: '', lng: ''}
                     },
-                    Categories: []
+                    Categories: [],
+                    reuseAfterInMinutes:-1
                 }
             }
         });

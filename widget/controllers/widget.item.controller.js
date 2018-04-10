@@ -5,6 +5,8 @@
     .controller('WidgetItemCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'LAYOUTS', '$sce', '$rootScope', 'Buildfire', 'ViewStack', 'UserData', 'PAGINATION', '$modal', '$timeout', '$location',
       function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, PAGINATION, $modal, $timeout, $location) {
         var WidgetItem = this;
+        $scope.showRedeemButton  =false;
+        $scope.showItemRedeemed  =false;
         WidgetItem.listeners = {};
 
         var currentView = ViewStack.getCurrentView();
@@ -20,11 +22,12 @@
           // Do nothing
         });
 
-        WidgetItem.getItemDetails = function () {
+        WidgetItem.getItemDetails = function (callback) {
           Buildfire.spinner.show();
           var success = function (result) {
               Buildfire.spinner.hide();
               WidgetItem.item = result;
+            callback();
             }
             , error = function (err) {
               Buildfire.spinner.hide();
@@ -148,6 +151,7 @@
             Buildfire.spinner.hide();
             WidgetItem.redeemed = result;
             WidgetItem.setRedeemedItem();
+            $scope.enableRedeemButton();
           };
           UserData.search({}, TAG_NAMES.COUPON_REDEEMED).then(result, err);
         };
@@ -236,6 +240,7 @@
               Buildfire.spinner.hide();
               WidgetItem.item.isRedeemed = true;
               WidgetItem.item.redeemedOn = result.data.redeemedOn;
+              $scope.enableRedeemButton();
               var redeemedModal = $modal.open({
                 templateUrl: 'templates/Redeem_Confirmation.html',
                 size: 'sm',
@@ -297,28 +302,29 @@
               WidgetItem.data = result.data;
               if (!WidgetItem.data.design)
                 WidgetItem.data.design = {};
-              WidgetItem.getItemDetails();
-              var getDevice = function (error, data) {
-                if (data)
-                  WidgetItem.device = data.device;
-                else
-                  console.log("Error while getting the device context data", error)
-              };
-              buildfire.getContext(getDevice);
-              if(WidgetItem.currentLoggedInUser){
-                WidgetItem.getSavedItems();
-                WidgetItem.getRedeemedCoupons();
-              }
-            else {
-                buildfire.auth.getCurrentUser(function (err, user) {
-                  if (user) {
-                    WidgetItem.currentLoggedInUser = user;
-                    $scope.$apply();
-                    WidgetItem.getSavedItems();
-                    WidgetItem.getRedeemedCoupons();
-                  }
-                });
-              }
+              WidgetItem.getItemDetails(function() {
+                var getDevice = function (error, data) {
+                  if (data)
+                    WidgetItem.device = data.device;
+                  else
+                    console.log("Error while getting the device context data", error)
+                };
+                buildfire.getContext(getDevice);
+                if (WidgetItem.currentLoggedInUser) {
+                  WidgetItem.getSavedItems();
+                  WidgetItem.getRedeemedCoupons();
+                }
+                else {
+                  buildfire.auth.getCurrentUser(function (err, user) {
+                    if (user) {
+                      WidgetItem.currentLoggedInUser = user;
+                      $scope.$apply();
+                      WidgetItem.getSavedItems();
+                      WidgetItem.getRedeemedCoupons();
+                    }
+                  });
+                }
+              });
             }
             , error = function (err) {
               Buildfire.spinner.hide();
@@ -338,6 +344,31 @@
 
         });
 
+        $scope.enableRedeemButton=function(){
+          $scope.getRedeemedDateText();
+          if(WidgetItem.item && WidgetItem.item.isRedeemed) {
+            if (WidgetItem.item.data.reuseAfterInMinutes &&WidgetItem.item.data.reuseAfterInMinutes!=-1 && WidgetItem.item.redeemedOn) {
+                var redeemedOn = new Date(WidgetItem.item.redeemedOn);
+                var resetDate = new Date(redeemedOn);
+                resetDate.setMinutes (redeemedOn.getMinutes() + WidgetItem.item.data.reuseAfterInMinutes);
+                $scope.showRedeemButton= new Date().getTime() > resetDate.getTime();
+              $scope.showItemRedeemed=!$scope.showRedeemButton;
+            }
+            else {
+              $scope.showRedeemButton = false;
+              $scope.showItemRedeemed = !$scope.showRedeemButton;
+
+            }
+          }
+          else {
+            $scope.showRedeemButton = true;
+            $scope.showItemRedeemed = !$scope.showRedeemButton;
+          }
+        };
+        $scope.getRedeemedDateText=function(){
+          var redeemedDate = new Date(WidgetItem.item.redeemedOn);
+          $scope.redeemedDateText =redeemedDate.toDateString() +" at "+redeemedDate.getHours()+":"+redeemedDate.getMinutes();
+        };
         init();
       }]);
 })(window.angular, window.buildfire, window);
