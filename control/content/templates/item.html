@@ -178,7 +178,7 @@
   <div class="col-md-3 labels pull-left">
     <span>Coupon Location</span>
   </div>
-  <div class="col-md-9 main pull-right">
+  <div class="col-md-9 main pull-right autocomplete-container">
     <input type="text" class="form-control" placeholder="Enter street address or lat/long coordinates" google-location-search="" callback-fn="ContentItem.setLocation(data)"
            ng-model="ContentItem.currentAddress"
            ng-enter="ContentItem.setCoordinates()"
