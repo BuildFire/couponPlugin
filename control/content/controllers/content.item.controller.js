@@ -28,11 +28,11 @@
                         case -1:
                             return "Single Use";
                         case 10:
-                            return "10 minuts";
+                            return "10 minutes";
                         case 30:
-                            return "30 minuts";
+                            return "30 minutes";
                         case 60:
-                            return "60 minuts";
+                            return "60 minutes";
                         case 1440:
                             return "1 Day";
                         case 4320:

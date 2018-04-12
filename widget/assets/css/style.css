@@ -460,6 +460,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	padding:0 10px;
 }
 .coupon.layout4 .panel{
+	padding-top: 5px;
 	margin-bottom:10px;
 	border:none !important;
 }
