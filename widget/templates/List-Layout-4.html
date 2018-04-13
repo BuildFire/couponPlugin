@@ -33,10 +33,16 @@
                   {{item.data.expiresOn | date}}</p>
                 <p ng-if="!item.data.expiresOn" class="date ellipsis margin-zero">No expiration date</p>
               </div>
+
               <div class="col-xs-5 pull-right text-right">
                 <p class="date margin-zero">{{item.data.distanceText}}</p>
               </div>
             </div>
+            <div class="item clearfix row" ng-click="WidgetHome.openDetails(item.id)">
+            <div class="col-xs-12  pull-left text-left">
+              <p  ng-if="item.redeemedOn" class="date margin-zero">Redeemed {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</p>
+            </div>
+              </div>
           </div>
         </div>
       </div>

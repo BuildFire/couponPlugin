@@ -17,6 +17,8 @@
             <p class="margin-zero small ellipsis"
                ng-if="WidgetItem.item.data.expiresOn"><i>Expires
               {{WidgetItem.item.data.expiresOn | date}}</i></p>
+            <p class="margin-zero small ellipsis"
+               ng-if="WidgetItem.item.redeemedOn"><i>Redeemed {{redeemedDateText}}</i></p>
           </div>
           <div class="col-xs-5 pull-right text-right">
             <img ng-if="WidgetItem.item.data.location.coordinates && WidgetItem.item.data.location.coordinates.lng" src="assets/media/map-icon.png"
@@ -54,12 +56,12 @@
     </div>
   </div>
   <div class="bottom fixed-bottom border-top-grey transition-third">
-    <div class="col-xs-12 pull-left text-center" ng-if="WidgetItem.item && WidgetItem.item.isRedeemed">
+    <div class="col-xs-12 pull-left text-center"  ng-show="showItemRedeemed">
       <p class="bodyTextTheme stretch margin-top-ten">Item redeemed
         {{WidgetItem.item.redeemedOn |timeago}}</p>
     </div>
     <div class="col-xs-12 pull-left text-center primaryBackgroundTheme"
-         ng-click="WidgetItem.redeemCoupon(WidgetItem.item)" ng-if="WidgetItem.item && !WidgetItem.item.isRedeemed">
+         ng-click="WidgetItem.redeemCoupon(WidgetItem.item)" ng-show="showRedeemButton">
       <p class="whiteTheme stretch margin-top-ten">Redeem this Item</p>
     </div>
   </div>

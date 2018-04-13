@@ -294,6 +294,8 @@
               }
               console.log("----------------------", WidgetHome.items);
               WidgetHome.setSavedItems();
+              WidgetHome.setRedeemedItems();
+              $scope.getRedeemedDateText();
             },
             errorAll = function (error) {
               Buildfire.spinner.hide();
@@ -446,7 +448,38 @@
           }
           $scope.isFetchedAllData = true;
         };
-
+        WidgetHome.getRedeemedCoupons = function () {
+          Buildfire.spinner.show();
+          var err = function (error) {
+            Buildfire.spinner.hide();
+            console.log("============ There is an error in getting redeemed coupons data", error);
+          }, result = function (result) {
+            Buildfire.spinner.hide();
+            WidgetHome.redeemed = result;
+            WidgetHome.setRedeemedItems();
+          };
+          UserData.search({}, TAG_NAMES.COUPON_REDEEMED).then(result, err);
+        };
+        WidgetHome.setRedeemedItems = function () {
+          for (var item = 0; item < WidgetHome.items.length; item++) {
+            WidgetHome.items[item].isRedeemed = false;
+            for (var redeem in WidgetHome.redeemed) {
+              if (WidgetHome.items[item].id == WidgetHome.redeemed[redeem].data.itemId) {
+                WidgetHome.items[item].isRedeemed = true;
+                WidgetHome.items[item].redeemedOn = WidgetHome.redeemed[redeem].data.redeemedOn;
+              }
+            }
+          }
+          $scope.isFetchedAllData = true;
+        };
+        $scope.getRedeemedDateText=function(item){
+          if(item && item.redeemedOn) {
+            var redeemedDate = new Date(item.redeemedOn);
+            return "Redeemed  "+ redeemedDate.toDateString() + " at " + redeemedDate.getHours() + ":" + redeemedDate.getMinutes();
+          }
+          else
+            return "";
+        };
         WidgetHome.addToSavedItems = function (item, index) {
           Buildfire.spinner.show();
           WidgetHome.savedItem = {
@@ -511,6 +544,7 @@
               WidgetHome.currentLoggedInUser = user;
               $scope.$apply();
               WidgetHome.getSavedData(true);
+              WidgetHome.getRedeemedCoupons();
             }
           });
         };
@@ -533,6 +567,7 @@
             WidgetHome.currentLoggedInUser = user;
             $scope.$apply();
             WidgetHome.getSavedData(true);
+            WidgetHome.getRedeemedCoupons();
           }
         });
 
@@ -616,6 +651,7 @@
 
         WidgetHome.listeners['ITEM_SAVED_UPDATED'] = $rootScope.$on('ITEM_SAVED_UPDATED', function (e) {
           WidgetHome.getSavedData(true);
+          WidgetHome.getRedeemedCoupons();
         });
 
         $scope.$on("$destroy", function() {
