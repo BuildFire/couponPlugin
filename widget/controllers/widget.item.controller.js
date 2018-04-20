@@ -321,7 +321,8 @@
                       $scope.$apply();
                       WidgetItem.getSavedItems();
                       WidgetItem.getRedeemedCoupons();
-                    }
+                    }else
+                      $scope.enableRedeemButton();//to enable the button when the user not logged in
                   });
                 }
               });
@@ -363,6 +364,7 @@
           else {
             $scope.showRedeemButton = true;
             $scope.showItemRedeemed = !$scope.showRedeemButton;
+            $scope.$apply();
           }
         };
         $scope.getRedeemedDateText=function(){
