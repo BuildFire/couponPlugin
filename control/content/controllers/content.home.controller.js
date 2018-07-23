@@ -3,8 +3,8 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', '$timeout', 'TAG_NAMES','SORT','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter', 'RankOfLastItem', '$csv','Utils','$rootScope',
-      function ($scope, $timeout, TAG_NAMES,SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem , $csv , Utils,$rootScope) {
+    .controller('ContentHomeCtrl', ['$scope', '$timeout', 'TAG_NAMES','SORT','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter', 'RankOfLastItem', '$csv','Utils','$rootScope','PluginEvents',
+      function ($scope, $timeout, TAG_NAMES,SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem , $csv , Utils,$rootScope, PluginEvents) {
 
         var ContentHome = this;
         ContentHome.searchValue = "";
@@ -32,7 +32,7 @@
 
         // Show the top plugin info part when on home view
         Buildfire.appearance.setHeaderVisibility(true);
-        
+
         var header = {
               title : 'Item Title',
               summary : "Item Summary",
@@ -431,6 +431,8 @@
               Buildfire.datastore.delete(ContentHome.items[index].id, TAG_NAMES.COUPON_ITEMS, function (err, result) {
                 if (err)
                   return;
+
+                PluginEvents.unregister(ContentHome.items[index].id);
                 //ContentHome.items.splice(_index, 1);
                 ContentHome.items.splice(index, 1);
                 $scope.$digest();
@@ -1041,6 +1043,16 @@
                 $scope.$apply();
               }
               else{
+                Buildfire.datastore.search({}, TAG_NAMES.COUPON_ITEMS, function (err, result) {
+                    if (err) {
+                        return console.error('-----------err in getting list inside bulk insert-------------', err);
+                    }
+                    if (result && result.length) {
+                        for (var i = 0; i < result.length; i++) {
+                            PluginEvents.register({key: result[i].id, title: result[i].data.title}, true);
+                        }
+                    }
+                });
                 ContentHome.loading = false;
                 ContentHome.isBusy = false;
                 ContentHome.items = [];

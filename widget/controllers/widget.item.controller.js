@@ -12,6 +12,9 @@
         var currentView = ViewStack.getCurrentView();
 
         if (currentView.params && currentView.params.itemId && !currentView.params.stopSwitch) {
+          //Track Coupon Plugin Event
+          buildfire.analytics.trackAction("coupon_item_view_" + currentView.params.itemId);
+          //#
           buildfire.messaging.sendMessageToControl({
             id: currentView.params.itemId,
             type: 'OpenItem'

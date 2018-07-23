@@ -230,5 +230,22 @@
                     return deferred.promise;
                 }
             }
-        }]);
+        }])
+        .factory('PluginEvents', [function () {
+            return {
+                register: function (event, silentNotification) {
+                    if(!event.key || !event.title){
+                        return;
+                    }
+
+                    buildfire.analytics.registerEvent({
+                        title: event.title,
+                        key: 'coupon_item_view_' + event.key,
+                    }, {silentNotification: silentNotification});
+                },
+                unregister: function (key) {
+                    buildfire.analytics.unregisterEvent('coupon_item_view_' + key);
+                }
+            };
+        }]);;
 })(window.angular, window.buildfire);
