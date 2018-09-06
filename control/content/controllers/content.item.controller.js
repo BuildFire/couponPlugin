@@ -2,8 +2,8 @@
 (function (buildfire, angular) {
     angular
         .module('couponPluginContent')
-        .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', '$location', '$anchorScroll', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location', 'Utils', 'Modals', 'RankOfLastFilter', 'Buildfire','RankOfLastItem',
-            function ($scope, $routeParams, $timeout, $location, $anchorScroll, DEFAULT_DATA, DataStore, TAG_NAMES, Location, Utils, Modals, RankOfLastFilter, Buildfire, RankOfLastItem) {
+        .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', '$location', '$anchorScroll', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location', 'Utils', 'Modals', 'RankOfLastFilter', 'Buildfire','RankOfLastItem','PluginEvents',
+            function ($scope, $routeParams, $timeout, $location, $anchorScroll, DEFAULT_DATA, DataStore, TAG_NAMES, Location, Utils, Modals, RankOfLastFilter, Buildfire, RankOfLastItem, PluginEvents) {
                 $scope.pluginReady = false;
                 var ContentItem = this;
                 var tmrDelayForItem = null
@@ -13,7 +13,7 @@
                 ContentItem.validCoordinatesFailure = false;
 
                 // Hide the top plugin info part when inside item detail view
-                Buildfire.appearance.setHeaderVisibility(false);
+                // Buildfire.appearance.setHeaderVisibility(false);
 
                 // the element you wish to scroll to.
                 $location.hash('top');
@@ -384,6 +384,14 @@
                  * done will close the single item view
                  */
                 ContentItem.done = function () {
+                    //register coupon in plugin events
+                    if(ContentItem.item && ContentItem.item.id && ContentItem.item.data){
+                        PluginEvents.register({
+                            title: ContentItem.item.data.title,
+                            key: ContentItem.item.id,
+                        }, !isNewItemInserted);
+                    }
+                    //#
                   buildfire.messaging.sendMessageToWidget({});
                     Location.goToHome();
                 };
