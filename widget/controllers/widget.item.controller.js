@@ -367,7 +367,7 @@
           else {
             $scope.showRedeemButton = true;
             $scope.showItemRedeemed = !$scope.showRedeemButton;
-            $scope.$apply();
+            if (!$scope.$$phase) $scope.$apply();
           }
         };
         $scope.getRedeemedDateText=function(){
