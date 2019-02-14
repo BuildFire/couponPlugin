@@ -827,6 +827,9 @@
         ContentHome.openImportCSVDialog = function () {
 
           $csv.import(headerRow).then(function (rows) {
+            rows = rows.filter(function (row) {
+              return row.title;
+            });
             ContentHome.loading = true;
             if (rows && rows.length > 1) {
               var categoryList=rows[1].Categories.split(',');
@@ -908,7 +911,7 @@
                               },
                               addressTitle: rows[index].location
                             };
-                            bulkInserItem(rows,rank);
+                            bulkInsertItems([rows[index]],rows[index].rank);
                           }
                           else {
                             console.error('' +
@@ -937,7 +940,7 @@
                             },
                             addressTitle: rows[index].location
                           };
-                          bulkInserItem(rows,rank);
+                          bulkInsertItems(rows,rank);
                         }
                         else {
                           console.error('' +
@@ -964,12 +967,12 @@
                           })
                         });
                         rows[index].SelectedCategories=tmpCategoryIds;
-                        bulkInserItem(rows,rank);
+                        bulkInsertItems(rows,rank);
                         $scope.$digest();
 
                       });
                     }else{
-                      bulkInserItem(rows,rank)
+                      bulkInsertItems(rows,rank)
                     }
 
                    /* if(rows[index].SelectedCategories.length) {
@@ -1032,7 +1035,7 @@
 
         };
 
-        function bulkInserItem(rows,rank){
+        function bulkInsertItems(rows,rank){
 
           if (validateCsv(rows)) {
 
