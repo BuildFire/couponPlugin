@@ -861,6 +861,8 @@
                 rows[index].links = [];
                 rows[index].rank = rank;
                 rows[index].body = "";
+                rows[index].startOn = getUnixFromDate(rows[index].startOn);
+                rows[index].expiresOn = getUnixFromDate(rows[index].expiresOn);
 
                 if(rows[index].carouselImages){
                  var carousalImageUrlArray=rows[index].carouselImages.split(',');
@@ -940,7 +942,7 @@
                             },
                             addressTitle: rows[index].location
                           };
-                          bulkInsertItems(rows,rank);
+                          bulkInsertItems([rows[index]],rows[index].rank);
                         }
                         else {
                           console.error('' +
@@ -967,12 +969,12 @@
                           })
                         });
                         rows[index].SelectedCategories=tmpCategoryIds;
-                        bulkInsertItems(rows,rank);
+                        bulkInsertItems([rows[index]],rows[index].rank);
                         $scope.$digest();
 
                       });
                     }else{
-                      bulkInsertItems(rows,rank)
+                      bulkInsertItems([rows[index]],rows[index].rank);
                     }
 
                    /* if(rows[index].SelectedCategories.length) {
@@ -1026,6 +1028,16 @@
               ContentHome.loading = false;
               ContentHome.csvDataInvalid = true;
               $scope.$apply();
+            }
+            function getUnixFromDate(date) {
+              var isUnix = !date.includes('/');
+              if (isUnix) {
+                return date;
+              } else {
+                date = date.split('/');
+                var formattedDate = date[0] + '.' + date[1] + '.' + date[2];
+                return new Date(formattedDate).getTime();
+              }
             }
           }, function (error) {
             ContentHome.loading = false;
@@ -1124,12 +1136,12 @@
             var tmpList="";
             selectedCategories.forEach(function(selCategory){
               Categories.forEach(function(category){
-                  if(selCategory==category.id){
-                    if(!tmpList)
-                    tmpList=category.title;
-                    else
-                      tmpList=tmpList+","+category.title;
-                  }
+                if(selCategory==category.id){
+                  if(!tmpList)
+                  tmpList=category.title;
+                  else
+                    tmpList=tmpList+","+category.title;
+                }
               });
             });
             return tmpList;
