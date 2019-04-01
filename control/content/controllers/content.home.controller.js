@@ -827,6 +827,9 @@
         ContentHome.openImportCSVDialog = function () {
 
           $csv.import(headerRow).then(function (rows) {
+            rows = rows.filter(function (row) {
+              return row.title;
+            });
             ContentHome.loading = true;
             if (rows && rows.length > 1) {
               var categoryList=rows[1].Categories.split(',');
@@ -858,6 +861,8 @@
                 rows[index].links = [];
                 rows[index].rank = rank;
                 rows[index].body = "";
+                rows[index].startOn = getUnixFromDate(rows[index].startOn);
+                rows[index].expiresOn = getUnixFromDate(rows[index].expiresOn);
 
                 if(rows[index].carouselImages){
                  var carousalImageUrlArray=rows[index].carouselImages.split(',');
@@ -908,7 +913,7 @@
                               },
                               addressTitle: rows[index].location
                             };
-                            bulkInserItem(rows,rank);
+                            bulkInsertItems([rows[index]],rows[index].rank);
                           }
                           else {
                             console.error('' +
@@ -937,7 +942,7 @@
                             },
                             addressTitle: rows[index].location
                           };
-                          bulkInserItem(rows,rank);
+                          bulkInsertItems([rows[index]],rows[index].rank);
                         }
                         else {
                           console.error('' +
@@ -964,12 +969,12 @@
                           })
                         });
                         rows[index].SelectedCategories=tmpCategoryIds;
-                        bulkInserItem(rows,rank);
+                        bulkInsertItems([rows[index]],rows[index].rank);
                         $scope.$digest();
 
                       });
                     }else{
-                      bulkInserItem(rows,rank)
+                      bulkInsertItems([rows[index]],rows[index].rank);
                     }
 
                    /* if(rows[index].SelectedCategories.length) {
@@ -1024,6 +1029,16 @@
               ContentHome.csvDataInvalid = true;
               $scope.$apply();
             }
+            function getUnixFromDate(date) {
+              var isUnix = !date.includes('/');
+              if (isUnix) {
+                return date;
+              } else {
+                date = date.split('/');
+                var formattedDate = date[0] + '.' + date[1] + '.' + date[2];
+                return new Date(formattedDate).getTime();
+              }
+            }
           }, function (error) {
             ContentHome.loading = false;
             $scope.$apply();
@@ -1032,7 +1047,7 @@
 
         };
 
-        function bulkInserItem(rows,rank){
+        function bulkInsertItems(rows,rank){
 
           if (validateCsv(rows)) {
 
@@ -1121,12 +1136,12 @@
             var tmpList="";
             selectedCategories.forEach(function(selCategory){
               Categories.forEach(function(category){
-                  if(selCategory==category.id){
-                    if(!tmpList)
-                    tmpList=category.title;
-                    else
-                      tmpList=tmpList+","+category.title;
-                  }
+                if(selCategory==category.id){
+                  if(!tmpList)
+                  tmpList=category.title;
+                  else
+                    tmpList=tmpList+","+category.title;
+                }
               });
             });
             return tmpList;
