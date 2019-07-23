@@ -416,6 +416,13 @@
                         lat: data.coordinates.lat,
                         aName: data.location
                     };
+                    ContentItem.item.data.location = {
+                        coordinates: {
+                            lng: data.coordinates.lng,
+                            lat: data.coordinates.lat
+                        },
+                        addressTitle: data.location
+                    };
                     ContentItem.currentAddress = data.location;
                     ContentItem.currentCoordinates = data.coordinates;
                     $scope.$digest();

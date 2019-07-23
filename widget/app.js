@@ -195,9 +195,9 @@
               }
               var selectedLocation = null;
 
-              var currentLocationIconImageUrl = 'http://beta.app.buildfire.com/app/media/google_marker_blue_icon.png';
-              var placeLocationIconImageUrl = 'http://beta.app.buildfire.com/app/media/google_marker_red_icon.png';
-              var selectedLocationIconImageUrl = 'http://beta.app.buildfire.com/app/media/google_marker_green_icon.png';
+              var currentLocationIconImageUrl = 'http://app.buildfire.com/app/media/google_marker_blue_icon.png';
+              var placeLocationIconImageUrl = 'http://app.buildfire.com/app/media/google_marker_red_icon.png';
+              var selectedLocationIconImageUrl = 'http://app.buildfire.com/app/media/google_marker_green_icon.png';
 
               var currentLocationIcon = getCustomMarkerIcon(currentLocationIconImageUrl);
               var placeLocationIcon = getCustomMarkerIcon(placeLocationIconImageUrl);
