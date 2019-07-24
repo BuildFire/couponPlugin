@@ -541,6 +541,7 @@
         };
 
         WidgetMap.openDetailsPage = function (coupon) {
+          buildfire.history.push('Item', { itemId : coupon.id });
           if(coupon && coupon.id){
             ViewStack.push({
               template: 'Item',

@@ -4,7 +4,7 @@
   <div class="scrollable">
     <div class="google-map" style="height:100%; background:#eef0f0;"
          ng-if="WidgetMap.data && WidgetMap.locationData.items && WidgetMap.allItemsFormatted">
-      <div google-map class="google-map-fix"
+      <div google-map class="google-map-fix" style="height:100%;"
            location-data="WidgetMap.locationData"
            marker-callback="WidgetMap.selectedMarker"
            refresh-data="WidgetMap.refreshData"></div>
