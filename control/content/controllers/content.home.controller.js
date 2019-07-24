@@ -749,7 +749,7 @@
                 tmpArray.push({'title' : res.data.title,
                   rank:index +1,
                   summary : res.data.summary,
-                  categories : res.data.Categories.length,
+                  categories : res.data.Categories ? res.data.Categories.length : 0,
                   expiresOn : res.data.expiresOn,
                   listImage  : res.data.listImage,
                   id:res.id});
