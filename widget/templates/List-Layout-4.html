@@ -49,7 +49,7 @@
     </div>
   </div>
   <!-- The default bottom sticky menu -->
-  <div class="bottom fixed-bottom"
+  <div class="bottom fixed-bottom primaryBackgroundTheme"
        ng-if="WidgetHome.data.settings.mapView == 'show' && WidgetHome.data.settings.filterPage == 'show'">
     <div
         class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme" ng-if="WidgetHome.isFilterApplied">
@@ -71,7 +71,7 @@
   </div>
 
   <!-- If map is hidden-->
-  <div class="bottom fixed-bottom"
+  <div class="bottom fixed-bottom primaryBackgroundTheme"
        ng-if="WidgetHome.data.settings.mapView == 'hide' && WidgetHome.data.settings.filterPage == 'show'">
     <div
         class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme" ng-if="WidgetHome.isFilterApplied">
@@ -89,7 +89,7 @@
   </div>
 
   <!-- If filter is hidden-->
-  <div class="bottom fixed-bottom"
+  <div class="bottom fixed-bottom primaryBackgroundTheme"
        ng-if="WidgetHome.data.settings.filterPage == 'hide' && WidgetHome.data.settings.mapView == 'show'">
     <div
         class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme" ng-if="WidgetHome.isFilterApplied">
@@ -107,7 +107,7 @@
   </div>
 
   <!-- If both  filter and map are hidden-->
-  <div class="bottom fixed-bottom"
+  <div class="bottom fixed-bottom primaryBackgroundTheme"
        ng-if="WidgetHome.data.settings.filterPage == 'hide' && WidgetHome.data.settings.mapView == 'hide'">
     <div
         class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme" ng-if="WidgetHome.isFilterApplied">

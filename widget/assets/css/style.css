@@ -204,6 +204,12 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	z-index:9999;
 	background:#fff;
 }
+
+html[iOS="true"] .holder .bottom.fixed-bottom {
+	padding-bottom: env(safe-area-inset-bottom) !important;
+	padding-bottom: constant(safe-area-inset-bottom) !important;
+}
+
 .holder .bottom.fixed-bottom .primaryBackgroundTheme{
 	background:#09a3ee;
 }
