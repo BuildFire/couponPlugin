@@ -175,7 +175,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 
 /* Fixed Bottom */
 .holder.has-bottom{
-	padding-bottom:38px !important;
+	padding-bottom:calc(env(safe-area-inset-bottom) + 38px) !important;
 }
 .holder.has-bottom.has-filter{
 	padding-bottom:58px !important;
