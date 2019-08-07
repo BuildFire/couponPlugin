@@ -160,6 +160,7 @@
               // Create the map.
               var map = new google.maps.Map(elem[0], {
                 streetViewControl: false,
+                gestureHandling: 'greedy',
                 mapTypeControl: false,
                 zoom: 8,
                 center: { lat: mapCenterLat, lng: mapCenterLng },
@@ -185,12 +186,8 @@
               var getCustomMarkerIcon = function (_imageUrl) {
                 return {
                   url: _imageUrl,
-                  // This marker is 20 pixels wide by 32 pixels high.
                   scaledSize: new google.maps.Size(20, 20),
-                  // The origin for this image is (0, 0).
-                  origin: new google.maps.Point(0, 0),
-                  // The anchor for this image is the base of the flagpole at (0, 32).
-                  anchor: new google.maps.Point(0, 32)
+                  anchor: new google.maps.Point(10, 10)
                 }
               }
               var selectedLocation = null;
