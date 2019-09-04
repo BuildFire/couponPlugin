@@ -34,7 +34,7 @@
         });
         function getGeoLocation() {
           Buildfire.geo.getCurrentPosition(
-            null,
+            { timeout: 5000 },
             function (err, position) {
               if (err) {
                 console.error(err);
