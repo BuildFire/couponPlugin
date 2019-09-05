@@ -34,7 +34,7 @@
         });
         function getGeoLocation() {
           Buildfire.geo.getCurrentPosition(
-            null,
+            { timeout: 5000 },
             function (err, position) {
               if (err) {
                 console.error(err);
@@ -541,6 +541,7 @@
         };
 
         WidgetMap.openDetailsPage = function (coupon) {
+          buildfire.history.push('Item', { itemId : coupon.id });
           if(coupon && coupon.id){
             ViewStack.push({
               template: 'Item',

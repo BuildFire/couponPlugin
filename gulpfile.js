@@ -122,7 +122,9 @@ jsTasks.forEach(function(task){
 
 
              /// obfuscate and minify the JS files
-            .pipe(uglify())
+            .pipe(uglify({
+                mangle: false
+            }))
             .on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()); })
 
             /// merge all the JS files together. If the
@@ -172,7 +174,7 @@ gulp.task('resources', function(){
 
 
 gulp.task('images', function(){
-    return gulp.src(['**/.images/**','control/design/icons/**','control/design/layouts/**'],{base: '.'})
+    return gulp.src(['**/images/**', '**/media/**', 'control/design/icons/**','control/design/layouts/**'],{base: '.'})
         .pipe(gulp.dest(destinationFolder ));
 });
 

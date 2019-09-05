@@ -175,7 +175,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 
 /* Fixed Bottom */
 .holder.has-bottom{
-	padding-bottom:38px !important;
+	padding-bottom:calc(env(safe-area-inset-bottom) + 38px) !important;
 }
 .holder.has-bottom.has-filter{
 	padding-bottom:58px !important;
@@ -204,6 +204,12 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	z-index:9999;
 	background:#fff;
 }
+
+html[safe-area="true"] .holder .bottom.fixed-bottom {
+	padding-bottom: env(safe-area-inset-bottom) !important;
+	padding-bottom: constant(safe-area-inset-bottom) !important;
+}
+
 .holder .bottom.fixed-bottom .primaryBackgroundTheme{
 	background:#09a3ee;
 }
