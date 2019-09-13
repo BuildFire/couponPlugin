@@ -36,9 +36,15 @@
           skip: 0,
           limit: PAGINATION.itemCount,
           filter: {
-            "$or": [{
-              "$json.expiresOn": {$gte: WidgetHome.yesterdayDate}
-            }, {"$json.expiresOn": ""}]
+            "$and": [{
+              "$or": [{
+                "$json.expiresOn": {$gte: WidgetHome.yesterdayDate}
+              }, {"$json.expiresOn": ""}]
+            }, {
+              "$or": [{
+                "$json.startOn": {$lte: WidgetHome.currentDate.getTime()}
+              }, {"$json.startOn": ""}]
+            }]
           },
           sort : {"rank": 1}
         };
@@ -572,14 +578,19 @@
         });
 
         WidgetHome.openDetails = function (itemId) {
-          buildfire.history.push('Item', { itemId : itemId });
-          ViewStack.push({
-            template: 'Item',
-            params: {
-              controller: "WidgetItemCtrl as WidgetItem",
-              itemId: itemId
-            }
-          });
+          if (WidgetHome.currentLoggedInUser) {
+            buildfire.history.push('Item', { itemId : itemId });
+            ViewStack.push({
+              template: 'Item',
+              params: {
+                controller: "WidgetItemCtrl as WidgetItem",
+                itemId: itemId
+              }
+            });
+          } else {
+            buildfire.auth.login({}, function () {
+            });
+          }
         };
 
         function getItemsDistance(_items) {
