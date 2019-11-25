@@ -32,13 +32,23 @@
 
         WidgetHome.currentDate = new Date();
         WidgetHome.yesterdayDate = +WidgetHome.currentDate.setDate(WidgetHome.currentDate.getDate() - 1);
+        WidgetHome.todayDate = +(new Date());
         var searchOptions = {
           skip: 0,
           limit: PAGINATION.itemCount,
           filter: {
-            "$or": [{
-              "$json.expiresOn": {$gte: WidgetHome.yesterdayDate}
-            }, {"$json.expiresOn": ""}]
+            "$and": [
+              {
+                "$or": [{
+                  "$json.expiresOn": { $gte: WidgetHome.yesterdayDate }
+                }, { "$json.expiresOn": "" }]
+              },
+              {
+                "$or": [{
+                  "$json.startOn": { $lte: WidgetHome.todayDate }
+                }, { "$json.startOn": "" }]
+              }
+            ]
           },
           sort : {"rank": 1}
         };
@@ -315,7 +325,13 @@
                     "$or": [{
                       "$json.expiresOn": {$gte: WidgetHome.yesterdayDate}
                     }, {"$json.expiresOn": ""}]
-                  }, {"$json.location.coordinates": {$exists: true}}]
+                  },
+                  {
+                    "$or": [{
+                      "$json.startOn": { $lte: WidgetHome.todayDate }
+                    }, { "$json.startOn": "" }]
+                  },
+                  {"$json.location.coordinates": {$exists: true}}]
                 }
               };
               itemFilter = {'$json.SelectedCategories': {'$in': filter.categories}};
@@ -328,7 +344,13 @@
                     "$or": [{
                       "$json.expiresOn": {$gte: WidgetHome.yesterdayDate}
                     }, {"$json.expiresOn": ""}]
-                  }, {"$json.location.coordinates": {$exists: true}}]
+                  },
+                  {
+                    "$or": [{
+                      "$json.startOn": { $lte: WidgetHome.todayDate }
+                    }, { "$json.startOn": "" }]
+                  },
+                  {"$json.location.coordinates": {$exists: true}}]
                 }
               }
             }
