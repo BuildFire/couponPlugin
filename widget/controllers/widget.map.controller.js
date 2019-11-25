@@ -9,6 +9,7 @@
         WidgetMap.listeners = {};
         WidgetMap.currentDate = new Date();
         WidgetMap.yesterdayDate = +WidgetMap.currentDate.setDate(WidgetMap.currentDate.getDate() - 1);
+        WidgetMap.todayDate = +(new Date());
         WidgetMap.refreshData = 1;
         WidgetMap.filter = {};
         var searchOptions = {
@@ -18,6 +19,11 @@
               "$or": [{
                 "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
               }, {"$json.expiresOn": ""}]
+            },
+            {
+              "$or": [{
+                "$json.startOn": { $lte: WidgetMap.todayDate }
+              }, { "$json.startOn": "" }]
             }, {"$json.location.coordinates": {$exists: true}}]
           }
         };
@@ -107,6 +113,11 @@
                     "$or": [{
                       "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
                     }, {"$json.expiresOn": ""}]
+                  },
+                  {
+                    "$or": [{
+                      "$json.startOn": { $lte: WidgetMap.todayDate }
+                    }, { "$json.startOn": "" }]
                   }, {"$json.location.coordinates": {$exists: true}}]
                 }
               };
@@ -120,6 +131,11 @@
                     "$or": [{
                       "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
                     }, {"$json.expiresOn": ""}]
+                  },
+                  {
+                    "$or": [{
+                      "$json.startOn": { $lte: WidgetMap.todayDate }
+                    }, { "$json.startOn": "" }]
                   }, {"$json.location.coordinates": {$exists: true}}]
                 }
               }
