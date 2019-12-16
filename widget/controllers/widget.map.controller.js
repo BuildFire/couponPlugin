@@ -16,14 +16,10 @@
           skip: 0,
           filter: {
             "$and": [{
-              "$or": [{
-                "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
-              }, {"$json.expiresOn": ""}]
+              "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
             },
             {
-              "$or": [{
-                "$json.startOn": { $lte: WidgetMap.todayDate }
-              }, { "$json.startOn": "" }]
+              "$json.startOn": { $lte: WidgetMap.todayDate }
             }, {"$json.location.coordinates": {$exists: true}}]
           }
         };
@@ -110,14 +106,10 @@
                 skip: 0,
                 filter: {
                   "$and": [{
-                    "$or": [{
-                      "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
-                    }, {"$json.expiresOn": ""}]
+                    "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
                   },
                   {
-                    "$or": [{
-                      "$json.startOn": { $lte: WidgetMap.todayDate }
-                    }, { "$json.startOn": "" }]
+                    "$json.startOn": { $lte: WidgetMap.todayDate }
                   }, {"$json.location.coordinates": {$exists: true}}]
                 }
               };
@@ -128,14 +120,10 @@
                 skip: 0,
                 filter: {
                   "$and": [{
-                    "$or": [{
-                      "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
-                    }, {"$json.expiresOn": ""}]
+                    "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
                   },
                   {
-                    "$or": [{
-                      "$json.startOn": { $lte: WidgetMap.todayDate }
-                    }, { "$json.startOn": "" }]
+                    "$json.startOn": { $lte: WidgetMap.todayDate }
                   }, {"$json.location.coordinates": {$exists: true}}]
                 }
               }
