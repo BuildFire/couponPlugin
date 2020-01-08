@@ -9,15 +9,17 @@
         WidgetMap.listeners = {};
         WidgetMap.currentDate = new Date();
         WidgetMap.yesterdayDate = +WidgetMap.currentDate.setDate(WidgetMap.currentDate.getDate() - 1);
+        WidgetMap.todayDate = +(new Date());
         WidgetMap.refreshData = 1;
         WidgetMap.filter = {};
         var searchOptions = {
           skip: 0,
           filter: {
             "$and": [{
-              "$or": [{
-                "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
-              }, {"$json.expiresOn": ""}]
+              "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
+            },
+            {
+              "$json.startOn": { $lte: WidgetMap.todayDate }
             }, {"$json.location.coordinates": {$exists: true}}]
           }
         };
@@ -104,9 +106,10 @@
                 skip: 0,
                 filter: {
                   "$and": [{
-                    "$or": [{
-                      "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
-                    }, {"$json.expiresOn": ""}]
+                    "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
+                  },
+                  {
+                    "$json.startOn": { $lte: WidgetMap.todayDate }
                   }, {"$json.location.coordinates": {$exists: true}}]
                 }
               };
@@ -117,9 +120,10 @@
                 skip: 0,
                 filter: {
                   "$and": [{
-                    "$or": [{
-                      "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
-                    }, {"$json.expiresOn": ""}]
+                    "$json.expiresOn": {$gte: WidgetMap.yesterdayDate}
+                  },
+                  {
+                    "$json.startOn": { $lte: WidgetMap.todayDate }
                   }, {"$json.location.coordinates": {$exists: true}}]
                 }
               }
