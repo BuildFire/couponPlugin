@@ -1,3 +1,50 @@
+/* Global Styles ////////////////////////////////////////////////////////////////////////////// */
+html{
+	font-size: 16px !important;
+}
+.caption {
+	font-size: .75rem;
+	line-height: 1.25rem;
+	opacity: .7;
+}
+.main-header{
+	box-shadow:0 2px 4px rgba(98, 98, 98, 0.3);
+	padding: 1rem;
+}
+h5{
+	font-size: 1rem !important;
+}
+.list-layout{
+	padding: 1rem 0;
+}
+.list-item{
+	cursor: pointer;
+}
+.list-item:hover{
+	background-color: rgba(150,150,150,.05);
+}
+/* End Global Styles ////////////////////////////////////////////////////////////////////////////// */
+
+/* Layout 1 ////////////////////////////////////////////////////////////////////////////// */
+.layout1 .list-item{
+	display: flex;
+	padding: .75rem 1rem;
+}
+.layout1 .square-icon{
+	width: 3.5rem;
+	height: 3.5rem;
+	overflow: hidden;
+	border-radius: .25rem;
+	flex-shrink: 0;
+	margin-right: .75rem;
+}
+.layout1 .square-icon img{
+	object-fit: cover;
+	width: 100%;
+	height: 100%;
+}
+/* End Layout 1 ////////////////////////////////////////////////////////////////////////////// */
+
 /* Link Items */
 .link-list{
 	padding-top:2px;
@@ -5,27 +52,10 @@
 .link-list a + a{
 	margin-left:10px;
 }
-
 /* List Items */
 .list-items .list-item,
 .list-layout .list-item{
 	position:relative;
-}
-.list-items .list-item:before,
-.layout3 .list-layout .list-item:after{
-	content:'';
-	border-top:1px solid #ddd !important;
-	opacity:0.25;
-	top:0;
-	left:0;
-	width:100%;
-	position:absolute;
-}
-.layout3 .list-layout .list-item:after{
-	border-top:none !important;
-	top:inherit;
-	bottom:0;
-	border-bottom:1px solid #ddd !important;
 }
 .list-items .list-item + .list-item{
 	padding-top:10px;
@@ -40,10 +70,6 @@
 }
 
 /* List Layout Grids */
-.list-layout .list-item{
-	padding-left:15px;
-	padding-right:8px;
-}
 .list-layout .list-item + .list-item{
 	padding-left:8px;
 	padding-right:15px;
@@ -99,10 +125,6 @@
 .list-layout.layout-6 .list-item-media .list-media-holder img{
 	max-height:100%;
 }
-.list-layout .list-item-copy{
-	padding:10px 0;
-	min-height:77px;
-}
 .list-layout .list-item-copy p.summary{
 	font-size:13px;
 }
@@ -114,15 +136,6 @@
 }
 .layout3 .list-layout{
 	position:relative;
-}
-.layout3 .list-layout:before{
-	content:'';
-	border-top:1px solid #ddd !important;
-	opacity:0.25;
-	top:0;
-	left:0;
-	position:absolute;
-	width:100%;
 }
 .layout3 .list-layout .list-item-media{
 	background:none;
@@ -288,9 +301,6 @@ html[safe-area="true"] .holder .bottom.fixed-bottom {
 }
 
 /* Custom */
-.coupon .list-item-copy p{
-	line-height:18px;
-}
 .coupon .list-item-copy p.small{
 	font-size:11px;
 	line-height:15px;
@@ -303,9 +313,6 @@ html[safe-area="true"] .holder .bottom.fixed-bottom {
 }
 .coupon .list-item-copy p span.selected{
 	font-weight:500;
-}
-.coupon .list-item-copy .copy-holder{
-	padding-right:45px;
 }
 .coupon .list-item-copy .bookmark-holder{
 	position:absolute;
