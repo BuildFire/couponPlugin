@@ -43,8 +43,10 @@
           </div>
 
           <div class="bookmark-holder" ng-if="WidgetHome.currentLoggedInUser">
+            <button class="btn btn-icon" ng-class="item.isSaved?'':'btn-primary'">
               <span class="icon icon-star text-primary" ng-if="item.isSaved" ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
               <span class="icon icon-star-empty text-default" ng-if="!item.isSaved" ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
+            </button>
           </div>
         </div>
 
