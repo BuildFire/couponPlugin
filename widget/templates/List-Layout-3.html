@@ -1,42 +1,46 @@
 
-<div class="holder padding-zero has-bottom sticky-bottom-menu clearfix" ng-controller="WidgetHomeCtrl as WidgetHome" >
+<div class="holder load-in padding-zero has-bottom sticky-bottom-menu clearfix" ng-controller="WidgetHomeCtrl as WidgetHome" >
 	<div class="scrollable infinite-scroll-parent">
-		<div class="coupon items-layout3">
+		<div class="coupon items-layout3 layout3">
       <div id="carousel" ng-if="WidgetHome.data.content.carouselImages.length"
            build-fire-carousel=""
            ng-style="WidgetHome.data.content.carouselImages.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}"></div>
-      <div class="description" ng-if="WidgetHome.showDescription(WidgetHome.data.content.description)">
+
+      <div class="main-header" ng-if="WidgetHome.showDescription(WidgetHome.data.content.description)">
         <p class="margin-zero" ng-bind-html="WidgetHome.safeHtml(WidgetHome.data.content.description)"></p>
       </div>
-			<div class="notes" ng-if="WidgetHome.data.content" infinite-scroll="WidgetHome.loadMore()"
+
+			<div class="notes items-grid" ng-if="WidgetHome.data.content" infinite-scroll="WidgetHome.loadMore()"
            infinite-scroll-distance="1"
            data-infinite-container=".infinite-scroll-parent"
            infinite-scroll-disabled="WidgetHome.busy">
-				<div
-            class="plugin-banner col-xs-6 pull-left overflow-hidden padding-zero" ng-repeat="item in WidgetHome.items">
-					<div class="plugin-slide border-grey border-radius-four">
+
+				<div class="plugin-banner grid-item" ng-repeat="item in WidgetHome.items">
 						<img ng-if="!item.data.listImage"
                  src="../../../styles/media/holder-16x9.png" ng-click="WidgetHome.openDetails(item.id)">
 						<img ng-if="item.data.listImage" load-image="16x9" crop-width="147" crop-height="83" crop-type="crop"
                  data-final-src="{{item.data.listImage}}" ng-click="WidgetHome.openDetails(item.id)">
-						<div class="item-text" ng-click="WidgetHome.openDetails(item.id)">
-							<p class="item-title margin-zero text-center text-primary primaryTheme ellipsis">{{item.data.title}}</p>
-							<p class="item-summary margin-zero text-center ellipsis"> {{item.data.summary}}</p>
-                          <p class="item-date margin-zero text-center" ng-if="item.data.expiresOn">Expires {{item.data.expiresOn | date}}</p>
-                          <p class="item-date margin-zero text-center ellipsis " ng-if="item.redeemedOn">Redeemed {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</p>
-							<p class="item-date margin-zero text-center" ng-if="!item.data.expiresOn">No expiration date</p>
-							<p class="item-date margin-zero text-center">{{item.data.distanceText}}</p>
+						<div class="item-text ellipsis" ng-click="WidgetHome.openDetails(item.id)">
+							<h5 class="item-title ellipsis">{{item.data.title}}</h5>
+              <p class="item-summary margin-zero ellipsis"> {{item.data.summary}}</p>
+              <p class="item-date caption" ng-if="item.data.expiresOn">Expires {{item.data.expiresOn | date}}</p>
+              <p class="item-date caption ellipsis " ng-if="item.redeemedOn">Redeemed {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</p>
+							<p class="item-date caption" ng-if="!item.data.expiresOn">No expiration date</p>
 
 							<!-- If summary, expires, or distance are empty, show these -->
-							<p class="item-summary margin-zero text-center ellipsis" ng-hide="item.data.summary">&nbsp;</p>
-							<p class="item-date margin-zero text-center" ng-hide="item.data.distanceText">&nbsp;</p>
+							<p class="item-summary caption margin-zero text-center ellipsis" ng-hide="item.data.summary">&nbsp;</p>
+							<p class="item-date caption margin-zero text-center" ng-hide="item.data.distanceText">&nbsp;</p>
 						</div>
-						<!-- Use these theme classes when active/selected -->
-						<span class="icon icon-star text-primary primaryTheme" ng-if="WidgetHome.currentLoggedInUser && item.isSaved"
-                  ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
-             <span class="icon icon-star-empty text-default" ng-if="WidgetHome.currentLoggedInUser && !item.isSaved"
-                   ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
-					</div>
+            <!-- Use these theme classes when active/selected -->
+            <div class="grid-item-footer">
+              <p class="item-date margin-zero caption">{{item.data.distanceText}}</p>
+              <span class="icon btn-icon icon-star text-primary primaryTheme" ng-if="WidgetHome.currentLoggedInUser && item.isSaved"
+                    ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
+              <span class="icon btn-icon icon-star-empty text-default" ng-if="WidgetHome.currentLoggedInUser && !item.isSaved"
+                     ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
+            </div>
+
+
 				</div>
 			</div>
 		</div>

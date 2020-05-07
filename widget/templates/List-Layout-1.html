@@ -1,4 +1,4 @@
-<div class="holder padding-zero has-bottom sticky-bottom-menu clearfix" ng-controller="WidgetHomeCtrl as WidgetHome" >
+<div class="holder load-in padding-zero has-bottom sticky-bottom-menu clearfix" ng-controller="WidgetHomeCtrl as WidgetHome" >
   <div class="scrollable infinite-scroll-parent">
     <div class="coupon layout1 valign">
 
@@ -20,15 +20,25 @@
           <div class="square-icon list-media-holder pull-left" ng-if="item.data.listImage">
             <img load-image="1x1" data-final-src="{{item.data.listImage}}" crop-width="60" crop-height="60" crop-type="crop">
           </div>
-
-          <div class="list-item-copy ellipsis">
-            <div class="copy-holder" ng-click="WidgetHome.openDetails(item.id)" ng-class="item.data.listImage?'':'no-padding'">
-              <h5 class="ellipsis margin-zero text-primary">
-                {{item.data.title}}
-              </h5>
-              <p class="ellipsis margin-zero bodyTextTheme">
-                {{item.data.summary}}
-              </p>
+          <div class="list-item-main">
+            <div class="list-item-top">
+              <div class="list-item-copy ellipsis">
+                <div class="copy-holder" ng-click="WidgetHome.openDetails(item.id)" ng-class="item.data.listImage?'':'no-padding'">
+                  <h5 class="ellipsis margin-zero">
+                    {{item.data.title}}
+                  </h5>
+                  <p class="ellipsis margin-zero bodyTextTheme">
+                    {{item.data.summary}}
+                  </p>
+                </div>
+              </div>
+    
+              <div class="bookmark-holder" ng-if="WidgetHome.currentLoggedInUser">
+                <span class="btn-icon icon icon-star text-primary" ng-if="item.isSaved" ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
+                <span class="btn-icon icon icon-star-empty text-default" ng-if="!item.isSaved" ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
+              </div>
+            </div>
+            <div class="item-details">
               <p class="caption ellipsis margin-zero bodyTextTheme opacity-seventy">
                 <i ng-if="item.data.expiresOn">Expires {{item.data.expiresOn | date}}</i>
                 <i ng-if="!item.data.expiresOn">No expiration date</i>
@@ -42,12 +52,6 @@
             </div>
           </div>
 
-          <div class="bookmark-holder" ng-if="WidgetHome.currentLoggedInUser">
-            <button class="btn btn-icon" ng-class="item.isSaved?'':'btn-primary'">
-              <span class="icon icon-star text-primary" ng-if="item.isSaved" ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
-              <span class="icon icon-star-empty text-default" ng-if="!item.isSaved" ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
-            </button>
-          </div>
         </div>
 
       </div>

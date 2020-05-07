@@ -1,59 +1,53 @@
 <div class="no-scroll holder padding-zero has-bottom sticky-bottom-menu"
      ng-controller="WidgetSavedCtrl as WidgetSaved">
   <div class="scrollable infinite-scroll-parent">
-    <div class="coupon layout3">
-      <div class="form-holder">
+    <div class="coupon saved-items-layout">
+
+      <div class="form-holder search-holder backgroundColorTheme">
         <input type="text" class="border-none form-control bodyTextTheme has-clear keyword" placeholder="Search item name or summary..." ng-model="WidgetSaved.keyword">
         <span class="clear-icon text-danger" ng-if="WidgetSaved.keyword" ng-click="WidgetSaved.clearSearchResult()">Clear</span>
-        <hr class="small margin-zero">
       </div>
-      <div
-          class="well well-sm text-center margin-top-twenty margin-left-ten margin-right-ten hidde" ng-if="!WidgetSaved.hasAtleastOneSaved">
-        <p class="margin-top-ten">No coupons saved.</p>
-      </div>
-      <div class="list-layout" infinite-scroll="WidgetSaved.loadMore()"
-           infinite-scroll-distance="1"
-           data-infinite-container=".infinite-scroll-parent"
-           infinite-scroll-disabled="WidgetSaved.busy">
+      
+      <div class="list-layout search-list" infinite-scroll="WidgetSaved.loadMore()"
+      infinite-scroll-distance="1"
+      data-infinite-container=".infinite-scroll-parent"
+      infinite-scroll-disabled="WidgetSaved.busy">
+  
+        <div class="text-center no-results hidde" ng-if="!WidgetSaved.hasAtleastOneSaved">
+          <p class="margin-top-ten">No coupons saved.</p>
+        </div>
+      
         <div class="list-item" ng-if="item.isSaved" ng-repeat="item in WidgetSaved.items">
-          <div class="list-item-media text-left overflow-hidden">
             <div class="square-icon list-media-holder pull-left"
                  ng-if="item.data.listImage"
                  ng-click="WidgetSaved.openDetails(item.id)">
               <img class="border-radius-three" crop-width="60" crop-height="60" crop-type="crop"
                    load-image="1x1" data-final-src="{{item.data.listImage}}">
             </div>
-            <div
-                class="list-item-copy text-left padding-left-ten padding-right-ten">
+            <div class="list-item-copy ellipsis">
               <div class="copy-holder" ng-click="WidgetSaved.openDetails(item.id)">
-                <p class="ellipsis margin-zero text-primary margin-top-five">
-                  {{item.data.title}}
-                </p>
-
+                <h5 class="ellipsis margin-zero">{{item.data.title}}</h5>
                 <p class="ellipsis margin-zero bodyTextTheme">
                   {{item.data.summary}}
                 </p>
-
                 <p
-                    class="small ellipsis margin-zero bodyTextTheme opacity-seventy" ng-if="item.data.expiresOn">
+                    class="caption ellipsis margin-zero bodyTextTheme opacity-seventy" ng-if="item.data.expiresOn">
                   <i>Expires {{item.data.expiresOn | date}}</i>
                 </p>
-
-
-                <p  class="small ellipsis margin-zero bodyTextTheme opacity-seventy" ng-if="item.redeemedOn" >
+                <p  class="caption ellipsis margin-zero bodyTextTheme opacity-seventy" ng-if="item.redeemedOn" >
                   <i>Redeemed {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</i>
                 </p>
-
-                <p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
+                <p class="caption ellipsis margin-zero bodyTextTheme opacity-seventy">
                   <i>{{item.data.distanceText}}</i>
                 </p>
               </div>
-              <div class="bookmark-holder">
-                <span class="icon icon-star text-primary" ng-click="WidgetSaved.removeSavedItem(item,$index)"></span>
-              </div>
+
             </div>
-          </div>
+            <div class="bookmark-holder">
+              <span class="icon icon-star btn-icon" ng-click="WidgetSaved.removeSavedItem(item,$index)"></span>
+            </div>
         </div>
+
       </div>
     </div>
   </div>
