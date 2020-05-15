@@ -43,7 +43,7 @@
                   Me</a>
               </div>
             </div>
-            <p class="location-share-msg margin-bottom-five margin-top-five"
+            <p class="location-share-msg margin-bottom-zero margin-top-twenty padding-bottom-zero"
                ng-if="WidgetFilter.locationData.currentCoordinates == null">
               Enable Location sharing to activate Closest to Me.
             </p>
@@ -55,12 +55,12 @@
             <h5 class="margin-zero">Categories</h5>
           </div>
           <div class="filter-content">
-            <p class="margin-zero"
+            <p class="margin-zero checklist-item"
                ng-class="WidgetFilter.allSelected?'text-primary':''"
                ng-click="WidgetFilter.setCategories('ALL', true)">All
               Items</p>
             <span ng-repeat="category in WidgetFilter.categories">
-						<p class="margin-zero" ng-class="category.isSelected?'text-primary':''"
+						<p class="margin-zero checklist-item" ng-class="category.isSelected?'text-primary':''"
                ng-click="WidgetFilter.setCategories(category, false, $index)">{{category.data.title}}</p>
             </span>
           </div>

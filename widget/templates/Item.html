@@ -30,7 +30,7 @@
                 ng-if="WidgetItem.currentLoggedInUser"
                 ng-click="WidgetItem.addToSaved(WidgetItem.item, WidgetItem.item.isSaved)">
               <span class="icon"
-                    ng-class="WidgetItem.item.isSaved?'whiteTheme icon-star':' icon-star-empty'"></span>
+                    ng-class="WidgetItem.item.isSaved?'btn-icon glyphicon glyphicon-star whiteTheme primaryBackgroundTheme':'btn-icon glyphicon glyphicon-star-empty'"></span>
             </div>
           </div>
 
@@ -63,7 +63,7 @@
 
   <div class="bottom fixed-bottom transition-third primaryBackgroundTheme">
     <div class=" text-center"  ng-show="showItemRedeemed">
-      <p class="bodyTextTheme stretch margin-top-ten">Item redeemed
+      <p class="whiteTheme stretch margin-top-ten">Item redeemed
         {{WidgetItem.item.redeemedOn |timeago}}</p>
     </div>
     <div class=" text-center primaryBackgroundTheme"

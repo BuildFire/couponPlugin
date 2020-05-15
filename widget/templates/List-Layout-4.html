@@ -16,15 +16,15 @@
            data-infinite-container=".infinite-scroll-parent"
            infinite-scroll-disabled="WidgetHome.busy">
 
-        <div class="panel backgroundColorTheme" ng-repeat="item in WidgetHome.items">
+        <div class="panel backgroundColorTheme" ng-repeat="item in WidgetHome.items" ng-click="WidgetHome.openDetails(item.id)">
           <div class="panel-heading bg-primary primaryBackgroundTheme">
             <div class="media" ng-if="item.data.listImage" ng-click="WidgetHome.openDetails(item.id)">
               <img load-image="1x1" crop-width="60" crop-height="60" crop-type="crop" data-final-src="{{item.data.listImage}}">
             </div>
-            <h5 class="ellipsis margin-zero whiteTheme" ng-click="WidgetHome.openDetails(item.id)">{{item.data.title}}</h5>
+            <h5 class="ellipsis margin-zero whiteTheme">{{item.data.title}}</h5>
             <div class="save-icon" ng-if="WidgetHome.currentLoggedInUser">
-				        <span class="icon btn-icon icon-star whiteTheme" ng-if="item.isSaved" ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
-              	<span class="icon btn-icon icon-star-empty whiteTheme" ng-if="!item.isSaved" ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
+				        <span class="btn-icon glyphicon glyphicon-star whiteTheme" ng-if="item.isSaved" ng-click="WidgetHome.removeFromSavedItems(item,$index); $event.stopPropagation();"></span>
+              	<span class="btn-icon glyphicon glyphicon-star-empty whiteTheme" ng-if="!item.isSaved" ng-click="WidgetHome.addToSavedItems(item,$index); $event.stopPropagation();"></span>
             </div>
           </div>
           <div class="panel-body" ng-click="WidgetHome.openDetails(item.id)">
