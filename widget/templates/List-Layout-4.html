@@ -4,7 +4,7 @@
       <div id="carousel" ng-if="WidgetHome.data.content.carouselImages.length"
            build-fire-carousel=""
            ng-style="WidgetHome.data.content.carouselImages.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}"></div>
-      <div class="description main-header"
+      <div class="description main-header word-break"
            ng-if="WidgetHome.showDescription(WidgetHome.data.content.description)">
         <p class="margin-zero"
            ng-bind-html="WidgetHome.safeHtml(WidgetHome.data.content.description)"></p>
@@ -27,7 +27,7 @@
               	<span class="btn-icon glyphicon glyphicon-star-empty whiteTheme" ng-if="!item.isSaved" ng-click="WidgetHome.addToSavedItems(item,$index); $event.stopPropagation();"></span>
             </div>
           </div>
-          <div class="panel-body" ng-click="WidgetHome.openDetails(item.id)">
+          <div class="panel-body word-break" ng-click="WidgetHome.openDetails(item.id)">
             <p ng-click="WidgetHome.openDetails(item.id)">{{item.data.summary}}</p>
             <div class="item item-footer" ng-click="WidgetHome.openDetails(item.id)">
               <div class="">
