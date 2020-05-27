@@ -261,6 +261,14 @@ h5{
 	margin-right: .75rem;
 	border-radius: .25rem;
 	overflow: hidden;
+	width: 4rem;
+	height: 4rem;
+}
+.saved-items-layout .list-item .list-media-holder img,
+.map-items .list-item .list-media-holder img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
 }
 .map-items .list-item-copy,
 .saved-items-layout .list-item-copy{
