@@ -279,6 +279,9 @@ h5{
 	margin-left: .75rem;
 	flex-shrink: 0;
 }
+.map-items .list-item .btn-icon .glyphicon{
+	margin-left: 0;
+}
 .map-items.list-layout{
 	padding: 1rem 0;
 	max-height: 40vh;
