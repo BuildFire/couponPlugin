@@ -1,50 +1,53 @@
-<div class="holder padding-zero has-bottom sticky-bottom-menu clearfix" ng-controller="WidgetHomeCtrl as WidgetHome" >
+<div class="holder load-in padding-zero has-bottom sticky-bottom-menu clearfix" ng-controller="WidgetHomeCtrl as WidgetHome" >
   <div class="scrollable infinite-scroll-parent">
     <div class="coupon layout4">
       <div id="carousel" ng-if="WidgetHome.data.content.carouselImages.length"
            build-fire-carousel=""
            ng-style="WidgetHome.data.content.carouselImages.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}"></div>
-      <div class="description"
+      <div class="description main-header word-break"
            ng-if="WidgetHome.showDescription(WidgetHome.data.content.description)">
         <p class="margin-zero"
            ng-bind-html="WidgetHome.safeHtml(WidgetHome.data.content.description)"></p>
       </div>
+
       <div class="panels" ng-if="WidgetHome.data.content"
            infinite-scroll="WidgetHome.loadMore()"
            infinite-scroll-distance="1"
            data-infinite-container=".infinite-scroll-parent"
            infinite-scroll-disabled="WidgetHome.busy">
-        <div class="panel backgroundColorTheme" ng-repeat="item in WidgetHome.items">
-          <div class="panel-heading bg-primary primaryBackgroundTheme clearfix">
-            <div class="media pull-left" ng-if="item.data.listImage" ng-click="WidgetHome.openDetails(item.id)">
+
+        <div class="panel backgroundColorTheme" ng-repeat="item in WidgetHome.items" ng-click="WidgetHome.openDetails(item.id)">
+          <div class="panel-heading bg-primary primaryBackgroundTheme">
+            <div class="media" ng-if="item.data.listImage" ng-click="WidgetHome.openDetails(item.id)">
               <img load-image="1x1" crop-width="60" crop-height="60" crop-type="crop" data-final-src="{{item.data.listImage}}">
             </div>
-            <p class="ellipsis margin-zero whiteTheme" ng-click="WidgetHome.openDetails(item.id)">{{item.data.title}}</p>
+            <h5 class="ellipsis margin-zero whiteTheme">{{item.data.title}}</h5>
             <div class="save-icon" ng-if="WidgetHome.currentLoggedInUser">
-				<span class="icon icon-star whiteTheme" ng-if="item.isSaved" ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
-              	<span class="icon icon-star-empty whiteTheme" ng-if="!item.isSaved" ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
+				        <span class="btn-icon glyphicon glyphicon-star whiteTheme" ng-if="item.isSaved" ng-click="WidgetHome.removeFromSavedItems(item,$index); $event.stopPropagation();"></span>
+              	<span class="btn-icon glyphicon glyphicon-star-empty whiteTheme" ng-if="!item.isSaved" ng-click="WidgetHome.addToSavedItems(item,$index); $event.stopPropagation();"></span>
             </div>
           </div>
-          <div class="panel-body border-grey" ng-click="WidgetHome.openDetails(item.id)">
+          <div class="panel-body word-break" ng-click="WidgetHome.openDetails(item.id)">
             <p ng-click="WidgetHome.openDetails(item.id)">{{item.data.summary}}</p>
-            <div class="item clearfix row" ng-click="WidgetHome.openDetails(item.id)">
-              <div class="col-xs-7 pull-left text-left">
-                <p ng-if="item.data.expiresOn" class="date ellipsis margin-zero">Expires
+            <div class="item item-footer" ng-click="WidgetHome.openDetails(item.id)">
+              <div class="">
+                <p ng-if="item.data.expiresOn" class="date ellipsis caption margin-zero">Expires
                   {{item.data.expiresOn | date}}</p>
                 <p ng-if="!item.data.expiresOn" class="date ellipsis margin-zero">No expiration date</p>
               </div>
 
-              <div class="col-xs-5 pull-right text-right">
-                <p class="date margin-zero">{{item.data.distanceText}}</p>
+              <div class="">
+                <p class="date margin-zero caption">{{item.data.distanceText}}</p>
               </div>
             </div>
-            <div class="item clearfix row" ng-click="WidgetHome.openDetails(item.id)">
-            <div class="col-xs-12  pull-left text-left">
-              <p  ng-if="item.redeemedOn" class="date margin-zero">Redeemed {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</p>
+            <div class="" ng-click="WidgetHome.openDetails(item.id)">
+            <div class="">
+              <p  ng-if="item.redeemedOn" class="date margin-zero caption">Redeemed {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</p>
             </div>
               </div>
           </div>
         </div>
+
       </div>
     </div>
   </div>

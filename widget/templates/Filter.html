@@ -2,19 +2,15 @@
      ng-controller="WidgetFilterCtrl as WidgetFilter">
   <div class="scrollable">
     <div class="coupon filter layout3">
-      <div class="form-holder">
-        <input type="text" class="border-none form-control bodyTextTheme has-clear keyword" placeholder="Enter keywords or phrase" ng-model="WidgetFilter.filter.text">
+      <div class="form-holder search-holder backgroundColorTheme">
+        <input type="text" class="border-none form-control has-clear keyword" placeholder="Enter keywords or phrase" ng-model="WidgetFilter.filter.text">
         <span class="clear-icon text-danger" ng-if="WidgetFilter.filter.text" ng-click="WidgetFilter.filter.text=''">Clear</span>
         <hr class="small margin-zero">
       </div>
-      <div class="filters margin-top-ten">
-        <div class="item active distance">
-          <div class="clearfix">
-            <div class="col-xs-12 pull-left text-left">
-              <span>Distance</span>
-            </div>
-          </div>
-          <div class="filter-content distance">
+      <div class="filters search-list">
+        <div class="item active distance padded">
+          <h5>Distance</h5>
+          <div class="filter-content distance padding-left-ten padding-right-ten">
             <rzslider ng-if="WidgetFilter.distanceSlider" rz-slider-tpl-url="templates/Slider-Template.html"
                       rz-slider-floor="WidgetFilter.distanceSlider.floor"
                       rz-slider-ceil="WidgetFilter.distanceSlider.ceil"
@@ -26,13 +22,8 @@
                       rz-slider-hide-limit-labels="true"></rzslider>
           </div>
         </div>
-        <hr class="small">
-        <div class="item active sorting">
-          <div class="clearfix">
-            <div class="col-xs-12 pull-left text-left">
-              <span>Sorting Options</span>
-            </div>
-          </div>
+        <div class="item active sorting padded">
+          <h5>Sorting Options</h5>
           <div class="filter-content">
             <div class="toggle-btns border-radius-four overflow-hidden">
               <div ng-click="WidgetFilter.filter.sortOnClosest = false"
@@ -52,7 +43,7 @@
                   Me</a>
               </div>
             </div>
-            <p class="location-share-msg margin-bottom-five margin-top-five"
+            <p class="location-share-msg margin-bottom-zero margin-top-twenty padding-bottom-zero"
                ng-if="WidgetFilter.locationData.currentCoordinates == null">
               Enable Location sharing to activate Closest to Me.
             </p>
@@ -60,20 +51,16 @@
         </div>
         <hr class="small">
         <div class="item active" ng-if="WidgetFilter.categories.length">
-          <div class="clearfix">
-            <div class="col-xs-12 pull-left text-left">
-              <span>Categories</span>
-            </div>
+          <div class="padded">
+            <h5 class="margin-zero">Categories</h5>
           </div>
           <div class="filter-content">
-            <hr class="small">
-            <p class="margin-zero"
+            <p class="margin-zero checklist-item"
                ng-class="WidgetFilter.allSelected?'text-primary':''"
                ng-click="WidgetFilter.setCategories('ALL', true)">All
               Items</p>
             <span ng-repeat="category in WidgetFilter.categories">
-            <hr class="small">
-						<p class="margin-zero" ng-class="category.isSelected?'text-primary':''"
+						<p class="margin-zero checklist-item" ng-class="category.isSelected?'text-primary':''"
                ng-click="WidgetFilter.setCategories(category, false, $index)">{{category.data.title}}</p>
             </span>
           </div>
