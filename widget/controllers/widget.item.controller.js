@@ -194,14 +194,6 @@
               WidgetItem.item.isSaved = true;
               WidgetItem.item.savedId = result.id;
               console.log("Inserted", result);
-              var addedSavedModal = $modal.open({
-                templateUrl: 'templates/Saved_Confirmation.html',
-                size: 'sm',
-                backdropClass: "ng-hide"
-              });
-              $timeout(function () {
-                addedSavedModal.close();
-              }, 3000);
               $rootScope.$broadcast("ITEM_SAVED_UPDATED");
             }, errorItem = function () {
               Buildfire.spinner.hide();

@@ -1,48 +1,53 @@
-<div class="holder padding-zero has-bottom sticky-bottom-menu clearfix" ng-controller="WidgetHomeCtrl as WidgetHome" >
+<div class="holder load-in padding-zero has-bottom sticky-bottom-menu clearfix" ng-controller="WidgetHomeCtrl as WidgetHome" >
 	<div class="scrollable infinite-scroll-parent">
-		<div class="coupon layout2 layout3 valign">
+		<div class="coupon layout2 valign">
       <div id="carousel" ng-if="WidgetHome.data.content.carouselImages.length"
            build-fire-carousel=""
            ng-style="WidgetHome.data.content.carouselImages.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}"></div>
-      <div class="padded" ng-if="WidgetHome.showDescription(WidgetHome.data.content.description)">
+
+      <div class="main-header word-break" ng-if="WidgetHome.showDescription(WidgetHome.data.content.description)">
         <p class="margin-zero" ng-bind-html="WidgetHome.safeHtml(WidgetHome.data.content.description)"></p>
       </div>
+
 			<div class="list-layout" ng-if="WidgetHome.data.content" infinite-scroll="WidgetHome.loadMore()"
            infinite-scroll-distance="1"
            data-infinite-container=".infinite-scroll-parent"
            infinite-scroll-disabled="WidgetHome.busy">
-				<div class="list-item" ng-repeat="item in WidgetHome.items">
-					<div class="list-item-media text-left overflow-hidden">
-						<div class="list-media-holder pull-left" ng-if="item.data.listImage">
-							<img load-image="16x9" crop-width="120" crop-height="70" crop-type="crop" data-final-src="{{item.data.listImage}}">
-						</div>
-						<div class="list-item-copy text-left padding-left-five padding-right-ten">
-							<div class="copy-holder" ng-click="WidgetHome.openDetails(item.id)" ng-class="item.data.listImage?'':'no-padding'">
-								<p class="ellipsis margin-zero text-primary">
-                  					{{item.data.title}}
-								</p>
-								<p class="ellipsis margin-zero bodyTextTheme">
-                  					{{item.data.summary}}
-								</p>
-								<p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-                                    <i ng-if="item.data.expiresOn">Expires {{item.data.expiresOn | date}}</i>
-                                    <i ng-if="!item.data.expiresOn">No expiration date</i>
-								</p>
-                              <p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-                                <i ng-if="item.redeemedOn" >Redeemed {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</i>
 
-                              </p>
-								<p class="small ellipsis margin-zero bodyTextTheme opacity-seventy">
-									<i>{{item.data.distanceText}}</i>
-								</p>
-							</div>
-							<div class="bookmark-holder" ng-if="WidgetHome.currentLoggedInUser">
-								<span class="icon icon-star text-primary" ng-if="item.isSaved" ng-click="WidgetHome.removeFromSavedItems(item,$index)"></span>
-                 				<span class="icon icon-star-empty text-default" ng-if="!item.isSaved" ng-click="WidgetHome.addToSavedItems(item,$index)"></span>
-							</div>
-						</div>
-					</div>
-				</div>
+
+				<div class="list-item" ng-repeat="item in WidgetHome.items" ng-click="WidgetHome.openDetails(item.id)">
+
+          <div class="list-media-holder" ng-if="item.data.listImage">
+            <img load-image="16x9" crop-width="120" crop-height="70" crop-type="crop" data-final-src="{{item.data.listImage}}">
+          </div>
+
+          <div class="list-item-copy ellipsis">
+            <div class="copy-holder ellipsis"  ng-class="item.data.listImage?'':'no-padding'">
+              <h5 class="ellipsis margin-zero">
+                          {{item.data.title}}
+              </h5>
+              <p class="ellipsis margin-zero bodyTextTheme">
+                          {{item.data.summary}}
+              </p>
+              <p class="caption ellipsis margin-zero bodyTextTheme opacity-seventy">
+                <i ng-if="item.data.expiresOn">Expires {{item.data.expiresOn | date}}</i>
+                <i ng-if="!item.data.expiresOn">No expiration date</i>
+              </p>
+              <p class="caption ellipsis margin-zero bodyTextTheme opacity-seventy">
+                <i ng-if="item.redeemedOn" >Redeemed {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</i>
+
+              </p>
+              <p class="caption ellipsis margin-zero bodyTextTheme opacity-seventy">
+                <i>{{item.data.distanceText}}</i>
+              </p>
+            </div>
+            <div class="bookmark-holder" ng-if="WidgetHome.currentLoggedInUser">
+              <span class="btn-icon glyphicon glyphicon-star whiteTheme primaryBackgroundTheme" ng-if="item.isSaved" ng-click="WidgetHome.removeFromSavedItems(item,$index); $event.stopPropagation();"></span>
+              <span class="btn-icon glyphicon glyphicon-star-empty" ng-if="!item.isSaved" ng-click="WidgetHome.addToSavedItems(item,$index); $event.stopPropagation();"></span>
+            </div>
+          </div>
+        </div>
+
 			</div>
 		</div>
 	</div>
