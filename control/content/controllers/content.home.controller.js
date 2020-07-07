@@ -9,6 +9,9 @@
         var ContentHome = this;
         ContentHome.searchValue = "";
         ContentHome.filter = null;
+        var unCaughtItems = [];
+        var unCaughtItemsShown = false;
+        var moreUncaughtItems = 0;
         var _data = {
           "content": {
             "carouselImages": [],
@@ -863,7 +866,8 @@
                 rows[index].body = "";
                 rows[index].startOn = getUnixFromDate(rows[index].startOn);
                 rows[index].expiresOn = getUnixFromDate(rows[index].expiresOn);
-
+                const rowSelectedCategory = rows[index].SelectedCategories;
+                const rowCarousel = rows[index].carouselImages;
                 if(rows[index].carouselImages){
                  var carousalImageUrlArray=rows[index].carouselImages.split(',');
                   rows[index].carouselImages=[];
@@ -918,7 +922,9 @@
                           else {
                             console.error('' +
                             'Error else parts of google');
-                            error();
+                            rows[index].carouselImages = rowCarousel;
+                            rows[index].SelectedCategories = rowSelectedCategory;
+                            unCaughtItems.push(rows[index]);
                           }
                         });
                         $scope.$digest();
@@ -947,7 +953,9 @@
                         else {
                           console.error('' +
                           'Error else parts of google');
-                          error();
+                          rows[index].carouselImages = rowCarousel;
+                          rows[index].SelectedCategories = rowSelectedCategory;
+                          unCaughtItems.push(rows[index]);
                         }
                       });
                       $scope.$digest();
@@ -959,7 +967,7 @@
                         filter: {"$json.title": {"$regex": '/*'}}
                       };
                       Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, data) {
-                        console.log("Saved", data.id);
+                        console.log("Saved", data);
                         var tmpCategoryIds=[];
                         data.forEach(function(categoryObj){
                           categoryList.forEach(function(categoryTitle){
@@ -976,51 +984,6 @@
                     }else{
                       bulkInsertItems([rows[index]],rows[index].rank);
                     }
-
-                   /* if(rows[index].SelectedCategories.length) {
-                      var categoryList = rows[index].SelectedCategories.split(',');
-
-                      var searchOptions = {
-                        filter: {"$json.title": {"$regex": '*//*'}},
-                      }
-                      Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, data) {
-                        console.log("Saved", data.id);
-                        var tmpCategoryIds=[];
-                        data.forEach(function(categoryObj){
-                          categoryList.forEach(function(categoryTitle){
-                            if(categoryTitle==categoryObj.data.title){
-                              tmpCategoryIds.push(categoryObj.id);
-                            }
-                          })
-                        })
-                        rows[index].SelectedCategories=tmpCategoryIds;
-                        $scope.$digest();
-
-                      });
-                      }*/
-
-                    /*if(rows[index].location) {
-                      var geocoder = new google.maps.Geocoder();
-                      geocoder.geocode({"address": rows[index].location}, function (results, status) {
-                        if (status == google.maps.GeocoderStatus.OK) {
-                          var lat = results[0].geometry.location.lat(),
-                              lng = results[0].geometry.location.lng();
-                          // ContentHome.setLocation({location: rows[index].location, coordinates: {lng:lng, lat:lat}});
-                          rows[index].location = {
-                            coordinates: {
-                              lng: lng,
-                              lat: lat
-                            },
-                            addressTitle: rows[index].location
-                          };
-                        }
-                        else {
-                          console.error('' +
-                          'Error else parts of google');
-                          error();
-                        }
-                      });
-                    }*/
                   });
               }
             }
@@ -1073,7 +1036,31 @@
                 ContentHome.items = [];
                 ContentHome.data.content.rankOfLastItem = rank;
                 RankOfLastItem.setRank(rank);
-                ContentHome.loadMoreItems('js');
+                ContentHome.loadMoreItems('js');                
+                if(unCaughtItems.length && (unCaughtItems.length > moreUncaughtItems) && !unCaughtItemsShown) {
+                  unCaughtItemsShown = true;
+                  moreUncaughtItems = unCaughtItems.length;
+                  let str = 'Importing failed for these items, please check their data! <br><br>';
+                  unCaughtItems.map((item, index) => {
+                    str += `${index+1}. ${item.title} - ${item.location}<br>`
+                  })
+                  buildfire.notifications.showDialog({
+                    title:"CSV Import"
+                    ,message: str
+                    ,size: 'lg'
+                    ,buttons: [ {text: 'Ok', key:'ok', type: 'success'}, {text: 'Download', key:'download', type: 'primary'}]
+                    },function(e,data){
+                         if(e) console.error(e);
+                         if(data) console.log(data);
+                         if(data.selectedButton.key === 'download') {
+                           var csv = $csv.jsonToCsv(angular.toJson(unCaughtItems), {
+                            header: header
+                          });
+                          $csv.download(csv, "Export.csv");
+                         }
+                  });
+                }
+
               }
 
             });
