@@ -12,6 +12,7 @@
         var unCaughtItems = [];
         var unCaughtItemsShown = false;
         var moreUncaughtItems = 0;
+        
         var _data = {
           "content": {
             "carouselImages": [],
@@ -857,7 +858,7 @@
 
               var rank =  ContentHome.data.content.rankOfLastItem || 0;
               RankOfLastItem.setRank(rank);
-
+              
               for (var index = 0; index < rows.length; index++) {
                 rank += 10;
                 rows[index].dateCreated = +new Date();
@@ -868,6 +869,7 @@
                 rows[index].expiresOn = getUnixFromDate(rows[index].expiresOn);
                 const rowSelectedCategory = rows[index].SelectedCategories;
                 const rowCarousel = rows[index].carouselImages;
+               
                 if(rows[index].carouselImages){
                  var carousalImageUrlArray=rows[index].carouselImages.split(',');
                   rows[index].carouselImages=[];
@@ -1040,9 +1042,9 @@
                 if(unCaughtItems.length && (unCaughtItems.length > moreUncaughtItems) && !unCaughtItemsShown) {
                   unCaughtItemsShown = true;
                   moreUncaughtItems = unCaughtItems.length;
-                  let str = 'Importing failed for these items, please check their data! <br><br>';
-                  unCaughtItems.map((item, index) => {
-                    str += `${index+1}. ${item.title} - ${item.location}<br>`
+                  var str = 'Importing failed for these items, please check their data! <br><br>';
+                  unCaughtItems.forEach(function(item,index){
+                    str += index+1 + ". " + item.title + " - " + item.location + "<br>"
                   })
                   buildfire.notifications.showDialog({
                     title:"CSV Import"

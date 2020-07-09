@@ -11,10 +11,14 @@
   "license": "ISC",
   "dependencies": {
     "bower": "^1.5.3",
+    "gulp-babel": "^8.0.0",
     "karma-cli": "^0.1.0",
     "karma-coverage": "^0.5.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.7.2",
+    "@babel/plugin-proposal-class-properties": "^7.7.0",
+    "@babel/preset-env": "^7.10.4",
     "chai": "^3.0.0",
     "del": "^3.0.0",
     "gulp": "^3.9.1",
