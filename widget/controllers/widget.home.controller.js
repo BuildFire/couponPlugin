@@ -37,13 +37,19 @@
           skip: 0,
           limit: PAGINATION.itemCount,
           filter: {
-            "$and": [
+            "$or": [
               {
                 "$json.expiresOn": { $gte: WidgetHome.yesterdayDate }
               },
               {
+                "$json.expiresOn": "",
+              },
+              {
                 "$json.startOn": { $lte: WidgetHome.todayDate }
-              }
+              },
+              {
+                "$json.startOn": "",
+              },
             ]
           },
           sort : {"rank": 1}
@@ -232,6 +238,8 @@
         WidgetHome.init(function(){});
 
         var onUpdateCallback = function (event) {
+          console.log("==================== WIDGET UPDATE CALLED ===============================")
+          console.log("==================== WIDGET UPDATE CALLED ===============================")
           setTimeout(function () {
             if (event && event.tag === TAG_NAMES.COUPON_INFO) {
               WidgetHome.data = event.data;
@@ -292,7 +300,6 @@
                   _item.data.distanceText = (WidgetHome.locationData.currentCoordinates) ? 'Fetching..' : 'NA';
                 });
               }
-
               WidgetHome.items = WidgetHome.items.length ? WidgetHome.items.concat(resultAll) : resultAll;
               searchOptions.skip = searchOptions.skip + PAGINATION.itemCount;
               if (resultAll.length == PAGINATION.itemCount) {
@@ -592,7 +599,15 @@
           });
         };
 
+        buildfire.messaging.onReceivedMessage = function(message){
+          if (message.importCSV === 'finished') {
+            console.log("zavrsio")
+            location.reload();
+          }
+       }
+
         function getItemsDistance(_items) {
+          console.log("AAAAAAAAAAAAAAAAAAAAAAAAA")
           console.log('WidgetHome.items', _items);
           if (WidgetHome.locationData.currentCoordinates == null) {
             return;
@@ -656,6 +671,7 @@
         }
 
         $scope.$watch(function () {
+          console.log("WATCH AAAAA")
           return WidgetHome.items;
         }, getItemsDistance);
 
