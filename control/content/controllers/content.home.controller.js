@@ -831,7 +831,7 @@
             rows = rows.filter(function (row) {
               return row.title;
             });
-            setTimeout(() => {
+            setTimeout(function() {
               buildfire.messaging.sendMessageToWidget({importCSV: 'finished'})
             }, rows.length*300);
             ContentHome.loading = true;
@@ -1129,7 +1129,7 @@
                       if (value.data.carouselImages.length == 0) {
                         value.data.carouselImages = [];
                       } else {
-                        let oldUrl = value.data.carouselImages;
+                        var oldUrl = value.data.carouselImages;
                         value.data.carouselImages = [{ action: "noAction", iconUrl: oldUrl, title: "image" }];
                       }
                     } else if (typeof value.data.carouselImages == "undefined")
