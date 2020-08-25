@@ -6,7 +6,11 @@
   "scripts": {
     "postinstall": "./node_modules/.bin/bower install",
     "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS",
-    "build": "gulp build && cd .. && rm -rf couponPlugin.zip && zip -r couponPlugin_release.zip couponPlugin_release/"
+    "build": "gulp build && cd .. && rm -rf couponPlugin.zip && zip -r couponPlugin_release.zip couponPlugin_release/",
+    "preinstall": "npx npm-force-resolutions"
+  },
+  "resolutions": {
+    "graceful-fs": "^4.2.4"
   },
   "license": "ISC",
   "dependencies": {

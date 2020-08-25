@@ -746,6 +746,7 @@
               var tmpArray=[];
               var lastIndex=result.length;
               result.forEach(function(res,index){
+                console.log("RES CATEGORIES", res.data.Categories)
                 tmpArray.push({'title' : res.data.title,
                   rank:index +1,
                   summary : res.data.summary,
@@ -830,6 +831,9 @@
             rows = rows.filter(function (row) {
               return row.title;
             });
+            setTimeout(function() {
+              buildfire.messaging.sendMessageToWidget({importCSV: 'finished'})
+            }, rows.length*300);
             ContentHome.loading = true;
             if (rows && rows.length > 1) {
               var categoryList=rows[1].Categories.split(',');
@@ -922,7 +926,6 @@
                           }
                         });
                         $scope.$digest();
-
                       });
 
 
@@ -976,51 +979,6 @@
                     }else{
                       bulkInsertItems([rows[index]],rows[index].rank);
                     }
-
-                   /* if(rows[index].SelectedCategories.length) {
-                      var categoryList = rows[index].SelectedCategories.split(',');
-
-                      var searchOptions = {
-                        filter: {"$json.title": {"$regex": '*//*'}},
-                      }
-                      Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, data) {
-                        console.log("Saved", data.id);
-                        var tmpCategoryIds=[];
-                        data.forEach(function(categoryObj){
-                          categoryList.forEach(function(categoryTitle){
-                            if(categoryTitle==categoryObj.data.title){
-                              tmpCategoryIds.push(categoryObj.id);
-                            }
-                          })
-                        })
-                        rows[index].SelectedCategories=tmpCategoryIds;
-                        $scope.$digest();
-
-                      });
-                      }*/
-
-                    /*if(rows[index].location) {
-                      var geocoder = new google.maps.Geocoder();
-                      geocoder.geocode({"address": rows[index].location}, function (results, status) {
-                        if (status == google.maps.GeocoderStatus.OK) {
-                          var lat = results[0].geometry.location.lat(),
-                              lng = results[0].geometry.location.lng();
-                          // ContentHome.setLocation({location: rows[index].location, coordinates: {lng:lng, lat:lat}});
-                          rows[index].location = {
-                            coordinates: {
-                              lng: lng,
-                              lat: lat
-                            },
-                            addressTitle: rows[index].location
-                          };
-                        }
-                        else {
-                          console.error('' +
-                          'Error else parts of google');
-                          error();
-                        }
-                      });
-                    }*/
                   });
               }
             }
@@ -1132,7 +1090,8 @@
         }
 
         function returnCommaSepratedListOfCategories(Categories, selectedCategories){
-          if(selectedCategories.length && Array.isArray(selectedCategories)){
+          if(typeof Categories  === 'string' || Categories instanceof String) return Categories;
+          else if(selectedCategories.length && Array.isArray(selectedCategories)){
             var tmpList="";
             selectedCategories.forEach(function(selCategory){
               Categories.forEach(function(category){
@@ -1166,6 +1125,26 @@
                     delete value.data.links;
                     delete value.data.rank;
                     delete value.data.body;
+                    if (typeof value.data.carouselImages === 'string' || value.data.carouselImages instanceof String) {
+                      if (value.data.carouselImages.length == 0) {
+                        value.data.carouselImages = [];
+                      } else {
+                        var oldUrl = value.data.carouselImages;
+                        value.data.carouselImages = [{ action: "noAction", iconUrl: oldUrl, title: "image" }];
+                      }
+                    } else if (typeof value.data.carouselImages == "undefined")
+                      value.data.carouselImages = [];
+
+
+                  /*    if (typeof value.data.Categories === 'string' || value.data.Categories instanceof String) {
+                        if (value.data.Categories.length == 0) {
+                          value.data.carouselImages = "";
+                        } else {
+                          let oldUrl = value.data.carouselImages;
+                          value.data.carouselImages = [{ action: "noAction", iconUrl: oldUrl, title: "image" }];
+                        }
+                      } else if (typeof value.data.carouselImages == "undefined")
+                        value.data.carouselImages = [];*/
 
                     value.data.carouselImages=returnCommaSepratedListOfEntity(value.data.carouselImages,'iconUrl')
                     if(value.data.SelectedCategories)

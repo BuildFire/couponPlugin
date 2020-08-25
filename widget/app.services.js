@@ -19,6 +19,7 @@
             if (err) {
               return deferred.reject(err);
             } else if (result) {
+              console.log("DATASTORE GET", result)
               return deferred.resolve(result);
             }
           });
@@ -67,6 +68,9 @@
             if (err) {
               return deferred.reject(err);
             } else if (result) {
+              console.log("datastore SEARCH", options)
+              console.log("datastore SEARCH", result)
+
               return deferred.resolve(result);
             }
           });
@@ -145,6 +149,7 @@
             if (err) {
               return deferred.reject(err);
             } else if (result) {
+              console.log("USERDATA SEARCH", result)
               return deferred.resolve(result);
             }
           });

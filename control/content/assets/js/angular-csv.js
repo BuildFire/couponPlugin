@@ -189,7 +189,7 @@
                 link: function (scope, element, attrs) {
                     element.context.onchange = function (event) {
                         var files = event.target.files; //FileList object
-                        if(files[0].type=="text/csv"){
+                        if(files[0].type=="text/csv" || files[0].type== "application/vnd.ms-excel"||files[0].name.split('.')[files[0].name.split('.').length-1]=="csv"){
                             for (var i = 0; i < files.length; i++) {
                                 var file = files[i];
                                 var picReader = new FileReader();
@@ -200,7 +200,6 @@
                                 });
                                 picReader.readAsText(file);
                             }
-
                         }
 
                     }
