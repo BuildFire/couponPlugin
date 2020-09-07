@@ -2,14 +2,14 @@
 (function (buildfire, angular) {
     angular
         .module('couponPluginContent')
-        .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', '$location', '$anchorScroll', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location', 'Utils', 'Modals', 'RankOfLastFilter', 'Buildfire','RankOfLastItem','PluginEvents',
+        .controller('ContentItemCtrl', ['$scope', '$routeParams', '$timeout', '$location', '$anchorScroll', 'DEFAULT_DATA', 'DataStore', 'TAG_NAMES', 'Location', 'Utils', 'Modals', 'RankOfLastFilter', 'Buildfire', 'RankOfLastItem', 'PluginEvents',
             function ($scope, $routeParams, $timeout, $location, $anchorScroll, DEFAULT_DATA, DataStore, TAG_NAMES, Location, Utils, Modals, RankOfLastFilter, Buildfire, RankOfLastItem, PluginEvents) {
                 $scope.pluginReady = false;
                 var ContentItem = this;
                 var tmrDelayForItem = null
                     , isNewItemInserted = false
                     , updating = false;
-                ContentItem.filters=[];
+                ContentItem.filters = [];
                 ContentItem.validCoordinatesFailure = false;
 
                 // Hide the top plugin info part when inside item detail view
@@ -23,8 +23,8 @@
                 $timeout(function () {
                     Buildfire.navigation.scrollTop();
                 }, 0);
-                $scope.getReuseText=function(periodInMinuts){
-                    switch (periodInMinuts){
+                $scope.getReuseText = function (periodInMinuts) {
+                    switch (periodInMinuts) {
                         case -1:
                             return "Single Use";
                         case 10:
@@ -64,12 +64,12 @@
                         return;
                     }
                     var success = function (result) {
-                          console.info('Saved data result: ', result);
-                          RankOfLastItem.setRank(result.data.content.rankOfLastItem);
-                      }
-                      , error = function (err) {
-                          console.error('Error while saving data : ', err);
-                      };
+                        console.info('Saved data result: ', result);
+                        RankOfLastItem.setRank(result.data.content.rankOfLastItem);
+                    }
+                        , error = function (err) {
+                            console.error('Error while saving data : ', err);
+                        };
                     newObj.content.rankOfLastItem = newObj.content.rankOfLastItem || 0;
                     DataStore.save(newObj, tag).then(success, error);
                 };
@@ -79,27 +79,30 @@
                  * */
                 var getInfoInitData = function () {
                     var success = function (result) {
-                          ContentItem.data = result.data;
-                          console.log("+++++++++++++++SSSSSSS", ContentItem.data )
-                          if(!ContentItem.data.content){
-                              ContentItem.data.content = {
-                                  rankOfLastItem:""
-                              }
-                          }
-                          if(!ContentItem.data.settings){
-                              ContentItem.data.settings = {
-                                  "defaultView": "list",
-                                  "distanceIn": "mi",
-                                  "mapView": "show",
-                                  "filterPage": "show"}
-                          }
-                          if(!ContentItem.data.design){
+                        ContentItem.data = result.data;
+                        console.log("+++++++++++++++SSSSSSS", ContentItem.data)
+                        if (!ContentItem.data.content) {
+                            ContentItem.data.content = {
+                                rankOfLastItem: ""
+                            }
+                        }
+                        if (!ContentItem.data.settings) {
+                            ContentItem.data.settings = {
+                                "defaultView": "list",
+                                "distanceIn": "mi",
+                                "mapView": "show",
+                                "filterPage": "show",
+                                "toggleEmployeeCode": 'off',
+                                "employeeCode": '12345'
+                            }
+                        }
+                        if (!ContentItem.data.design) {
 
-                          }
-                      }
-                      , error = function (err) {
-                              console.error('Error while getting data', err);
-                      };
+                        }
+                    }
+                        , error = function (err) {
+                            console.error('Error while getting data', err);
+                        };
                     DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
 
                 };
@@ -118,13 +121,13 @@
                     // is currently selected
                     if (idx > -1) {
                         ContentItem.selection.splice(idx, 1);
-                        category.noOfItems= category.noOfItems-1;
+                        category.noOfItems = category.noOfItems - 1;
                     }
 
                     // is newly selected
                     else {
                         ContentItem.selection.push(category.id);
-                        category.noOfItems= category.noOfItems+1;
+                        category.noOfItems = category.noOfItems + 1;
                     }
                     Buildfire.datastore.update(category.id, category, TAG_NAMES.COUPON_CATEGORIES, function (err) {
                         ContentItem.isUpdating = false;
@@ -142,11 +145,11 @@
 
                 function isValidItem(item) {
                     if (item) {
-                        if (item.startOn && item.expiresOn){
-                            if((item.expiresOn - item.startOn) > 0)
-                              return item.title && true;
+                        if (item.startOn && item.expiresOn) {
+                            if ((item.expiresOn - item.startOn) > 0)
+                                return item.title && true;
                             else
-                              return false;
+                                return false;
                         }
                         else
                             return item.title;
@@ -155,11 +158,11 @@
                         return false;
                     }
                 }
-                
-                ContentItem.checkItemValid = function(){
+
+                ContentItem.checkItemValid = function () {
                     if ($scope.pluginReady && ContentItem.item) {
-                        if (ContentItem.item.data.startOn && ContentItem.item.data.expiresOn){
-                            if((ContentItem.item.data.expiresOn - ContentItem.item.data.startOn) > 0)
+                        if (ContentItem.item.data.startOn && ContentItem.item.data.expiresOn) {
+                            if ((ContentItem.item.data.expiresOn - ContentItem.item.data.startOn) > 0)
                                 return ContentItem.item.data.title && true;
                             else
                                 return false;
@@ -173,10 +176,10 @@
                 };
 
                 function isValidFilter(item) {
-                    if(item){
+                    if (item) {
                         return item.title;
                     }
-                    else{
+                    else {
                         return false;
                     }
                 }
@@ -187,7 +190,7 @@
                         DataStore.update(_item.id, _item.data, TAG_NAMES.COUPON_ITEMS).then(function (data) {
                             console.log('Item updated successfully-----', data);
                             updateMasterItem(data);
-                           // updateFilterData(data.data.SelectedCategories,data.data.Categories);
+                            // updateFilterData(data.data.SelectedCategories,data.data.Categories);
                             updating = false;
                         }, function (err) {
                             console.error('Error: while updating item--:', err);
@@ -198,20 +201,20 @@
                     else if (!isNewItemInserted) {
                         isNewItemInserted = true;
                         _item.data.dateCreated = +new Date();
-                        _item.data.rank = RankOfLastItem.getRank()+10;
+                        _item.data.rank = RankOfLastItem.getRank() + 10;
                         DataStore.insert(_item.data, TAG_NAMES.COUPON_ITEMS).then(function (data) {
                             updating = false;
                             if (data && data.id) {
-                                ContentItem.item.data.deepLinkUrl = buildfire.deeplink.createLink({id: data.id});
+                                ContentItem.item.data.deepLinkUrl = buildfire.deeplink.createLink({ id: data.id });
                                 ContentItem.item.id = data.id;
-                                ContentItem.data.content.rankOfLastItem = RankOfLastItem.getRank()+10;
+                                ContentItem.data.content.rankOfLastItem = RankOfLastItem.getRank() + 10;
                                 saveData(ContentItem.data, TAG_NAMES.COUPON_INFO);
                                 updateMasterItem(ContentItem.item);
-                                if(ContentItem.item.id)
-                                buildfire.messaging.sendMessageToWidget({
-                                    id:ContentItem.item.id,
-                                    type:'AddNewItem'
-                                });
+                                if (ContentItem.item.id)
+                                    buildfire.messaging.sendMessageToWidget({
+                                        id: ContentItem.item.id,
+                                        type: 'AddNewItem'
+                                    });
                             }
                             else {
                                 isNewItemInserted = false;
@@ -247,73 +250,75 @@
 
                 function init() {
 
-                        var searchOptions={
-                            "filter":{"$json.title": {"$regex": '/*'}},
-                            "sort": {"title": 1},
-                            "skip":"0",
-                            "limit":"50"
-                        };
+                    var searchOptions = {
+                        "filter": { "$json.title": { "$regex": '/*' } },
+                        "sort": { "title": 1 },
+                        "skip": "0",
+                        "limit": "50"
+                    };
 
-                        Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
-                            if (!$routeParams.id) {
-                                if(!ContentItem.item)
-                                    ContentItem.item = angular.copy(DEFAULT_DATA.ITEM);
-                            }
-                            $scope.pluginReady = true;
-                            if (err) {
-                                Buildfire.spinner.hide();
-                                return console.error('-----------err in getting list-------------', err);
-                            }
-                            var tmpArray=[];
-                            var lastIndex=result.length;
-                            result.forEach(function(res,index){
-                                tmpArray.push({'title' : res.data.title,
-                                    id:res.id,
-                                    noOfItems: res.data.noOfItems});
-                            });
-
-                            ContentItem.item.data.Categories = tmpArray;
-                            updateMasterItem(ContentItem.item);
+                    Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
+                        if (!$routeParams.id) {
+                            if (!ContentItem.item)
+                                ContentItem.item = angular.copy(DEFAULT_DATA.ITEM);
+                        }
+                        $scope.pluginReady = true;
+                        if (err) {
                             Buildfire.spinner.hide();
-                            $scope.$digest();
+                            return console.error('-----------err in getting list-------------', err);
+                        }
+                        var tmpArray = [];
+                        var lastIndex = result.length;
+                        result.forEach(function (res, index) {
+                            tmpArray.push({
+                                'title': res.data.title,
+                                id: res.id,
+                                noOfItems: res.data.noOfItems
+                            });
                         });
-                    }
+
+                        ContentItem.item.data.Categories = tmpArray;
+                        updateMasterItem(ContentItem.item);
+                        Buildfire.spinner.hide();
+                        $scope.$digest();
+                    });
+                }
                 //}
 
 
 
-                ContentItem.getItemData = function(itemId){
-                    var success = function(result){
-                            console.log("------------->>>>", result, itemId);
-                            updating=true;
-                          ContentItem.item = result;
-                          if (ContentItem.item.data.location && ContentItem.item.data.location.addressTitle) {
-                              ContentItem.currentAddress = ContentItem.item.data.location.addressTitle;
-                              ContentItem.currentCoordinates = ContentItem.item.data.location.coordinates;
-                          }
-                          if(!ContentItem.item.data.SelectedCategories){
-                              ContentItem.selection =[];
-                          }
-                          else{
-                              ContentItem.selection = ContentItem.item.data.SelectedCategories;
-                          }
-                            setTimeout(function(){
-                                updating=false;
-                            },2000)
+                ContentItem.getItemData = function (itemId) {
+                    var success = function (result) {
+                        console.log("------------->>>>", result, itemId);
+                        updating = true;
+                        ContentItem.item = result;
+                        if (ContentItem.item.data.location && ContentItem.item.data.location.addressTitle) {
+                            ContentItem.currentAddress = ContentItem.item.data.location.addressTitle;
+                            ContentItem.currentCoordinates = ContentItem.item.data.location.coordinates;
+                        }
+                        if (!ContentItem.item.data.SelectedCategories) {
+                            ContentItem.selection = [];
+                        }
+                        else {
+                            ContentItem.selection = ContentItem.item.data.SelectedCategories;
+                        }
+                        setTimeout(function () {
+                            updating = false;
+                        }, 2000)
 
 
-                          init();
+                        init();
 
-                      },
-                      error = function(err){
-                          console.log("There is error in fetching data", err);
-                      };
+                    },
+                        error = function (err) {
+                            console.log("There is error in fetching data", err);
+                        };
                     DataStore.getById(itemId, TAG_NAMES.COUPON_ITEMS).then(success, error);
-                 };
+                };
 
-                 /*
-                  Send message to widget that this page has been opened
-                */
+                /*
+                 Send message to widget that this page has been opened
+               */
 
                 if ($routeParams.id) {
                     ContentItem.getItemData($routeParams.id);
@@ -322,20 +327,20 @@
                         type: 'OpenItem'
                     });
                 }
-                else{
+                else {
                     init();
                 }
 
                 //Methods to add and remove list image
 
                 ContentItem.addListImage = function () {
-                    var options = {showIcons: false, multiSelection: false},
+                    var options = { showIcons: false, multiSelection: false },
                         listImgCB = function (error, result) {
                             if (error) {
                                 console.error('Error:', error);
                             } else {
                                 ContentItem.item.data.listImage = result && result.selectedFiles && result.selectedFiles[0] || null;
-                                if (!$scope.$$phase)$scope.$digest();
+                                if (!$scope.$$phase) $scope.$digest();
                             }
                         };
                     buildfire.imageLib.showDialog(options, listImgCB);
@@ -347,15 +352,15 @@
                 //Methods to add and remove pre redemption image
 
                 ContentItem.addPreRedemptionImage = function () {
-                    var options = {showIcons: false, multiSelection: false},
-                      listImgCB = function (error, result) {
-                          if (error) {
-                              console.error('Error:', error);
-                          } else {
-                              ContentItem.item.data.preRedemptionImage = result && result.selectedFiles && result.selectedFiles[0] || null;
-                              if (!$scope.$$phase)$scope.$digest();
-                          }
-                      };
+                    var options = { showIcons: false, multiSelection: false },
+                        listImgCB = function (error, result) {
+                            if (error) {
+                                console.error('Error:', error);
+                            } else {
+                                ContentItem.item.data.preRedemptionImage = result && result.selectedFiles && result.selectedFiles[0] || null;
+                                if (!$scope.$$phase) $scope.$digest();
+                            }
+                        };
                     buildfire.imageLib.showDialog(options, listImgCB);
                 };
                 ContentItem.removePreRedemptionImage = function () {
@@ -365,15 +370,15 @@
                 //Methods to add and remove post redemption image
 
                 ContentItem.addPostRedemptionImage = function () {
-                    var options = {showIcons: false, multiSelection: false},
-                      listImgCB = function (error, result) {
-                          if (error) {
-                              console.error('Error:', error);
-                          } else {
-                              ContentItem.item.data.postRedemptionImage = result && result.selectedFiles && result.selectedFiles[0] || null;
-                              if (!$scope.$$phase)$scope.$digest();
-                          }
-                      };
+                    var options = { showIcons: false, multiSelection: false },
+                        listImgCB = function (error, result) {
+                            if (error) {
+                                console.error('Error:', error);
+                            } else {
+                                ContentItem.item.data.postRedemptionImage = result && result.selectedFiles && result.selectedFiles[0] || null;
+                                if (!$scope.$$phase) $scope.$digest();
+                            }
+                        };
                     buildfire.imageLib.showDialog(options, listImgCB);
                 };
                 ContentItem.removePostRedemptionImage = function () {
@@ -385,22 +390,22 @@
                  */
                 ContentItem.done = function () {
                     //register coupon in plugin events
-                    if(ContentItem.item && ContentItem.item.id && ContentItem.item.data){
+                    if (ContentItem.item && ContentItem.item.id && ContentItem.item.data) {
                         PluginEvents.register({
                             title: ContentItem.item.data.title,
                             key: ContentItem.item.id,
                         }, !isNewItemInserted);
                     }
                     //#
-                  buildfire.messaging.sendMessageToWidget({});
+                    buildfire.messaging.sendMessageToWidget({});
                     Location.goToHome();
                 };
                 ContentItem.setLocation = function (data) {
                     console.log('setLocation-------------------method called-----------', data);
                     ContentItem.item.data.location = {
                         coordinates: {
-                          lng: data.coordinates.lng,
-                          lat: data.coordinates.lat
+                            lng: data.coordinates.lng,
+                            lat: data.coordinates.lat
                         },
                         addressTitle: data.location
                     };
@@ -442,7 +447,7 @@
                                 coordinates: {
                                     lng: Number(ContentItem.currentCoordinates[0]),
                                     lat: Number(ContentItem.currentCoordinates[1])
-                                },addressTitle:ContentItem.currentAddress
+                                }, addressTitle: ContentItem.currentAddress
                             }
                             ContentItem.currentAddress = ContentItem.item.data.location.addressTitle;
                             ContentItem.currentCoordinates = ContentItem.item.data.location.coordinates;
@@ -499,11 +504,11 @@
                             }).get().join(); // + ', ' + $(".pac-container .pac-item:first").find('span:last').text();
                             console.log('firstResult', firstResult);
                             var geocoder = new google.maps.Geocoder();
-                            geocoder.geocode({"address": firstResult}, function (results, status) {
+                            geocoder.geocode({ "address": firstResult }, function (results, status) {
                                 if (status == google.maps.GeocoderStatus.OK) {
                                     var lat = results[0].geometry.location.lat(),
                                         lng = results[0].geometry.location.lng();
-                                    ContentItem.setLocation({location: firstResult, coordinates: {lng:lng, lat:lat}});
+                                    ContentItem.setLocation({ location: firstResult, coordinates: { lng: lng, lat: lat } });
                                     $("#googleMapAutocomplete").blur();
                                 }
                                 else {
@@ -538,7 +543,7 @@
                             ContentItem.filter = {
                                 title: response.title,
                                 rank: RankOfLastFilter.getRank() + 10,
-                                noOfItems : 0,
+                                noOfItems: 0,
                             };
 
                             ContentItem.filters.unshift(ContentItem.filter);
@@ -585,7 +590,7 @@
                     }
                 };
 
-            ContentItem.updateItemData = function () {
+                ContentItem.updateItemData = function () {
                     Buildfire.datastore.update(ContentItem.filter.id, ContentItem.filter, TAG_NAMES.COUPON_CATEGORIES, function (err) {
                         ContentItem.isUpdating = false;
                         init();

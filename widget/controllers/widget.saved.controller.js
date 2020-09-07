@@ -18,8 +18,8 @@
         //Refresh list of saved items on pulling the tile bar
 
         buildfire.datastore.onRefresh(function () {
-          WidgetSaved.init(function(err){
-            if(!err){
+          WidgetSaved.init(function (err) {
+            if (!err) {
               console.log(">>>>>>Refreshed saved list");
               WidgetSaved.items = [];
               searchOptions.skip = 0;
@@ -32,16 +32,16 @@
         WidgetSaved.init = function (cb) {
           Buildfire.spinner.show();
           var success = function (result) {
-              Buildfire.spinner.hide();
-              if (result && result.data) {
-                WidgetSaved.data = result.data;
-              }
-            cb();
+            Buildfire.spinner.hide();
+            if (result && result.data) {
+              WidgetSaved.data = result.data;
             }
+            cb();
+          }
             , error = function (err) {
               Buildfire.spinner.hide();
               console.error('Error while getting data', err);
-            cb();
+              cb();
             };
           DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
         };
@@ -64,28 +64,28 @@
         WidgetSaved.getItems = function () {
           Buildfire.spinner.show();
           var successAll = function (resultAll) {
+            Buildfire.spinner.hide();
+            WidgetSaved.items = WidgetSaved.items.length ? WidgetSaved.items.concat(resultAll) : resultAll;
+            console.log("***************** ==============", WidgetSaved.items);
+            if (WidgetSaved.items.length < 1) {
+              WidgetSaved.hasAtleastOneSaved = false;
+            }
+            searchOptions.skip = searchOptions.skip + PAGINATION.itemCount;
+            if (resultAll.length == PAGINATION.itemCount) {
+              WidgetSaved.busy = false;
+            }
+            var err = function (error) {
               Buildfire.spinner.hide();
-              WidgetSaved.items = WidgetSaved.items.length ? WidgetSaved.items.concat(resultAll) : resultAll;
-              console.log("***************** ==============", WidgetSaved.items);
-              if(WidgetSaved.items.length < 1){
-                WidgetSaved.hasAtleastOneSaved = false;
-              }
-              searchOptions.skip = searchOptions.skip + PAGINATION.itemCount;
-              if (resultAll.length == PAGINATION.itemCount) {
-                WidgetSaved.busy = false;
-              }
-              var err = function (error) {
-                Buildfire.spinner.hide();
-                console.log("============ There is an error in getting data", error);
-              }, result = function (result) {
-                Buildfire.spinner.hide();
-                console.log("===========search", result);
-                WidgetSaved.savedItems = result;
-                WidgetSaved.getSavedItems();
-                WidgetSaved.getRedeemedCoupons();
-              };
-              UserData.search({}, TAG_NAMES.COUPON_SAVED).then(result, err);
-            },
+              console.log("============ There is an error in getting data", error);
+            }, result = function (result) {
+              Buildfire.spinner.hide();
+              console.log("===========search", result);
+              WidgetSaved.savedItems = result;
+              WidgetSaved.getSavedItems();
+              WidgetSaved.getRedeemedCoupons();
+            };
+            UserData.search({}, TAG_NAMES.COUPON_SAVED).then(result, err);
+          },
             errorAll = function (error) {
               Buildfire.spinner.hide();
               console.log("error", error)
@@ -143,10 +143,10 @@
           }
           $scope.isFetchedAllData = true;
         };
-        $scope.getRedeemedDateText=function(item){
-          if(item && item.redeemedOn) {
+        $scope.getRedeemedDateText = function (item) {
+          if (item && item.redeemedOn) {
             var redeemedDate = new Date(item.redeemedOn);
-            return "Redeemed  "+ redeemedDate.toDateString() + " at " + redeemedDate.getHours() + ":" + redeemedDate.getMinutes();
+            return "Redeemed  " + redeemedDate.toDateString() + " at " + redeemedDate.getHours() + ":" + redeemedDate.getMinutes();
           }
           else
             return "";
@@ -250,7 +250,7 @@
                     "$regex": searchTerm,
                     "$options": "i"
                   }
-                }, {"$json.summary": {"$regex": searchTerm, "$options": "i"}}]
+                }, { "$json.summary": { "$regex": searchTerm, "$options": "i" } }]
               };
             }
           }
@@ -319,7 +319,7 @@
           WidgetSaved.keyword = null;
         };
 
-        WidgetSaved.init(function(){});
+        WidgetSaved.init(function () { });
 
         WidgetSaved.listeners['CHANGED'] = $rootScope.$on('VIEW_CHANGED', function (e, type, view) {
 
@@ -327,8 +327,8 @@
             //bind on refresh again
 
             buildfire.datastore.onRefresh(function () {
-              WidgetSaved.init(function(err){
-                if(!err){
+              WidgetSaved.init(function (err) {
+                if (!err) {
                   console.log(">>>>>>Refreshed saved list");
                   WidgetSaved.items = [];
                   searchOptions.skip = 0;

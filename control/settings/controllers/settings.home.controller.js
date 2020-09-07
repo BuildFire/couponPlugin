@@ -11,6 +11,12 @@
 
         function updateMasterItem(data) {
           SettingsHome.masterInfo = angular.copy(data);
+          if (SettingsHome.masterInfo.data.settings.toggleEmployeeCode == 'on') {
+            SettingsHome.showCode = true;
+          }
+          if (SettingsHome.masterInfo.data.settings.toggleEmployeeCode == 'off') {
+            SettingsHome.showCode = false;
+          }
         }
 
         function isUnchanged(data) {
@@ -34,13 +40,13 @@
             SettingsHome.couponInfo = angular.copy(DEFAULT_INFO.COUPON_INFO);
             updateMasterItem(SettingsHome.couponInfo);
           }
-          if (tmrDelay)clearTimeout(tmrDelay);
+          if (tmrDelay) clearTimeout(tmrDelay);
         }
 
         function error(err) {
           if (err && err.code !== STATUS_CODE.NOT_FOUND) {
             console.error('Error while getting data---', err);
-            if (tmrDelay)clearTimeout(tmrDelay);
+            if (tmrDelay) clearTimeout(tmrDelay);
           }
           else if (err && err.code === STATUS_CODE.NOT_FOUND) {
             saveData(JSON.parse(angular.toJson(SettingsHome.data)), TAG_NAMES.COUPON_INFO);
@@ -57,13 +63,23 @@
           if (newObj.data && newObj.data.settings && newObj.data.settings.mapView == 'hide' && newObj.data.settings.defaultView == 'map') {
             SettingsHome.couponInfo.data.settings.defaultView = 'list';
             SettingsHome.showMessage = true;
-            setTimeout(function(){
+            setTimeout(function () {
               SettingsHome.showMessage = false;
               $scope.$digest();
-            },2000);
+            }, 2000);
           }
-          if(newObj.data) {
+          if (newObj.data && newObj.data.settings && newObj.data.settings.toggleEmployeeCode == 'on') {
+            SettingsHome.showCode = true;
+          }
+
+          if (newObj.data) {
             DataStore.save(newObj.data, tag).then(saveSuccess, SaveError);
+          }
+        }
+
+        function saveEmployeeCode(newObj) {
+          if (newObj.data && newObj.data.settings && newObj.data.settings.employeeCode != '') {
+            console.log('klik', newObj.data.settings.employeeCode)
           }
         }
 

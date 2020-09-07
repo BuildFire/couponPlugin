@@ -1,30 +1,39 @@
 {
-  "author":"BuildFire"
-,"pluginName":"Coupon"
-,"pluginDescription":"Whether you have one location or multiple locations, The Coupon Feature provides your users with searchable and mappable coupons with an ability to filter. This plugin is a must have feature for all retailers, restaurants, cafés, coffee shops, diners, golf courses, gyms, and much more."
-,"pluginKeywords": "Coupons, Deals, Location, Map, Sales, Discounts, Redeem, Gifts, Points, Buy, Shop"
-,"supportEmail":"support@buildfire.com"
-,"supportSite" : "http://learn.appdocumentation.com/plugin-tutorials/coupon-plugin-tutorial"
-,"offlineModeEnabled": true
-,"control":{
-  "content":{
-    "enabled":true
-  }
-, "design":{
-    "enabled":true
-  }
-, "settings":{
-    "enabled":true
-  }
-}
-,"widget":{
-
-},
-  "features" : [{"name":"Geo"}]
-,
-  "languages" : ["en"],
+  "author": "BuildFire",
+  "pluginName": "Coupon BEGO DEV",
+  "pluginDescription": "Whether you have one location or multiple locations, The Coupon Feature provides your users with searchable and mappable coupons with an ability to filter. This plugin is a must have feature for all retailers, restaurants, cafés, coffee shops, diners, golf courses, gyms, and much more.",
+  "pluginKeywords": "Coupons, Deals, Location, Map, Sales, Discounts, Redeem, Gifts, Points, Buy, Shop",
+  "supportEmail": "support@buildfire.com",
+  "supportSite": "http://learn.appdocumentation.com/plugin-tutorials/coupon-plugin-tutorial",
+  "offlineModeEnabled": true,
+  "control": {
+    "content": {
+      "enabled": true
+    },
+    "design": {
+      "enabled": true
+    },
+    "settings": {
+      "enabled": true
+    }
+  },
+  "widget": {},
+  "features": [
+    {
+      "name": "Geo"
+    }
+  ],
+  "languages": [
+    "en"
+  ],
   "media": [
-    { "type": "image-resource", "path": "marketplacegif.gif" },
-    { "type": "image-resource", "path": "image.png" }
+    {
+      "type": "image-resource",
+      "path": "marketplacegif.gif"
+    },
+    {
+      "type": "image-resource",
+      "path": "image.png"
+    }
   ]
 }
