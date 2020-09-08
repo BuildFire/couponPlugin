@@ -122,15 +122,24 @@
   </div>
   <hr class="none">
   <div class="item clearfix row" ng-if="SettingsHome.showCode">
-    <div class="col-md-9 padding-right-zero pull-left">
-      <input type="tel" class="form-control" maxlength="10" minlength="1"
-        placeholder="Enter Employee Code Here (Max 10 chars)"
-        ng-model="SettingsHome.couponInfo.data.settings.employeeCode"
+    <div class="col-md-3 labels pull-left margin-top-five">
+      <span>Employee Code</span>
+    </div>
+    <div class="col-md-6 padding-right-zero pull-left">
+      <input type="number" class="form-control" placeholder="Enter Employee Code Here"
         value="{{SettingsHome.couponInfo.data.settings.employeeCode}}">
+      <small class="form-text text-muted">Numeric Characters only, maximum 10 Characters</small>
     </div>
+
     <div class="col-md-3 pull-left">
-      <a class="btn btn-primary" onclick="window.location.reload()">Save</a>
+      <a class="btn btn-success" ng-click="SettingsHome.code(code)">Save</a>
     </div>
+  </div>
+  <div class="alert alert-success alert-sm text-center" ng-if='SettingsHome.codeSuccess'>
+    Employee Code Saved Successfully!
+  </div>
+  <div class="alert alert-danger alert-sm text-center" ng-if='SettingsHome.codeFail'>
+    Code Setting Failed, please try again!
   </div>
 </body>
 

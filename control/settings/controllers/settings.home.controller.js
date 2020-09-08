@@ -9,6 +9,24 @@
         var tmrDelay = null;
         SettingsHome.couponInfo = {};
 
+        SettingsHome.code = function saveEmployeeCode(code) {
+          if (code && code.toString().length >= 1 && code.toString().length <= 10) {
+            SettingsHome.couponInfo.data.settings.employeeCode = code;
+            SettingsHome.codeSuccess = true;
+            setTimeout(function () {
+              SettingsHome.codeSuccess = false;
+              $scope.$digest();
+            }, 4000);
+          } else {
+            SettingsHome.codeFail = true;
+            setTimeout(function () {
+              SettingsHome.codeFail = false;
+              $scope.$digest();
+            }, 4000);
+          }
+          console.log(SettingsHome.couponInfo.data.settings.employeeCode)
+        }
+
         function updateMasterItem(data) {
           SettingsHome.masterInfo = angular.copy(data);
           if (SettingsHome.masterInfo.data.settings.toggleEmployeeCode == 'on') {
@@ -74,12 +92,6 @@
 
           if (newObj.data) {
             DataStore.save(newObj.data, tag).then(saveSuccess, SaveError);
-          }
-        }
-
-        function saveEmployeeCode(newObj) {
-          if (newObj.data && newObj.data.settings && newObj.data.settings.employeeCode != '') {
-            console.log('klik', newObj.data.settings.employeeCode)
           }
         }
 
