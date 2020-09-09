@@ -26,10 +26,10 @@
     })
     .constant('LAYOUTS', {
       itemListLayout: [
-        {name: "List-Layout-1"},
-        {name: "List-Layout-2"},
-        {name: "List-Layout-3"},
-        {name: "List-Layout-4"}
+        { name: "List-Layout-1" },
+        { name: "List-Layout-2" },
+        { name: "List-Layout-3" },
+        { name: "List-Layout-4" }
       ]
     })
     .constant('DEFAULT_INFO', {
@@ -47,7 +47,9 @@
             defaultView: "list",
             distanceIn: "mi",
             mapView: "show",
-            filterPage: "show"
+            filterPage: "show",
+            toggleEmployeeCode: "off",
+            employeeCode: 12345
           }
         }
       }

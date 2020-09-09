@@ -2,7 +2,7 @@
 
 (function (angular, buildfire) {
     angular.module('couponPluginWidget')
-        .controller('WidgetMasterCtrl', ['$scope', 'TAG_NAMES', 'LAYOUTS', 'DataStore','Buildfire',
+        .controller('WidgetMasterCtrl', ['$scope', 'TAG_NAMES', 'LAYOUTS', 'DataStore', 'Buildfire',
             function ($scope, TAG_NAMES, LAYOUTS, DataStore, Buildfire) {
                 var WidgetMaster = this;
                 WidgetMaster.init = function () {
@@ -21,7 +21,9 @@
                                     defaultView: "list",
                                     distanceIn: "mi",
                                     mapView: "show",
-                                    filterPage: "show"
+                                    filterPage: "show",
+                                    toggleEmployeeCode: "off",
+                                    employeeCode: 12345
                                 }
                             };
                         }
@@ -45,15 +47,15 @@
                             WidgetMaster.data.content = {};
                     }
                         , error = function (err) {
-                        Buildfire.spinner.hide();
-                        WidgetMaster.data = {design: {itemListLayout: LAYOUTS.itemListLayout[0].name}};
-                        console.error('Error while getting data', err);
-                    };
+                            Buildfire.spinner.hide();
+                            WidgetMaster.data = { design: { itemListLayout: LAYOUTS.itemListLayout[0].name } };
+                            console.error('Error while getting data', err);
+                        };
                     DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
                 };
-                
+
                 WidgetMaster.init();
-                
+
                 var onUpdateCallback = function (event) {
                     console.log(event.data, "-=-=-=-=-=-=-=-");
                     setTimeout(function () {
@@ -76,7 +78,7 @@
                         $scope.$digest();
                     }, 0);
                 };
-                
+
                 DataStore.onUpdate().then(null, null, onUpdateCallback);
 
             }])

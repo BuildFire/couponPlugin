@@ -18,14 +18,14 @@
         WidgetHome.locationData = {};
         WidgetHome.busy = false;
         WidgetHome.items = [];
-        WidgetHome.filter={};
+        WidgetHome.filter = {};
         $rootScope.$on('FILTER_ITEMS', function (e, view) {
           WidgetHome.isFilterApplied = view.isFilterApplied;
           if (view && view.isFilterApplied) {
-            WidgetHome.filter=view.filter;
+            WidgetHome.filter = view.filter;
             WidgetHome.getItems(view.filter);
-          }else{
-            WidgetHome.items=[];
+          } else {
+            WidgetHome.items = [];
             WidgetHome.getItems(view.filter);
           }
         });
@@ -52,7 +52,7 @@
               },
             ]
           },
-          sort : {"rank": 1}
+          sort: { "rank": 1 }
         };
         WidgetHome.couponInfo = null;
         $scope.isFetchedAllData = false;
@@ -60,8 +60,8 @@
         //Refresh list of items on pulling the tile bar
 
         buildfire.datastore.onRefresh(function () {
-          WidgetHome.init(function(err){
-            if(!err){
+          WidgetHome.init(function (err) {
+            if (!err) {
               console.log(">>>>>>Refreshed home list");
               WidgetHome.items = [];
               searchOptions.skip = 0;
@@ -77,25 +77,25 @@
         WidgetHome.getSearchOptions = function (value) {
           switch (value) {
             case SORT.ITEM_TITLE_A_Z:
-              searchOptions.sort = {"title": 1};
+              searchOptions.sort = { "title": 1 };
               break;
             case SORT.ITEM_TITLE_Z_A:
-              searchOptions.sort = {"title": -1};
+              searchOptions.sort = { "title": -1 };
               break;
             case SORT.EXPIRATION_DATE_ASC:
-              searchOptions.sort = {"expiresOn": -1};
+              searchOptions.sort = { "expiresOn": -1 };
               break;
             case SORT.EXPIRATION_DATE_DESC:
-              searchOptions.sort = {"expiresOn": 1};
+              searchOptions.sort = { "expiresOn": 1 };
               break;
             case SORT.NEWEST_FIRST:
-              searchOptions.sort = {"dateCreated": -1};
+              searchOptions.sort = { "dateCreated": -1 };
               break;
             case SORT.OLDEST_FIRST:
-              searchOptions.sort = {"dateCreated": 1};
+              searchOptions.sort = { "dateCreated": 1 };
               break;
-            default :
-              searchOptions.sort = {"rank": 1};
+            default:
+              searchOptions.sort = { "rank": 1 };
               break;
           }
           return searchOptions;
@@ -104,59 +104,61 @@
         WidgetHome.init = function (cb) {
           Buildfire.spinner.show();
           var success = function (result) {
-              Buildfire.spinner.hide();
-              if (result && result.data) {
-                WidgetHome.data = result.data;
-              }
-              else {
-                WidgetHome.data = {
-                  design: {
-                    itemListLayout: LAYOUTS.itemListLayout[0].name
-                  },
-                  "settings": {
-                    defaultView: "list",
-                    distanceIn: "mi",
-                    mapView: "show",
-                    filterPage: "show"
-                  }
-                };
-              }
-              if (WidgetHome.data && !WidgetHome.data.design) {
-                WidgetHome.data.design = {
+            Buildfire.spinner.hide();
+            if (result && result.data) {
+              WidgetHome.data = result.data;
+            }
+            else {
+              WidgetHome.data = {
+                design: {
                   itemListLayout: LAYOUTS.itemListLayout[0].name
-                };
-              }
-              if (WidgetHome.data && !WidgetHome.data.settings) {
-                WidgetHome.data.settings = {
+                },
+                "settings": {
                   defaultView: "list",
                   distanceIn: "mi",
                   mapView: "show",
-                  filterPage: "show"
-                };
-              }
-              if (!WidgetHome.data.design.itemListLayout) {
-                WidgetHome.data.design.itemListLayout = LAYOUTS.itemListLayout[0].name;
-              }
-              if (!WidgetHome.data.content)
-                WidgetHome.data.content = {};
-              if (WidgetHome.data.content.sortItemBy) {
-                currentSortOrder = WidgetHome.data.content.sortItemBy;
-              }
-              if (WidgetHome.data.settings.distanceIn)
-                currentDistanceUnit = WidgetHome.data.settings.distanceIn;
-            cb();
+                  filterPage: "show",
+                  toggleEmployeeCode: "off",
+                  employeeCode: 12345
+                }
+              };
             }
+            if (WidgetHome.data && !WidgetHome.data.design) {
+              WidgetHome.data.design = {
+                itemListLayout: LAYOUTS.itemListLayout[0].name
+              };
+            }
+            if (WidgetHome.data && !WidgetHome.data.settings) {
+              WidgetHome.data.settings = {
+                defaultView: "list",
+                distanceIn: "mi",
+                mapView: "show",
+                filterPage: "show"
+              };
+            }
+            if (!WidgetHome.data.design.itemListLayout) {
+              WidgetHome.data.design.itemListLayout = LAYOUTS.itemListLayout[0].name;
+            }
+            if (!WidgetHome.data.content)
+              WidgetHome.data.content = {};
+            if (WidgetHome.data.content.sortItemBy) {
+              currentSortOrder = WidgetHome.data.content.sortItemBy;
+            }
+            if (WidgetHome.data.settings.distanceIn)
+              currentDistanceUnit = WidgetHome.data.settings.distanceIn;
+            cb();
+          }
             , error = function (err) {
               Buildfire.spinner.hide();
-              WidgetHome.data = {design: {itemListLayout: LAYOUTS.itemListLayout[0].name}};
+              WidgetHome.data = { design: { itemListLayout: LAYOUTS.itemListLayout[0].name } };
               console.error('Error while getting data', err);
-            cb(err);
+              cb(err);
             };
           DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
 
           // Fetch user location
 
-          if (typeof(Storage) !== "undefined") {
+          if (typeof (Storage) !== "undefined") {
             var userLocation = localStorage.getItem('user_location');
             if (userLocation) {
               WidgetHome.locationData.currentCoordinates = JSON.parse(userLocation);
@@ -203,7 +205,7 @@
 
         WidgetHome.safeHtml = function (html) {
           if (html) {
-            var $html = $('<div />', {html: html});
+            var $html = $('<div />', { html: html });
             $html.find('iframe').each(function (index, element) {
               var src = element.src;
               console.log('element is: ', src, src.indexOf('http'));
@@ -235,7 +237,7 @@
           );
         }
 
-        WidgetHome.init(function(){});
+        WidgetHome.init(function () { });
 
         var onUpdateCallback = function (event) {
           console.log("==================== WIDGET UPDATE CALLED ===============================")
@@ -293,23 +295,23 @@
         WidgetHome.getItems = function (filter) {
           Buildfire.spinner.show();
           var successAll = function (resultAll) {
-              Buildfire.spinner.hide();
-              if (resultAll) {
-                resultAll.forEach(function (_item) {
-                  _item.data.distance = 0; // default distance value
-                  _item.data.distanceText = (WidgetHome.locationData.currentCoordinates) ? 'Fetching..' : 'NA';
-                });
-              }
-              WidgetHome.items = WidgetHome.items.length ? WidgetHome.items.concat(resultAll) : resultAll;
-              searchOptions.skip = searchOptions.skip + PAGINATION.itemCount;
-              if (resultAll.length == PAGINATION.itemCount) {
-                WidgetHome.busy = false;
-              }
-              console.log("----------------------", WidgetHome.items);
-              WidgetHome.setSavedItems();
-              WidgetHome.setRedeemedItems();
-              $scope.getRedeemedDateText();
-            },
+            Buildfire.spinner.hide();
+            if (resultAll) {
+              resultAll.forEach(function (_item) {
+                _item.data.distance = 0; // default distance value
+                _item.data.distanceText = (WidgetHome.locationData.currentCoordinates) ? 'Fetching..' : 'NA';
+              });
+            }
+            WidgetHome.items = WidgetHome.items.length ? WidgetHome.items.concat(resultAll) : resultAll;
+            searchOptions.skip = searchOptions.skip + PAGINATION.itemCount;
+            if (resultAll.length == PAGINATION.itemCount) {
+              WidgetHome.busy = false;
+            }
+            console.log("----------------------", WidgetHome.items);
+            WidgetHome.setSavedItems();
+            WidgetHome.setRedeemedItems();
+            $scope.getRedeemedDateText();
+          },
             errorAll = function (error) {
               Buildfire.spinner.hide();
               console.log("error", error)
@@ -318,45 +320,45 @@
           if (WidgetHome.data && WidgetHome.data.content && WidgetHome.data.content.sortItemBy) {
             searchOptions = WidgetHome.getSearchOptions(WidgetHome.data.content.sortItemBy);
           }
-          if(filter){
+          if (filter) {
             var itemFilter;
-            if(filter.categories && filter.categories.length){
-              searchOptions= {
+            if (filter.categories && filter.categories.length) {
+              searchOptions = {
                 skip: 0,
                 filter: {
                   "$and": [{
-                    "$json.expiresOn": {$gte: WidgetHome.yesterdayDate}
+                    "$json.expiresOn": { $gte: WidgetHome.yesterdayDate }
                   },
                   {
                     "$json.startOn": { $lte: WidgetHome.todayDate }
                   },
-                  {"$json.location.coordinates": {$exists: true}}]
+                  { "$json.location.coordinates": { $exists: true } }]
                 }
               };
-              itemFilter = {'$json.SelectedCategories': {'$in': filter.categories}};
+              itemFilter = { '$json.SelectedCategories': { '$in': filter.categories } };
               searchOptions.filter.$and.push(itemFilter);
-            }else{
-              searchOptions= {
+            } else {
+              searchOptions = {
                 skip: 0,
                 filter: {
                   "$and": [{
-                    "$json.expiresOn": {$gte: WidgetHome.yesterdayDate}
+                    "$json.expiresOn": { $gte: WidgetHome.yesterdayDate }
                   },
                   {
                     "$json.startOn": { $lte: WidgetHome.todayDate }
                   },
-                  {"$json.location.coordinates": {$exists: true}}]
+                  { "$json.location.coordinates": { $exists: true } }]
                 }
               }
             }
 
-            if(filter.text){
-              var newValue=filter.text;
+            if (filter.text) {
+              var newValue = filter.text;
               if (newValue) {
                 newValue = newValue.trim();
                 if (newValue.indexOf(' ') !== -1) {
                   var searchTerm = newValue.split(' ');
-                  searchOptions.filter.$or=[];
+                  searchOptions.filter.$or = [];
                   searchOptions.filter.$or.push({
                     "$json.title": {
                       "$regex": searchTerm[0],
@@ -379,20 +381,20 @@
                     }
                   });
                 } else {
-                 var searchTerm = newValue;
-                  searchOptions.filter.$or=[];
+                  var searchTerm = newValue;
+                  searchOptions.filter.$or = [];
                   searchOptions.filter.$or.push({
                     "$json.title": {
                       "$regex": searchTerm,
                       "$options": "i"
                     }
-                  }, {"$json.summary": {"$regex": searchTerm, "$options": "i"}})
+                  }, { "$json.summary": { "$regex": searchTerm, "$options": "i" } })
                 }
               }
             }
-            WidgetHome.items=[];
-            DataStore.search(searchOptions , TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
-          }else{
+            WidgetHome.items = [];
+            DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
+          } else {
             DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
           }
 
@@ -489,10 +491,10 @@
           }
           $scope.isFetchedAllData = true;
         };
-        $scope.getRedeemedDateText=function(item){
-          if(item && item.redeemedOn) {
+        $scope.getRedeemedDateText = function (item) {
+          if (item && item.redeemedOn) {
             var redeemedDate = new Date(item.redeemedOn);
-            return "Redeemed  "+ redeemedDate.toDateString() + " at " + redeemedDate.getHours() + ":" + redeemedDate.getMinutes();
+            return "Redeemed  " + redeemedDate.toDateString() + " at " + redeemedDate.getHours() + ":" + redeemedDate.getMinutes();
           }
           else
             return "";
@@ -589,7 +591,7 @@
         });
 
         WidgetHome.openDetails = function (itemId) {
-          buildfire.history.push('Item', { itemId : itemId });
+          buildfire.history.push('Item', { itemId: itemId });
           ViewStack.push({
             template: 'Item',
             params: {
@@ -599,12 +601,12 @@
           });
         };
 
-        buildfire.messaging.onReceivedMessage = function(message){
+        buildfire.messaging.onReceivedMessage = function (message) {
           if (message.importCSV === 'finished') {
             console.log("zavrsio")
             location.reload();
           }
-       }
+        }
 
         function getItemsDistance(_items) {
           console.log("AAAAAAAAAAAAAAAAAAAAAAAAA")
@@ -616,40 +618,40 @@
             GeoDistance.getDistance(WidgetHome.locationData.currentCoordinates, _items, WidgetHome.data.settings.distanceIn).then(function (result) {
               console.log('WidgetHome.locationData.currentCoordinates', WidgetHome.locationData.currentCoordinates);
               console.log('distance result', result);
-              var endIndex=WidgetHome.items.length;
-             // var tempItem=_items;
-              var deleteItemArrayIndex=[];
+              var endIndex = WidgetHome.items.length;
+              // var tempItem=_items;
+              var deleteItemArrayIndex = [];
               for (var _ind = 0; _ind < endIndex; _ind++) {
                 if (_items && _items[_ind]) {
 
                   _items[_ind].data.distanceText = (result.rows[0].elements[_ind].status != 'OK') ? 'NA' : result.rows[0].elements[_ind].distance.text + ' away';
                   _items[_ind].data.distance = (result.rows[0].elements[_ind].status != 'OK') ? -1 : result.rows[0].elements[_ind].distance.value;
 
-                    if (WidgetHome.isFilterApplied && WidgetHome.filter.distanceRange) {
+                  if (WidgetHome.isFilterApplied && WidgetHome.filter.distanceRange) {
 
-                        //  var sortFilterCond = (Number(_items[_ind].data.distanceText.split(' ')[0]) >=  WidgetHome.filter.distanceRange.min && Number(_items[_ind].data.distanceText.split(' ')[0]) <=  WidgetHome.filter.distanceRange.max);
-                        var itemDistNo = Number(_items[_ind].data.distanceText.split(' ')[0].replace(/,/g,''));
-                        var distanceUnit = _items[_ind].data.distanceText.split(' ')[1];
-                        var filterDistMin = WidgetHome.filter.distanceRange.min;
-                        var filterDistMax = WidgetHome.filter.distanceRange.max;
-                        var sortFilterCond;
-                        if ((distanceUnit == 'km' && filterDistMax > 483) || (distanceUnit == 'mi' && filterDistMax > 300))
-                            sortFilterCond = (itemDistNo >= filterDistMin);
-                        else
-                            sortFilterCond = (itemDistNo >= filterDistMin && itemDistNo <= filterDistMax);
-                        if (!sortFilterCond) {
-                            deleteItemArrayIndex.push(_ind);
-                        }
-                        if (_ind == endIndex - 1) {
-                            for (var i = deleteItemArrayIndex.length - 1; i >= 0; i--)
-                                _items.splice(deleteItemArrayIndex[i], 1);
-                        }
+                    //  var sortFilterCond = (Number(_items[_ind].data.distanceText.split(' ')[0]) >=  WidgetHome.filter.distanceRange.min && Number(_items[_ind].data.distanceText.split(' ')[0]) <=  WidgetHome.filter.distanceRange.max);
+                    var itemDistNo = Number(_items[_ind].data.distanceText.split(' ')[0].replace(/,/g, ''));
+                    var distanceUnit = _items[_ind].data.distanceText.split(' ')[1];
+                    var filterDistMin = WidgetHome.filter.distanceRange.min;
+                    var filterDistMax = WidgetHome.filter.distanceRange.max;
+                    var sortFilterCond;
+                    if ((distanceUnit == 'km' && filterDistMax > 483) || (distanceUnit == 'mi' && filterDistMax > 300))
+                      sortFilterCond = (itemDistNo >= filterDistMin);
+                    else
+                      sortFilterCond = (itemDistNo >= filterDistMin && itemDistNo <= filterDistMax);
+                    if (!sortFilterCond) {
+                      deleteItemArrayIndex.push(_ind);
                     }
+                    if (_ind == endIndex - 1) {
+                      for (var i = deleteItemArrayIndex.length - 1; i >= 0; i--)
+                        _items.splice(deleteItemArrayIndex[i], 1);
+                    }
+                  }
                 }
               }
 
 
-              if(WidgetHome.isFilterApplied && WidgetHome.filter.sortOnClosest) {
+              if (WidgetHome.isFilterApplied && WidgetHome.filter.sortOnClosest) {
                 _items = _items.sort(function (a, b) {
                   if (a.data.distance > 0 && b.data.distance > 0) {
                     return a.data.distance - b.data.distance;
@@ -663,7 +665,7 @@
                 });
               }
 
-                //    WidgetHome.isFilterApplied=false;
+              //    WidgetHome.isFilterApplied=false;
             }, function (err) {
               console.error('distance err', err);
             });
@@ -680,10 +682,10 @@
           WidgetHome.getRedeemedCoupons();
         });
 
-        $scope.$on("$destroy", function() {
+        $scope.$on("$destroy", function () {
 
-          for(var i in WidgetHome.listeners) {
-            if(WidgetHome.listeners.hasOwnProperty(i)) {
+          for (var i in WidgetHome.listeners) {
+            if (WidgetHome.listeners.hasOwnProperty(i)) {
               WidgetHome.listeners[i]();
             }
           }
@@ -692,18 +694,18 @@
         });
 
         WidgetHome.listeners['CHANGED'] = $rootScope.$on('VIEW_CHANGED', function (e, type, view) {
-            // bind on refresh again
-            buildfire.datastore.onRefresh(function () {
-              WidgetHome.init(function(err){
-                if(!err){
-                  console.log(">>>>>>Refreshed home list");
-                  WidgetHome.items = [];
-                  searchOptions.skip = 0;
-                  WidgetHome.busy = false;
-                  WidgetHome.loadMore();
-                }
-              });
+          // bind on refresh again
+          buildfire.datastore.onRefresh(function () {
+            WidgetHome.init(function (err) {
+              if (!err) {
+                console.log(">>>>>>Refreshed home list");
+                WidgetHome.items = [];
+                searchOptions.skip = 0;
+                WidgetHome.busy = false;
+                WidgetHome.loadMore();
+              }
             });
+          });
         });
       }])
 })(window.angular, window.buildfire);

@@ -3,8 +3,8 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', '$timeout', 'TAG_NAMES','SORT','SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS','Buildfire','Modals','RankOfLastFilter', 'RankOfLastItem', '$csv','Utils','$rootScope','PluginEvents',
-      function ($scope, $timeout, TAG_NAMES,SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem , $csv , Utils,$rootScope, PluginEvents) {
+    .controller('ContentHomeCtrl', ['$scope', '$timeout', 'TAG_NAMES', 'SORT', 'SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS', 'Buildfire', 'Modals', 'RankOfLastFilter', 'RankOfLastItem', '$csv', 'Utils', '$rootScope', 'PluginEvents',
+      function ($scope, $timeout, TAG_NAMES, SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem, $csv, Utils, $rootScope, PluginEvents) {
 
         var ContentHome = this;
         ContentHome.searchValue = "";
@@ -25,7 +25,9 @@
             "defaultView": "list",
             "distanceIn": "mi",
             "mapView": "show",
-            "filterPage": "show"
+            "filterPage": "show",
+            "toggleEmployeeCode": "off",
+            "employeeCode": "12345"
           }
         };
 
@@ -34,35 +36,35 @@
         Buildfire.appearance.setHeaderVisibility(true);
 
         var header = {
-              title : 'Item Title',
-              summary : "Item Summary",
-              SelectedCategories : "Selected Categories",
-              Categories : "Categories",
-              listImage : 'List Image',
-              carouselImages : 'Carousel images',
-              preRedemptionText : 'Pre-Redemption Body Content',
-              postRedemptionText : 'Post-Redemption Body Content',
-              startOn : 'Start Date',
-              expiresOn : 'Expiration Date',
-              addressTitle : 'Address Title',
-              location : 'Coupon Location',
-              webURL : 'Web URL',
-              sendToEmail : 'Send to Email',
-              smsTextNumber : 'SMS Text Number',
-              phoneNumber : 'Phone Number',
-              facebookURL : 'Facebook URL',
-              twitterURL : 'Twitter URL',
-              instagramURL : 'Instagram URL',
-              googlePlusURL : 'Google+ URL',
-              linkedinURL : 'Linkedin URL'
-            }
-            , headerRow = ["title", "summary" ,"SelectedCategories", "Categories" , "listImage", "carouselImages", "preRedemptionText" , "postRedemptionText" , "startOn" , "expiresOn" , "addressTitle", "location", "webURL", "sendToEmail", "smsTextNumber", "phoneNumber", "facebookURL", "twitterURL", "instagramURL", "googlePlusURL", "linkedinURL"];
+          title: 'Item Title',
+          summary: "Item Summary",
+          SelectedCategories: "Selected Categories",
+          Categories: "Categories",
+          listImage: 'List Image',
+          carouselImages: 'Carousel images',
+          preRedemptionText: 'Pre-Redemption Body Content',
+          postRedemptionText: 'Post-Redemption Body Content',
+          startOn: 'Start Date',
+          expiresOn: 'Expiration Date',
+          addressTitle: 'Address Title',
+          location: 'Coupon Location',
+          webURL: 'Web URL',
+          sendToEmail: 'Send to Email',
+          smsTextNumber: 'SMS Text Number',
+          phoneNumber: 'Phone Number',
+          facebookURL: 'Facebook URL',
+          twitterURL: 'Twitter URL',
+          instagramURL: 'Instagram URL',
+          googlePlusURL: 'Google+ URL',
+          linkedinURL: 'Linkedin URL'
+        }
+          , headerRow = ["title", "summary", "SelectedCategories", "Categories", "listImage", "carouselImages", "preRedemptionText", "postRedemptionText", "startOn", "expiresOn", "addressTitle", "location", "webURL", "sendToEmail", "smsTextNumber", "phoneNumber", "facebookURL", "twitterURL", "instagramURL", "googlePlusURL", "linkedinURL"];
 
 
-      /*  var today = new Date();
-        var month = new Date().getMonth() + 1;
-        ContentHome.currentDate = +new Date("'" + month + "/" + today.getDate() + "/" + today.getFullYear() + "'");
-*/
+        /*  var today = new Date();
+          var month = new Date().getMonth() + 1;
+          ContentHome.currentDate = +new Date("'" + month + "/" + today.getDate() + "/" + today.getFullYear() + "'");
+  */
         ContentHome.currentDate = new Date();
         ContentHome.yesterdayDate = +ContentHome.currentDate.setDate(ContentHome.currentDate.getDate() - 1);
         ContentHome.tommorowDate = +ContentHome.currentDate.setDate(ContentHome.currentDate.getDate() + 1);
@@ -73,8 +75,8 @@
 
         ContentHome.items = [];
 
-        $rootScope.$on('ITEMS_UPDATED',function(e){
-          ContentHome.filters=[];
+        $rootScope.$on('ITEMS_UPDATED', function (e) {
+          ContentHome.filters = [];
           ContentHome.items = [];
           ContentHome.loadMore('js');
           ContentHome.loadMoreItems('js');
@@ -98,13 +100,13 @@
         ];
 
         ContentHome.searchOptions = {
-          filter: {"$json.title": {"$regex": '/*'}},
+          filter: { "$json.title": { "$regex": '/*' } },
           skip: SORT_FILTER._skip,
           limit: SORT_FILTER._limit + 1 // the plus one is to check if there are any more
         };
 
         ContentHome.searchOptionsForItems = {
-          filter: {"$json.title": {"$regex": '/*'}},
+          filter: { "$json.title": { "$regex": '/*' } },
           skip: SORT._skip,
           limit: SORT._limit + 1 // the plus one is to check if there are any more
         };
@@ -267,18 +269,18 @@
         };
         //ContentHome.itemSortableOptions.disabled = !(ContentHome.data.content.sortFilterBy === SORT_FILTER.MANUALLY);
 
-       //Polyfill for isInterger support for IE
-        Number.isInteger = Number.isInteger || function(value) {
+        //Polyfill for isInterger support for IE
+        Number.isInteger = Number.isInteger || function (value) {
           return typeof value === "number" &&
-              isFinite(value) &&
-              Math.floor(value) === value;
+            isFinite(value) &&
+            Math.floor(value) === value;
         };
 
 
         ContentHome.addEditFilter = function (filter, editFlag, index) {
           var tempTitle = '';
-          if(Number.isInteger(index))
-          var filterIndex=index;
+          if (Number.isInteger(index))
+            var filterIndex = index;
           if (filter)
             tempTitle = filter.data.title;
           Modals.addFilterModal({
@@ -298,22 +300,22 @@
                 })
 
               } else {
-                var filterResponse=response;
-                var notFound=true;
-                if(ContentHome.filters && ContentHome.filters.length){
-                  for(var index=0; index<ContentHome.filters.length ;index++){
-                    if(ContentHome.filters[index].data.title==response.title){
-                      notFound=false;
+                var filterResponse = response;
+                var notFound = true;
+                if (ContentHome.filters && ContentHome.filters.length) {
+                  for (var index = 0; index < ContentHome.filters.length; index++) {
+                    if (ContentHome.filters[index].data.title == response.title) {
+                      notFound = false;
                       confirmFilterAdd(filterResponse);
                       break;
                     }
-                    if(ContentHome.filters.length-1==index){
-                      if(notFound)
-                      insertFilter(filterResponse);
+                    if (ContentHome.filters.length - 1 == index) {
+                      if (notFound)
+                        insertFilter(filterResponse);
                       break;
                     }
                   }
-                }else{
+                } else {
                   insertFilter(filterResponse);
                 }
               }
@@ -325,22 +327,21 @@
           });
         };
 
-        function confirmFilterAdd(filterResponse){
-          Modals.removePopupFilterModal({}).then(function(response){
+        function confirmFilterAdd(filterResponse) {
+          Modals.removePopupFilterModal({}).then(function (response) {
             console.log(response);
-            if(response)
-            {
+            if (response) {
               insertFilter(filterResponse);
             }
           });
         }
 
-        function insertFilter(response){
+        function insertFilter(response) {
           ContentHome.filter = {
             data: {
               title: response.title,
               rank: RankOfLastFilter.getRank() + 10,
-              noOfItems : 0
+              noOfItems: 0
             }
           };
           ContentHome.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 10;
@@ -360,7 +361,7 @@
         }
 
         ContentHome.deleteFilter = function (index) {
-          Modals.removePopupModal({'item': 'filter'}).then(function (result) {
+          Modals.removePopupModal({ 'item': 'filter' }).then(function (result) {
             if (result) {
 
               Buildfire.datastore.delete(ContentHome.filters[index].id, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
@@ -369,12 +370,12 @@
                 //ContentHome.items.splice(_index, 1);
                 ContentHome.filters.splice(index, 1);
                 var tmpArray = [];
-                ContentHome.filters.forEach(function(res,index){
+                ContentHome.filters.forEach(function (res, index) {
                   tmpArray.push(res.id);
                 });
-                ContentHome.items.forEach(function(resItem,index){
+                ContentHome.items.forEach(function (resItem, index) {
                   // tmpArray.push(res.data.SelectedCategories);
-                  var  intersectedCategories =  tmpArray.filter(function(value) {
+                  var intersectedCategories = tmpArray.filter(function (value) {
                     return resItem.data.SelectedCategories.indexOf(value) > -1;
                   });
                   ContentHome.items[index].SelectedCommonCategories = intersectedCategories;
@@ -386,7 +387,7 @@
         };
         ContentHome.showFilter = function (index, itemId, selectedItems, categories, itemData) {
 
-            //categories=ContentHome.filters;
+          //categories=ContentHome.filters;
 
           Modals.showFilterPopupModal({
             index: index,
@@ -402,8 +403,8 @@
 
             ContentHome.loadMoreItems('items');//, {"$json.title": {"$regex": '/*'}}
             ContentHome.loadMore('filter');
-          //  ContentHome.loadMore()
-              if (!$scope.$apply)
+            //  ContentHome.loadMore()
+            if (!$scope.$apply)
               $scope.$digest();
 
 
@@ -413,15 +414,15 @@
         };
 
         ContentHome.deleteItem = function (index) {
-          Modals.removeItemPopupModal({'item': 'item'}).then(function (result) {
+          Modals.removeItemPopupModal({ 'item': 'item' }).then(function (result) {
             if (result) {
-              if(ContentHome.items[index].data && ContentHome.items[index].data.SelectedCategories && ContentHome.items[index].data.SelectedCategories.length){
-                ContentHome.items[index].data.SelectedCategories.forEach(function(category){
-                  for(var index=0;index<ContentHome.filters.length;index++){
-                    if(ContentHome.filters[index].id==category){
-                      ContentHome.filter=ContentHome.filters[index].data;
-                      ContentHome.filter.noOfItems-=1;
-                      ContentHome.isItemValid=true;
+              if (ContentHome.items[index].data && ContentHome.items[index].data.SelectedCategories && ContentHome.items[index].data.SelectedCategories.length) {
+                ContentHome.items[index].data.SelectedCategories.forEach(function (category) {
+                  for (var index = 0; index < ContentHome.filters.length; index++) {
+                    if (ContentHome.filters[index].id == category) {
+                      ContentHome.filter = ContentHome.filters[index].data;
+                      ContentHome.filter.noOfItems -= 1;
+                      ContentHome.isItemValid = true;
                     }
                   }
 
@@ -469,52 +470,52 @@
 
 
         ContentHome.chooseFilter = function (value, title) {
-          ContentHome.data.content.selectedFilter = {"title": title, "id": value};
+          ContentHome.data.content.selectedFilter = { "title": title, "id": value };
           ContentHome.data.content.selectedStatus = "All Statuses";
-          ContentHome.searchValue="";
+          ContentHome.searchValue = "";
           ContentHome.items = [];
           ContentHome.searchOptionsForItems.skip = 0;
-          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!=='All Categories') {
+          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id !== 'All Categories') {
             ContentHome.searchOptionsForItems.filter = {
               "$and": [{
-                "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
-              }, {"$json.title": {"$regex": '/*'}}]
+                "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
+              }, { "$json.title": { "$regex": '/*' } }]
             };
-          }else{
-            ContentHome.searchOptionsForItems.filter = {"$json.title": {"$regex": '/*'}};
+          } else {
+            ContentHome.searchOptionsForItems.filter = { "$json.title": { "$regex": '/*' } };
           };
           ContentHome.loadMoreItems('items');//, {"$json.title": {"$regex": '/*'}}
         };
 
         ContentHome.chooseStatus = function (status) {
-          ContentHome.searchValue ="";
+          ContentHome.searchValue = "";
           ContentHome.data.content.selectedStatus = status;
-         // ContentHome.couponActiveDate = ContentHome.currentDate;
-          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!=='All Categories') {
+          // ContentHome.couponActiveDate = ContentHome.currentDate;
+          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id !== 'All Categories') {
             if (ContentHome.data.content.selectedStatus == 'Active') {
               ContentHome.searchOptionsForItems.filter =
               {
                 "$and": [{
                   "$and": [{
-                    "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
-                  }, {"$json.title": {"$regex": '/*'}}]
-                }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.tommorowDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
+                    "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
+                  }, { "$json.title": { "$regex": '/*' } }]
+                }, { "$or": [{ "$json.expiresOn": { "$gte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$eq": "" } }] }]
               }
             } else if (ContentHome.data.content.selectedStatus == 'Expired') {
               ContentHome.searchOptionsForItems.filter =
               {
                 "$and": [{
                   "$and": [{
-                    "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
-                  }, {"$json.title": {"$regex": '/*'}}]
-                }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.tommorowDate}}]}]
+                    "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
+                  }, { "$json.title": { "$regex": '/*' } }]
+                }, { "$or": [{ "$json.expiresOn": { "$lte": ContentHome.tommorowDate } }] }]
               }
-            }else if (ContentHome.data.content.selectedStatus == 'All Statuses') {
+            } else if (ContentHome.data.content.selectedStatus == 'All Statuses') {
               ContentHome.searchOptionsForItems.filter =
               {
                 "$and": [{
-                  "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
-                }, {"$json.title": {"$regex": '/*'}}]
+                  "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
+                }, { "$json.title": { "$regex": '/*' } }]
               }
             }
           } else {
@@ -522,20 +523,20 @@
               ContentHome.searchOptionsForItems.filter =
               {
                 "$and": [{
-                  "$and": [{"$json.title": {"$regex": '/*'}}]
-                }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.tommorowDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
+                  "$and": [{ "$json.title": { "$regex": '/*' } }]
+                }, { "$or": [{ "$json.expiresOn": { "$gte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$eq": "" } }] }]
               }
             } else if (ContentHome.data.content.selectedStatus == 'Expired') {
               ContentHome.searchOptionsForItems.filter =
               {
                 "$and": [
-                   {"$json.title": {"$regex": '/*'}},
-                  {"$json.expiresOn": {"$lte": ContentHome.tommorowDate}}
+                  { "$json.title": { "$regex": '/*' } },
+                  { "$json.expiresOn": { "$lte": ContentHome.tommorowDate } }
                 ]
               }
             }
             else if (ContentHome.data.content.selectedStatus == 'All Statuses') {
-              ContentHome.searchOptionsForItems.filter = {"$json.title": {"$regex": '/*'}};
+              ContentHome.searchOptionsForItems.filter = { "$json.title": { "$regex": '/*' } };
             }
           }
 
@@ -549,16 +550,16 @@
 
         ContentHome.searchItem = function () {
           ContentHome.couponActiveDate = ContentHome.currentDate;
-          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!='All Categories' && ContentHome.data.content.selectedStatus && ContentHome.data.content.selectedStatus !== 'All Statuses') {
+          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id != 'All Categories' && ContentHome.data.content.selectedStatus && ContentHome.data.content.selectedStatus !== 'All Statuses') {
 
             if (ContentHome.data.content.selectedStatus == 'Active') {
               ContentHome.searchOptionsForItems.filter =
               {
                 "$and": [{
                   "$and": [{
-                    "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
-                  }, { "$or":  [{"$json.title": {"$regex": ContentHome.searchValue,"$options": "i"}},{"$json.summary": {"$regex": ContentHome.searchValue,"$options": "i"}}]}]
-                }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.tommorowDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
+                    "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
+                  }, { "$or": [{ "$json.title": { "$regex": ContentHome.searchValue, "$options": "i" } }, { "$json.summary": { "$regex": ContentHome.searchValue, "$options": "i" } }] }]
+                }, { "$or": [{ "$json.expiresOn": { "$gte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$eq": "" } }] }]
               }
             } else if (ContentHome.data.content.selectedStatus == 'Expired') {
 
@@ -566,46 +567,48 @@
               {
                 "$and": [{
                   "$and": [{
-                    "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
-                  }, { "$or":  [{"$json.title": {"$regex": ContentHome.searchValue,"$options": "i"}},{"$json.summary": {"$regex": ContentHome.searchValue,"$options": "i"}}]}]
-                }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.tommorowDate}}]}]
+                    "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
+                  }, { "$or": [{ "$json.title": { "$regex": ContentHome.searchValue, "$options": "i" } }, { "$json.summary": { "$regex": ContentHome.searchValue, "$options": "i" } }] }]
+                }, { "$or": [{ "$json.expiresOn": { "$lte": ContentHome.tommorowDate } }] }]
               }
             }
-          } else if(ContentHome.data.content.selectedStatus && ContentHome.data.content.selectedStatus!=="All Statuses"){
+          } else if (ContentHome.data.content.selectedStatus && ContentHome.data.content.selectedStatus !== "All Statuses") {
             if (ContentHome.data.content.selectedStatus == 'Active') {
               ContentHome.searchOptionsForItems.filter =
               {
                 "$and": [{
-                  "$and": [{ "$or":  [{"$json.title": {"$regex": ContentHome.searchValue,"$options": "i"}},{"$json.summary": {"$regex": ContentHome.searchValue,"$options": "i"}}]}]
-                }, {"$or": [{"$json.expiresOn": {"$gte": ContentHome.tommorowDate}}, {"$json.expiresOn": {"$eq": ""}}]}]
+                  "$and": [{ "$or": [{ "$json.title": { "$regex": ContentHome.searchValue, "$options": "i" } }, { "$json.summary": { "$regex": ContentHome.searchValue, "$options": "i" } }] }]
+                }, { "$or": [{ "$json.expiresOn": { "$gte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$eq": "" } }] }]
               }
             } else if (ContentHome.data.content.selectedStatus == 'Expired') {
               ContentHome.searchOptionsForItems.filter =
               {
                 "$and": [{
-                  "$and": [{ "$or":  [{"$json.title": {"$regex": ContentHome.searchValue,"$options": "i"}},{"$json.summary": {"$regex": ContentHome.searchValue,"$options": "i"}}]}]
-                }, {"$or": [{"$json.expiresOn": {"$lte": ContentHome.tommorowDate}}]}]
+                  "$and": [{ "$or": [{ "$json.title": { "$regex": ContentHome.searchValue, "$options": "i" } }, { "$json.summary": { "$regex": ContentHome.searchValue, "$options": "i" } }] }]
+                }, { "$or": [{ "$json.expiresOn": { "$lte": ContentHome.tommorowDate } }] }]
               }
             }
-          }else if(ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id!=='All Categories'){
+          } else if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id !== 'All Categories') {
             ContentHome.searchOptionsForItems.filter = {
               "$and": [{
-                "$json.SelectedCategories": {$eq: ContentHome.data.content.selectedFilter.id}
-              }, { "$or":  [{"$json.title": {"$regex": ContentHome.searchValue,"$options": "i"}},{"$json.summary": {"$regex": ContentHome.searchValue,"$options": "i"}}]}]
+                "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
+              }, { "$or": [{ "$json.title": { "$regex": ContentHome.searchValue, "$options": "i" } }, { "$json.summary": { "$regex": ContentHome.searchValue, "$options": "i" } }] }]
             }
-          }else{
+          } else {
 
-            ContentHome.searchOptionsForItems.filter = { "$or": [{
-              "$json.title": {
-                "$regex": ContentHome.searchValue,
-                "$options": "i"
-              }
-            },{
-              "$json.summary": {
-                "$regex": ContentHome.searchValue,
-                "$options": "i"
-              }
-            }]}
+            ContentHome.searchOptionsForItems.filter = {
+              "$or": [{
+                "$json.title": {
+                  "$regex": ContentHome.searchValue,
+                  "$options": "i"
+                }
+              }, {
+                "$json.summary": {
+                  "$regex": ContentHome.searchValue,
+                  "$options": "i"
+                }
+              }]
+            }
           }
           ContentHome.items = [];
           ContentHome.searchOptionsForItems.skip = 0;
@@ -623,14 +626,14 @@
           ContentHome.filterSortableOptions.disabled = true;
           switch (value) {
             case SORT_FILTER.CATEGORY_NAME_A_Z:
-              ContentHome.searchOptions.sort = {"title": 1};
+              ContentHome.searchOptions.sort = { "title": 1 };
               break;
             case SORT_FILTER.CATEGORY_NAME_Z_A:
-              ContentHome.searchOptions.sort = {"title": -1};
+              ContentHome.searchOptions.sort = { "title": -1 };
               break;
-            default :
+            default:
               ContentHome.filterSortableOptions.disabled = false;
-              ContentHome.searchOptions.sort = {"rank": 1};
+              ContentHome.searchOptions.sort = { "rank": 1 };
               break;
           }
           return ContentHome.searchOptions;
@@ -640,33 +643,33 @@
           ContentHome.itemSortableOptions.disabled = true;
           switch (value) {
             case SORT.ITEM_TITLE_A_Z:
-              ContentHome.searchOptionsForItems.sort = {"title": 1};
+              ContentHome.searchOptionsForItems.sort = { "title": 1 };
               break;
             case SORT.ITEM_TITLE_Z_A:
-              ContentHome.searchOptionsForItems.sort = {"title": -1};
+              ContentHome.searchOptionsForItems.sort = { "title": -1 };
               break;
             case SORT.NEWEST_FIRST:
-              ContentHome.searchOptionsForItems.sort = {"dateCreated": -1};
+              ContentHome.searchOptionsForItems.sort = { "dateCreated": -1 };
               break;
             case SORT.OLDEST_FIRST:
-              ContentHome.searchOptionsForItems.sort = {"dateCreated": 1};
+              ContentHome.searchOptionsForItems.sort = { "dateCreated": 1 };
               break;
             case SORT.EXPIRATION_DATE_ASC:
-              ContentHome.searchOptionsForItems.sort = {"expiresOn": 1};
+              ContentHome.searchOptionsForItems.sort = { "expiresOn": 1 };
               break;
             case SORT.EXPIRATION_DATE_DESC:
-              ContentHome.searchOptionsForItems.sort = {"expiresOn": -1};
+              ContentHome.searchOptionsForItems.sort = { "expiresOn": -1 };
               break;
-            default :
+            default:
               ContentHome.itemSortableOptions.disabled = false;
-              ContentHome.searchOptionsForItems.sort = {"rank": 1};
+              ContentHome.searchOptionsForItems.sort = { "rank": 1 };
               break;
           }
           return ContentHome.searchOptionsForItems;
         };
 
         ContentHome.loadMore = function (str) {
-          console.log("------------------>>>>>>>>>>>>>>>>>>>>in",str)
+          console.log("------------------>>>>>>>>>>>>>>>>>>>>in", str)
 
           Buildfire.spinner.show();
           if (ContentHome.busyFilter) {
@@ -676,48 +679,50 @@
           ContentHome.busyFilter = true;
           if (ContentHome.data && ContentHome.data.content.sortFilterBy) {
             ContentHome.searchOptions = getSearchOptions(ContentHome.data.content.sortFilterBy);
-          }else{
+          } else {
             return;
           }
-          if(str!=='items')
-          Buildfire.datastore.search(ContentHome.searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
-            if (err) {
+          if (str !== 'items')
+            Buildfire.datastore.search(ContentHome.searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
+              if (err) {
+                Buildfire.spinner.hide();
+                return console.error('-----------err in getting list-------------', err);
+              }
+              if (result.length <= SORT_FILTER._limit) {// to indicate there are more
+                ContentHome.noMoreFilter = true;
+                Buildfire.spinner.hide();
+              } else {
+                result.pop();
+                ContentHome.searchOptions.skip = ContentHome.searchOptions.skip + SORT_FILTER._limit;
+                ContentHome.noMoreFilter = false;
+              }
+              var tmpArray = [];
+              var lastIndex = result.length;
+              result.forEach(function (res, index) {
+                tmpArray.push({
+                  'title': res.data.title,
+                  rank: index + 1,
+                  id: res.data.id
+                });
+              });
+
+              ContentHome.filters = ContentHome.filters ? ContentHome.filters.concat(result) : result;
+              ContentHome.busyFilter = false;
               Buildfire.spinner.hide();
-              return console.error('-----------err in getting list-------------', err);
-            }
-            if (result.length <= SORT_FILTER._limit) {// to indicate there are more
-              ContentHome.noMoreFilter = true;
-              Buildfire.spinner.hide();
-            } else {
-              result.pop();
-              ContentHome.searchOptions.skip = ContentHome.searchOptions.skip + SORT_FILTER._limit;
-              ContentHome.noMoreFilter = false;
-            }
-            var tmpArray=[];
-            var lastIndex=result.length;
-            result.forEach(function(res,index){
-              tmpArray.push({'title' : res.data.title,
-              rank:index +1,
-                id:res.data.id});
+              $scope.$digest();
             });
-
-            ContentHome.filters = ContentHome.filters ? ContentHome.filters.concat(result) : result;
-            ContentHome.busyFilter = false;
-            Buildfire.spinner.hide();
-            $scope.$digest();
-          });
         };
 
 
-        var searchOptionsFilterForItemList={
-          "filter":{"$json.title": {"$regex": '/*'}},
-          "sort": {"title": 1},
-          "skip":"0",
-          "limit":"50"
+        var searchOptionsFilterForItemList = {
+          "filter": { "$json.title": { "$regex": '/*' } },
+          "sort": { "title": 1 },
+          "skip": "0",
+          "limit": "50"
         };
 
-        ContentHome.loadMoreItems = function(str){
-          console.log("------------------>>>>>>>>>>>>>>>>>>>>",str)
+        ContentHome.loadMoreItems = function (str) {
+          console.log("------------------>>>>>>>>>>>>>>>>>>>>", str)
 
           Buildfire.spinner.show();
           if (ContentHome.busy) {
@@ -725,11 +730,11 @@
           }
           if (ContentHome.data && ContentHome.data.content.sortItemBy) {
             ContentHome.searchOptionsForItems = getItemSearchOptions(ContentHome.data.content.sortItemBy);
-          }else{
+          } else {
             return;
           }
           ContentHome.busy = true;
-          if(str!=='filter')
+          if (str !== 'filter')
             Buildfire.datastore.search(ContentHome.searchOptionsForItems, TAG_NAMES.COUPON_ITEMS, function (err, result) {
               if (err) {
                 Buildfire.spinner.hide();
@@ -743,17 +748,19 @@
                 ContentHome.searchOptionsForItems.skip = ContentHome.searchOptionsForItems.skip + SORT._limit;
                 ContentHome.noMore = false;
               }
-              var tmpArray=[];
-              var lastIndex=result.length;
-              result.forEach(function(res,index){
+              var tmpArray = [];
+              var lastIndex = result.length;
+              result.forEach(function (res, index) {
                 console.log("RES CATEGORIES", res.data.Categories)
-                tmpArray.push({'title' : res.data.title,
-                  rank:index +1,
-                  summary : res.data.summary,
-                  categories : res.data.Categories ? res.data.Categories.length : 0,
-                  expiresOn : res.data.expiresOn,
-                  listImage  : res.data.listImage,
-                  id:res.id});
+                tmpArray.push({
+                  'title': res.data.title,
+                  rank: index + 1,
+                  summary: res.data.summary,
+                  categories: res.data.Categories ? res.data.Categories.length : 0,
+                  expiresOn: res.data.expiresOn,
+                  listImage: res.data.listImage,
+                  id: res.id
+                });
               });
 
               ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
@@ -763,54 +770,54 @@
                   Buildfire.spinner.hide();
                   return console.error('-----------err in getting list-------------', err);
                 }
-                var tmpArray=[];
-                var lastIndex=result.length;
-                resultFilter.forEach(function(res,index){
+                var tmpArray = [];
+                var lastIndex = result.length;
+                resultFilter.forEach(function (res, index) {
                   tmpArray.push(res.id);
                 });
-                ContentHome.items.forEach(function(resItem,index){
+                ContentHome.items.forEach(function (resItem, index) {
                   // tmpArray.push(res.data.SelectedCategories);
-                  var  intersectedCategories =  tmpArray.filter(function(value) {
-                    if(resItem.data.SelectedCategories && resItem.data.SelectedCategories.length)
-                    return resItem.data.SelectedCategories.indexOf(value) > -1;
+                  var intersectedCategories = tmpArray.filter(function (value) {
+                    if (resItem.data.SelectedCategories && resItem.data.SelectedCategories.length)
+                      return resItem.data.SelectedCategories.indexOf(value) > -1;
                   });
                   ContentHome.items[index].SelectedCommonCategories = intersectedCategories;
                 });
                 $scope.$digest();
               });
               ContentHome.busy = false;
-              console.log("-------------------llll",ContentHome.items )
-            Buildfire.spinner.hide();
-            $scope.$digest();
-          });
+              console.log("-------------------llll", ContentHome.items)
+              Buildfire.spinner.hide();
+              $scope.$digest();
+            });
         };
 
 
 
-       /* *//**
-         * ContentHome.getMore is used to load the items
-         *//*
-        ContentHome.getMore = function () {
-          if (ContentHome.isBusy && !ContentHome.noMore) {
-            return;
-          }
-         // updateSearchOptions();
-          ContentHome.isBusy = true;
-          DataStore.search(searchOptions,TAG_NAMES.COUPON_ITEMS).then(function success(result) {
-            if (result.length <= _limit) {// to indicate there are more
-              ContentHome.noMore = true;
-            }
-            else {
-              result.pop();
-              searchOptions.skip = searchOptions.skip + _limit;
-              ContentHome.noMore = false;
-            }
-            ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
-            ContentHome.isBusy = false;
-          }, function fail() {
-            ContentHome.isBusy = false;
-          });
-        };*/
+        /* *//**
+          * ContentHome.getMore is used to load the items
+          *//*
+       ContentHome.getMore = function () {
+         if (ContentHome.isBusy && !ContentHome.noMore) {
+           return;
+         }
+        // updateSearchOptions();
+         ContentHome.isBusy = true;
+         DataStore.search(searchOptions,TAG_NAMES.COUPON_ITEMS).then(function success(result) {
+           if (result.length <= _limit) {// to indicate there are more
+             ContentHome.noMore = true;
+           }
+           else {
+             result.pop();
+             searchOptions.skip = searchOptions.skip + _limit;
+             ContentHome.noMore = false;
+           }
+           ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
+           ContentHome.isBusy = false;
+         }, function fail() {
+           ContentHome.isBusy = false;
+         });
+       };*/
 
 
         function validateCsv(items) {
@@ -820,9 +827,9 @@
           return items.every(isValidItem);
         }
 
-        function asyncProcess(index, cb){
-            cb(index);
-            console.log('completed');
+        function asyncProcess(index, cb) {
+          cb(index);
+          console.log('completed');
         }
 
         ContentHome.openImportCSVDialog = function () {
@@ -831,15 +838,15 @@
             rows = rows.filter(function (row) {
               return row.title;
             });
-            setTimeout(function() {
-              buildfire.messaging.sendMessageToWidget({importCSV: 'finished'})
-            }, rows.length*300);
+            setTimeout(function () {
+              buildfire.messaging.sendMessageToWidget({ importCSV: 'finished' })
+            }, rows.length * 300);
             ContentHome.loading = true;
             if (rows && rows.length > 1) {
-              var categoryList=rows[1].Categories.split(',');
-              categoryList.forEach(function(category){
-                var obj={};
-                obj.title=category;
+              var categoryList = rows[1].Categories.split(',');
+              categoryList.forEach(function (category) {
+                var obj = {};
+                obj.title = category;
                 insertFilter(obj);
               });
 
@@ -856,7 +863,7 @@
               if (!ContentHome.loading)
                 return;
 
-              var rank =  ContentHome.data.content.rankOfLastItem || 0;
+              var rank = ContentHome.data.content.rankOfLastItem || 0;
               RankOfLastItem.setRank(rank);
 
               for (var index = 0; index < rows.length; index++) {
@@ -868,12 +875,12 @@
                 rows[index].startOn = getUnixFromDate(rows[index].startOn);
                 rows[index].expiresOn = getUnixFromDate(rows[index].expiresOn);
 
-                if(rows[index].carouselImages){
-                 var carousalImageUrlArray=rows[index].carouselImages.split(',');
-                  rows[index].carouselImages=[];
+                if (rows[index].carouselImages) {
+                  var carousalImageUrlArray = rows[index].carouselImages.split(',');
+                  rows[index].carouselImages = [];
 
-                  carousalImageUrlArray.forEach(function(url){
-                    var obj={
+                  carousalImageUrlArray.forEach(function (url) {
+                    var obj = {
                       action: "noAction",
                       iconUrl: url,
                       title: "image"
@@ -882,61 +889,33 @@
                   })
                 }
 
-                  asyncProcess(index, function(index) {
+                asyncProcess(index, function (index) {
 
-                    if(rows[index].SelectedCategories.length && rows[index].location){
+                  if (rows[index].SelectedCategories.length && rows[index].location) {
 
-                      var categoryList = rows[index].SelectedCategories.split(',');
+                    var categoryList = rows[index].SelectedCategories.split(',');
 
-                      var searchOptions = {
-                        filter: {"$json.title": {"$regex": '/*'}}
-                      };
-                      Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, data) {
-                        console.log("Saved", data.id);
-                        var tmpCategoryIds=[];
-                        data.forEach(function(categoryObj){
-                          categoryList.forEach(function(categoryTitle){
-                            if(categoryTitle==categoryObj.data.title){
-                              tmpCategoryIds.push(categoryObj.id);
-                            }
-                          })
-                        });
-                        rows[index].SelectedCategories=tmpCategoryIds;
-
-
-                        var geocoder = new google.maps.Geocoder();
-                        geocoder.geocode({"address": rows[index].location}, function (results, status) {
-                          if (status == google.maps.GeocoderStatus.OK) {
-                            var lat = results[0].geometry.location.lat(),
-                                lng = results[0].geometry.location.lng();
-                            // ContentHome.setLocation({location: rows[index].location, coordinates: {lng:lng, lat:lat}});
-                            rows[index].location = {
-                              coordinates: {
-                                lng: lng,
-                                lat: lat
-                              },
-                              addressTitle: rows[index].location
-                            };
-                            bulkInsertItems([rows[index]],rows[index].rank);
+                    var searchOptions = {
+                      filter: { "$json.title": { "$regex": '/*' } }
+                    };
+                    Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, data) {
+                      console.log("Saved", data.id);
+                      var tmpCategoryIds = [];
+                      data.forEach(function (categoryObj) {
+                        categoryList.forEach(function (categoryTitle) {
+                          if (categoryTitle == categoryObj.data.title) {
+                            tmpCategoryIds.push(categoryObj.id);
                           }
-                          else {
-                            console.error('' +
-                            'Error else parts of google');
-                            error();
-                          }
-                        });
-                        $scope.$digest();
+                        })
                       });
-
-
-                    }else if ((!rows[index].SelectedCategories.length) && rows[index].location){
+                      rows[index].SelectedCategories = tmpCategoryIds;
 
 
                       var geocoder = new google.maps.Geocoder();
-                      geocoder.geocode({"address": rows[index].location}, function (results, status) {
+                      geocoder.geocode({ "address": rows[index].location }, function (results, status) {
                         if (status == google.maps.GeocoderStatus.OK) {
                           var lat = results[0].geometry.location.lat(),
-                              lng = results[0].geometry.location.lng();
+                            lng = results[0].geometry.location.lng();
                           // ContentHome.setLocation({location: rows[index].location, coordinates: {lng:lng, lat:lat}});
                           rows[index].location = {
                             coordinates: {
@@ -945,41 +924,69 @@
                             },
                             addressTitle: rows[index].location
                           };
-                          bulkInsertItems([rows[index]],rows[index].rank);
+                          bulkInsertItems([rows[index]], rows[index].rank);
                         }
                         else {
                           console.error('' +
-                          'Error else parts of google');
+                            'Error else parts of google');
                           error();
                         }
                       });
                       $scope.$digest();
+                    });
 
-                    }else if(rows[index].SelectedCategories.length && (!rows[index].location)){
-                      var categoryList = rows[index].SelectedCategories.split(',');
 
-                      var searchOptions = {
-                        filter: {"$json.title": {"$regex": '/*'}}
-                      };
-                      Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, data) {
-                        console.log("Saved", data.id);
-                        var tmpCategoryIds=[];
-                        data.forEach(function(categoryObj){
-                          categoryList.forEach(function(categoryTitle){
-                            if(categoryTitle==categoryObj.data.title){
-                              tmpCategoryIds.push(categoryObj.id);
-                            }
-                          })
-                        });
-                        rows[index].SelectedCategories=tmpCategoryIds;
-                        bulkInsertItems([rows[index]],rows[index].rank);
-                        $scope.$digest();
+                  } else if ((!rows[index].SelectedCategories.length) && rows[index].location) {
 
+
+                    var geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({ "address": rows[index].location }, function (results, status) {
+                      if (status == google.maps.GeocoderStatus.OK) {
+                        var lat = results[0].geometry.location.lat(),
+                          lng = results[0].geometry.location.lng();
+                        // ContentHome.setLocation({location: rows[index].location, coordinates: {lng:lng, lat:lat}});
+                        rows[index].location = {
+                          coordinates: {
+                            lng: lng,
+                            lat: lat
+                          },
+                          addressTitle: rows[index].location
+                        };
+                        bulkInsertItems([rows[index]], rows[index].rank);
+                      }
+                      else {
+                        console.error('' +
+                          'Error else parts of google');
+                        error();
+                      }
+                    });
+                    $scope.$digest();
+
+                  } else if (rows[index].SelectedCategories.length && (!rows[index].location)) {
+                    var categoryList = rows[index].SelectedCategories.split(',');
+
+                    var searchOptions = {
+                      filter: { "$json.title": { "$regex": '/*' } }
+                    };
+                    Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, data) {
+                      console.log("Saved", data.id);
+                      var tmpCategoryIds = [];
+                      data.forEach(function (categoryObj) {
+                        categoryList.forEach(function (categoryTitle) {
+                          if (categoryTitle == categoryObj.data.title) {
+                            tmpCategoryIds.push(categoryObj.id);
+                          }
+                        })
                       });
-                    }else{
-                      bulkInsertItems([rows[index]],rows[index].rank);
-                    }
-                  });
+                      rows[index].SelectedCategories = tmpCategoryIds;
+                      bulkInsertItems([rows[index]], rows[index].rank);
+                      $scope.$digest();
+
+                    });
+                  } else {
+                    bulkInsertItems([rows[index]], rows[index].rank);
+                  }
+                });
               }
             }
             else {
@@ -1005,26 +1012,26 @@
 
         };
 
-        function bulkInsertItems(rows,rank){
+        function bulkInsertItems(rows, rank) {
 
           if (validateCsv(rows)) {
 
-            buildfire.datastore.bulkInsert(rows, TAG_NAMES.COUPON_ITEMS,function(err,data){
-              if(err){
+            buildfire.datastore.bulkInsert(rows, TAG_NAMES.COUPON_ITEMS, function (err, data) {
+              if (err) {
                 console.error(error);
                 ContentHome.loading = false;
                 $scope.$apply();
               }
-              else{
+              else {
                 Buildfire.datastore.search({}, TAG_NAMES.COUPON_ITEMS, function (err, result) {
-                    if (err) {
-                        return console.error('-----------err in getting list inside bulk insert-------------', err);
+                  if (err) {
+                    return console.error('-----------err in getting list inside bulk insert-------------', err);
+                  }
+                  if (result && result.length) {
+                    for (var i = 0; i < result.length; i++) {
+                      PluginEvents.register({ key: result[i].id, title: result[i].data.title }, true);
                     }
-                    if (result && result.length) {
-                        for (var i = 0; i < result.length; i++) {
-                            PluginEvents.register({key: result[i].id, title: result[i].data.title}, true);
-                        }
-                    }
+                  }
                 });
                 ContentHome.loading = false;
                 ContentHome.isBusy = false;
@@ -1074,37 +1081,37 @@
         }
 
 
-        function returnCommaSepratedListOfEntity(entities,param){
-          if(entities.length && Array.isArray(entities)){
-            var tmpURLstr="";
-            entities.forEach(function(entity){
-              if(tmpURLstr)
-                tmpURLstr=tmpURLstr+','+entity[param];
+        function returnCommaSepratedListOfEntity(entities, param) {
+          if (entities.length && Array.isArray(entities)) {
+            var tmpURLstr = "";
+            entities.forEach(function (entity) {
+              if (tmpURLstr)
+                tmpURLstr = tmpURLstr + ',' + entity[param];
               else
-                tmpURLstr=entity[param];
+                tmpURLstr = entity[param];
             });
-           return tmpURLstr;
-          }else{
+            return tmpURLstr;
+          } else {
             return entities;
           }
         }
 
-        function returnCommaSepratedListOfCategories(Categories, selectedCategories){
-          if(typeof Categories  === 'string' || Categories instanceof String) return Categories;
-          else if(selectedCategories.length && Array.isArray(selectedCategories)){
-            var tmpList="";
-            selectedCategories.forEach(function(selCategory){
-              Categories.forEach(function(category){
-                if(selCategory==category.id){
-                  if(!tmpList)
-                  tmpList=category.title;
+        function returnCommaSepratedListOfCategories(Categories, selectedCategories) {
+          if (typeof Categories === 'string' || Categories instanceof String) return Categories;
+          else if (selectedCategories.length && Array.isArray(selectedCategories)) {
+            var tmpList = "";
+            selectedCategories.forEach(function (selCategory) {
+              Categories.forEach(function (category) {
+                if (selCategory == category.id) {
+                  if (!tmpList)
+                    tmpList = category.title;
                   else
-                    tmpList=tmpList+","+category.title;
+                    tmpList = tmpList + "," + category.title;
                 }
               });
             });
             return tmpList;
-         }
+          }
 
         }
 
@@ -1114,26 +1121,26 @@
         ContentHome.exportCSV = function () {
           var search = angular.copy(ContentHome.searchOptions);
           search.skip = 0;
-          search.limit =  SORT._maxLimit + 1;
+          search.limit = SORT._maxLimit + 1;
           getRecords(search,
-              []
-              , function (data) {
-                if (data && data.length) {
-                  var items = [];
-                  angular.forEach(angular.copy(data), function (value) {
-                    delete value.data.dateCreated;
-                    delete value.data.links;
-                    delete value.data.rank;
-                    delete value.data.body;
-                    if (typeof value.data.carouselImages === 'string' || value.data.carouselImages instanceof String) {
-                      if (value.data.carouselImages.length == 0) {
-                        value.data.carouselImages = [];
-                      } else {
-                        var oldUrl = value.data.carouselImages;
-                        value.data.carouselImages = [{ action: "noAction", iconUrl: oldUrl, title: "image" }];
-                      }
-                    } else if (typeof value.data.carouselImages == "undefined")
+            []
+            , function (data) {
+              if (data && data.length) {
+                var items = [];
+                angular.forEach(angular.copy(data), function (value) {
+                  delete value.data.dateCreated;
+                  delete value.data.links;
+                  delete value.data.rank;
+                  delete value.data.body;
+                  if (typeof value.data.carouselImages === 'string' || value.data.carouselImages instanceof String) {
+                    if (value.data.carouselImages.length == 0) {
                       value.data.carouselImages = [];
+                    } else {
+                      var oldUrl = value.data.carouselImages;
+                      value.data.carouselImages = [{ action: "noAction", iconUrl: oldUrl, title: "image" }];
+                    }
+                  } else if (typeof value.data.carouselImages == "undefined")
+                    value.data.carouselImages = [];
 
 
                   /*    if (typeof value.data.Categories === 'string' || value.data.Categories instanceof String) {
@@ -1146,24 +1153,24 @@
                       } else if (typeof value.data.carouselImages == "undefined")
                         value.data.carouselImages = [];*/
 
-                    value.data.carouselImages=returnCommaSepratedListOfEntity(value.data.carouselImages,'iconUrl')
-                    if(value.data.SelectedCategories)
-                    value.data.SelectedCategories=returnCommaSepratedListOfCategories(value.data.Categories,value.data.SelectedCategories);
-                    value.data.Categories=returnCommaSepratedListOfEntity(value.data.Categories,'title');
-                    value.data.location=value.data.location.addressTitle;
+                  value.data.carouselImages = returnCommaSepratedListOfEntity(value.data.carouselImages, 'iconUrl')
+                  if (value.data.SelectedCategories)
+                    value.data.SelectedCategories = returnCommaSepratedListOfCategories(value.data.Categories, value.data.SelectedCategories);
+                  value.data.Categories = returnCommaSepratedListOfEntity(value.data.Categories, 'title');
+                  value.data.location = value.data.location.addressTitle;
 
-                    items.push(value.data);
-                  });
-                  var csv = $csv.jsonToCsv(angular.toJson(items), {
-                    header: header
-                  });
-                  $csv.download(csv, "Export.csv");
-                }
-                else {
-                  ContentHome.getTemplate();
-                }
-               // records = [];
-              });
+                  items.push(value.data);
+                });
+                var csv = $csv.jsonToCsv(angular.toJson(items), {
+                  header: header
+                });
+                $csv.download(csv, "Export.csv");
+              }
+              else {
+                ContentHome.getTemplate();
+              }
+              // records = [];
+            });
         };
 
         /**
@@ -1171,26 +1178,26 @@
          */
         ContentHome.getTemplate = function () {
           var templateData = [{
-            title : '',
-            summary : "",
-            Categories : "",
-            listImage : '',
-            carouselImages : '',
-            preRedemptionText : '',
-            postRedemptionText : '',
-            startOn : '',
-            expiresOn : '',
-            addressTitle : '',
-            location : '',
-            webURL : '',
-            sendToEmail : '',
-            smsTextNumber : '',
-            phoneNumber : '',
-            facebookURL : '',
-            twitterURL : '',
-            instagramURL : '',
-            googlePlusURL : '',
-            linkedinURL : ''
+            title: '',
+            summary: "",
+            Categories: "",
+            listImage: '',
+            carouselImages: '',
+            preRedemptionText: '',
+            postRedemptionText: '',
+            startOn: '',
+            expiresOn: '',
+            addressTitle: '',
+            location: '',
+            webURL: '',
+            sendToEmail: '',
+            smsTextNumber: '',
+            phoneNumber: '',
+            facebookURL: '',
+            twitterURL: '',
+            instagramURL: '',
+            googlePlusURL: '',
+            linkedinURL: ''
           }];
           var csv = $csv.jsonToCsv(angular.toJson(templateData), {
             header: header
@@ -1206,11 +1213,11 @@
             return;
           }
           var success = function (result) {
-              console.info('Saved data result: ', result);
-              RankOfLastFilter.setRank(result.data.content.rankOfLastFilter);
-              RankOfLastItem.setRank(result.data.content.rankOfLastItem);
-              updateMasterItem(newObj);
-            }
+            console.info('Saved data result: ', result);
+            RankOfLastFilter.setRank(result.data.content.rankOfLastFilter);
+            RankOfLastItem.setRank(result.data.content.rankOfLastItem);
+            updateMasterItem(newObj);
+          }
             , error = function (err) {
               console.error('Error while saving data : ', err);
             };
@@ -1219,10 +1226,10 @@
         };
 
         function isValidItem(item) {
-          if(item){
+          if (item) {
             return item.title;
           }
-          else{
+          else {
             return false;
           }
 
@@ -1232,7 +1239,7 @@
           ContentHome.isUpdating = false;
           ContentHome.isItemValid = isValidItem(ContentHome.filter);
           if (!ContentHome.isUpdating && !isUnchanged(ContentHome.filter) && ContentHome.isItemValid) {
-           setTimeout(function () {
+            setTimeout(function () {
               if (item.id) {
                 ContentHome.updateItemData();
                 $scope.$digest();
@@ -1271,42 +1278,42 @@
          * */
         var init = function () {
           var success = function (result) {
-              console.info('Init success result:', result);
-              ContentHome.data = result.data;
-              if (!ContentHome.data.content) {
-                ContentHome.data = angular.copy(_data);
-              } else {
-                if (!ContentHome.data.content)
-                  ContentHome.data.content = {};
-                if (!ContentHome.data.settings)
-                  ContentHome.data.settings = {};
-                if (!ContentHome.data.content.carouselImages)
-                  editor.loadItems([]);
-                else
-                  editor.loadItems(ContentHome.data.content.carouselImages);
-                if(!ContentHome.data.content.sortFilterBy)
-                  ContentHome.data.content.sortFilterBy=ContentHome.sortFilterOptions[0];
-                if(!ContentHome.data.content.sortItemBy)
-                  ContentHome.data.content.sortItemBy=ContentHome.sortItemOptions[0];
-                ContentHome.filters = [];
-                ContentHome.searchOptions.skip = 0;
-                ContentHome.busyFilter = false;
-                ContentHome.busy = false;
-                ContentHome.data.content.selectedFilter = null;
-                ContentHome.data.content.selectedStatus = null;
-                console.log("-------------------llll", ContentHome.data.content);
-                RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter || 0);
-                RankOfLastItem.setRank(ContentHome.data.content.rankOfLastItem || 0);
-              }
-              updateMasterItem(ContentHome.data);
-              if (tmrDelay)clearTimeout(tmrDelay);
-                ContentHome.loadMore('js');
-                ContentHome.loadMoreItems('js');
+            console.info('Init success result:', result);
+            ContentHome.data = result.data;
+            if (!ContentHome.data.content) {
+              ContentHome.data = angular.copy(_data);
+            } else {
+              if (!ContentHome.data.content)
+                ContentHome.data.content = {};
+              if (!ContentHome.data.settings)
+                ContentHome.data.settings = {};
+              if (!ContentHome.data.content.carouselImages)
+                editor.loadItems([]);
+              else
+                editor.loadItems(ContentHome.data.content.carouselImages);
+              if (!ContentHome.data.content.sortFilterBy)
+                ContentHome.data.content.sortFilterBy = ContentHome.sortFilterOptions[0];
+              if (!ContentHome.data.content.sortItemBy)
+                ContentHome.data.content.sortItemBy = ContentHome.sortItemOptions[0];
+              ContentHome.filters = [];
+              ContentHome.searchOptions.skip = 0;
+              ContentHome.busyFilter = false;
+              ContentHome.busy = false;
+              ContentHome.data.content.selectedFilter = null;
+              ContentHome.data.content.selectedStatus = null;
+              console.log("-------------------llll", ContentHome.data.content);
+              RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter || 0);
+              RankOfLastItem.setRank(ContentHome.data.content.rankOfLastItem || 0);
             }
+            updateMasterItem(ContentHome.data);
+            if (tmrDelay) clearTimeout(tmrDelay);
+            ContentHome.loadMore('js');
+            ContentHome.loadMoreItems('js');
+          }
             , error = function (err) {
               if (err && err.code !== STATUS_CODE.NOT_FOUND) {
                 console.error('Error while getting data', err);
-                if (tmrDelay)clearTimeout(tmrDelay);
+                if (tmrDelay) clearTimeout(tmrDelay);
               }
               else if (err && err.code === STATUS_CODE.NOT_FOUND) {
                 saveData(JSON.parse(angular.toJson(ContentHome.data)), TAG_NAMES.COUPON_INFO);
