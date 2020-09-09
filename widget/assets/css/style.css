@@ -879,3 +879,44 @@ html[buildfire='widget'] .modal {
     background: none !important;
 }
 
+/* Code Template */
+
+.code-holder {
+	height: calc(100% - 4vh - env(safe-area-inset-bottom));
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.purchase-amount p {
+    padding: 0 40px;
+}
+
+.enter-price,
+.next-btn  {
+    width: 100%;
+    max-width: 240px;
+    margin: 0 auto;
+    position: relative;
+}
+
+input[type="password"].form-control {
+	font-size: 32px;
+	background-color: rgba(150,150,150,.1);
+	border-bottom: 1px solid rgba(150,150,150,.3) !important;
+	border-radius: 4px 4px 0 0;
+	padding: .75em .5em;
+	margin-bottom: .5em;
+	color: inherit;
+}
+input[type="password"].form-control::placeholder{
+	font-size: 20px;
+}
+.purchase-amount h5{
+	font-size: 16px;
+	line-height: 1.5em;
+	margin-bottom: 40px;
+}
+

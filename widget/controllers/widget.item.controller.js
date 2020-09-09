@@ -4,11 +4,10 @@
   angular.module('couponPluginWidget')
     .controller('WidgetItemCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'LAYOUTS', '$sce', '$rootScope', 'Buildfire', 'ViewStack', 'UserData', 'PAGINATION', '$modal', '$timeout', '$location',
       function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, PAGINATION, $modal, $timeout, $location) {
-        var WidgetItem = this;
+        let WidgetItem = this;
         $scope.showRedeemButton  =false;
         $scope.showItemRedeemed  =false;
         WidgetItem.listeners = {};
-
         var currentView = ViewStack.getCurrentView();
 
         if (currentView.params && currentView.params.itemId && !currentView.params.stopSwitch) {
@@ -224,7 +223,20 @@
         buildfire.auth.onLogout(logoutCallback);
 
         WidgetItem.redeemCoupon = function(item){
-          if(WidgetItem.currentLoggedInUser){
+          console.log("BEGO", WidgetItem)
+          console.log('Bego2', WidgetItem.data.settings.toggleEmployeeCode)
+          console.log(WidgetItem.currentLoggedInUser)
+          if(WidgetItem.currentLoggedInUser && WidgetItem.data.settings.toggleEmployeeCode == 'on'){
+            
+            ViewStack.push({
+              template: 'Code',
+              params: {
+                controller: "WidgetCodeCtrl as WidgetCode"
+              }
+            });
+         
+
+          } else if (WidgetItem.currentLoggedInUser){
             WidgetItem.redeemedItem = {
               data: {
                 itemId: item.id,
@@ -250,13 +262,46 @@
               return console.error('There was a problem redeeming the coupon');
             };
             UserData.insert(WidgetItem.redeemedItem.data, TAG_NAMES.COUPON_REDEEMED).then(successItem, errorItem);
-
-          }else{
+          }
+          
+          else{
             buildfire.auth.login({}, function () {
 
             });
           }
         };
+
+        WidgetItem.confirmPasscode = function (passcode) {
+          console.log('ja kliknuh na confirm',passcode)
+          if(passcode == WidgetItem.data.settings.employeeCode){
+            WidgetItem.redeemedItem = {
+              data: {
+                itemId: item.id,
+                redeemedOn: +new Date()
+              }
+            };
+            var successItem = function (result) {
+              Buildfire.spinner.hide();
+              WidgetItem.item.isRedeemed = true;
+              WidgetItem.item.redeemedOn = result.data.redeemedOn;
+              $scope.enableRedeemButton();
+              var redeemedModal = $modal.open({
+                templateUrl: 'templates/Redeem_Confirmation.html',
+                size: 'sm',
+                backdropClass: "ng-hide"
+              });
+              WidgetItem.addToSaved(WidgetItem.item, WidgetItem.item.isSaved, true);
+              $timeout(function () {
+                redeemedModal.close();
+              }, 2000);
+            }, errorItem = function () {
+              Buildfire.spinner.hide();
+              return console.error('There was a problem redeeming the coupon');
+            };
+            UserData.insert(WidgetItem.redeemedItem.data, TAG_NAMES.COUPON_REDEEMED).then(successItem, errorItem);
+          }
+        }
+
 
         var onUpdateCallback = function (event) {
           setTimeout(function () {
