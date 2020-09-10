@@ -5,22 +5,22 @@
             confirmation</h5>
 
         <div class="enter-price">
-            <input type="password" placeholder="Enter Code" class="form-control text-center border-none"
+            <input type="password" id="passcode" placeholder="Enter Code" class="form-control text-center border-none"
                 ng-model="WidgetItem.passcode" maxlength="10" get-focus
                 ng-click="WidgetItem.preventClickBehavior($event)">
         </div>
         <div class="next-btn margin-top-twenty">
-            <button class="btn btn-success stretch" href="javascript:void(0);" ng-click="WidgetItem.confirmPasscode(passcode)"
+            <button class="btn btn-success stretch" href="javascript:void(0);" ng-click="WidgetItem.confirmPasscode(passcode, WidgetItem)"
                 ng-disabled="!WidgetItem.passcode">
                 Confirm
             </button>
         </div>
     </div>
 
-    <div class="alert alert-sm text-center alert-danger" ng-if="WidgetItem.passcodeFailure">Invalid confirmation
+    <div class="alert alert-danger alert-sm text-center" ng-if="WidgetItem.passcodeFailure">Invalid confirmation
         code.
     </div>
-    <div class="alert alert-sm text-center alert-danger" ng-if="WidgetItem.dailyLimitExceeded">You have
+    <div class="alert alert-danger alert-sm text-center" ng-if="WidgetItem.dailyLimitExceeded">You have
         exceeded the daily limit.
     </div>
 

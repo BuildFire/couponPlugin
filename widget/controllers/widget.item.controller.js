@@ -8,6 +8,7 @@
         $scope.showRedeemButton  =false;
         $scope.showItemRedeemed  =false;
         WidgetItem.listeners = {};
+        WidgetItem.passcodeFailure = false;
         var currentView = ViewStack.getCurrentView();
 
         if (currentView.params && currentView.params.itemId && !currentView.params.stopSwitch) {
@@ -35,7 +36,6 @@
               Buildfire.spinner.hide();
               console.error('Error In Fetching Event', err);
             };
-
           if (currentView.params && currentView.params.itemId) {
             DataStore.getById(currentView.params.itemId, TAG_NAMES.COUPON_ITEMS).then(success, error);
           }
@@ -222,21 +222,9 @@
 
         buildfire.auth.onLogout(logoutCallback);
 
-        WidgetItem.redeemCoupon = function(item){
-          console.log("BEGO", WidgetItem)
-          console.log('Bego2', WidgetItem.data.settings.toggleEmployeeCode)
-          console.log(WidgetItem.currentLoggedInUser)
-          if(WidgetItem.currentLoggedInUser && WidgetItem.data.settings.toggleEmployeeCode == 'on'){
+        WidgetItem.redeemCoupon = function(item, passcodeTrue){
+          if (WidgetItem.currentLoggedInUser && (WidgetItem.data.settings.toggleEmployeeCode == 'off' || (WidgetItem.data.settings.toggleEmployeeCode == 'on' && passcodeTrue))){
             
-            ViewStack.push({
-              template: 'Code',
-              params: {
-                controller: "WidgetCodeCtrl as WidgetCode"
-              }
-            });
-         
-
-          } else if (WidgetItem.currentLoggedInUser){
             WidgetItem.redeemedItem = {
               data: {
                 itemId: item.id,
@@ -262,43 +250,37 @@
               return console.error('There was a problem redeeming the coupon');
             };
             UserData.insert(WidgetItem.redeemedItem.data, TAG_NAMES.COUPON_REDEEMED).then(successItem, errorItem);
+          } else if (WidgetItem.currentLoggedInUser && WidgetItem.data.settings.toggleEmployeeCode == 'on'){
+            ViewStack.push({
+              template: 'Code',
+              params: {
+                controller: "WidgetCodeCtrl as WidgetCode",
+                item: item,
+                WidgetItem: WidgetItem
+              },
+            });
           }
-          
           else{
             buildfire.auth.login({}, function () {
-
             });
           }
         };
 
         WidgetItem.confirmPasscode = function (passcode) {
-          console.log('ja kliknuh na confirm',passcode)
+          passcode = angular.element('#passcode').val()
+          currentView = ViewStack.getCurrentView()
+          WidgetItem.item = currentView.params.item
           if(passcode == WidgetItem.data.settings.employeeCode){
-            WidgetItem.redeemedItem = {
-              data: {
-                itemId: item.id,
-                redeemedOn: +new Date()
-              }
-            };
-            var successItem = function (result) {
-              Buildfire.spinner.hide();
-              WidgetItem.item.isRedeemed = true;
-              WidgetItem.item.redeemedOn = result.data.redeemedOn;
-              $scope.enableRedeemButton();
-              var redeemedModal = $modal.open({
-                templateUrl: 'templates/Redeem_Confirmation.html',
-                size: 'sm',
-                backdropClass: "ng-hide"
-              });
-              WidgetItem.addToSaved(WidgetItem.item, WidgetItem.item.isSaved, true);
-              $timeout(function () {
-                redeemedModal.close();
-              }, 2000);
-            }, errorItem = function () {
-              Buildfire.spinner.hide();
-              return console.error('There was a problem redeeming the coupon');
-            };
-            UserData.insert(WidgetItem.redeemedItem.data, TAG_NAMES.COUPON_REDEEMED).then(successItem, errorItem);
+              WidgetItem.redeemCoupon(currentView.params.item, true);
+              setTimeout(() => {
+                ViewStack.popAllViews();
+              }, 500);
+          } else {
+            WidgetItem.passcodeFailure = true
+            setTimeout(() => {
+              WidgetItem.passcodeFailure = false
+              $scope.$digest()
+            }, 2000);
           }
         }
 
