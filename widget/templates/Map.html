@@ -9,78 +9,65 @@
            marker-callback="WidgetMap.selectedMarker"
            refresh-data="WidgetMap.refreshData"></div>
     </div>
-    <div class="overlay-list coupon layout3 bodyBackgroundTheme" ng-class="WidgetMap.selectedItem? 'active' : ''">
-      <div class="list-layout" ng-if="WidgetMap.selectedItem.multiCoupons">
+    <div class="overlay-list coupon backgroundColorTheme" ng-class="WidgetMap.selectedItem? 'active' : ''">
+      <div class="list-layout map-items" ng-if="WidgetMap.selectedItem.multiCoupons">
         <div class="list-item" ng-repeat="coupon in WidgetMap.selectedItem.couponContained">
-          <div class="list-item-media text-left overflow-hidden">
-            <div class="square-icon list-media-holder pull-left" ng-if="coupon.data.listImage">
+
+            <div class="square-icon list-media-holder" ng-if="coupon.data.listImage">
               <img load-image="4x3" crop-width="96" crop-height="72" crop-type="crop" data-final-src="{{coupon.data.listImage}}" ng-click="WidgetMap.openDetailsPage(coupon)">
             </div>
-            <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-              <div class="copy-holder" ng-class="{'padding-left-ten': !coupon.data.listImage}" ng-click="WidgetMap.openDetailsPage(coupon)">
-                <p class="ellipsis margin-zero text-primary margin-top-five">
-                  {{coupon.data.title}}
-                </p>
-                <p class="ellipsis margin-zero bodyTextTheme">
-                  {{coupon.data.summary}}
-                </p>
+
+            <div class="list-item-copy text-left ellipsis">
+              <div class="copy-holder" ng-click="WidgetMap.openDetailsPage(coupon)">
+                <h5 class="ellipsis margin-zero">{{coupon.data.title}}</h5>
+                <p class="ellipsis margin-zero bodyTextTheme">{{coupon.data.summary}}</p>
                 <p class="ellipsis margin-zero bodyTextTheme" ng-hide="coupon.data.summary">
                   &nbsp;
                 </p>
-                <p class="small ellipsis margin-zero bodyTextTheme">
+                <p class="caption ellipsis margin-zero">
                   <i><span ng-if="coupon.data.expiresOn">Exp. {{coupon.data.expiresOn |
                     date}} </span>
                     <span
                       class="dot bodyTextBackgroundTheme"></span>{{WidgetMap.selectedItemDistance}}</i>
                 </p>
-                <p   class="ellipsis margin-zero bodyTextTheme">
-                  {{getRedeemedDateText(coupon)}}
-                </p>
-              </div>
-              <div class="bookmark-holder primaryBackgroundTheme" ng-class="coupon.isSaved?'bg-primary':''"
-                   ng-if="WidgetMap.currentLoggedInUser"
-                   ng-click="WidgetMap.addRemoveSavedItem(coupon, true, $index)">
-                <span class="icon"
-                      ng-class="coupon.isSaved?'whiteTheme icon-star':' icon-star-empty'"></span>
+                <p class="ellipsis caption margin-zero bodyTextTheme">{{getRedeemedDateText(coupon)}}</p>
               </div>
             </div>
-          </div>
+            <div class="bookmark-holder"
+                 ng-if="WidgetMap.currentLoggedInUser"
+                 ng-click="WidgetMap.addRemoveSavedItem(coupon, true, $index)">
+              <span
+                    ng-class="coupon.isSaved?'btn-icon glyphicon glyphicon-star whiteTheme primaryBackgroundTheme':'btn-icon glyphicon glyphicon-star-empty'"></span>
+            </div>
         </div>
       </div>
-      <div class="list-layout" ng-if="!WidgetMap.selectedItem.multiCoupons">
+      <div class="list-layout map-items" ng-if="!WidgetMap.selectedItem.multiCoupons">
         <div class="list-item">
-          <div class="list-item-media text-left overflow-hidden">
-            <div class="square-icon list-media-holder pull-left" ng-if="WidgetMap.selectedItem.data.listImage">
-              <img load-image="4x3" crop-width="96" crop-height="72" crop-type="crop" data-final-src="{{WidgetMap.selectedItem.data.listImage}}">
+
+          <div class="square-icon list-media-holder" ng-if="WidgetMap.selectedItem.data.listImage">
+            <img load-image="4x3" crop-width="96" crop-height="72" crop-type="crop" data-final-src="{{WidgetMap.selectedItem.data.listImage}}">
+          </div>
+
+          <div class="list-item-copy ellipsis">
+            <div class="copy-holder" ng-click="WidgetMap.openDetailsPage(WidgetMap.selectedItem)">
+              <h5 class="ellipsis margin-zero">{{WidgetMap.selectedItem.data.title}}</h5>
+              <p class="ellipsis margin-zero bodyTextTheme">{{WidgetMap.selectedItem.data.summary}}</p>
+              <p class="ellipsis margin-zero bodyTextTheme" ng-hide="WidgetMap.selectedItem.data.summary">&nbsp;</p>
+              <p class="caption ellipsis margin-zero bodyTextTheme">
+                <i><span ng-if="WidgetMap.selectedItem.data.expiresOn">Exp. {{WidgetMap.selectedItem.data.expiresOn |
+                  date}} </span>
+                  <span class="dot bodyTextBackgroundTheme"></span>{{WidgetMap.selectedItemDistance}}</i>
+              </p>
+              <p ng-if="WidgetMap.selectedItem.redeemedOn"  class="ellipsis margin-zero caption bodyTextTheme">
+                Redeemed {{WidgetMap.selectedItem.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}
+              </p>
             </div>
-            <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-              <div class="copy-holder" ng-class="{'padding-left-ten': !WidgetMap.selectedItem.data.listImage}" ng-click="WidgetMap.openDetailsPage(WidgetMap.selectedItem)">
-                <p class="ellipsis margin-zero text-primary margin-top-five">
-                  {{WidgetMap.selectedItem.data.title}}
-                </p>
-                <p class="ellipsis margin-zero bodyTextTheme">
-                  {{WidgetMap.selectedItem.data.summary}}
-                </p>
-                <p class="ellipsis margin-zero bodyTextTheme" ng-hide="WidgetMap.selectedItem.data.summary">
-                  &nbsp;
-                </p>
-                <p class="small ellipsis margin-zero bodyTextTheme">
-                  <i><span ng-if="WidgetMap.selectedItem.data.expiresOn">Exp. {{WidgetMap.selectedItem.data.expiresOn |
-                    date}} </span>
-                    <span
-                            class="dot bodyTextBackgroundTheme"></span>{{WidgetMap.selectedItemDistance}}</i>
-                </p>
-                <p ng-if="WidgetMap.selectedItem.redeemedOn"  class="ellipsis margin-zero bodyTextTheme">
-                  Redeemed {{WidgetMap.selectedItem.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}
-                </p>
-              </div>
-              <div class="bookmark-holder primaryBackgroundTheme" ng-class="WidgetMap.selectedItem.isSaved?'bg-primary':''"
-                   ng-if="WidgetMap.currentLoggedInUser"
-                   ng-click="WidgetMap.addRemoveSavedItem(WidgetMap.selectedItem)">
-                <span class="icon"
-                      ng-class="WidgetMap.selectedItem.isSaved?'whiteTheme icon-star':' icon-star-empty'"></span>
-              </div>
-            </div>
+          </div>
+          <div class="bookmark-holder btn-icon primaryBackgroundTheme"
+                ng-if="WidgetMap.currentLoggedInUser"
+                ng-click="WidgetMap.addRemoveSavedItem(WidgetMap.selectedItem)">
+            <span 
+                ng-class="WidgetMap.selectedItem.isSaved?'btn-icon glyphicon glyphicon-star whiteTheme primaryBackgroundTheme':'btn-icon glyphicon glyphicon-star-empty'"></span>
           </div>
         </div>
       </div>

@@ -2,65 +2,71 @@
     class="no-scroll holder padding-zero has-bottom sticky-bottom-menu clearfix"
     ng-controller="WidgetItemCtrl as WidgetItem">
   <div class="scrollable">
-    <div class="coupon coupon-item layout3">
+    <div class="coupon coupon-item">
       <div id="carousel2" ng-if="WidgetItem.item.data.carouselImages.length"
            build-fire-carousel2=""
            ng-style="WidgetItem.item.data.carouselImages.length > 0 ? {'min-height': (9 * deviceWidth / 16) + 'px' } : {}"></div>
-      <div class="padded" ng-if="WidgetItem.item.data">
-        <div class="clearfix row intro">
-          <div class="col-xs-7 pull-left padding-right-zero">
-            <p class="margin-zero" style="font-size:15px;">
-              {{WidgetItem.item.data.title}}</p>
+      <div ng-if="WidgetItem.item.data">
 
-            <p class="margin-zero">{{WidgetItem.item.data.summary}}</p>
+        <div class="main-header word-break">
 
-            <p class="margin-zero small ellipsis"
-               ng-if="WidgetItem.item.data.expiresOn"><i>Expires
+          <h5>{{WidgetItem.item.data.title}}</h5>
+          <p>{{WidgetItem.item.data.summary}}</p>
+
+          <div class="item-actions">
+            <div class="coupon-details">
+              <p class="caption margin-zero ellipsis"
+                ng-if="WidgetItem.item.data.expiresOn"><i>Expires
               {{WidgetItem.item.data.expiresOn | date}}</i></p>
-            <p class="margin-zero small ellipsis"
-               ng-if="WidgetItem.item.redeemedOn"><i>Redeemed {{redeemedDateText}}</i></p>
-          </div>
-          <div class="col-xs-5 pull-right text-right">
+              <p class="margin-zero caption ellipsis"
+                ng-if="WidgetItem.item.redeemedOn"><i>Redeemed {{redeemedDateText}}</i></p>
+            </div>
+
             <img ng-if="WidgetItem.item.data.location.coordinates && WidgetItem.item.data.location.coordinates.lng" src="assets/media/map-icon.png"
                  ng-click="WidgetItem.onAddressClick(WidgetItem.item.data.location.coordinates.lng,WidgetItem.item.data.location.coordinates.lat)">
-
             <div
-                class="save-holder backgroundPrimaryTheme text-center pull-right margin-left-ten"
+                class="save-holder btn-icon backgroundPrimaryTheme"
                 ng-class="WidgetItem.item.isSaved?'bg-primary':''"
                 ng-if="WidgetItem.currentLoggedInUser"
                 ng-click="WidgetItem.addToSaved(WidgetItem.item, WidgetItem.item.isSaved)">
               <span class="icon"
-                    ng-class="WidgetItem.item.isSaved?'whiteTheme icon-star':' icon-star-empty'"></span>
+                    ng-class="WidgetItem.item.isSaved?'btn-icon glyphicon glyphicon-star whiteTheme primaryBackgroundTheme':'btn-icon glyphicon glyphicon-star-empty'"></span>
             </div>
           </div>
-        </div>
-        <hr class="small" ng-if="WidgetItem.item.data.links.length">
-        <div class="text-center" ng-if="WidgetItem.item.data.links.length">
-          <a class="text-primary"
-             ng-click="WidgetItem.openLinks(WidgetItem.item.data.links)">Open
-            More Options</a>
-        </div>
-        <hr class="small">
-        <div class="redeem-photo text-center margin-top-five margin-bottom-ten" ng-if="!WidgetItem.item.isRedeemed && WidgetItem.item.data.preRedemptionImage">
-          <img load-image="16x9" crop-width="312" crop-height="156" crop-type="crop"  src="{{WidgetItem.item.data.preRedemptionImage}}">
+
         </div>
 
-        <div class="redeem-photo text-center margin-top-five margin-bottom-ten" ng-if="WidgetItem.item.isRedeemed && WidgetItem.item.data.postRedemptionImage">
-          <img load-image="16x9" crop-width="312" crop-height="156" crop-type="crop"  src="{{WidgetItem.item.data.postRedemptionImage}}">
+        <div class="padded">
+          <div class="text-center" ng-if="WidgetItem.item.data.links.length">
+            <a class="text-primary"
+               ng-click="WidgetItem.openLinks(WidgetItem.item.data.links)">Open
+              More Options</a>
+          </div>
+  
+          <div class="redeem-photo text-center margin-top-five margin-bottom-ten" ng-if="!WidgetItem.item.isRedeemed && WidgetItem.item.data.preRedemptionImage">
+            <img load-image="16x9" crop-width="312" crop-height="156" crop-type="crop"  src="{{WidgetItem.item.data.preRedemptionImage}}">
+          </div>
+  
+          <div class="redeem-photo text-center margin-top-five margin-bottom-ten" ng-if="WidgetItem.item.isRedeemed && WidgetItem.item.data.postRedemptionImage">
+            <img load-image="16x9" crop-width="312" crop-height="156" crop-type="crop"  src="{{WidgetItem.item.data.postRedemptionImage}}">
+          </div>
+          <p class="margin-zero word-break"
+             ng-bind-html="WidgetItem.safeHtml(WidgetItem.item.data.preRedemptionText)" ng-if="!WidgetItem.item.isRedeemed"></p>
+          <p class="margin-zero word-break"
+             ng-bind-html="WidgetItem.safeHtml(WidgetItem.item.data.postRedemptionText)" ng-if="WidgetItem.item.isRedeemed"></p>
         </div>
-        <p class="margin-zero"
-           ng-bind-html="WidgetItem.safeHtml(WidgetItem.item.data.preRedemptionText)" ng-if="!WidgetItem.item.isRedeemed"></p>
-        <p class="margin-zero"
-           ng-bind-html="WidgetItem.safeHtml(WidgetItem.item.data.postRedemptionText)" ng-if="WidgetItem.item.isRedeemed"></p>
+
+
       </div>
     </div>
   </div>
-  <div class="bottom fixed-bottom border-top-grey transition-third primaryBackgroundTheme">
-    <div class="col-xs-12 pull-left text-center"  ng-show="showItemRedeemed">
-      <p class="bodyTextTheme stretch margin-top-ten">Item redeemed
+
+  <div class="bottom fixed-bottom transition-third primaryBackgroundTheme">
+    <div class=" text-center"  ng-show="showItemRedeemed">
+      <p class="whiteTheme stretch margin-top-ten">Item redeemed
         {{WidgetItem.item.redeemedOn |timeago}}</p>
     </div>
-    <div class="col-xs-12 pull-left text-center primaryBackgroundTheme"
+    <div class=" text-center primaryBackgroundTheme"
          ng-click="WidgetItem.redeemCoupon(WidgetItem.item)" ng-show="showRedeemButton">
       <p class="whiteTheme stretch margin-top-ten">Redeem this Item</p>
     </div>
