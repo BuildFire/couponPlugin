@@ -71,7 +71,43 @@
             }
           });
           return deferred.promise;
-        }, onUpdate: function (viewName) {
+        },getAll: function (options, _tagName) {
+          var deferred = $q.defer();
+          if (typeof options == 'undefined') {
+            return deferred.reject(new Error({
+              code: STATUS_CODE.UNDEFINED_OPTIONS,
+              message: STATUS_MESSAGES.UNDEFINED_OPTIONS
+            }));
+          }
+          options.recordCount = true;
+          options.limit = 50;
+          Buildfire.datastore.search(options, _tagName, function (err, counter) {
+            if (err) {
+              return deferred.reject(err);
+            } else if (counter) {
+              var numberOfRecords = counter.totalRecord;
+              if(numberOfRecords > 50) {
+                var response = 50;
+                var result = [...counter.result];
+                for (let skip = 50; skip < numberOfRecords; skip += 50) {
+                  options.skip = skip;
+                  Buildfire.datastore.search(options, _tagName, function (err, res) {
+                    response += 50;
+                    result = [...result, ...res.result];
+                    if(response >= numberOfRecords) {
+                      console.log("TU!");
+                      return deferred.resolve(result);
+                    }
+                  });
+                }
+              } else return deferred.resolve(counter.result)
+              
+              
+            }
+          });
+          return deferred.promise;
+        },
+         onUpdate: function (viewName) {
           var deferred = $q.defer();
           var onUpdateFn = Buildfire.datastore.onUpdate(function (event) {
             if (!event) {
