@@ -251,6 +251,10 @@
             };
             UserData.insert(WidgetItem.redeemedItem.data, TAG_NAMES.COUPON_REDEEMED).then(successItem, errorItem);
           } else if (WidgetItem.currentLoggedInUser && WidgetItem.data.settings.toggleEmployeeCode == 'on'){
+           
+            setTimeout(() => {
+              Buildfire.spinner.hide()
+            }, 500);
             ViewStack.push({
               template: 'Code',
               params: {
