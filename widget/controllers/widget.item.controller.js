@@ -237,14 +237,17 @@
               WidgetItem.item.redeemedOn = result.data.redeemedOn;
               $scope.enableRedeemButton();
               var redeemedModal = $modal.open({
-                templateUrl: 'templates/Redeem_Confirmation.html',
-                size: 'sm',
-                backdropClass: "ng-hide"
+                templateUrl: "templates/Redeem_Confirmation.html",
+                size: "sm",
+                backdropClass: "ng-hide",
               });
-              WidgetItem.addToSaved(WidgetItem.item, WidgetItem.item.isSaved, true);
-              setTimeout(() => {
-                ViewStack.popAllViews();
-              }, 500);
+              WidgetItem.addToSaved(
+                WidgetItem.item,
+                WidgetItem.item.isSaved,
+                true
+              );
+
+              ViewStack.popAllViews();
               $timeout(function () {
                 redeemedModal.close();
               }, 2000);
