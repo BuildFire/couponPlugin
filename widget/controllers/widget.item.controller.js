@@ -242,6 +242,9 @@
                 backdropClass: "ng-hide"
               });
               WidgetItem.addToSaved(WidgetItem.item, WidgetItem.item.isSaved, true);
+              setTimeout(() => {
+                ViewStack.popAllViews();
+              }, 500);
               $timeout(function () {
                 redeemedModal.close();
               }, 2000);
@@ -275,10 +278,7 @@
           currentView = ViewStack.getCurrentView()
           WidgetItem.item = currentView.params.item
           if(passcode == WidgetItem.data.settings.employeeCode){
-              WidgetItem.redeemCoupon(currentView.params.item, true);
-              setTimeout(() => {
-                ViewStack.popAllViews();
-              }, 500);
+            WidgetItem.redeemCoupon(currentView.params.item, true);
           } else {
             WidgetItem.passcodeFailure = true
             setTimeout(() => {
