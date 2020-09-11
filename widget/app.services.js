@@ -99,7 +99,6 @@
                     response += 50;
                     result = [...result, ...res.result];
                     if(response >= numberOfRecords) {
-                      console.log("TU!");
                       return deferred.resolve(result);
                     }
                   });
