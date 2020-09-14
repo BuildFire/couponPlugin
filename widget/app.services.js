@@ -85,6 +85,7 @@
           }
           options.recordCount = true;
           options.limit = 50;
+          console.log({options: options});
           Buildfire.datastore.search(options, _tagName, function (err, counter) {
             if (err) {
               return deferred.reject(err);
@@ -92,12 +93,14 @@
               var numberOfRecords = counter.totalRecord;
               if(numberOfRecords > 50) {
                 var response = 50;
-                var result = [...counter.result];
-                for (let skip = 50; skip < numberOfRecords; skip += 50) {
+                var result = counter.result;
+                for (var skip = 50; skip < numberOfRecords; skip += 50) {
                   options.skip = skip;
                   Buildfire.datastore.search(options, _tagName, function (err, res) {
                     response += 50;
-                    result = [...result, ...res.result];
+                    res.result.forEach(function(item) {
+                      result.push(item);
+                    });
                     if(response >= numberOfRecords) {
                       return deferred.resolve(result);
                     }

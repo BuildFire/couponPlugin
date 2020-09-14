@@ -1008,7 +1008,12 @@
         function bulkInsertItems(rows,rank){
 
           if (validateCsv(rows)) {
-
+            rows.forEach(function(row, index) {
+              if(row.expiresOn) {
+                rows[index].expiresOn = Number(row.expiresOn)
+                rows[index].startOn = Number(row.startOn)
+              }
+            })
             buildfire.datastore.bulkInsert(rows, TAG_NAMES.COUPON_ITEMS,function(err,data){
               if(err){
                 console.error(error);

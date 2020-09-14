@@ -297,6 +297,8 @@
                           else{
                               ContentItem.selection = ContentItem.item.data.SelectedCategories;
                           }
+                          ContentItem.item.data.expiresOn = Number(ContentItem.item.data.expiresOn);
+                          ContentItem.item.data.startOn = Number(ContentItem.item.data.startOn);
                             setTimeout(function(){
                                 updating=false;
                             },2000)
