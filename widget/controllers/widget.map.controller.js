@@ -21,7 +21,8 @@
             {
               "$json.startOn": { $lte: WidgetMap.todayDate }
             }, {"$json.location.coordinates": {$exists: true}}]
-          }
+          },
+          recordCount: true,
         };
         var currentDistanceUnit = null;
         $rootScope.$on('FILTER_ITEMS', function (e, view) {
@@ -169,10 +170,10 @@
                 }
               }
             }
-
-            DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
+            
+            DataStore.getAll(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
           } else {
-            DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
+            DataStore.getAll(searchOptions, TAG_NAMES.COUPON_ITEMS).then(successAll, errorAll);
           }
 
         };
