@@ -85,7 +85,6 @@
           }
           options.recordCount = true;
           options.limit = 50;
-          console.log({options: options});
           Buildfire.datastore.search(options, _tagName, function (err, counter) {
             if (err) {
               return deferred.reject(err);
