@@ -115,6 +115,8 @@ h5{
 .layout1 .item-details{
 	display: flex;
 	justify-content: space-between;
+	max-width: 100vw;
+	flex-flow: wrap;
 }
 /* End Layout 1 ////////////////////////////////////////////////////////////////////////////// */
 
@@ -149,6 +151,8 @@ h5{
 .layout1 .item-details{
 	display: flex;
 	justify-content: space-between;
+	max-width: 100vw;
+	flex-flow: wrap;
 }
 /* End Layout 2 ////////////////////////////////////////////////////////////////////////////// */
 
