@@ -1197,8 +1197,32 @@
                 rows[index].links = [];
                 rows[index].rank = rank;
                 rows[index].body = "";
-                rows[index].startOn = getUnixFromDate(rows[index].startOn);
-                rows[index].expiresOn = getUnixFromDate(rows[index].expiresOn);
+                if (rows[index].startOn)
+
+
+
+
+
+                                                                                                       rows[index].startOn = getUnixFromDate(rows[index].startOn);
+                if (rows[index].expiresOn)
+
+
+
+
+
+                                                                                                       rows[index].expiresOn = getUnixFromDate(
+                    
+                    
+                    
+                    
+                    
+                    rows[index].expiresOn
+                  
+                  
+                  
+                  
+                  
+                  );
 
                 if (rows[index].carouselImages) {
                   var carousalImageUrlArray = rows[index].carouselImages.split(
@@ -1393,6 +1417,9 @@
                 ContentHome.loading = false;
                 ContentHome.isBusy = false;
                 ContentHome.items = [];
+                if (rank === null) {
+                  rank = rows[rows.length - 1].rank;
+                }
                 ContentHome.data.content.rankOfLastItem = rank;
                 RankOfLastItem.setRank(rank);
                 ContentHome.loadMoreItems("js");
@@ -1504,7 +1531,9 @@
                     { action: "noAction", iconUrl: oldUrl, title: "image" },
                   ];
                 }
-              } else if (typeof value.data.carouselImages == "undefined") value.data.carouselImages = [];
+              } else if (typeof value.data.carouselImages == "undefined")
+               
+                value.data.carouselImages = [];
 
               /*    if (typeof value.data.Categories === 'string' || value.data.Categories instanceof String) {
                         if (value.data.Categories.length == 0) {
