@@ -119,11 +119,6 @@
           return SettingsHome.couponInfo;
         }, saveDataWithDelay, true);
 
-        // $scope.$watch('SettingsHome.couponInfo.data.settings.employeeCode', function (newVal, oldVal) {
-        //   console.log({ newVal, oldVal });
-        //   if (newVal >= 10000000000) {
-        //     $scope.SettingsHome.couponInfo.data.settings.employeeCode = oldVal;
-        //   }
-        // });
+       
       }]);
 })(window.angular);

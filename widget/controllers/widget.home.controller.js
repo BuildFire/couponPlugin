@@ -5,6 +5,7 @@
     .controller('WidgetHomeCtrl', ['$scope', 'TAG_NAMES', 'LAYOUTS', 'DataStore', 'PAGINATION', 'Buildfire', 'Location', '$rootScope', 'ViewStack', '$sce', 'UserData', '$modal', '$timeout', 'SORT', 'GeoDistance',
       function ($scope, TAG_NAMES, LAYOUTS, DataStore, PAGINATION, Buildfire, Location, $rootScope, ViewStack, $sce, UserData, $modal, $timeout, SORT, GeoDistance) {
         var WidgetHome = this;
+        console.log(WidgetHome)
         console.log('inside widget home controller--------------->');
         WidgetHome.listeners = {};
         $rootScope.deviceHeight = window.innerHeight;
@@ -133,7 +134,9 @@
                 defaultView: "list",
                 distanceIn: "mi",
                 mapView: "show",
-                filterPage: "show"
+                filterPage: "show",
+                toggleEmployeeCode: "off",
+                employeeCode: 12345
               };
             }
             if (!WidgetHome.data.design.itemListLayout) {
