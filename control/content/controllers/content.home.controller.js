@@ -1120,10 +1120,7 @@
               $scope.$digest();
             }
           );
-      };
-      /**
-       * ContentHome.getMore is used to load the items
-       */ /*
+      }; /*
        ContentHome.getMore = function () {
          if (ContentHome.isBusy && !ContentHome.noMore) {
            return;
@@ -1145,8 +1142,9 @@
            ContentHome.isBusy = false;
          });
        };*/
-
-      /* */ function validateCsv(items) {
+      /**
+       * ContentHome.getMore is used to load the items
+       */ /* */ function validateCsv(items) {
         if (!Array.isArray(items) || !items.length) {
           return false;
         }
