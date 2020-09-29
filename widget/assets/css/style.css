@@ -30,8 +30,8 @@ h5{
 	align-items: center;
 	justify-content: center;
 	padding: 0;
-	width: 2.5rem;
-	height: 2.5rem;
+	width: 2.8125rem;
+	height: 2.8125rem;
 	border-radius: 50%;
 	border: 0;
 	background-color: transparent;
@@ -149,6 +149,7 @@ h5{
 .layout1 .item-details{
 	display: flex;
 	justify-content: space-between;
+	flex-direction: column;
 }
 /* End Layout 2 ////////////////////////////////////////////////////////////////////////////// */
 
