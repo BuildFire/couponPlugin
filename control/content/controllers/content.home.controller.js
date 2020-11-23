@@ -887,7 +887,6 @@
                     rows[index].carouselImages.push(obj);
                   })
                 }
-
                 asyncProcess(index, function (index) {
 
                   if (rows[index].SelectedCategories.length && rows[index].location) {
@@ -903,6 +902,8 @@
                       data.forEach(function (categoryObj) {
                         categoryList.forEach(function (categoryTitle) {
                           if (categoryTitle == categoryObj.data.title) {
+                            categoryObj.data.noOfItems+=1;
+                          //  buildfire.datastore.save(categoryObj,TAG_NAMES.COUPON_CATEGORIES);
                             tmpCategoryIds.push(categoryObj.id);
                           }
                         })
@@ -928,7 +929,8 @@
                         else {
                           console.error('' +
                             'Error else parts of google');
-                          error();
+                          rows[index].location = "";
+                          bulkInsertItems([rows[index]], rows[index].rank);
                         }
                       });
                       $scope.$digest();
@@ -954,7 +956,8 @@
                       }
                       else {
                         console.error('Error else parts of google');
-                        if (error) error();
+                        rows[index].location = "";
+                        bulkInsertItems([rows[index]], rows[index].rank);
                       }
                     });
                     $scope.$digest();
@@ -971,17 +974,19 @@
                       data.forEach(function (categoryObj) {
                         categoryList.forEach(function (categoryTitle) {
                           if (categoryTitle == categoryObj.data.title) {
+                            categoryObj.data.noOfItems+=1;
+                            buildfire.datastore.save(categoryObj,TAG_NAMES.COUPON_CATEGORIES);
                             tmpCategoryIds.push(categoryObj.id);
                           }
                         })
                       });
                       rows[index].SelectedCategories = tmpCategoryIds;
-                      bulkInsertItems(rows, null);
+                      bulkInsertItems([rows[index]], null);
                       $scope.$digest();
 
                     });
                   } else {
-                    bulkInsertItems(rows, null);
+                    bulkInsertItems([rows[index]], null);
                   }
                 });
               }
