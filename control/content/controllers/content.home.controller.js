@@ -56,8 +56,6 @@
           distanceIn: "mi",
           mapView: "show",
           filterPage: "show",
-          toggleEmployeeCode: "off",
-          employeeCode: "12345",
         },
       };
 
@@ -1120,7 +1118,10 @@
               $scope.$digest();
             }
           );
-      }; /*
+      };
+      /**
+       * ContentHome.getMore is used to load the items
+       */ /*
      ContentHome.getMore = function () {
        if (ContentHome.isBusy && !ContentHome.noMore) {
          return;
@@ -1142,9 +1143,8 @@
          ContentHome.isBusy = false;
        });
      };*/
-      /**
-       * ContentHome.getMore is used to load the items
-       */ /* */ function validateCsv(items) {
+
+      /* */ function validateCsv(items) {
         if (!Array.isArray(items) || !items.length) {
           return false;
         }
@@ -1417,7 +1417,6 @@
 
           /*   DataStore.insert(rows,TAG_NAMES.COUPON_ITEMS).then(function (data) {
              }, function errorHandler(error) {
-
              });*/
         } else {
           ContentHome.loading = false;
@@ -1519,8 +1518,7 @@
                     { action: "noAction", iconUrl: oldUrl, title: "image" },
                   ];
                 }
-              } else if (typeof value.data.carouselImages == "undefined")
-                value.data.carouselImages = [];
+              } else if (typeof value.data.carouselImages == "undefined") value.data.carouselImages = [];
 
               /*    if (typeof value.data.Categories === 'string' || value.data.Categories instanceof String) {
                         if (value.data.Categories.length == 0) {
