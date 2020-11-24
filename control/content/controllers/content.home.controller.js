@@ -1121,27 +1121,27 @@
             }
           );
       }; /*
-       ContentHome.getMore = function () {
-         if (ContentHome.isBusy && !ContentHome.noMore) {
-           return;
+     ContentHome.getMore = function () {
+       if (ContentHome.isBusy && !ContentHome.noMore) {
+         return;
+       }
+      // updateSearchOptions();
+       ContentHome.isBusy = true;
+       DataStore.search(searchOptions,TAG_NAMES.COUPON_ITEMS).then(function success(result) {
+         if (result.length <= _limit) {// to indicate there are more
+           ContentHome.noMore = true;
          }
-        // updateSearchOptions();
-         ContentHome.isBusy = true;
-         DataStore.search(searchOptions,TAG_NAMES.COUPON_ITEMS).then(function success(result) {
-           if (result.length <= _limit) {// to indicate there are more
-             ContentHome.noMore = true;
-           }
-           else {
-             result.pop();
-             searchOptions.skip = searchOptions.skip + _limit;
-             ContentHome.noMore = false;
-           }
-           ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
-           ContentHome.isBusy = false;
-         }, function fail() {
-           ContentHome.isBusy = false;
-         });
-       };*/
+         else {
+           result.pop();
+           searchOptions.skip = searchOptions.skip + _limit;
+           ContentHome.noMore = false;
+         }
+         ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
+         ContentHome.isBusy = false;
+       }, function fail() {
+         ContentHome.isBusy = false;
+       });
+     };*/
       /**
        * ContentHome.getMore is used to load the items
        */ /* */ function validateCsv(items) {
@@ -1198,30 +1198,10 @@
                 rows[index].rank = rank;
                 rows[index].body = "";
                 if (rows[index].startOn)
-
-
-
-
-
-                                                                                                       rows[index].startOn = getUnixFromDate(rows[index].startOn);
+                  rows[index].startOn = getUnixFromDate(rows[index].startOn);
                 if (rows[index].expiresOn)
-
-
-
-
-
-                                                                                                       rows[index].expiresOn = getUnixFromDate(
-                    
-                    
-                    
-                    
-                    
+                  rows[index].expiresOn = getUnixFromDate(
                     rows[index].expiresOn
-                  
-                  
-                  
-                  
-                  
                   );
 
                 if (rows[index].carouselImages) {
@@ -1239,7 +1219,6 @@
                     rows[index].carouselImages.push(obj);
                   });
                 }
-
                 asyncProcess(index, function (index) {
                   if (
                     rows[index].SelectedCategories.length &&
@@ -1261,6 +1240,8 @@
                         data.forEach(function (categoryObj) {
                           categoryList.forEach(function (categoryTitle) {
                             if (categoryTitle == categoryObj.data.title) {
+                              categoryObj.data.noOfItems += 1;
+                              //  buildfire.datastore.save(categoryObj,TAG_NAMES.COUPON_CATEGORIES);
                               tmpCategoryIds.push(categoryObj.id);
                             }
                           });
@@ -1285,7 +1266,8 @@
                               bulkInsertItems([rows[index]], rows[index].rank);
                             } else {
                               console.error("" + "Error else parts of google");
-                              error();
+                              rows[index].location = "";
+                              bulkInsertItems([rows[index]], rows[index].rank);
                             }
                           }
                         );
@@ -1313,8 +1295,9 @@
                           };
                           bulkInsertItems([rows[index]], rows[index].rank);
                         } else {
-                          console.error("" + "Error else parts of google");
-                          error();
+                          console.error("Error else parts of google");
+                          rows[index].location = "";
+                          bulkInsertItems([rows[index]], rows[index].rank);
                         }
                       }
                     );
@@ -1339,17 +1322,22 @@
                         data.forEach(function (categoryObj) {
                           categoryList.forEach(function (categoryTitle) {
                             if (categoryTitle == categoryObj.data.title) {
+                              categoryObj.data.noOfItems += 1;
+                              buildfire.datastore.save(
+                                categoryObj,
+                                TAG_NAMES.COUPON_CATEGORIES
+                              );
                               tmpCategoryIds.push(categoryObj.id);
                             }
                           });
                         });
                         rows[index].SelectedCategories = tmpCategoryIds;
-                        bulkInsertItems([rows[index]], rows[index].rank);
+                        bulkInsertItems([rows[index]], null);
                         $scope.$digest();
                       }
                     );
                   } else {
-                    bulkInsertItems([rows[index]], rows[index].rank);
+                    bulkInsertItems([rows[index]], null);
                   }
                 });
               }
@@ -1532,7 +1520,6 @@
                   ];
                 }
               } else if (typeof value.data.carouselImages == "undefined")
-               
                 value.data.carouselImages = [];
 
               /*    if (typeof value.data.Categories === 'string' || value.data.Categories instanceof String) {
