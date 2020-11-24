@@ -56,6 +56,8 @@
           distanceIn: "mi",
           mapView: "show",
           filterPage: "show",
+          toggleEmployeeCode: "off",
+          employeeCode: "12345",
         },
       };
 
