@@ -1,225 +1,175 @@
 "use strict";
 
 (function (angular, buildfire) {
-  angular.module("couponPluginContent").controller("ContentHomeCtrl", [
-    "$scope",
-    "$timeout",
-    "TAG_NAMES",
-    "SORT",
-    "SORT_FILTER",
-    "STATUS_CODE",
-    "DataStore",
-    "LAYOUTS",
-    "Buildfire",
-    "Modals",
-    "RankOfLastFilter",
-    "RankOfLastItem",
-    "$csv",
-    "Utils",
-    "$rootScope",
-    "PluginEvents",
-    function (
-      $scope,
-      $timeout,
-      TAG_NAMES,
-      SORT,
-      SORT_FILTER,
-      STATUS_CODE,
-      DataStore,
-      LAYOUTS,
-      Buildfire,
-      Modals,
-      RankOfLastFilter,
-      RankOfLastItem,
-      $csv,
-      Utils,
-      $rootScope,
-      PluginEvents
-    ) {
-      var ContentHome = this;
-      ContentHome.searchValue = "";
-      ContentHome.filter = null;
-      var _data = {
-        content: {
-          carouselImages: [],
-          description: "",
-          rankOfLastFilter: "",
-          rankOfLastItem: "",
-          sortItemBy: SORT.MANUALLY,
-          sortFilterBy: SORT_FILTER.MANUALLY,
-        },
-        design: {
-          itemListLayout: LAYOUTS.itemListLayout[0].name,
-        },
-        settings: {
-          defaultView: "list",
-          distanceIn: "mi",
-          mapView: "show",
-          filterPage: "show",
-          toggleEmployeeCode: "off",
-          employeeCode: "12345",
-        },
-      };
+  angular
+    .module('couponPluginContent')
+    .controller('ContentHomeCtrl', ['$scope', '$timeout', 'TAG_NAMES', 'SORT', 'SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS', 'Buildfire', 'Modals', 'RankOfLastFilter', 'RankOfLastItem', '$csv', 'Utils', '$rootScope', 'PluginEvents',
+      function ($scope, $timeout, TAG_NAMES, SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem, $csv, Utils, $rootScope, PluginEvents) {
 
-      // Show the top plugin info part when on home view
-      Buildfire.appearance.setHeaderVisibility(true);
+        var ContentHome = this;
+        ContentHome.searchValue = "";
+        ContentHome.filter = null;
+        var _data = {
+          "content": {
+            "carouselImages": [],
+            "description": '',
+            "rankOfLastFilter": '',
+            "rankOfLastItem": '',
+            "sortItemBy": SORT.MANUALLY,
+            "sortFilterBy": SORT_FILTER.MANUALLY
+          },
+          "design": {
+            "itemListLayout": LAYOUTS.itemListLayout[0].name
+          },
+          "settings": {
+            "defaultView": "list",
+            "distanceIn": "mi",
+            "mapView": "show",
+            "filterPage": "show"
+          }
+        };
 
-      var header = {
-          title: "Item Title",
+
+        // Show the top plugin info part when on home view
+        Buildfire.appearance.setHeaderVisibility(true);
+
+        var header = {
+          title: 'Item Title',
           summary: "Item Summary",
           SelectedCategories: "Selected Categories",
           Categories: "Categories",
-          listImage: "List Image",
-          carouselImages: "Carousel images",
-          preRedemptionText: "Pre-Redemption Body Content",
-          postRedemptionText: "Post-Redemption Body Content",
-          startOn: "Start Date",
-          expiresOn: "Expiration Date",
-          addressTitle: "Address Title",
-          location: "Coupon Location",
-          webURL: "Web URL",
-          sendToEmail: "Send to Email",
-          smsTextNumber: "SMS Text Number",
-          phoneNumber: "Phone Number",
-          facebookURL: "Facebook URL",
-          twitterURL: "Twitter URL",
-          instagramURL: "Instagram URL",
-          googlePlusURL: "Google+ URL",
-          linkedinURL: "Linkedin URL",
-        },
-        headerRow = [
-          "title",
-          "summary",
-          "SelectedCategories",
-          "Categories",
-          "listImage",
-          "carouselImages",
-          "preRedemptionText",
-          "postRedemptionText",
-          "startOn",
-          "expiresOn",
-          "addressTitle",
-          "location",
-          "webURL",
-          "sendToEmail",
-          "smsTextNumber",
-          "phoneNumber",
-          "facebookURL",
-          "twitterURL",
-          "instagramURL",
-          "googlePlusURL",
-          "linkedinURL",
-        ];
-
-      /*  var today = new Date();
-          var month = new Date().getMonth() + 1;
-          ContentHome.currentDate = +new Date("'" + month + "/" + today.getDate() + "/" + today.getFullYear() + "'");
-  */
-      ContentHome.currentDate = new Date();
-      ContentHome.yesterdayDate = +ContentHome.currentDate.setDate(
-        ContentHome.currentDate.getDate() - 1
-      );
-      ContentHome.tommorowDate = +ContentHome.currentDate.setDate(
-        ContentHome.currentDate.getDate() + 1
-      );
+          listImage: 'List Image',
+          carouselImages: 'Carousel images',
+          preRedemptionText: 'Pre-Redemption Body Content',
+          postRedemptionText: 'Post-Redemption Body Content',
+          startOn: 'Start Date',
+          expiresOn: 'Expiration Date',
+          addressTitle: 'Address Title',
+          location: 'Coupon Location',
+          webURL: 'Web URL',
+          sendToEmail: 'Send to Email',
+          smsTextNumber: 'SMS Text Number',
+          phoneNumber: 'Phone Number',
+          facebookURL: 'Facebook URL',
+          twitterURL: 'Twitter URL',
+          instagramURL: 'Instagram URL',
+          googlePlusURL: 'Google+ URL',
+          linkedinURL: 'Linkedin URL'
+        }
+          , headerRow = ["title", "summary", "SelectedCategories", "Categories", "listImage", "carouselImages", "preRedemptionText", "postRedemptionText", "startOn", "expiresOn", "addressTitle", "location", "webURL", "sendToEmail", "smsTextNumber", "phoneNumber", "facebookURL", "twitterURL", "instagramURL", "googlePlusURL", "linkedinURL"];
 
       ContentHome.currentDateTimestamp = +new Date();
 
-      ContentHome.filters = [];
+        /*  var today = new Date();
+          var month = new Date().getMonth() + 1;
+          ContentHome.currentDate = +new Date("'" + month + "/" + today.getDate() + "/" + today.getFullYear() + "'");
+  */
+        ContentHome.currentDate = new Date();
+        ContentHome.yesterdayDate = +ContentHome.currentDate.setDate(ContentHome.currentDate.getDate() - 1);
+        ContentHome.tommorowDate = +ContentHome.currentDate.setDate(ContentHome.currentDate.getDate() + 1);
 
       ContentHome.items = [];
 
       $rootScope.$on("ITEMS_UPDATED", function (e) {
         ContentHome.filters = [];
         ContentHome.items = [];
-        ContentHome.loadMore("js");
-        ContentHome.loadMoreItems("js");
-      });
 
-      ContentHome.sortFilterOptions = [
-        SORT_FILTER.MANUALLY,
-        SORT_FILTER.CATEGORY_NAME_A_Z,
-        SORT_FILTER.CATEGORY_NAME_Z_A,
-      ];
+        $rootScope.$on('ITEMS_UPDATED', function (e) {
+          ContentHome.filters = [];
+          ContentHome.items = [];
+          ContentHome.loadMore('js');
+          ContentHome.loadMoreItems('js');
 
-      ContentHome.sortItemOptions = [
-        SORT.MANUALLY,
-        SORT.ITEM_TITLE_A_Z,
-        SORT.ITEM_TITLE_Z_A,
-        SORT.NEWEST_FIRST,
-        SORT.OLDEST_FIRST,
-        SORT.EXPIRATION_DATE_ASC,
-        SORT.EXPIRATION_DATE_DESC,
-      ];
+        })
 
-      ContentHome.searchOptions = {
-        filter: { "$json.title": { $regex: "/*" } },
-        skip: SORT_FILTER._skip,
-        limit: SORT_FILTER._limit + 1, // the plus one is to check if there are any more
-      };
+        ContentHome.sortFilterOptions = [
+          SORT_FILTER.MANUALLY,
+          SORT_FILTER.CATEGORY_NAME_A_Z,
+          SORT_FILTER.CATEGORY_NAME_Z_A
+        ];
 
-      ContentHome.searchOptionsForItems = {
-        filter: { "$json.title": { $regex: "/*" } },
-        skip: SORT._skip,
-        limit: SORT._limit + 1, // the plus one is to check if there are any more
-      };
-      /*
-       * create an artificial delay so api isnt called on every character entered
-       * */
-      var tmrDelay = null;
+        ContentHome.sortItemOptions = [
+          SORT.MANUALLY,
+          SORT.ITEM_TITLE_A_Z,
+          SORT.ITEM_TITLE_Z_A,
+          SORT.NEWEST_FIRST,
+          SORT.OLDEST_FIRST,
+          SORT.EXPIRATION_DATE_ASC,
+          SORT.EXPIRATION_DATE_DESC
+        ];
 
-      ContentHome.busyFilter = false;
-      ContentHome.busy = false;
-      RankOfLastFilter.setRank(0);
-      RankOfLastItem.setRank(0);
+        ContentHome.searchOptions = {
+          filter: { "$json.title": { "$regex": '/*' } },
+          skip: SORT_FILTER._skip,
+          limit: SORT_FILTER._limit + 1 // the plus one is to check if there are any more
+        };
 
-      var updateMasterItem = function (data) {
-        ContentHome.masterData = angular.copy(data);
-      };
+        ContentHome.searchOptionsForItems = {
+          filter: { "$json.title": { "$regex": '/*' } },
+          skip: SORT._skip,
+          limit: SORT._limit + 1 // the plus one is to check if there are any more
+        };
+        /*
+         * create an artificial delay so api isnt called on every character entered
+         * */
+        var tmrDelay = null;
 
-      var isUnchanged = function (data) {
-        return angular.equals(data, ContentHome.masterData);
-      };
+        ContentHome.busyFilter = false;
+        ContentHome.busy = false;
+        RankOfLastFilter.setRank(0);
+        RankOfLastItem.setRank(0);
 
-      ContentHome.descriptionWYSIWYGOptions = {
-        plugins: "advlist autolink link image lists charmap print preview",
-        skin: "lightgray",
-        trusted: true,
-        theme: "modern",
-      };
+        var updateMasterItem = function (data) {
+          ContentHome.masterData = angular.copy(data);
+        };
 
-      // create a new instance of the buildfire carousel editor
-      var editor = new Buildfire.components.carousel.editor("#carousel");
 
-      // this method will be called when a new item added to the list
-      editor.onAddItems = function (items) {
-        if (!ContentHome.data.content.carouselImages)
-          ContentHome.data.content.carouselImages = [];
-        ContentHome.data.content.carouselImages.push.apply(
-          ContentHome.data.content.carouselImages,
-          items
-        );
-        $scope.$digest();
-      };
-      // this method will be called when an item deleted from the list
-      editor.onDeleteItem = function (item, index) {
-        ContentHome.data.content.carouselImages.splice(index, 1);
-        $scope.$digest();
-      };
-      // this method will be called when you edit item details
-      editor.onItemChange = function (item, index) {
-        ContentHome.data.content.carouselImages.splice(index, 1, item);
-        $scope.$digest();
-      };
-      // this method will be called when you change the order of items
-      editor.onOrderChange = function (item, oldIndex, newIndex) {
-        var items = ContentHome.data.content.carouselImages;
+        var isUnchanged = function (data) {
+          return angular.equals(data, ContentHome.masterData);
+        };
 
-        var tmp = items[oldIndex];
 
-        if (oldIndex < newIndex) {
-          for (var i = oldIndex + 1; i <= newIndex; i++) {
-            items[i - 1] = items[i];
+        ContentHome.descriptionWYSIWYGOptions = {
+          plugins: 'advlist autolink link image lists charmap print preview',
+          skin: 'lightgray',
+          trusted: true,
+          theme: 'modern'
+        };
+
+        // create a new instance of the buildfire carousel editor
+        var editor = new Buildfire.components.carousel.editor("#carousel");
+
+        // this method will be called when a new item added to the list
+        editor.onAddItems = function (items) {
+          if (!ContentHome.data.content.carouselImages)
+            ContentHome.data.content.carouselImages = [];
+          ContentHome.data.content.carouselImages.push.apply(ContentHome.data.content.carouselImages, items);
+          $scope.$digest();
+        };
+        // this method will be called when an item deleted from the list
+        editor.onDeleteItem = function (item, index) {
+          ContentHome.data.content.carouselImages.splice(index, 1);
+          $scope.$digest();
+        };
+        // this method will be called when you edit item details
+        editor.onItemChange = function (item, index) {
+          ContentHome.data.content.carouselImages.splice(index, 1, item);
+          $scope.$digest();
+        };
+        // this method will be called when you change the order of items
+        editor.onOrderChange = function (item, oldIndex, newIndex) {
+          var items = ContentHome.data.content.carouselImages;
+
+          var tmp = items[oldIndex];
+
+          if (oldIndex < newIndex) {
+            for (var i = oldIndex + 1; i <= newIndex; i++) {
+              items[i - 1] = items[i];
+            }
+          } else {
+            for (var i = oldIndex - 1; i >= newIndex; i--) {
+              items[i + 1] = items[i];
+            }
           }
         } else {
           for (var i = oldIndex - 1; i >= newIndex; i--) {
@@ -331,35 +281,29 @@
               );
             }
           }
-        },
-      };
-      //ContentHome.itemSortableOptions.disabled = !(ContentHome.data.content.sortFilterBy === SORT_FILTER.MANUALLY);
+        };
+        //ContentHome.itemSortableOptions.disabled = !(ContentHome.data.content.sortFilterBy === SORT_FILTER.MANUALLY);
 
-      //Polyfill for isInterger support for IE
-      Number.isInteger =
-        Number.isInteger ||
-        function (value) {
-          return (
-            typeof value === "number" &&
+        //Polyfill for isInterger support for IE
+        Number.isInteger = Number.isInteger || function (value) {
+          return typeof value === "number" &&
             isFinite(value) &&
-            Math.floor(value) === value
-          );
+            Math.floor(value) === value;
         };
 
-      ContentHome.addEditFilter = function (filter, editFlag, index) {
-        var tempTitle = "";
-        if (Number.isInteger(index)) var filterIndex = index;
-        if (filter) tempTitle = filter.data.title;
-        Modals.addFilterModal({
-          title: tempTitle,
-          isEdit: editFlag,
-        }).then(
-          function (response) {
-            if (
-              !(
-                response.title === null || response.title.match(/^ *$/) !== null
-              )
-            ) {
+
+        ContentHome.addEditFilter = function (filter, editFlag, index) {
+          var tempTitle = '';
+          if (Number.isInteger(index))
+            var filterIndex = index;
+          if (filter)
+            tempTitle = filter.data.title;
+          Modals.addFilterModal({
+            title: tempTitle,
+            isEdit: editFlag
+          }).then(function (response) {
+            if (!(response.title === null || response.title.match(/^ *$/) !== null)) {
+
               //if index is there it means filter update operation is performed
               if (Number.isInteger(filterIndex)) {
                 ContentHome.filters[filterIndex].data.title = response.title;
@@ -379,20 +323,15 @@
                 var filterResponse = response;
                 var notFound = true;
                 if (ContentHome.filters && ContentHome.filters.length) {
-                  for (
-                    var index = 0;
-                    index < ContentHome.filters.length;
-                    index++
-                  ) {
-                    if (
-                      ContentHome.filters[index].data.title == response.title
-                    ) {
+                  for (var index = 0; index < ContentHome.filters.length; index++) {
+                    if (ContentHome.filters[index].data.title == response.title) {
                       notFound = false;
                       confirmFilterAdd(filterResponse);
                       break;
                     }
                     if (ContentHome.filters.length - 1 == index) {
-                      if (notFound) insertFilter(filterResponse);
+                      if (notFound)
+                        insertFilter(filterResponse);
                       break;
                     }
                   }
@@ -424,15 +363,28 @@
             noOfItems: 0,
           },
         };
-        ContentHome.data.content.rankOfLastFilter =
-          RankOfLastFilter.getRank() + 10;
-        RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
-        ContentHome.filters.unshift(ContentHome.filter);
-        Buildfire.datastore.insert(
-          ContentHome.filter.data,
-          TAG_NAMES.COUPON_CATEGORIES,
-          false,
-          function (err, data) {
+
+        function confirmFilterAdd(filterResponse) {
+          Modals.removePopupFilterModal({}).then(function (response) {
+            console.log(response);
+            if (response) {
+              insertFilter(filterResponse);
+            }
+          });
+        }
+
+        function insertFilter(response) {
+          ContentHome.filter = {
+            data: {
+              title: response.title,
+              rank: RankOfLastFilter.getRank() + 10,
+              noOfItems: 0
+            }
+          };
+          ContentHome.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 10;
+          RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
+          ContentHome.filters.unshift(ContentHome.filter);
+          Buildfire.datastore.insert(ContentHome.filter.data, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
             console.log("Saved", data.id);
             ContentHome.isUpdating = false;
             ContentHome.filter.id = data.id;
@@ -442,18 +394,16 @@
               return console.error("There was a problem saving your data");
             }
             $scope.$digest();
-          }
-        );
-      }
+          });
+        }
 
-      ContentHome.deleteFilter = function (index) {
-        Modals.removePopupModal({ item: "filter" }).then(function (result) {
-          if (result) {
-            Buildfire.datastore.delete(
-              ContentHome.filters[index].id,
-              TAG_NAMES.COUPON_CATEGORIES,
-              function (err, result) {
-                if (err) return;
+        ContentHome.deleteFilter = function (index) {
+          Modals.removePopupModal({ 'item': 'filter' }).then(function (result) {
+            if (result) {
+
+              Buildfire.datastore.delete(ContentHome.filters[index].id, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
+                if (err)
+                  return;
                 //ContentHome.items.splice(_index, 1);
                 ContentHome.filters.splice(index, 1);
                 var tmpArray = [];
@@ -470,57 +420,44 @@
                   ].SelectedCommonCategories = intersectedCategories;
                 });
                 $scope.$digest();
-              }
-            );
-          }
-        });
-      };
-      ContentHome.showFilter = function (
-        index,
-        itemId,
-        selectedItems,
-        categories,
-        itemData
-      ) {
-        //categories=ContentHome.filters;
+              });
+            }
+          });
+        };
+        ContentHome.showFilter = function (index, itemId, selectedItems, categories, itemData) {
 
-        Modals.showFilterPopupModal({
-          index: index,
-          itemId: itemId,
-          selectedItems: selectedItems,
-          categories: categories,
-          itemData: itemData,
-        }).then(
-          function (response) {
+          //categories=ContentHome.filters;
+
+          Modals.showFilterPopupModal({
+            index: index,
+            itemId: itemId,
+            selectedItems: selectedItems,
+            categories: categories,
+            itemData: itemData
+          }).then(function (response) {
             ContentHome.items = [];
             ContentHome.filters = [];
             ContentHome.isBusy = false;
             ContentHome.searchOptionsForItems.skip = 0;
 
-            ContentHome.loadMoreItems("items"); //, {"$json.title": {"$regex": '/*'}}
-            ContentHome.loadMore("filter");
+            ContentHome.loadMoreItems('items');//, {"$json.title": {"$regex": '/*'}}
+            ContentHome.loadMore('filter');
             //  ContentHome.loadMore()
-            if (!$scope.$apply) $scope.$digest();
-          },
-          function (err) {}
-        );
-      };
+            if (!$scope.$apply)
+              $scope.$digest();
 
-      ContentHome.deleteItem = function (index) {
-        Modals.removeItemPopupModal({ item: "item" }).then(function (result) {
-          if (result) {
-            if (
-              ContentHome.items[index].data &&
-              ContentHome.items[index].data.SelectedCategories &&
-              ContentHome.items[index].data.SelectedCategories.length
-            ) {
-              ContentHome.items[index].data.SelectedCategories.forEach(
-                function (category) {
-                  for (
-                    var index = 0;
-                    index < ContentHome.filters.length;
-                    index++
-                  ) {
+
+          }, function (err) {
+
+          });
+        };
+
+        ContentHome.deleteItem = function (index) {
+          Modals.removeItemPopupModal({ 'item': 'item' }).then(function (result) {
+            if (result) {
+              if (ContentHome.items[index].data && ContentHome.items[index].data.SelectedCategories && ContentHome.items[index].data.SelectedCategories.length) {
+                ContentHome.items[index].data.SelectedCategories.forEach(function (category) {
+                  for (var index = 0; index < ContentHome.filters.length; index++) {
                     if (ContentHome.filters[index].id == category) {
                       ContentHome.filter = ContentHome.filters[index].data;
                       ContentHome.filter.noOfItems -= 1;
@@ -560,487 +497,273 @@
         }
       };
 
-      ContentHome.sortItemBy = function (value) {
-        if (!value) {
-          console.info("There was a problem sorting your data");
-        } else {
-          // ContentHome.data.content.filters=null;
+        ContentHome.chooseFilter = function (value, title) {
+          ContentHome.data.content.selectedFilter = { "title": title, "id": value };
+          ContentHome.data.content.selectedStatus = "All Statuses";
+          ContentHome.searchValue = "";
           ContentHome.items = [];
           ContentHome.searchOptionsForItems.skip = 0;
-          ContentHome.busy = false;
-          ContentHome.data.content.sortItemBy = value;
-          ContentHome.loadMoreItems("items");
-        }
-      };
-
-      ContentHome.chooseFilter = function (value, title) {
-        ContentHome.data.content.selectedFilter = { title: title, id: value };
-        ContentHome.data.content.selectedStatus = "All Statuses";
-        ContentHome.searchValue = "";
-        ContentHome.items = [];
-        ContentHome.searchOptionsForItems.skip = 0;
-        if (
-          ContentHome.data.content.selectedFilter &&
-          ContentHome.data.content.selectedFilter.id !== "All Categories"
-        ) {
-          ContentHome.searchOptionsForItems.filter = {
-            $and: [
-              {
-                "$json.SelectedCategories": {
-                  $eq: ContentHome.data.content.selectedFilter.id,
-                },
-              },
-              { "$json.title": { $regex: "/*" } },
-            ],
+          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id !== 'All Categories') {
+            ContentHome.searchOptionsForItems.filter = {
+              "$and": [{
+                "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
+              }, { "$json.title": { "$regex": '/*' } }]
+            };
+          } else {
+            ContentHome.searchOptionsForItems.filter = { "$json.title": { "$regex": '/*' } };
           };
-        } else {
-          ContentHome.searchOptionsForItems.filter = {
-            "$json.title": { $regex: "/*" },
-          };
-        }
-        ContentHome.loadMoreItems("items"); //, {"$json.title": {"$regex": '/*'}}
-      };
+          ContentHome.loadMoreItems('items');//, {"$json.title": {"$regex": '/*'}}
+        };
 
-      ContentHome.chooseStatus = function (status) {
-        ContentHome.searchValue = "";
-        ContentHome.data.content.selectedStatus = status;
-        // ContentHome.couponActiveDate = ContentHome.currentDate;
-        if (
-          ContentHome.data.content.selectedFilter &&
-          ContentHome.data.content.selectedFilter.id !== "All Categories"
-        ) {
-          if (ContentHome.data.content.selectedStatus == "Active") {
-            ContentHome.searchOptionsForItems.filter = {
-              $and: [
-                {
-                  $and: [
-                    {
-                      "$json.SelectedCategories": {
-                        $eq: ContentHome.data.content.selectedFilter.id,
-                      },
-                    },
-                    { "$json.title": { $regex: "/*" } },
-                  ],
-                },
-                {
-                  $or: [
-                    { "$json.expiresOn": { $gte: ContentHome.tommorowDate } },
-                    { "$json.expiresOn": { $eq: "" } },
-                  ],
-                },
-              ],
-            };
-          } else if (ContentHome.data.content.selectedStatus == "Expired") {
-            ContentHome.searchOptionsForItems.filter = {
-              $and: [
-                {
-                  $and: [
-                    {
-                      "$json.SelectedCategories": {
-                        $eq: ContentHome.data.content.selectedFilter.id,
-                      },
-                    },
-                    { "$json.title": { $regex: "/*" } },
-                  ],
-                },
-                {
-                  $or: [
-                    { "$json.expiresOn": { $lte: ContentHome.tommorowDate } },
-                  ],
-                },
-              ],
-            };
-          } else if (
-            ContentHome.data.content.selectedStatus == "All Statuses"
-          ) {
-            ContentHome.searchOptionsForItems.filter = {
-              $and: [
-                {
-                  "$json.SelectedCategories": {
-                    $eq: ContentHome.data.content.selectedFilter.id,
-                  },
-                },
-                { "$json.title": { $regex: "/*" } },
-              ],
-            };
-          }
-        } else {
-          if (ContentHome.data.content.selectedStatus == "Active") {
-            ContentHome.searchOptionsForItems.filter = {
-              $and: [
-                {
-                  $and: [{ "$json.title": { $regex: "/*" } }],
-                },
-                {
-                  $or: [
-                    { "$json.expiresOn": { $gte: ContentHome.tommorowDate } },
-                    { "$json.expiresOn": { $eq: "" } },
-                  ],
-                },
-              ],
-            };
-          } else if (ContentHome.data.content.selectedStatus == "Expired") {
-            ContentHome.searchOptionsForItems.filter = {
-              $and: [
-                { "$json.title": { $regex: "/*" } },
-                { "$json.expiresOn": { $lte: ContentHome.tommorowDate } },
-              ],
-            };
-          } else if (
-            ContentHome.data.content.selectedStatus == "All Statuses"
-          ) {
-            ContentHome.searchOptionsForItems.filter = {
-              "$json.title": { $regex: "/*" },
-            };
-          }
-        }
-
-        ContentHome.items = [];
-        ContentHome.searchOptionsForItems.skip = 0;
-
-        ContentHome.loadMoreItems("items"); //, {"$json.title": {"$regex": '/*'}}
-        console.log(
-          "-------------------llll",
-          ContentHome.searchOptionsForItems.filter
-        );
-      };
-
-      ContentHome.searchItem = function () {
-        ContentHome.couponActiveDate = ContentHome.currentDate;
-        if (
-          ContentHome.data.content.selectedFilter &&
-          ContentHome.data.content.selectedFilter.id != "All Categories" &&
-          ContentHome.data.content.selectedStatus &&
-          ContentHome.data.content.selectedStatus !== "All Statuses"
-        ) {
-          if (ContentHome.data.content.selectedStatus == "Active") {
-            ContentHome.searchOptionsForItems.filter = {
-              $and: [
-                {
-                  $and: [
-                    {
-                      "$json.SelectedCategories": {
-                        $eq: ContentHome.data.content.selectedFilter.id,
-                      },
-                    },
-                    {
-                      $or: [
-                        {
-                          "$json.title": {
-                            $regex: ContentHome.searchValue,
-                            $options: "i",
-                          },
-                        },
-                        {
-                          "$json.summary": {
-                            $regex: ContentHome.searchValue,
-                            $options: "i",
-                          },
-                        },
-                      ],
-                    },
-                  ],
-                },
-                {
-                  $or: [
-                    { "$json.expiresOn": { $gte: ContentHome.tommorowDate } },
-                    { "$json.expiresOn": { $eq: "" } },
-                  ],
-                },
-              ],
-            };
-          } else if (ContentHome.data.content.selectedStatus == "Expired") {
-            ContentHome.searchOptionsForItems.filter = {
-              $and: [
-                {
-                  $and: [
-                    {
-                      "$json.SelectedCategories": {
-                        $eq: ContentHome.data.content.selectedFilter.id,
-                      },
-                    },
-                    {
-                      $or: [
-                        {
-                          "$json.title": {
-                            $regex: ContentHome.searchValue,
-                            $options: "i",
-                          },
-                        },
-                        {
-                          "$json.summary": {
-                            $regex: ContentHome.searchValue,
-                            $options: "i",
-                          },
-                        },
-                      ],
-                    },
-                  ],
-                },
-                {
-                  $or: [
-                    { "$json.expiresOn": { $lte: ContentHome.tommorowDate } },
-                  ],
-                },
-              ],
-            };
-          }
-        } else if (
-          ContentHome.data.content.selectedStatus &&
-          ContentHome.data.content.selectedStatus !== "All Statuses"
-        ) {
-          if (ContentHome.data.content.selectedStatus == "Active") {
-            ContentHome.searchOptionsForItems.filter = {
-              $and: [
-                {
-                  $and: [
-                    {
-                      $or: [
-                        {
-                          "$json.title": {
-                            $regex: ContentHome.searchValue,
-                            $options: "i",
-                          },
-                        },
-                        {
-                          "$json.summary": {
-                            $regex: ContentHome.searchValue,
-                            $options: "i",
-                          },
-                        },
-                      ],
-                    },
-                  ],
-                },
-                {
-                  $or: [
-                    { "$json.expiresOn": { $gte: ContentHome.tommorowDate } },
-                    { "$json.expiresOn": { $eq: "" } },
-                  ],
-                },
-              ],
-            };
-          } else if (ContentHome.data.content.selectedStatus == "Expired") {
-            ContentHome.searchOptionsForItems.filter = {
-              $and: [
-                {
-                  $and: [
-                    {
-                      $or: [
-                        {
-                          "$json.title": {
-                            $regex: ContentHome.searchValue,
-                            $options: "i",
-                          },
-                        },
-                        {
-                          "$json.summary": {
-                            $regex: ContentHome.searchValue,
-                            $options: "i",
-                          },
-                        },
-                      ],
-                    },
-                  ],
-                },
-                {
-                  $or: [
-                    { "$json.expiresOn": { $lte: ContentHome.tommorowDate } },
-                  ],
-                },
-              ],
-            };
-          }
-        } else if (
-          ContentHome.data.content.selectedFilter &&
-          ContentHome.data.content.selectedFilter.id !== "All Categories"
-        ) {
-          ContentHome.searchOptionsForItems.filter = {
-            $and: [
+        ContentHome.chooseStatus = function (status) {
+          ContentHome.searchValue = "";
+          ContentHome.data.content.selectedStatus = status;
+          // ContentHome.couponActiveDate = ContentHome.currentDate;
+          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id !== 'All Categories') {
+            if (ContentHome.data.content.selectedStatus == 'Active') {
+              ContentHome.searchOptionsForItems.filter =
               {
-                "$json.SelectedCategories": {
-                  $eq: ContentHome.data.content.selectedFilter.id,
-                },
-              },
+                "$and": [{
+                  "$and": [{
+                    "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
+                  }, { "$json.title": { "$regex": '/*' } }]
+                }, { "$or": [{ "$json.expiresOn": { "$gte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$eq": "" } }] }]
+              }
+            } else if (ContentHome.data.content.selectedStatus == 'Expired') {
+              ContentHome.searchOptionsForItems.filter =
               {
-                $or: [
-                  {
-                    "$json.title": {
-                      $regex: ContentHome.searchValue,
-                      $options: "i",
-                    },
-                  },
-                  {
-                    "$json.summary": {
-                      $regex: ContentHome.searchValue,
-                      $options: "i",
-                    },
-                  },
-                ],
-              },
-            ],
-          };
-        } else {
-          ContentHome.searchOptionsForItems.filter = {
-            $or: [
+                "$and": [{
+                  "$and": [{
+                    "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
+                  }, { "$json.title": { "$regex": '/*' } }]
+                }, { "$or": [{ "$json.expiresOn": { "$lte": ContentHome.tommorowDate } }] }]
+              }
+            } else if (ContentHome.data.content.selectedStatus == 'All Statuses') {
+              ContentHome.searchOptionsForItems.filter =
               {
+                "$and": [{
+                  "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
+                }, { "$json.title": { "$regex": '/*' } }]
+              }
+            }
+          } else {
+            if (ContentHome.data.content.selectedStatus == 'Active') {
+              ContentHome.searchOptionsForItems.filter =
+              {
+                "$and": [{
+                  "$and": [{ "$json.title": { "$regex": '/*' } }]
+                }, { "$or": [{ "$json.expiresOn": { "$gte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$eq": "" } }] }]
+              }
+            } else if (ContentHome.data.content.selectedStatus == 'Expired') {
+              ContentHome.searchOptionsForItems.filter =
+              {
+                "$and": [
+                  { "$json.title": { "$regex": '/*' } },
+                  { "$json.expiresOn": { "$lte": ContentHome.tommorowDate } }
+                ]
+              }
+            }
+            else if (ContentHome.data.content.selectedStatus == 'All Statuses') {
+              ContentHome.searchOptionsForItems.filter = { "$json.title": { "$regex": '/*' } };
+            }
+          }
+
+
+          ContentHome.items = [];
+          ContentHome.searchOptionsForItems.skip = 0;
+
+          ContentHome.loadMoreItems('items');//, {"$json.title": {"$regex": '/*'}}
+          console.log("-------------------llll", ContentHome.searchOptionsForItems.filter)
+        };
+
+        ContentHome.searchItem = function () {
+          ContentHome.couponActiveDate = ContentHome.currentDate;
+          if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id != 'All Categories' && ContentHome.data.content.selectedStatus && ContentHome.data.content.selectedStatus !== 'All Statuses') {
+
+            if (ContentHome.data.content.selectedStatus == 'Active') {
+              ContentHome.searchOptionsForItems.filter =
+              {
+                "$and": [{
+                  "$and": [{
+                    "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
+                  }, { "$or": [{ "$json.title": { "$regex": ContentHome.searchValue, "$options": "i" } }, { "$json.summary": { "$regex": ContentHome.searchValue, "$options": "i" } }] }]
+                }, { "$or": [{ "$json.expiresOn": { "$gte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$eq": "" } }] }]
+              }
+            } else if (ContentHome.data.content.selectedStatus == 'Expired') {
+
+              ContentHome.searchOptionsForItems.filter =
+              {
+                "$and": [{
+                  "$and": [{
+                    "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
+                  }, { "$or": [{ "$json.title": { "$regex": ContentHome.searchValue, "$options": "i" } }, { "$json.summary": { "$regex": ContentHome.searchValue, "$options": "i" } }] }]
+                }, { "$or": [{ "$json.expiresOn": { "$lte": ContentHome.tommorowDate } }] }]
+              }
+            }
+          } else if (ContentHome.data.content.selectedStatus && ContentHome.data.content.selectedStatus !== "All Statuses") {
+            if (ContentHome.data.content.selectedStatus == 'Active') {
+              ContentHome.searchOptionsForItems.filter =
+              {
+                "$and": [{
+                  "$and": [{ "$or": [{ "$json.title": { "$regex": ContentHome.searchValue, "$options": "i" } }, { "$json.summary": { "$regex": ContentHome.searchValue, "$options": "i" } }] }]
+                }, { "$or": [{ "$json.expiresOn": { "$gte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$eq": "" } }] }]
+              }
+            } else if (ContentHome.data.content.selectedStatus == 'Expired') {
+              ContentHome.searchOptionsForItems.filter =
+              {
+                "$and": [{
+                  "$and": [{ "$or": [{ "$json.title": { "$regex": ContentHome.searchValue, "$options": "i" } }, { "$json.summary": { "$regex": ContentHome.searchValue, "$options": "i" } }] }]
+                }, { "$or": [{ "$json.expiresOn": { "$lte": ContentHome.tommorowDate } }] }]
+              }
+            }
+          } else if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id !== 'All Categories') {
+            ContentHome.searchOptionsForItems.filter = {
+              "$and": [{
+                "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
+              }, { "$or": [{ "$json.title": { "$regex": ContentHome.searchValue, "$options": "i" } }, { "$json.summary": { "$regex": ContentHome.searchValue, "$options": "i" } }] }]
+            }
+          } else {
+
+            ContentHome.searchOptionsForItems.filter = {
+              "$or": [{
                 "$json.title": {
-                  $regex: ContentHome.searchValue,
-                  $options: "i",
-                },
-              },
-              {
+                  "$regex": ContentHome.searchValue,
+                  "$options": "i"
+                }
+              }, {
                 "$json.summary": {
-                  $regex: ContentHome.searchValue,
-                  $options: "i",
-                },
-              },
-            ],
-          };
-        }
-        ContentHome.items = [];
-        ContentHome.searchOptionsForItems.skip = 0;
-        ContentHome.loadMoreItems("items");
-      };
+                  "$regex": ContentHome.searchValue,
+                  "$options": "i"
+                }
+              }]
+            }
+          }
+          ContentHome.items = [];
+          ContentHome.searchOptionsForItems.skip = 0;
+          ContentHome.loadMoreItems('items');
+        };
 
-      /**
-       * getSearchOptions(value) is used to get searchOptions with one more key sort which decide the order of sorting.
-       * @param value is used to filter sort option.
-       * @returns object
-       * SORT_FILTER.CATEGORY_NAME_A_Z,
-       * SORT_FILTER.CATEGORY_NAME_Z_A
-       */
-      var getSearchOptions = function (value) {
-        ContentHome.filterSortableOptions.disabled = true;
-        switch (value) {
-          case SORT_FILTER.CATEGORY_NAME_A_Z:
-            ContentHome.searchOptions.sort = { title: 1 };
-            break;
-          case SORT_FILTER.CATEGORY_NAME_Z_A:
-            ContentHome.searchOptions.sort = { title: -1 };
-            break;
-          default:
-            ContentHome.filterSortableOptions.disabled = false;
-            ContentHome.searchOptions.sort = { rank: 1 };
-            break;
-        }
-        return ContentHome.searchOptions;
-      };
+        /**
+         * getSearchOptions(value) is used to get searchOptions with one more key sort which decide the order of sorting.
+         * @param value is used to filter sort option.
+         * @returns object
+         * SORT_FILTER.CATEGORY_NAME_A_Z,
+         * SORT_FILTER.CATEGORY_NAME_Z_A
+         */
+        var getSearchOptions = function (value) {
+          ContentHome.filterSortableOptions.disabled = true;
+          switch (value) {
+            case SORT_FILTER.CATEGORY_NAME_A_Z:
+              ContentHome.searchOptions.sort = { "title": 1 };
+              break;
+            case SORT_FILTER.CATEGORY_NAME_Z_A:
+              ContentHome.searchOptions.sort = { "title": -1 };
+              break;
+            default:
+              ContentHome.filterSortableOptions.disabled = false;
+              ContentHome.searchOptions.sort = { "rank": 1 };
+              break;
+          }
+          return ContentHome.searchOptions;
+        };
 
-      var getItemSearchOptions = function (value) {
-        ContentHome.itemSortableOptions.disabled = true;
-        switch (value) {
-          case SORT.ITEM_TITLE_A_Z:
-            ContentHome.searchOptionsForItems.sort = { title: 1 };
-            break;
-          case SORT.ITEM_TITLE_Z_A:
-            ContentHome.searchOptionsForItems.sort = { title: -1 };
-            break;
-          case SORT.NEWEST_FIRST:
-            ContentHome.searchOptionsForItems.sort = { dateCreated: -1 };
-            break;
-          case SORT.OLDEST_FIRST:
-            ContentHome.searchOptionsForItems.sort = { dateCreated: 1 };
-            break;
-          case SORT.EXPIRATION_DATE_ASC:
-            ContentHome.searchOptionsForItems.sort = { expiresOn: 1 };
-            break;
-          case SORT.EXPIRATION_DATE_DESC:
-            ContentHome.searchOptionsForItems.sort = { expiresOn: -1 };
-            break;
-          default:
-            ContentHome.itemSortableOptions.disabled = false;
-            ContentHome.searchOptionsForItems.sort = { rank: 1 };
-            break;
-        }
-        return ContentHome.searchOptionsForItems;
-      };
+        var getItemSearchOptions = function (value) {
+          ContentHome.itemSortableOptions.disabled = true;
+          switch (value) {
+            case SORT.ITEM_TITLE_A_Z:
+              ContentHome.searchOptionsForItems.sort = { "title": 1 };
+              break;
+            case SORT.ITEM_TITLE_Z_A:
+              ContentHome.searchOptionsForItems.sort = { "title": -1 };
+              break;
+            case SORT.NEWEST_FIRST:
+              ContentHome.searchOptionsForItems.sort = { "dateCreated": -1 };
+              break;
+            case SORT.OLDEST_FIRST:
+              ContentHome.searchOptionsForItems.sort = { "dateCreated": 1 };
+              break;
+            case SORT.EXPIRATION_DATE_ASC:
+              ContentHome.searchOptionsForItems.sort = { "expiresOn": 1 };
+              break;
+            case SORT.EXPIRATION_DATE_DESC:
+              ContentHome.searchOptionsForItems.sort = { "expiresOn": -1 };
+              break;
+            default:
+              ContentHome.itemSortableOptions.disabled = false;
+              ContentHome.searchOptionsForItems.sort = { "rank": 1 };
+              break;
+          }
+          return ContentHome.searchOptionsForItems;
+        };
 
-      ContentHome.loadMore = function (str) {
-        console.log("------------------>>>>>>>>>>>>>>>>>>>>in", str);
+        ContentHome.loadMore = function (str) {
+          console.log("------------------>>>>>>>>>>>>>>>>>>>>in", str)
 
-        Buildfire.spinner.show();
-        if (ContentHome.busyFilter) {
-          return;
-        }
+          Buildfire.spinner.show();
+          if (ContentHome.busyFilter) {
+            return;
+          }
 
-        ContentHome.busyFilter = true;
-        if (ContentHome.data && ContentHome.data.content.sortFilterBy) {
-          ContentHome.searchOptions = getSearchOptions(
-            ContentHome.data.content.sortFilterBy
-          );
-        } else {
-          return;
-        }
-        if (str !== "items")
-          Buildfire.datastore.search(
-            ContentHome.searchOptions,
-            TAG_NAMES.COUPON_CATEGORIES,
-            function (err, result) {
+          ContentHome.busyFilter = true;
+          if (ContentHome.data && ContentHome.data.content.sortFilterBy) {
+            ContentHome.searchOptions = getSearchOptions(ContentHome.data.content.sortFilterBy);
+          } else {
+            return;
+          }
+          if (str !== 'items')
+            Buildfire.datastore.search(ContentHome.searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
               if (err) {
                 Buildfire.spinner.hide();
-                return console.error(
-                  "-----------err in getting list-------------",
-                  err
-                );
+                return console.error('-----------err in getting list-------------', err);
               }
-              if (result.length <= SORT_FILTER._limit) {
-                // to indicate there are more
+              if (result.length <= SORT_FILTER._limit) {// to indicate there are more
                 ContentHome.noMoreFilter = true;
                 Buildfire.spinner.hide();
               } else {
                 result.pop();
-                ContentHome.searchOptions.skip =
-                  ContentHome.searchOptions.skip + SORT_FILTER._limit;
+                ContentHome.searchOptions.skip = ContentHome.searchOptions.skip + SORT_FILTER._limit;
                 ContentHome.noMoreFilter = false;
               }
               var tmpArray = [];
               var lastIndex = result.length;
               result.forEach(function (res, index) {
                 tmpArray.push({
-                  title: res.data.title,
+                  'title': res.data.title,
                   rank: index + 1,
-                  id: res.data.id,
+                  id: res.data.id
                 });
               });
 
-              ContentHome.filters = ContentHome.filters
-                ? ContentHome.filters.concat(result)
-                : result;
+              ContentHome.filters = ContentHome.filters ? ContentHome.filters.concat(result) : result;
               ContentHome.busyFilter = false;
               Buildfire.spinner.hide();
               $scope.$digest();
-            }
-          );
-      };
+            });
+        };
 
-      var searchOptionsFilterForItemList = {
-        filter: { "$json.title": { $regex: "/*" } },
-        sort: { title: 1 },
-        skip: "0",
-        limit: "50",
-      };
 
-      ContentHome.loadMoreItems = function (str) {
-        console.log("------------------>>>>>>>>>>>>>>>>>>>>", str);
+        var searchOptionsFilterForItemList = {
+          "filter": { "$json.title": { "$regex": '/*' } },
+          "sort": { "title": 1 },
+          "skip": "0",
+          "limit": "50"
+        };
 
-        Buildfire.spinner.show();
-        if (ContentHome.busy) {
-          return;
-        }
-        if (ContentHome.data && ContentHome.data.content.sortItemBy) {
-          ContentHome.searchOptionsForItems = getItemSearchOptions(
-            ContentHome.data.content.sortItemBy
-          );
-        } else {
-          return;
-        }
-        ContentHome.busy = true;
-        if (str !== "filter")
-          Buildfire.datastore.search(
-            ContentHome.searchOptionsForItems,
-            TAG_NAMES.COUPON_ITEMS,
-            function (err, result) {
+        ContentHome.loadMoreItems = function (str) {
+          console.log("------------------>>>>>>>>>>>>>>>>>>>>", str)
+
+          Buildfire.spinner.show();
+          if (ContentHome.busy) {
+            return;
+          }
+          if (ContentHome.data && ContentHome.data.content.sortItemBy) {
+            ContentHome.searchOptionsForItems = getItemSearchOptions(ContentHome.data.content.sortItemBy);
+          } else {
+            return;
+          }
+          ContentHome.busy = true;
+          if (str !== 'filter')
+            Buildfire.datastore.search(ContentHome.searchOptionsForItems, TAG_NAMES.COUPON_ITEMS, function (err, result) {
               if (err) {
                 Buildfire.spinner.hide();
                 return console.error(
@@ -1061,38 +784,35 @@
               var tmpArray = [];
               var lastIndex = result.length;
               result.forEach(function (res, index) {
-                console.log("RES CATEGORIES", res.data.Categories);
+                console.log("RES CATEGORIES", res.data.Categories)
                 tmpArray.push({
-                  title: res.data.title,
+                  'title': res.data.title,
                   rank: index + 1,
                   summary: res.data.summary,
-                  categories: res.data.Categories
-                    ? res.data.Categories.length
-                    : 0,
+                  categories: res.data.Categories ? res.data.Categories.length : 0,
                   expiresOn: res.data.expiresOn,
                   listImage: res.data.listImage,
-                  id: res.id,
+                  id: res.id
                 });
               });
 
-              ContentHome.items = ContentHome.items
-                ? ContentHome.items.concat(result)
-                : result;
-              Buildfire.datastore.search(
-                searchOptionsFilterForItemList,
-                TAG_NAMES.COUPON_CATEGORIES,
-                function (err, resultFilter) {
-                  if (err) {
-                    Buildfire.spinner.hide();
-                    return console.error(
-                      "-----------err in getting list-------------",
-                      err
-                    );
-                  }
-                  var tmpArray = [];
-                  var lastIndex = result.length;
-                  resultFilter.forEach(function (res, index) {
-                    tmpArray.push(res.id);
+              ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
+              Buildfire.datastore.search(searchOptionsFilterForItemList, TAG_NAMES.COUPON_CATEGORIES, function (err, resultFilter) {
+
+                if (err) {
+                  Buildfire.spinner.hide();
+                  return console.error('-----------err in getting list-------------', err);
+                }
+                var tmpArray = [];
+                var lastIndex = result.length;
+                resultFilter.forEach(function (res, index) {
+                  tmpArray.push(res.id);
+                });
+                ContentHome.items.forEach(function (resItem, index) {
+                  // tmpArray.push(res.data.SelectedCategories);
+                  var intersectedCategories = tmpArray.filter(function (value) {
+                    if (resItem.data.SelectedCategories && resItem.data.SelectedCategories.length)
+                      return resItem.data.SelectedCategories.indexOf(value) > -1;
                   });
                   ContentHome.items.forEach(function (resItem, index) {
                     // tmpArray.push(res.data.SelectedCategories);
@@ -1115,38 +835,50 @@
                 }
               );
               ContentHome.busy = false;
-              console.log("-------------------llll", ContentHome.items);
+              console.log("-------------------llll", ContentHome.items)
               Buildfire.spinner.hide();
               $scope.$digest();
-            }
-          );
-      }; /*
-       ContentHome.getMore = function () {
-         if (ContentHome.isBusy && !ContentHome.noMore) {
-           return;
+            });
+        };
+
+
+
+        /* *//**
+          * ContentHome.getMore is used to load the items
+          *//*
+     ContentHome.getMore = function () {
+       if (ContentHome.isBusy && !ContentHome.noMore) {
+         return;
+       }
+      // updateSearchOptions();
+       ContentHome.isBusy = true;
+       DataStore.search(searchOptions,TAG_NAMES.COUPON_ITEMS).then(function success(result) {
+         if (result.length <= _limit) {// to indicate there are more
+           ContentHome.noMore = true;
          }
-        // updateSearchOptions();
-         ContentHome.isBusy = true;
-         DataStore.search(searchOptions,TAG_NAMES.COUPON_ITEMS).then(function success(result) {
-           if (result.length <= _limit) {// to indicate there are more
-             ContentHome.noMore = true;
-           }
-           else {
-             result.pop();
-             searchOptions.skip = searchOptions.skip + _limit;
-             ContentHome.noMore = false;
-           }
-           ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
-           ContentHome.isBusy = false;
-         }, function fail() {
-           ContentHome.isBusy = false;
-         });
-       };*/
-      /**
-       * ContentHome.getMore is used to load the items
-       */ /* */ function validateCsv(items) {
-        if (!Array.isArray(items) || !items.length) {
-          return false;
+         else {
+           result.pop();
+           searchOptions.skip = searchOptions.skip + _limit;
+           ContentHome.noMore = false;
+         }
+         ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
+         ContentHome.isBusy = false;
+       }, function fail() {
+         ContentHome.isBusy = false;
+       });
+     };*/
+
+
+        function validateCsv(items) {
+          if (!Array.isArray(items) || !items.length) {
+            return false;
+          }
+          return items.every(isValidItem);
+        }
+
+        function asyncProcess(index, cb) {
+          cb(index);
+          console.log('completed');
         }
         return items.every(isValidItem);
       }
@@ -1163,13 +895,11 @@
               return row.title;
             });
             setTimeout(function () {
-              buildfire.messaging.sendMessageToWidget({
-                importCSV: "finished",
-              });
+              buildfire.messaging.sendMessageToWidget({ importCSV: 'finished' })
             }, rows.length * 300);
             ContentHome.loading = true;
             if (rows && rows.length > 1) {
-              var categoryList = rows[1].Categories.split(",");
+              var categoryList = rows[1].Categories.split(',');
               categoryList.forEach(function (category) {
                 var obj = {};
                 obj.title = category;
@@ -1197,13 +927,12 @@
                 rows[index].links = [];
                 rows[index].rank = rank;
                 rows[index].body = "";
-                rows[index].startOn = getUnixFromDate(rows[index].startOn);
-                rows[index].expiresOn = getUnixFromDate(rows[index].expiresOn);
+                if (rows[index].startOn) rows[index].startOn = getUnixFromDate(rows[index].startOn);
+                if (rows[index].expiresOn) rows[index].expiresOn = getUnixFromDate(rows[index].expiresOn);
+
 
                 if (rows[index].carouselImages) {
-                  var carousalImageUrlArray = rows[index].carouselImages.split(
-                    ","
-                  );
+                  var carousalImageUrlArray = rows[index].carouselImages.split(',');
                   rows[index].carouselImages = [];
 
                   carousalImageUrlArray.forEach(function (url) {
@@ -1215,67 +944,32 @@
                     rows[index].carouselImages.push(obj);
                   });
                 }
-
                 asyncProcess(index, function (index) {
-                  if (
-                    rows[index].SelectedCategories.length &&
-                    rows[index].location
-                  ) {
-                    var categoryList = rows[index].SelectedCategories.split(
-                      ","
-                    );
+
+                  if (rows[index].SelectedCategories.length && rows[index].location) {
+
+                    var categoryList = rows[index].SelectedCategories.split(',');
 
                     var searchOptions = {
-                      filter: { "$json.title": { $regex: "/*" } },
+                      filter: { "$json.title": { "$regex": '/*' } }
                     };
-                    Buildfire.datastore.search(
-                      searchOptions,
-                      TAG_NAMES.COUPON_CATEGORIES,
-                      function (err, data) {
-                        console.log("Saved", data.id);
-                        var tmpCategoryIds = [];
-                        data.forEach(function (categoryObj) {
-                          categoryList.forEach(function (categoryTitle) {
-                            if (categoryTitle == categoryObj.data.title) {
-                              tmpCategoryIds.push(categoryObj.id);
-                            }
-                          });
-                        });
-                        rows[index].SelectedCategories = tmpCategoryIds;
-
-                        var geocoder = new google.maps.Geocoder();
-                        geocoder.geocode(
-                          { address: rows[index].location },
-                          function (results, status) {
-                            if (status == google.maps.GeocoderStatus.OK) {
-                              var lat = results[0].geometry.location.lat(),
-                                lng = results[0].geometry.location.lng();
-                              // ContentHome.setLocation({location: rows[index].location, coordinates: {lng:lng, lat:lat}});
-                              rows[index].location = {
-                                coordinates: {
-                                  lng: lng,
-                                  lat: lat,
-                                },
-                                addressTitle: rows[index].location,
-                              };
-                              bulkInsertItems([rows[index]], rows[index].rank);
-                            } else {
-                              console.error("" + "Error else parts of google");
-                              error();
-                            }
+                    Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, data) {
+                      console.log("Saved", data.id);
+                      var tmpCategoryIds = [];
+                      data.forEach(function (categoryObj) {
+                        categoryList.forEach(function (categoryTitle) {
+                          if (categoryTitle == categoryObj.data.title) {
+                            categoryObj.data.noOfItems+=1;
+                          //  buildfire.datastore.save(categoryObj,TAG_NAMES.COUPON_CATEGORIES);
+                            tmpCategoryIds.push(categoryObj.id);
                           }
-                        );
-                        $scope.$digest();
-                      }
-                    );
-                  } else if (
-                    !rows[index].SelectedCategories.length &&
-                    rows[index].location
-                  ) {
-                    var geocoder = new google.maps.Geocoder();
-                    geocoder.geocode(
-                      { address: rows[index].location },
-                      function (results, status) {
+                        })
+                      });
+                      rows[index].SelectedCategories = tmpCategoryIds;
+
+
+                      var geocoder = new google.maps.Geocoder();
+                      geocoder.geocode({ "address": rows[index].location }, function (results, status) {
                         if (status == google.maps.GeocoderStatus.OK) {
                           var lat = results[0].geometry.location.lat(),
                             lng = results[0].geometry.location.lng();
@@ -1288,44 +982,68 @@
                             addressTitle: rows[index].location,
                           };
                           bulkInsertItems([rows[index]], rows[index].rank);
-                        } else {
-                          console.error("" + "Error else parts of google");
-                          error();
                         }
+                        else {
+                          console.error('' +
+                            'Error else parts of google');
+                          rows[index].location = "";
+                          bulkInsertItems([rows[index]], rows[index].rank);
+                        }
+                      });
+                      $scope.$digest();
+                    });
+
+
+                  } else if ((!rows[index].SelectedCategories.length) && rows[index].location) {
+
+                    var geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({ "address": rows[index].location }, function (results, status) {
+                      if (status == google.maps.GeocoderStatus.OK) {
+                        var lat = results[0].geometry.location.lat(),
+                          lng = results[0].geometry.location.lng();
+                        // ContentHome.setLocation({location: rows[index].location, coordinates: {lng:lng, lat:lat}});
+                        rows[index].location = {
+                          coordinates: {
+                            lng: lng,
+                            lat: lat
+                          },
+                          addressTitle: rows[index].location
+                        };
+                        bulkInsertItems([rows[index]], rows[index].rank);
                       }
-                    );
+                      else {
+                        console.error('Error else parts of google');
+                        rows[index].location = "";
+                        bulkInsertItems([rows[index]], rows[index].rank);
+                      }
+                    });
                     $scope.$digest();
-                  } else if (
-                    rows[index].SelectedCategories.length &&
-                    !rows[index].location
-                  ) {
-                    var categoryList = rows[index].SelectedCategories.split(
-                      ","
-                    );
+
+                  } else if (rows[index].SelectedCategories.length && (!rows[index].location)) {
+                    var categoryList = rows[index].SelectedCategories.split(',');
 
                     var searchOptions = {
-                      filter: { "$json.title": { $regex: "/*" } },
+                      filter: { "$json.title": { "$regex": '/*' } }
                     };
-                    Buildfire.datastore.search(
-                      searchOptions,
-                      TAG_NAMES.COUPON_CATEGORIES,
-                      function (err, data) {
-                        console.log("Saved", data.id);
-                        var tmpCategoryIds = [];
-                        data.forEach(function (categoryObj) {
-                          categoryList.forEach(function (categoryTitle) {
-                            if (categoryTitle == categoryObj.data.title) {
-                              tmpCategoryIds.push(categoryObj.id);
-                            }
-                          });
-                        });
-                        rows[index].SelectedCategories = tmpCategoryIds;
-                        bulkInsertItems([rows[index]], rows[index].rank);
-                        $scope.$digest();
-                      }
-                    );
+                    Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, data) {
+                      console.log("Saved", data.id);
+                      var tmpCategoryIds = [];
+                      data.forEach(function (categoryObj) {
+                        categoryList.forEach(function (categoryTitle) {
+                          if (categoryTitle == categoryObj.data.title) {
+                            categoryObj.data.noOfItems+=1;
+                            buildfire.datastore.save(categoryObj,TAG_NAMES.COUPON_CATEGORIES);
+                            tmpCategoryIds.push(categoryObj.id);
+                          }
+                        })
+                      });
+                      rows[index].SelectedCategories = tmpCategoryIds;
+                      bulkInsertItems([rows[index]], null);
+                      $scope.$digest();
+
+                    });
                   } else {
-                    bulkInsertItems([rows[index]], rows[index].rank);
+                    bulkInsertItems([rows[index]], null);
                   }
                 });
               }
@@ -1361,38 +1079,41 @@
               rows[index].startOn = Number(row.startOn);
             }
           });
-          buildfire.datastore.bulkInsert(
-            rows,
-            TAG_NAMES.COUPON_ITEMS,
-            function (err, data) {
+
+        };
+
+        function bulkInsertItems(rows, rank) {
+
+          if (validateCsv(rows)) {
+            rows.forEach(function (row, index) {
+              if (row.expiresOn) {
+                rows[index].expiresOn = Number(row.expiresOn)
+                rows[index].startOn = Number(row.startOn)
+              }
+            })
+            buildfire.datastore.bulkInsert(rows, TAG_NAMES.COUPON_ITEMS, function (err, data) {
               if (err) {
                 console.error(error);
                 ContentHome.loading = false;
                 $scope.$apply();
-              } else {
-                Buildfire.datastore.search(
-                  {},
-                  TAG_NAMES.COUPON_ITEMS,
-                  function (err, result) {
-                    if (err) {
-                      return console.error(
-                        "-----------err in getting list inside bulk insert-------------",
-                        err
-                      );
-                    }
-                    if (result && result.length) {
-                      for (var i = 0; i < result.length; i++) {
-                        PluginEvents.register(
-                          { key: result[i].id, title: result[i].data.title },
-                          true
-                        );
-                      }
+              }
+              else {
+                Buildfire.datastore.search({}, TAG_NAMES.COUPON_ITEMS, function (err, result) {
+                  if (err) {
+                    return console.error('-----------err in getting list inside bulk insert-------------', err);
+                  }
+                  if (result && result.length) {
+                    for (var i = 0; i < result.length; i++) {
+                      PluginEvents.register({ key: result[i].id, title: result[i].data.title }, true);
                     }
                   }
-                );
+                });
                 ContentHome.loading = false;
                 ContentHome.isBusy = false;
                 ContentHome.items = [];
+                if (rank === null) {
+                  rank = rows[rows.length - 1].rank;
+                }
                 ContentHome.data.content.rankOfLastItem = rank;
                 RankOfLastItem.setRank(rank);
                 ContentHome.loadMoreItems("js");
@@ -1452,61 +1173,71 @@
         } else {
           return entities;
         }
-      }
 
-      function returnCommaSepratedListOfCategories(
-        Categories,
-        selectedCategories
-      ) {
-        if (typeof Categories === "string" || Categories instanceof String)
-          return Categories;
-        else if (
-          selectedCategories.length &&
-          Array.isArray(selectedCategories)
-        ) {
-          var tmpList = "";
-          selectedCategories.forEach(function (selCategory) {
-            Categories.forEach(function (category) {
-              if (selCategory == category.id) {
-                if (!tmpList) tmpList = category.title;
-                else tmpList = tmpList + "," + category.title;
-              }
+
+        function returnCommaSepratedListOfEntity(entities, param) {
+          if (entities.length && Array.isArray(entities)) {
+            var tmpURLstr = "";
+            entities.forEach(function (entity) {
+              if (tmpURLstr)
+                tmpURLstr = tmpURLstr + ',' + entity[param];
+              else
+                tmpURLstr = entity[param];
             });
-          });
-          return tmpList;
+            return tmpURLstr;
+          } else {
+            return entities;
+          }
         }
-      }
 
-      /**
-       * ContentHome.exportCSV() used to export item list data to CSV
-       */
-      ContentHome.exportCSV = function () {
-        var search = angular.copy(ContentHome.searchOptions);
-        search.skip = 0;
-        search.limit = SORT._maxLimit + 1;
-        getRecords(search, [], function (data) {
-          if (data && data.length) {
-            var items = [];
-            angular.forEach(angular.copy(data), function (value) {
-              delete value.data.dateCreated;
-              delete value.data.links;
-              delete value.data.rank;
-              delete value.data.body;
-              if (
-                typeof value.data.carouselImages === "string" ||
-                value.data.carouselImages instanceof String
-              ) {
-                if (value.data.carouselImages.length == 0) {
-                  value.data.carouselImages = [];
-                } else {
-                  var oldUrl = value.data.carouselImages;
-                  value.data.carouselImages = [
-                    { action: "noAction", iconUrl: oldUrl, title: "image" },
-                  ];
+        function returnCommaSepratedListOfCategories(Categories, selectedCategories) {
+          if (typeof Categories === 'string' || Categories instanceof String) return Categories;
+          else if (selectedCategories.length && Array.isArray(selectedCategories)) {
+            var tmpList = "";
+            selectedCategories.forEach(function (selCategory) {
+              Categories.forEach(function (category) {
+                if (selCategory == category.id) {
+                  if (!tmpList)
+                    tmpList = category.title;
+                  else
+                    tmpList = tmpList + "," + category.title;
                 }
-              } else if (typeof value.data.carouselImages == "undefined") value.data.carouselImages = [];
+              });
+            });
+            return tmpList;
+          }
 
-              /*    if (typeof value.data.Categories === 'string' || value.data.Categories instanceof String) {
+        }
+
+        /**
+         * ContentHome.exportCSV() used to export item list data to CSV
+         */
+        ContentHome.exportCSV = function () {
+          var search = angular.copy(ContentHome.searchOptions);
+          search.skip = 0;
+          search.limit = SORT._maxLimit + 1;
+          getRecords(search,
+            []
+            , function (data) {
+              if (data && data.length) {
+                var items = [];
+                angular.forEach(angular.copy(data), function (value) {
+                  delete value.data.dateCreated;
+                  delete value.data.links;
+                  delete value.data.rank;
+                  delete value.data.body;
+                  if (typeof value.data.carouselImages === 'string' || value.data.carouselImages instanceof String) {
+                    if (value.data.carouselImages.length == 0) {
+                      value.data.carouselImages = [];
+                    } else {
+                      var oldUrl = value.data.carouselImages;
+                      value.data.carouselImages = [{ action: "noAction", iconUrl: oldUrl, title: "image" }];
+                    }
+                  } else if (typeof value.data.carouselImages == "undefined")
+                    value.data.carouselImages = [];
+
+
+                  /*    if (typeof value.data.Categories === 'string' || value.data.Categories instanceof String) {
                         if (value.data.Categories.length == 0) {
                           value.data.carouselImages = "";
                         } else {
@@ -1516,29 +1247,84 @@
                       } else if (typeof value.data.carouselImages == "undefined")
                         value.data.carouselImages = [];*/
 
-              value.data.carouselImages = returnCommaSepratedListOfEntity(
-                value.data.carouselImages,
-                "iconUrl"
-              );
-              if (value.data.SelectedCategories)
-                value.data.SelectedCategories = returnCommaSepratedListOfCategories(
-                  value.data.Categories,
-                  value.data.SelectedCategories
-                );
-              value.data.Categories = returnCommaSepratedListOfEntity(
-                value.data.Categories,
-                "title"
-              );
-              value.data.location = value.data.location.addressTitle;
+                  value.data.carouselImages = returnCommaSepratedListOfEntity(value.data.carouselImages, 'iconUrl')
+                  if (value.data.SelectedCategories)
+                    value.data.SelectedCategories = returnCommaSepratedListOfCategories(value.data.Categories, value.data.SelectedCategories);
+                  value.data.Categories = returnCommaSepratedListOfEntity(value.data.Categories, 'title');
+                  value.data.location = value.data.location.addressTitle;
 
-              items.push(value.data);
+                  items.push(value.data);
+                });
+                var csv = $csv.jsonToCsv(angular.toJson(items), {
+                  header: header
+                });
+                $csv.download(csv, "Export.csv");
+              }
+              else {
+                ContentHome.getTemplate();
+              }
+              // records = [];
             });
-            var csv = $csv.jsonToCsv(angular.toJson(items), {
-              header: header,
-            });
-            $csv.download(csv, "Export.csv");
-          } else {
-            ContentHome.getTemplate();
+        };
+
+        /**
+         * ContentHome.getTemplate() used to download csv template
+         */
+        ContentHome.getTemplate = function () {
+          var templateData = [{
+            title: '',
+            summary: "",
+            Categories: "",
+            listImage: '',
+            carouselImages: '',
+            preRedemptionText: '',
+            postRedemptionText: '',
+            startOn: '',
+            expiresOn: '',
+            addressTitle: '',
+            location: '',
+            webURL: '',
+            sendToEmail: '',
+            smsTextNumber: '',
+            phoneNumber: '',
+            facebookURL: '',
+            twitterURL: '',
+            instagramURL: '',
+            googlePlusURL: '',
+            linkedinURL: ''
+          }];
+          var csv = $csv.jsonToCsv(angular.toJson(templateData), {
+            header: header
+          });
+          $csv.download(csv, "Template.csv");
+        };
+
+        /*
+         * Call the datastore to save the data object
+         */
+        var saveData = function (newObj, tag) {
+          if (typeof newObj === 'undefined') {
+            return;
+          }
+          var success = function (result) {
+            console.info('Saved data result: ', result);
+            RankOfLastFilter.setRank(result.data.content.rankOfLastFilter);
+            RankOfLastItem.setRank(result.data.content.rankOfLastItem);
+            updateMasterItem(newObj);
+          }
+            , error = function (err) {
+              console.error('Error while saving data : ', err);
+            };
+          newObj.content.rankOfLastFilter = newObj.content.rankOfLastFilter || 0;
+          DataStore.save(newObj, tag).then(success, error);
+        };
+
+        function isValidItem(item) {
+          if (item) {
+            return item.title;
+          }
+          else {
+            return false;
           }
           // records = [];
         });
@@ -1585,40 +1371,16 @@
         if (typeof newObj === "undefined") {
           return;
         }
-        var success = function (result) {
-            console.info("Saved data result: ", result);
-            RankOfLastFilter.setRank(result.data.content.rankOfLastFilter);
-            RankOfLastItem.setRank(result.data.content.rankOfLastItem);
-            updateMasterItem(newObj);
-          },
-          error = function (err) {
-            console.error("Error while saving data : ", err);
-          };
-        newObj.content.rankOfLastFilter = newObj.content.rankOfLastFilter || 0;
-        DataStore.save(newObj, tag).then(success, error);
-      };
 
-      function isValidItem(item) {
-        if (item) {
-          return item.title;
-        } else {
-          return false;
-        }
-      }
-
-      var updateItemsWithDelay = function (item) {
-        ContentHome.isUpdating = false;
-        ContentHome.isItemValid = isValidItem(ContentHome.filter);
-        if (
-          !ContentHome.isUpdating &&
-          !isUnchanged(ContentHome.filter) &&
-          ContentHome.isItemValid
-        ) {
-          setTimeout(function () {
-            if (item.id) {
-              ContentHome.updateItemData();
-              $scope.$digest();
-            } /*else if (!ContentHome.isNewItemInserted) {
+        var updateItemsWithDelay = function (item) {
+          ContentHome.isUpdating = false;
+          ContentHome.isItemValid = isValidItem(ContentHome.filter);
+          if (!ContentHome.isUpdating && !isUnchanged(ContentHome.filter) && ContentHome.isItemValid) {
+            setTimeout(function () {
+              if (item.id) {
+                ContentHome.updateItemData();
+                $scope.$digest();
+              } /*else if (!ContentHome.isNewItemInserted) {
                 ContentHome.addNewItem();
               }*/
           }, 300);
@@ -1638,41 +1400,28 @@
         );
       };
 
-      var saveDataWithDelay = function (newObj) {
-        if (newObj) {
-          if (isUnchanged(newObj)) {
-            return;
-          }
-          if (tmrDelay) {
-            clearTimeout(tmrDelay);
-          }
-          tmrDelay = setTimeout(function () {
-            saveData(JSON.parse(angular.toJson(newObj)), TAG_NAMES.COUPON_INFO);
-          }, 500);
-        }
-      };
-
-      /*
-       * Go pull any previously saved data
-       * */
-      var init = function () {
-        var success = function (result) {
-            console.info("Init success result:", result);
+        /*
+         * Go pull any previously saved data
+         * */
+        var init = function () {
+          var success = function (result) {
+            console.info('Init success result:', result);
             ContentHome.data = result.data;
             if (!ContentHome.data.content) {
               ContentHome.data = angular.copy(_data);
             } else {
-              if (!ContentHome.data.content) ContentHome.data.content = {};
-              if (!ContentHome.data.settings) ContentHome.data.settings = {};
+              if (!ContentHome.data.content)
+                ContentHome.data.content = {};
+              if (!ContentHome.data.settings)
+                ContentHome.data.settings = {};
               if (!ContentHome.data.content.carouselImages)
                 editor.loadItems([]);
-              else editor.loadItems(ContentHome.data.content.carouselImages);
+              else
+                editor.loadItems(ContentHome.data.content.carouselImages);
               if (!ContentHome.data.content.sortFilterBy)
-                ContentHome.data.content.sortFilterBy =
-                  ContentHome.sortFilterOptions[0];
+                ContentHome.data.content.sortFilterBy = ContentHome.sortFilterOptions[0];
               if (!ContentHome.data.content.sortItemBy)
-                ContentHome.data.content.sortItemBy =
-                  ContentHome.sortItemOptions[0];
+                ContentHome.data.content.sortItemBy = ContentHome.sortItemOptions[0];
               ContentHome.filters = [];
               ContentHome.searchOptions.skip = 0;
               ContentHome.busyFilter = false;
@@ -1680,31 +1429,26 @@
               ContentHome.data.content.selectedFilter = null;
               ContentHome.data.content.selectedStatus = null;
               console.log("-------------------llll", ContentHome.data.content);
-              RankOfLastFilter.setRank(
-                ContentHome.data.content.rankOfLastFilter || 0
-              );
-              RankOfLastItem.setRank(
-                ContentHome.data.content.rankOfLastItem || 0
-              );
+              RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter || 0);
+              RankOfLastItem.setRank(ContentHome.data.content.rankOfLastItem || 0);
             }
             updateMasterItem(ContentHome.data);
             if (tmrDelay) clearTimeout(tmrDelay);
-            ContentHome.loadMore("js");
-            ContentHome.loadMoreItems("js");
-          },
-          error = function (err) {
-            if (err && err.code !== STATUS_CODE.NOT_FOUND) {
-              console.error("Error while getting data", err);
-              if (tmrDelay) clearTimeout(tmrDelay);
-            } else if (err && err.code === STATUS_CODE.NOT_FOUND) {
-              saveData(
-                JSON.parse(angular.toJson(ContentHome.data)),
-                TAG_NAMES.COUPON_INFO
-              );
-            }
-          };
-        DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
-      };
+            ContentHome.loadMore('js');
+            ContentHome.loadMoreItems('js');
+          }
+            , error = function (err) {
+              if (err && err.code !== STATUS_CODE.NOT_FOUND) {
+                console.error('Error while getting data', err);
+                if (tmrDelay) clearTimeout(tmrDelay);
+              }
+              else if (err && err.code === STATUS_CODE.NOT_FOUND) {
+                saveData(JSON.parse(angular.toJson(ContentHome.data)), TAG_NAMES.COUPON_INFO);
+              }
+            };
+          DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
+
+        };
 
       init();
 
