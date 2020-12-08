@@ -53,7 +53,6 @@
             { "$json.location.coordinates": { $exists: true } },
           ],
         },
-        recordCount: true,
       };
       var currentDistanceUnit = null;
       $rootScope.$on("FILTER_ITEMS", function (e, view) {
@@ -66,28 +65,28 @@
         }
       });
       function getGeoLocation() {
-        Buildfire.geo.getCurrentPosition({ timeout: 5000 }, function (
-          err,
-          position
-        ) {
-          if (err) {
-            console.error(err);
-          } else if (position && position.coords) {
-            WidgetMap.locationData.currentCoordinates = [
-              position.coords.longitude,
-              position.coords.latitude,
-            ];
-            localStorage.setItem(
-              "user_location",
-              JSON.stringify(WidgetMap.locationData.currentCoordinates)
-            );
-            WidgetMap.refreshData += 1;
+        Buildfire.geo.getCurrentPosition(
+          { timeout: 5000 },
+          function (err, position) {
+            if (err) {
+              console.error(err);
+            } else if (position && position.coords) {
+              WidgetMap.locationData.currentCoordinates = [
+                position.coords.longitude,
+                position.coords.latitude,
+              ];
+              localStorage.setItem(
+                "user_location",
+                JSON.stringify(WidgetMap.locationData.currentCoordinates)
+              );
+              WidgetMap.refreshData += 1;
 
-            $scope.$apply();
-          } else {
-            getGeoLocation();
+              $scope.$apply();
+            } else {
+              getGeoLocation();
+            }
           }
-        });
+        );
       }
 
       //Refresh items on pulling the tile bar
@@ -217,12 +216,12 @@
             }
           }
 
-          DataStore.getAll(searchOptions, TAG_NAMES.COUPON_ITEMS).then(
+          DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(
             successAll,
             errorAll
           );
         } else {
-          DataStore.getAll(searchOptions, TAG_NAMES.COUPON_ITEMS).then(
+          DataStore.search(searchOptions, TAG_NAMES.COUPON_ITEMS).then(
             successAll,
             errorAll
           );
@@ -702,21 +701,20 @@
         DataStore.clearListener("map");
       });
 
-      WidgetMap.listeners["CHANGED"] = $rootScope.$on("VIEW_CHANGED", function (
-        e,
-        type,
-        view
-      ) {
-        if (ViewStack.getCurrentView().template == "Map") {
-          //bind on refresh again
+      WidgetMap.listeners["CHANGED"] = $rootScope.$on(
+        "VIEW_CHANGED",
+        function (e, type, view) {
+          if (ViewStack.getCurrentView().template == "Map") {
+            //bind on refresh again
 
-          buildfire.datastore.onRefresh(function () {
-            WidgetMap.init(function (err) {
-              console.log(">>>>>>Refreshed map");
+            buildfire.datastore.onRefresh(function () {
+              WidgetMap.init(function (err) {
+                console.log(">>>>>>Refreshed map");
+              });
             });
-          });
+          }
         }
-      });
+      );
     },
   ]);
 })(window.angular, window.buildfire, window);
