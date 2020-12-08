@@ -1,237 +1,310 @@
-'use strict';
+"use strict";
 
 (function (angular, buildfire, window) {
-  angular.module('couponPluginWidget')
-    .controller('WidgetItemCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'LAYOUTS', '$sce', '$rootScope', 'Buildfire', 'ViewStack', 'UserData', 'PAGINATION', '$modal', '$timeout', '$location',
-      function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, PAGINATION, $modal, $timeout, $location) {
-        let WidgetItem = this;
-        $scope.showRedeemButton  =false;
-        $scope.showItemRedeemed  =false;
-        WidgetItem.listeners = {};
-        WidgetItem.passcodeFailure = false;
-        var currentView = ViewStack.getCurrentView();
+  angular.module("couponPluginWidget").controller("WidgetItemCtrl", [
+    "$scope",
+    "DataStore",
+    "TAG_NAMES",
+    "LAYOUTS",
+    "$sce",
+    "$rootScope",
+    "Buildfire",
+    "ViewStack",
+    "UserData",
+    "PAGINATION",
+    "$modal",
+    "$timeout",
+    "$location",
+    function (
+      $scope,
+      DataStore,
+      TAG_NAMES,
+      LAYOUTS,
+      $sce,
+      $rootScope,
+      Buildfire,
+      ViewStack,
+      UserData,
+      PAGINATION,
+      $modal,
+      $timeout,
+      $location
+    ) {
+      var WidgetItem = this;
+      $scope.showRedeemButton = false;
+      $scope.showItemRedeemed = false;
+      WidgetItem.listeners = {};
+      WidgetItem.passcodeFailure = false;
+      var currentView = ViewStack.getCurrentView();
 
-        if (currentView.params && currentView.params.itemId && !currentView.params.stopSwitch) {
-          //Track Coupon Plugin Event
-          buildfire.analytics.trackAction("coupon_item_view_" + currentView.params.itemId);
-          //#
-          buildfire.messaging.sendMessageToControl({
-            id: currentView.params.itemId,
-            type: 'OpenItem'
-          });
-        }
-
-        buildfire.datastore.onRefresh(function () {
-          // Do nothing
+      if (
+        currentView.params &&
+        currentView.params.itemId &&
+        !currentView.params.stopSwitch
+      ) {
+        //Track Coupon Plugin Event
+        buildfire.analytics.trackAction(
+          "coupon_item_view_" + currentView.params.itemId
+        );
+        //#
+        buildfire.messaging.sendMessageToControl({
+          id: currentView.params.itemId,
+          type: "OpenItem",
         });
+      }
 
-        WidgetItem.getItemDetails = function (callback) {
-          Buildfire.spinner.show();
-          var success = function (result) {
-              Buildfire.spinner.hide();
-              WidgetItem.item = result;
+      buildfire.datastore.onRefresh(function () {
+        // Do nothing
+      });
+
+      WidgetItem.getItemDetails = function (callback) {
+        Buildfire.spinner.show();
+        var success = function (result) {
+            Buildfire.spinner.hide();
+            WidgetItem.item = result;
             callback();
+          },
+          error = function (err) {
+            Buildfire.spinner.hide();
+            console.error("Error In Fetching Event", err);
+          };
+        if (currentView.params && currentView.params.itemId) {
+          DataStore.getById(
+            currentView.params.itemId,
+            TAG_NAMES.COUPON_ITEMS
+          ).then(success, error);
+        }
+      };
+
+      WidgetItem.safeHtml = function (html) {
+        if (html) {
+          var $html = $("<div />", { html: html });
+          $html.find("iframe").each(function (index, element) {
+            var src = element.src;
+            console.log("element is: ", src, src.indexOf("http"));
+            src =
+              src && src.indexOf("file://") != -1
+                ? src.replace("file://", "http://")
+                : src;
+            element.src =
+              src && src.indexOf("http") != -1 ? src : "http:" + src;
+          });
+          return $sce.trustAsHtml($html.html());
+        }
+      };
+
+      WidgetItem.openLinks = function (actionItems) {
+        if (actionItems && actionItems.length) {
+          var options = {};
+          var callback = function (error, result) {
+            if (error) {
+              console.error("Error:", error);
             }
-            , error = function (err) {
-              Buildfire.spinner.hide();
-              console.error('Error In Fetching Event', err);
-            };
-          if (currentView.params && currentView.params.itemId) {
-            DataStore.getById(currentView.params.itemId, TAG_NAMES.COUPON_ITEMS).then(success, error);
-          }
-        };
+          };
+          buildfire.actionItems.list(actionItems, options, callback);
+        }
+      };
 
-        WidgetItem.safeHtml = function (html) {
-          if (html) {
-            var $html = $('<div />', {html: html});
-            $html.find('iframe').each(function (index, element) {
-              var src = element.src;
-              console.log('element is: ', src, src.indexOf('http'));
-              src = src && src.indexOf('file://') != -1 ? src.replace('file://', 'http://') : src;
-              element.src = src && src.indexOf('http') != -1 ? src : 'http:' + src;
-            });
-            return $sce.trustAsHtml($html.html());
-          }
-        };
+      WidgetItem.onAddressClick = function (long, lat) {
+        if (
+          WidgetItem.device &&
+          WidgetItem.device.platform.toLowerCase() == "ios"
+        )
+          buildfire.navigation.openWindow(
+            "maps://maps.apple.com?q=" + lat + "," + long,
+            "_system"
+          );
+        else
+          buildfire.navigation.openWindow(
+            "http://maps.google.com/maps?daddr=" + lat + "," + long,
+            "_system"
+          );
+      };
 
-        WidgetItem.openLinks = function (actionItems) {
-          if (actionItems && actionItems.length) {
-            var options = {};
-            var callback = function (error, result) {
-              if (error) {
-                console.error('Error:', error);
-              }
-            };
-            buildfire.actionItems.list(actionItems, options, callback);
-          }
-        };
-
-        WidgetItem.onAddressClick = function (long, lat) {
-          if (WidgetItem.device && WidgetItem.device.platform.toLowerCase() == 'ios')
-            buildfire.navigation.openWindow("maps://maps.apple.com?q=" + lat + "," + long, '_system');
-          else
-            buildfire.navigation.openWindow("http://maps.google.com/maps?daddr=" + lat + "," + long, '_system');
-        };
-
-        /**
-         * This event listener is bound for "Carousel:LOADED" event broadcast
-         */
-        WidgetItem.listeners["CarouselLoaded"] = $rootScope.$on("Carousel2:LOADED", function () {
+      /**
+       * This event listener is bound for "Carousel:LOADED" event broadcast
+       */
+      WidgetItem.listeners["CarouselLoaded"] = $rootScope.$on(
+        "Carousel2:LOADED",
+        function () {
           //  WidgetItem.view = null;
-          if (WidgetItem.view)
-            WidgetItem.view._destroySlider();
+          if (WidgetItem.view) WidgetItem.view._destroySlider();
           if (!WidgetItem.view) {
-            WidgetItem.view = new Buildfire.components.carousel.view("#carousel2", []);
+            WidgetItem.view = new Buildfire.components.carousel.view(
+              "#carousel2",
+              []
+            );
           }
           if (WidgetItem.item.data && WidgetItem.item.data.carouselImages) {
             WidgetItem.view.loadItems(WidgetItem.item.data.carouselImages);
           } else {
             WidgetItem.view.loadItems([]);
           }
-        });
+        }
+      );
 
-        /**
-         * Check for current logged in user, if not show ogin screen
-         */
-        buildfire.auth.getCurrentUser(function (err, user) {
-          console.log("===========LoggedInUser", user);
-          if (user) {
-            WidgetItem.currentLoggedInUser = user;
+      /**
+       * Check for current logged in user, if not show ogin screen
+       */
+      buildfire.auth.getCurrentUser(function (err, user) {
+        console.log("===========LoggedInUser", user);
+        if (user) {
+          WidgetItem.currentLoggedInUser = user;
+        }
+      });
+
+      $scope.$on("$destroy", function () {
+        for (var i in WidgetItem.listeners) {
+          if (WidgetItem.listeners.hasOwnProperty(i)) {
+            WidgetItem.listeners[i]();
           }
-        });
+        }
+        DataStore.clearListener();
+      });
 
-        $scope.$on("$destroy", function () {
-          for (var i in WidgetItem.listeners) {
-            if (WidgetItem.listeners.hasOwnProperty(i)) {
-              WidgetItem.listeners[i]();
+      WidgetItem.setSavedItem = function () {
+        if (WidgetItem.item) {
+          for (var save in WidgetItem.saved) {
+            if (WidgetItem.saved[save].data.itemId == WidgetItem.item.id) {
+              WidgetItem.item.isSaved = true;
+              WidgetItem.item.savedId = WidgetItem.saved[save].id;
             }
           }
-          DataStore.clearListener();
-        });
+        }
+      };
 
-        WidgetItem.setSavedItem = function () {
-          if (WidgetItem.item) {
-            for (var save in WidgetItem.saved) {
-              if (WidgetItem.saved[save].data.itemId == WidgetItem.item.id) {
-                WidgetItem.item.isSaved = true;
-                WidgetItem.item.savedId = WidgetItem.saved[save].id;
-              }
+      WidgetItem.setRedeemedItem = function () {
+        if (WidgetItem.item) {
+          for (var redeem in WidgetItem.redeemed) {
+            if (WidgetItem.redeemed[redeem].data.itemId == WidgetItem.item.id) {
+              WidgetItem.item.isRedeemed = true;
+              WidgetItem.item.redeemedOn =
+                WidgetItem.redeemed[redeem].data.redeemedOn;
             }
           }
-        };
+        }
+      };
 
-        WidgetItem.setRedeemedItem = function () {
-          if (WidgetItem.item) {
-            for (var redeem in WidgetItem.redeemed) {
-              if (WidgetItem.redeemed[redeem].data.itemId == WidgetItem.item.id) {
-                WidgetItem.item.isRedeemed = true;
-                WidgetItem.item.redeemedOn = WidgetItem.redeemed[redeem].data.redeemedOn;
-              }
-            }
-          }
-        };
-
-        WidgetItem.getSavedItems = function () {
-          Buildfire.spinner.show();
-          var err = function (error) {
+      WidgetItem.getSavedItems = function () {
+        Buildfire.spinner.show();
+        var err = function (error) {
             Buildfire.spinner.hide();
-            console.log("============ There is an error in getting saved items data", error);
-          }, result = function (result) {
+            console.log(
+              "============ There is an error in getting saved items data",
+              error
+            );
+          },
+          result = function (result) {
             Buildfire.spinner.hide();
             WidgetItem.saved = result;
             WidgetItem.setSavedItem();
           };
-          UserData.search({}, TAG_NAMES.COUPON_SAVED).then(result, err);
-        };
+        UserData.search({}, TAG_NAMES.COUPON_SAVED).then(result, err);
+      };
 
-        WidgetItem.getRedeemedCoupons = function () {
-          Buildfire.spinner.show();
-          var err = function (error) {
+      WidgetItem.getRedeemedCoupons = function () {
+        Buildfire.spinner.show();
+        var err = function (error) {
             Buildfire.spinner.hide();
-            console.log("============ There is an error in getting redeemed coupons data", error);
-          }, result = function (result) {
+            console.log(
+              "============ There is an error in getting redeemed coupons data",
+              error
+            );
+          },
+          result = function (result) {
             Buildfire.spinner.hide();
             WidgetItem.redeemed = result;
             WidgetItem.setRedeemedItem();
             $scope.enableRedeemButton();
           };
-          UserData.search({}, TAG_NAMES.COUPON_REDEEMED).then(result, err);
-        };
+        UserData.search({}, TAG_NAMES.COUPON_REDEEMED).then(result, err);
+      };
 
-        WidgetItem.addToSaved = function (item, isSaved, onlyAdd) {
-          Buildfire.spinner.show();
-          if (isSaved && item.savedId && !onlyAdd) {
-            var successRemove = function (result) {
+      WidgetItem.addToSaved = function (item, isSaved, onlyAdd) {
+        Buildfire.spinner.show();
+        if (isSaved && item.savedId && !onlyAdd) {
+          var successRemove = function (result) {
               Buildfire.spinner.hide();
               WidgetItem.item.isSaved = false;
               WidgetItem.item.savedId = null;
-              if (!$scope.$$phase)
-                $scope.$digest();
+              if (!$scope.$$phase) $scope.$digest();
               var removeSavedModal = $modal.open({
-                templateUrl: 'templates/Saved_Removed.html',
-                size: 'sm',
-                backdropClass: "ng-hide"
+                templateUrl: "templates/Saved_Removed.html",
+                size: "sm",
+                backdropClass: "ng-hide",
               });
               $timeout(function () {
                 removeSavedModal.close();
               }, 3000);
               $rootScope.$broadcast("ITEM_SAVED_UPDATED");
-
-            }, errorRemove = function () {
+            },
+            errorRemove = function () {
               Buildfire.spinner.hide();
-              return console.error('There was a problem removing your data');
+              return console.error("There was a problem removing your data");
             };
-            UserData.delete(item.savedId, TAG_NAMES.COUPON_SAVED, WidgetItem.currentLoggedInUser._id).then(successRemove, errorRemove)
-          } else {
-            WidgetItem.savedItem = {
-              data: {
-                itemId: item.id
-              }
-            };
-            var successItem = function (result) {
+          UserData.delete(
+            item.savedId,
+            TAG_NAMES.COUPON_SAVED,
+            WidgetItem.currentLoggedInUser._id
+          ).then(successRemove, errorRemove);
+        } else {
+          WidgetItem.savedItem = {
+            data: {
+              itemId: item.id,
+            },
+          };
+          var successItem = function (result) {
               Buildfire.spinner.hide();
               WidgetItem.item.isSaved = true;
               WidgetItem.item.savedId = result.id;
               console.log("Inserted", result);
               $rootScope.$broadcast("ITEM_SAVED_UPDATED");
-            }, errorItem = function () {
+            },
+            errorItem = function () {
               Buildfire.spinner.hide();
-              return console.error('There was a problem saving your data');
+              return console.error("There was a problem saving your data");
             };
-            UserData.insert(WidgetItem.savedItem.data, TAG_NAMES.COUPON_SAVED).then(successItem, errorItem);
+          UserData.insert(
+            WidgetItem.savedItem.data,
+            TAG_NAMES.COUPON_SAVED
+          ).then(successItem, errorItem);
+        }
+      };
+
+      var loginCallback = function () {
+        buildfire.auth.getCurrentUser(function (err, user) {
+          if (user) {
+            WidgetItem.currentLoggedInUser = user;
+            $scope.$apply();
+            WidgetItem.getSavedItems();
+            WidgetItem.getRedeemedCoupons();
           }
-        };
+        });
+      };
 
-        var loginCallback = function () {
-          buildfire.auth.getCurrentUser(function (err, user) {
-            if (user) {
-              WidgetItem.currentLoggedInUser = user;
-              $scope.$apply();
-              WidgetItem.getSavedItems();
-              WidgetItem.getRedeemedCoupons();
-            }
-          });
-        };
+      buildfire.auth.onLogin(loginCallback);
 
-        buildfire.auth.onLogin(loginCallback);
+      var logoutCallback = function () {
+        WidgetItem.currentLoggedInUser = null;
+        $scope.$apply();
+      };
 
-        var logoutCallback = function () {
-          WidgetItem.currentLoggedInUser = null;
-          $scope.$apply();
-        };
+      buildfire.auth.onLogout(logoutCallback);
 
-        buildfire.auth.onLogout(logoutCallback);
-
-        WidgetItem.redeemCoupon = function(item, passcodeTrue){
-          if (WidgetItem.currentLoggedInUser && (WidgetItem.data.settings.toggleEmployeeCode == 'off' || (WidgetItem.data.settings.toggleEmployeeCode == 'on' && passcodeTrue))){
-            
-            WidgetItem.redeemedItem = {
-              data: {
-                itemId: item.id,
-                redeemedOn: +new Date()
-              }
-            };
-            var successItem = function (result) {
+      WidgetItem.redeemCoupon = function (item, passcodeTrue) {
+        if (
+          WidgetItem.currentLoggedInUser &&
+          (WidgetItem.data.settings.toggleEmployeeCode == "off" ||
+            (WidgetItem.data.settings.toggleEmployeeCode == "on" &&
+              passcodeTrue))
+        ) {
+          WidgetItem.redeemedItem = {
+            data: {
+              itemId: item.id,
+              redeemedOn: +new Date(),
+            },
+          };
+          var successItem = function (result) {
               Buildfire.spinner.hide();
               WidgetItem.item.isRedeemed = true;
               WidgetItem.item.redeemedOn = result.data.redeemedOn;
@@ -251,155 +324,165 @@
               $timeout(function () {
                 redeemedModal.close();
               }, 2000);
-            }, errorItem = function () {
+            },
+            errorItem = function () {
               Buildfire.spinner.hide();
-              return console.error('There was a problem redeeming the coupon');
+              return console.error("There was a problem redeeming the coupon");
             };
-            UserData.insert(WidgetItem.redeemedItem.data, TAG_NAMES.COUPON_REDEEMED).then(successItem, errorItem);
-          } else if (WidgetItem.currentLoggedInUser && WidgetItem.data.settings.toggleEmployeeCode == 'on'){
-           
-            setTimeout(() => {
-              Buildfire.spinner.hide()
-            }, 500);
-            ViewStack.push({
-              template: 'Code',
-              params: {
-                controller: "WidgetCodeCtrl as WidgetCode",
-                item: item,
-                WidgetItem: WidgetItem
-              },
-            });
-          }
-          else{
-            buildfire.auth.login({}, function () {
-            });
-          }
-        };
+          UserData.insert(
+            WidgetItem.redeemedItem.data,
+            TAG_NAMES.COUPON_REDEEMED
+          ).then(successItem, errorItem);
+        } else if (
+          WidgetItem.currentLoggedInUser &&
+          WidgetItem.data.settings.toggleEmployeeCode == "on"
+        ) {
+          setTimeout(function () {
+            Buildfire.spinner.hide();
+          }, 500);
+          ViewStack.push({
+            template: "Code",
+            params: {
+              controller: "WidgetCodeCtrl as WidgetCode",
+              item: item,
+              WidgetItem: WidgetItem,
+            },
+          });
+        } else {
+          buildfire.auth.login({}, function () {});
+        }
+      };
 
-        WidgetItem.confirmPasscode = function (passcode) {
-          passcode = angular.element('#passcode').val()
-          currentView = ViewStack.getCurrentView()
-          WidgetItem.item = currentView.params.item
-          if(passcode == WidgetItem.data.settings.employeeCode){
-            WidgetItem.redeemCoupon(currentView.params.item, true);
-          } else {
-            WidgetItem.passcodeFailure = true
-            setTimeout(() => {
-              WidgetItem.passcodeFailure = false
-              $scope.$digest()
-            }, 2000);
+      WidgetItem.confirmPasscode = function (passcode) {
+        passcode = angular.element("#passcode").val();
+        currentView = ViewStack.getCurrentView();
+        WidgetItem.item = currentView.params.item;
+        if (passcode == WidgetItem.data.settings.employeeCode) {
+          WidgetItem.redeemCoupon(currentView.params.item, true);
+        } else {
+          WidgetItem.passcodeFailure = true;
+          setTimeout(function () {
+            WidgetItem.passcodeFailure = false;
+            $scope.$digest();
+          }, 2000);
+        }
+      };
+
+      var onUpdateCallback = function (event) {
+        setTimeout(function () {
+          $scope.$digest();
+          if (event && event.tag) {
+            console.log("_____________________________", event);
+            switch (event.tag) {
+              case TAG_NAMES.COUPON_INFO:
+                WidgetItem.data = event.data;
+                if (!WidgetItem.data.design) WidgetItem.data.design = {};
+                if (!WidgetItem.data.settings) WidgetItem.data.settings = {};
+                break;
+              case TAG_NAMES.COUPON_ITEMS:
+                if (event.data) {
+                  WidgetItem.item.data = event.data;
+                  if (WidgetItem.view) {
+                    WidgetItem.view.loadItems(
+                      WidgetItem.item.data.carouselImages
+                    );
+                  }
+                }
+                break;
+            }
+            $scope.$digest();
+          }
+        }, 500);
+      };
+
+      DataStore.onUpdate("item").then(null, null, onUpdateCallback);
+
+      /*
+       * Fetch user's data from datastore
+       */
+      var init = function () {
+        Buildfire.spinner.show();
+        var success = function (result) {
+            Buildfire.spinner.hide();
+            WidgetItem.data = result.data;
+            if (!WidgetItem.data.design) WidgetItem.data.design = {};
+            WidgetItem.getItemDetails(function () {
+              var getDevice = function (error, data) {
+                if (data) WidgetItem.device = data.device;
+                else
+                  console.log(
+                    "Error while getting the device context data",
+                    error
+                  );
+              };
+              buildfire.getContext(getDevice);
+              if (WidgetItem.currentLoggedInUser) {
+                WidgetItem.getSavedItems();
+                WidgetItem.getRedeemedCoupons();
+              } else {
+                buildfire.auth.getCurrentUser(function (err, user) {
+                  if (user) {
+                    WidgetItem.currentLoggedInUser = user;
+                    $scope.$apply();
+                    WidgetItem.getSavedItems();
+                    WidgetItem.getRedeemedCoupons();
+                  } else $scope.enableRedeemButton(); //to enable the button when the user not logged in
+                });
+              }
+            });
+          },
+          error = function (err) {
+            Buildfire.spinner.hide();
+            console.error("Error while getting data", err);
+          };
+        DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
+      };
+
+      $scope.$on("$destroy", function () {
+        for (var i in WidgetItem.listeners) {
+          if (WidgetItem.listeners.hasOwnProperty(i)) {
+            WidgetItem.listeners[i]();
           }
         }
+        DataStore.clearListener("item");
+      });
 
-
-        var onUpdateCallback = function (event) {
-          setTimeout(function () {
-            $scope.$digest();
-            if (event && event.tag) {
-              console.log("_____________________________", event);
-              switch (event.tag) {
-                case TAG_NAMES.COUPON_INFO:
-                  WidgetItem.data = event.data;
-                  if (!WidgetItem.data.design)
-                    WidgetItem.data.design = {};
-                  if (!WidgetItem.data.settings)
-                    WidgetItem.data.settings = {};
-                  break;
-                case TAG_NAMES.COUPON_ITEMS:
-                  if (event.data) {
-                    WidgetItem.item.data = event.data;
-                    if (WidgetItem.view) {
-                      WidgetItem.view.loadItems(WidgetItem.item.data.carouselImages);
-                    }
-                  }
-                  break;
-              }
-              $scope.$digest();
-            }
-          }, 500);
-        };
-
-        DataStore.onUpdate("item").then(null, null, onUpdateCallback);
-
-        /*
-         * Fetch user's data from datastore
-         */
-        var init = function () {
-          Buildfire.spinner.show();
-          var success = function (result) {
-              Buildfire.spinner.hide();
-              WidgetItem.data = result.data;
-              if (!WidgetItem.data.design)
-                WidgetItem.data.design = {};
-              WidgetItem.getItemDetails(function() {
-                var getDevice = function (error, data) {
-                  if (data)
-                    WidgetItem.device = data.device;
-                  else
-                    console.log("Error while getting the device context data", error)
-                };
-                buildfire.getContext(getDevice);
-                if (WidgetItem.currentLoggedInUser) {
-                  WidgetItem.getSavedItems();
-                  WidgetItem.getRedeemedCoupons();
-                }
-                else {
-                  buildfire.auth.getCurrentUser(function (err, user) {
-                    if (user) {
-                      WidgetItem.currentLoggedInUser = user;
-                      $scope.$apply();
-                      WidgetItem.getSavedItems();
-                      WidgetItem.getRedeemedCoupons();
-                    }else
-                      $scope.enableRedeemButton();//to enable the button when the user not logged in
-                  });
-                }
-              });
-            }
-            , error = function (err) {
-              Buildfire.spinner.hide();
-              console.error('Error while getting data', err);
-            };
-          DataStore.get(TAG_NAMES.COUPON_INFO).then(success, error);
-        };
-
-        $scope.$on("$destroy", function() {
-
-          for(var i in WidgetItem.listeners) {
-            if(WidgetItem.listeners.hasOwnProperty(i)) {
-              WidgetItem.listeners[i]();
-            }
-          }
-          DataStore.clearListener("item");
-
-        });
-
-        $scope.enableRedeemButton=function(){
-          $scope.getRedeemedDateText();
-          if(WidgetItem.item && WidgetItem.item.isRedeemed) {
-            if (WidgetItem.item.data.reuseAfterInMinutes &&WidgetItem.item.data.reuseAfterInMinutes!=-1 && WidgetItem.item.redeemedOn) {
-                var redeemedOn = new Date(WidgetItem.item.redeemedOn);
-                var resetDate = new Date(redeemedOn);
-                resetDate.setMinutes (redeemedOn.getMinutes() + WidgetItem.item.data.reuseAfterInMinutes);
-                $scope.showRedeemButton= new Date().getTime() > resetDate.getTime();
-              $scope.showItemRedeemed=!$scope.showRedeemButton;
-            }
-            else {
-              $scope.showRedeemButton = false;
-              $scope.showItemRedeemed = !$scope.showRedeemButton;
-
-            }
-          }
-          else {
-            $scope.showRedeemButton = true;
+      $scope.enableRedeemButton = function () {
+        $scope.getRedeemedDateText();
+        if (WidgetItem.item && WidgetItem.item.isRedeemed) {
+          if (
+            WidgetItem.item.data.reuseAfterInMinutes &&
+            WidgetItem.item.data.reuseAfterInMinutes != -1 &&
+            WidgetItem.item.redeemedOn
+          ) {
+            var redeemedOn = new Date(WidgetItem.item.redeemedOn);
+            var resetDate = new Date(redeemedOn);
+            resetDate.setMinutes(
+              redeemedOn.getMinutes() + WidgetItem.item.data.reuseAfterInMinutes
+            );
+            $scope.showRedeemButton =
+              new Date().getTime() > resetDate.getTime();
             $scope.showItemRedeemed = !$scope.showRedeemButton;
-            if (!$scope.$$phase) $scope.$apply();
+          } else {
+            $scope.showRedeemButton = false;
+            $scope.showItemRedeemed = !$scope.showRedeemButton;
           }
-        };
-        $scope.getRedeemedDateText=function(){
-          var redeemedDate = new Date(WidgetItem.item.redeemedOn);
-          $scope.redeemedDateText =redeemedDate.toDateString() +" at "+redeemedDate.getHours()+":"+redeemedDate.getMinutes();
-        };
-        init();
-      }]);
+        } else {
+          $scope.showRedeemButton = true;
+          $scope.showItemRedeemed = !$scope.showRedeemButton;
+          if (!$scope.$$phase) $scope.$apply();
+        }
+      };
+      $scope.getRedeemedDateText = function () {
+        var redeemedDate = new Date(WidgetItem.item.redeemedOn);
+        $scope.redeemedDateText =
+          redeemedDate.toDateString() +
+          " at " +
+          redeemedDate.getHours() +
+          ":" +
+          redeemedDate.getMinutes();
+      };
+      init();
+    },
+  ]);
 })(window.angular, window.buildfire, window);
