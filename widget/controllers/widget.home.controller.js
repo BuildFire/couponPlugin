@@ -37,19 +37,61 @@
           skip: 0,
           limit: PAGINATION.itemCount,
           filter: {
-            "$or": [
+            $or: [
               {
-                "$json.expiresOn": { $gte: WidgetHome.yesterdayDate }
+                $and: [
+                  {
+                    "$json.expiresOn": ""
+                  },
+                  {
+                    "$json.startOn": ""
+                  },
+                ]
               },
               {
-                "$json.expiresOn": "",
+                $and: [
+                  {
+                    "$json.expiresOn": { $gte: WidgetHome.yesterdayDate }
+                  },
+                  {
+                    "$json.startOn": { $lte: Date.now() }
+                  },
+                ]
               },
               {
-                "$json.startOn": { $lte: WidgetHome.todayDate }
+                $and: [
+                  {
+                    $or: [
+                      {
+                        "$json.expiresOn": ""
+                      },
+                      {
+                        "$json.expiresOn": 0
+                      }
+                    ]
+                  },
+                  {
+                    "$json.startOn": { $lte: Date.now() }
+                  },
+                ]
               },
               {
-                "$json.startOn": "",
-              },
+                $and: [
+                  {
+                    $or: [
+                      {
+                        "$json.startOn": ""
+                      },
+                      {
+                        "$json.startOn": 0
+                      }
+                    ]
+                  },
+                  {
+                    "$json.expiresOn": { $gte: WidgetHome.yesterdayDate }
+                  },
+                ]
+              }
             ]
           },
           sort : {"rank": 1}
