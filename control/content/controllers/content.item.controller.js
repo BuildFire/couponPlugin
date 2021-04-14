@@ -1,4 +1,5 @@
 "use strict";
+
 (function (buildfire, angular) {
   angular.module("couponPluginContent").controller("ContentItemCtrl", [
     "$scope",
@@ -214,12 +215,23 @@
         }
       }
 
+      function createDeepLink(data) {
+         new Deeplink({
+          deeplinkId: data.id,
+          name: data.data.title,
+          deeplinkData: {
+            id: data.id,
+          }
+        }).save();
+      }
+
       function insertAndUpdate(_item) {
         updating = true;
         if (_item.id) {
           DataStore.update(_item.id, _item.data, TAG_NAMES.COUPON_ITEMS).then(
             function (data) {
               console.log("Item updated successfully-----", data);
+              createDeepLink(data)
               updateMasterItem(data);
               // updateFilterData(data.data.SelectedCategories,data.data.Categories);
               updating = false;
@@ -238,9 +250,19 @@
             function (data) {
               updating = false;
               if (data && data.id) {
-                ContentItem.item.data.deepLinkUrl = buildfire.deeplink.createLink(
-                  { id: data.id }
-                );
+                ContentItem.item.data.deepLinkUrl = buildfire.deeplink.createLink({ id: data.id });
+                data.data.deepLinkUrl = buildfire.deeplink.createLink({ id: data.id });
+                var newDeep = new Deeplink({
+                  deeplinkId: data.id,
+                  name: data.data.title,
+                  deeplinkData: {
+                    id: data.id,
+                  }
+                });
+                newDeep.save((err, deepLinkData) => {
+                  data.data.deepLinkId = deepLinkData.deeplinkId;
+                  DataStore.update(data.id, data.data, TAG_NAMES.COUPON_ITEMS)
+                });
                 ContentItem.item.id = data.id;
                 ContentItem.data.content.rankOfLastItem =
                   RankOfLastItem.getRank() + 10;

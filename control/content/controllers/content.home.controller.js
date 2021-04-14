@@ -411,6 +411,39 @@
           });
         };
 
+        /* for future use if it comes to supporting older data */
+        // ContentHome.createDeepLinksForItems = function () {
+        //   let pageSize = 50, page = 0, allItems = [];
+        //   function get() {
+        //     Buildfire.datastore.search({
+        //       filter: { '$json.deepLinkId': { $exists: false } },
+        //       pageSize, page, recordCount: true
+        //     }, TAG_NAMES.COUPON_ITEMS, function (err, data) {
+        //       if (err) return console.error(err);
+        //       allItems = allItems.concat(data.result);
+        //       if (data.totalRecord > allItems.length) {
+        //         page++;
+        //         get();
+        //       } else {
+        //         allItems.map(item => {
+        //           new Deeplink({
+        //             deeplinkId: item.id,
+        //             name: item.data.title,
+        //             deeplinkData: {
+        //               id: item.id,
+        //             }
+        //           }).save((err, deepLinkData) => {
+        //             item.data.deepLinkId = deepLinkData.deeplinkId;
+        //             Buildfire.datastore.update(item.id, item.data, TAG_NAMES.COUPON_ITEMS)
+        //           });
+        //         })
+        //       }
+        //     });
+        //   }
+        //   get();
+        // }
+        // ContentHome.createDeepLinksForItems();
+
         ContentHome.deleteItem = function (index) {
           Modals.removeItemPopupModal({ 'item': 'item' }).then(function (result) {
             if (result) {
@@ -423,10 +456,10 @@
                       ContentHome.isItemValid = true;
                     }
                   }
-
                 });
               }
 
+              Deeplink.deleteById(ContentHome.items[index].id);
               Buildfire.datastore.delete(ContentHome.items[index].id, TAG_NAMES.COUPON_ITEMS, function (err, result) {
                 if (err)
                   return;
@@ -795,27 +828,27 @@
         /* *//**
           * ContentHome.getMore is used to load the items
           *//*
-     ContentHome.getMore = function () {
-       if (ContentHome.isBusy && !ContentHome.noMore) {
-         return;
-       }
-      // updateSearchOptions();
-       ContentHome.isBusy = true;
-       DataStore.search(searchOptions,TAG_NAMES.COUPON_ITEMS).then(function success(result) {
-         if (result.length <= _limit) {// to indicate there are more
-           ContentHome.noMore = true;
-         }
-         else {
-           result.pop();
-           searchOptions.skip = searchOptions.skip + _limit;
-           ContentHome.noMore = false;
-         }
-         ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
-         ContentHome.isBusy = false;
-       }, function fail() {
-         ContentHome.isBusy = false;
-       });
-     };*/
+  ContentHome.getMore = function () {
+    if (ContentHome.isBusy && !ContentHome.noMore) {
+      return;
+    }
+    // updateSearchOptions();
+    ContentHome.isBusy = true;
+    DataStore.search(searchOptions,TAG_NAMES.COUPON_ITEMS).then(function success(result) {
+      if (result.length <= _limit) {// to indicate there are more
+        ContentHome.noMore = true;
+      }
+      else {
+        result.pop();
+        searchOptions.skip = searchOptions.skip + _limit;
+        ContentHome.noMore = false;
+      }
+      ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
+      ContentHome.isBusy = false;
+    }, function fail() {
+      ContentHome.isBusy = false;
+    });
+  };*/
 
 
         function validateCsv(items) {
@@ -902,8 +935,8 @@
                       data.forEach(function (categoryObj) {
                         categoryList.forEach(function (categoryTitle) {
                           if (categoryTitle == categoryObj.data.title) {
-                            categoryObj.data.noOfItems+=1;
-                          //  buildfire.datastore.save(categoryObj,TAG_NAMES.COUPON_CATEGORIES);
+                            categoryObj.data.noOfItems += 1;
+                            //  buildfire.datastore.save(categoryObj,TAG_NAMES.COUPON_CATEGORIES);
                             tmpCategoryIds.push(categoryObj.id);
                           }
                         })
@@ -974,8 +1007,8 @@
                       data.forEach(function (categoryObj) {
                         categoryList.forEach(function (categoryTitle) {
                           if (categoryTitle == categoryObj.data.title) {
-                            categoryObj.data.noOfItems+=1;
-                            buildfire.datastore.save(categoryObj,TAG_NAMES.COUPON_CATEGORIES);
+                            categoryObj.data.noOfItems += 1;
+                            buildfire.datastore.save(categoryObj, TAG_NAMES.COUPON_CATEGORIES);
                             tmpCategoryIds.push(categoryObj.id);
                           }
                         })
