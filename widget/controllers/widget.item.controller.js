@@ -29,7 +29,19 @@
           Buildfire.spinner.show();
           var success = function (result) {
               Buildfire.spinner.hide();
-              WidgetItem.item = result;
+              if(result && result.data && result.id && !result.data.__$Deleted)
+                WidgetItem.item = result; 
+              else {
+                if (ViewStack.getCurrentView().template == 'Item') {
+                  buildfire.messaging.sendMessageToControl({
+                    type: 'BackToHome'
+                  });
+                }
+                ViewStack.pop();
+                buildfire.dialog.toast({
+                  message: "This item no longer exists!"
+                })
+              }
             callback();
             }
             , error = function (err) {

@@ -1070,6 +1070,18 @@
                   if (result && result.length) {
                     for (var i = 0; i < result.length; i++) {
                       PluginEvents.register({ key: result[i].id, title: result[i].data.title }, true);
+                      if(!result[i].data.deepLinkId) {
+                        new Deeplink({
+                          deeplinkId: result[i].id,
+                          name: result[i].data.title,
+                          deeplinkData: {
+                            id: result[i].id,
+                          }
+                        }).save(function(err, deepLinkData) {
+                          result[i].data.deepLinkId = deepLinkData.deeplinkId;
+                          Buildfire.datastore.update(result[i].id, result[i].data, TAG_NAMES.COUPON_ITEMS, console.log)
+                        });
+                      }
                     }
                   }
                 });

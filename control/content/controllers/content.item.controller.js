@@ -219,6 +219,7 @@
          new Deeplink({
           deeplinkId: data.id,
           name: data.data.title,
+          imageUrl: data.data.listImage ? data.data.listImage : null,
           deeplinkData: {
             id: data.id,
           }
@@ -255,11 +256,12 @@
                 var newDeep = new Deeplink({
                   deeplinkId: data.id,
                   name: data.data.title,
+                  imageUrl: data.data.listImage ? data.data.listImage : null,
                   deeplinkData: {
                     id: data.id,
                   }
                 });
-                newDeep.save((err, deepLinkData) => {
+                newDeep.save(function(err, deepLinkData) {
                   data.data.deepLinkId = deepLinkData.deeplinkId;
                   DataStore.update(data.id, data.data, TAG_NAMES.COUPON_ITEMS)
                 });
