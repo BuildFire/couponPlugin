@@ -215,7 +215,7 @@
         }
       }
 
-      function createDeepLink(data) {
+      function createDeepLink(data, update) {
          new Deeplink({
           deeplinkId: data.id,
           name: data.data.title,
@@ -223,7 +223,12 @@
           deeplinkData: {
             id: data.id,
           }
-        }).save();
+        }).save(function(err, deepLinkData) {
+          if(update) {
+            data.data.deepLinkId = deepLinkData.deeplinkId;
+            DataStore.update(data.id, data.data, TAG_NAMES.COUPON_ITEMS)
+          }
+        });
       }
 
       function insertAndUpdate(_item) {
@@ -232,7 +237,7 @@
           DataStore.update(_item.id, _item.data, TAG_NAMES.COUPON_ITEMS).then(
             function (data) {
               console.log("Item updated successfully-----", data);
-              createDeepLink(data)
+              createDeepLink(data, false);
               updateMasterItem(data);
               // updateFilterData(data.data.SelectedCategories,data.data.Categories);
               updating = false;
@@ -253,18 +258,7 @@
               if (data && data.id) {
                 ContentItem.item.data.deepLinkUrl = buildfire.deeplink.createLink({ id: data.id });
                 data.data.deepLinkUrl = buildfire.deeplink.createLink({ id: data.id });
-                var newDeep = new Deeplink({
-                  deeplinkId: data.id,
-                  name: data.data.title,
-                  imageUrl: data.data.listImage ? data.data.listImage : null,
-                  deeplinkData: {
-                    id: data.id,
-                  }
-                });
-                newDeep.save(function(err, deepLinkData) {
-                  data.data.deepLinkId = deepLinkData.deeplinkId;
-                  DataStore.update(data.id, data.data, TAG_NAMES.COUPON_ITEMS)
-                });
+                createDeepLink(data, true);
                 ContentItem.item.id = data.id;
                 ContentItem.data.content.rankOfLastItem =
                   RankOfLastItem.getRank() + 10;
