@@ -1074,6 +1074,7 @@
                         new Deeplink({
                           deeplinkId: result[i].id,
                           name: result[i].data.title,
+                          imageUrl: result[i].data.listImage ? data.data.listImage : null,
                           deeplinkData: {
                             id: result[i].id,
                           }
