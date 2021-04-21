@@ -43,14 +43,61 @@
       var searchOptions = {
         skip: 0,
         filter: {
-          $and: [
+          $or: [
             {
-              "$json.expiresOn": { $gte: WidgetMap.yesterdayDate },
+              $and: [
+                {
+                  "$json.expiresOn": "",
+                },
+                {
+                  "$json.startOn": "",
+                },
+              ],
             },
             {
-              "$json.startOn": { $lte: WidgetMap.todayDate },
+              $and: [
+                {
+                  "$json.expiresOn": { $gte: WidgetMap.yesterdayDate },
+                },
+                {
+                  "$json.startOn": { $lte: Date.now() },
+                },
+              ],
             },
-            { "$json.location.coordinates": { $exists: true } },
+            {
+              $and: [
+                {
+                  $or: [
+                    {
+                      "$json.expiresOn": "",
+                    },
+                    {
+                      "$json.expiresOn": 0,
+                    },
+                  ],
+                },
+                {
+                  "$json.startOn": { $lte: Date.now() },
+                },
+              ],
+            },
+            {
+              $and: [
+                {
+                  $or: [
+                    {
+                      "$json.startOn": "",
+                    },
+                    {
+                      "$json.startOn": 0,
+                    },
+                  ],
+                },
+                {
+                  "$json.expiresOn": { $gte: WidgetMap.yesterdayDate },
+                },
+              ],
+            },
           ],
         },
       };
@@ -61,7 +108,7 @@
           WidgetMap.filter = view.filter;
           WidgetMap.getAllItems(view.filter);
         } else {
-          WidgetMap.getAllItems(view.filter);
+          WidgetMap.getAllItems();
         }
       });
       function getGeoLocation() {
