@@ -1,4 +1,5 @@
 "use strict";
+
 (function (buildfire, angular) {
   angular.module("couponPluginContent").controller("ContentItemCtrl", [
     "$scope",
@@ -214,12 +215,29 @@
         }
       }
 
+      function createDeepLink(data, update) {
+         new Deeplink({
+          deeplinkId: data.id,
+          name: data.data.title,
+          imageUrl: data.data.listImage ? data.data.listImage : null,
+          deeplinkData: {
+            id: data.id,
+          }
+        }).save(function(err, deepLinkData) {
+          if(update) {
+            data.data.deepLinkId = deepLinkData.deeplinkId;
+            DataStore.update(data.id, data.data, TAG_NAMES.COUPON_ITEMS)
+          }
+        });
+      }
+
       function insertAndUpdate(_item) {
         updating = true;
         if (_item.id) {
           DataStore.update(_item.id, _item.data, TAG_NAMES.COUPON_ITEMS).then(
             function (data) {
               console.log("Item updated successfully-----", data);
+              createDeepLink(data, false);
               updateMasterItem(data);
               // updateFilterData(data.data.SelectedCategories,data.data.Categories);
               updating = false;
@@ -238,9 +256,9 @@
             function (data) {
               updating = false;
               if (data && data.id) {
-                ContentItem.item.data.deepLinkUrl = buildfire.deeplink.createLink(
-                  { id: data.id }
-                );
+                ContentItem.item.data.deepLinkUrl = buildfire.deeplink.createLink({ id: data.id });
+                data.data.deepLinkUrl = buildfire.deeplink.createLink({ id: data.id });
+                createDeepLink(data, true);
                 ContentItem.item.id = data.id;
                 ContentItem.data.content.rankOfLastItem =
                   RankOfLastItem.getRank() + 10;

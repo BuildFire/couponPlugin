@@ -19,6 +19,7 @@
         WidgetHome.busy = false;
         WidgetHome.items = [];
         WidgetHome.filter={};
+        WidgetHome.deepLinkingDone = false;
         $rootScope.$on('FILTER_ITEMS', function (e, view) {
           WidgetHome.isFilterApplied = view.isFilterApplied;
           if (view && view.isFilterApplied) {
@@ -351,6 +352,12 @@
               WidgetHome.setSavedItems();
               WidgetHome.setRedeemedItems();
               $scope.getRedeemedDateText();
+              buildfire.deeplink.getData(function(data) {
+                if(data && data.id && !WidgetHome.deepLinkingDone) {
+                  WidgetHome.deepLinkingDone = true;
+                  WidgetHome.openDetails(data.id);
+                }
+              });
             },
             errorAll = function (error) {
               Buildfire.spinner.hide();
@@ -643,14 +650,11 @@
 
         buildfire.messaging.onReceivedMessage = function(message){
           if (message.importCSV === 'finished') {
-            console.log("zavrsio")
             location.reload();
           }
        }
 
         function getItemsDistance(_items) {
-          console.log("AAAAAAAAAAAAAAAAAAAAAAAAA")
-          console.log('WidgetHome.items', _items);
           if (WidgetHome.locationData.currentCoordinates == null) {
             return;
           }
@@ -713,7 +717,6 @@
         }
 
         $scope.$watch(function () {
-          console.log("WATCH AAAAA")
           return WidgetHome.items;
         }, getItemsDistance);
 
