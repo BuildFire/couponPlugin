@@ -40,6 +40,8 @@
       WidgetMap.todayDate = +new Date();
       WidgetMap.refreshData = 1;
       WidgetMap.filter = {};
+      WidgetMap.deepLinkingDone = false;
+
       var searchOptions = {
         skip: 0,
         filter: {
@@ -163,7 +165,12 @@
             }
 
             WidgetMap.locationData.items = resultAll;
-
+            buildfire.deeplink.getData(function(data) {
+              if(data && data.id && !WidgetMap.deepLinkingDone) {
+                WidgetMap.deepLinkingDone = true;
+                WidgetMap.openDetailsPage({id: data.id});
+              }
+            });
             if (WidgetMap.currentLoggedInUser) {
               WidgetMap.getSavedItems();
               WidgetMap.getRedeemedCoupons();
