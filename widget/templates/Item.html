@@ -43,17 +43,17 @@
               More Options</a>
           </div>
   
-          <div class="redeem-photo text-center margin-top-five margin-bottom-ten" ng-if="!WidgetItem.item.isRedeemed && WidgetItem.item.data.preRedemptionImage">
+          <div class="redeem-photo text-center margin-top-five margin-bottom-ten" ng-if="WidgetItem.item.data.preRedemptionImage && showRedeemButton">
             <img load-image="16x9" crop-width="312" crop-height="156" crop-type="crop"  src="{{WidgetItem.item.data.preRedemptionImage}}">
           </div>
   
-          <div class="redeem-photo text-center margin-top-five margin-bottom-ten" ng-if="WidgetItem.item.isRedeemed && WidgetItem.item.data.postRedemptionImage">
+          <div class="redeem-photo text-center margin-top-five margin-bottom-ten" ng-if="WidgetItem.item.data.postRedemptionImage && showItemRedeemed">
             <img load-image="16x9" crop-width="312" crop-height="156" crop-type="crop"  src="{{WidgetItem.item.data.postRedemptionImage}}">
           </div>
           <p class="margin-zero word-break"
-             ng-bind-html="WidgetItem.safeHtml(WidgetItem.item.data.preRedemptionText)" ng-if="!WidgetItem.item.isRedeemed"></p>
+             ng-bind-html="WidgetItem.safeHtml(WidgetItem.item.data.preRedemptionText)" ng-if="showRedeemButton"></p>
           <p class="margin-zero word-break"
-             ng-bind-html="WidgetItem.safeHtml(WidgetItem.item.data.postRedemptionText)" ng-if="WidgetItem.item.isRedeemed"></p>
+             ng-bind-html="WidgetItem.safeHtml(WidgetItem.item.data.postRedemptionText)" ng-if="showItemRedeemed"></p>
         </div>
 
 
