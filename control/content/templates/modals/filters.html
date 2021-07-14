@@ -1,6 +1,6 @@
 <!-- Filter Categories Modal -->
 <div class="header clearfix border-bottom-grey">
-  <h4 class="margin-zero">Categories</h4>
+  <h4 class="margin-zero">Select Categories</h4>
   <span class="icon icon-cross2 close-modal" ng-click="cancel()"></span>
 </div>
 <div class="padded clearfix">
@@ -17,13 +17,9 @@
     </div>
   </div>
 </div>
-<div class="bottom border-top-grey clearfix">
-  <div class="col-md-6 pull-left text-center">
-    <a class="text-default default-background-hover transition-third"
-       ng-click="cancel()">Cancel</a>
-  </div>
-  <div class="col-md-6 pull-right text-center border-left-grey">
-    <a class="text-danger default-background-hover transition-third"
-       ng-click="ok()">OK</a>
-  </div>
+<div class="flex padded-sm">
+  <button class="btn btn-outlined btn-secondary flex-left-auto"
+  ng-click="cancel()">Cancel</button>
+  <button class="margin-left-ten btn btn-primary"
+  ng-click="ok()">OK</button>
 </div>

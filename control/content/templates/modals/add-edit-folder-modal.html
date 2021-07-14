@@ -1,16 +1,17 @@
 <!-- Add/Edit Filter Modal -->
 <!--<script type="text/ng-template" id="addEditFilter.html">-->
 <div class="header clearfix border-bottom-grey">
-  <h4 class="margin-zero">Add/Edit Filter</h4>
+  <h4 class="margin-zero">Add / Edit Category</h4>
   <span class="icon icon-cross2 close-modal" ng-click="cancel()"></span>
 </div>
 <div class="padded clearfix row">
   <div class="content">
-    <div class="col-xs-12 pull-left margin-bottom-ten">
-      <span>Filter Title</span>
+    <div class="col-xs-12 pull-left margin-bottom-five">
+      <label for="filter-title">Category Title</label>
     </div>
     <div class="col-xs-12 pull-right">
       <input
+        id="filter-title"
         ng-model="filterTitle"
         type="text"
         placeholder="Enter Title"
@@ -20,21 +21,11 @@
     </div>
   </div>
 </div>
-<div class="bottom border-top-grey clearfix">
-  <div class="col-md-6 pull-left text-center">
-    <a
-      class="text-default default-background-hover transition-third"
-      ng-click="cancel()"
-      >Cancel</a
-    >
-  </div>
-  <div class="col-md-6 pull-right text-center border-left-grey">
-    <a
-      class="text-success default-background-hover transition-third"
-      ng-click="ok()"
-      >Save</a
-    >
-  </div>
+<div class="flex padded-sm">
+  <button class="btn btn-outlined btn-secondary flex-left-auto"
+  ng-click="cancel()">Cancel</button>
+  <button class="margin-left-ten btn btn-success"
+  ng-click="ok()">Save</button>
 </div>
 <!--
 </script>-->
