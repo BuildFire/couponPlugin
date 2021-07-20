@@ -879,3 +879,10 @@ html[buildfire='widget'] .modal {
     background: none !important;
 }
 
+.no-data {
+	background-image: url('../.images/empty_page.svg');
+	background-repeat: no-repeat;
+	background-attachment: absolute;
+	background-position: center;
+	height: 80vh;
+}

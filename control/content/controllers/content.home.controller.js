@@ -738,6 +738,7 @@
               });
 
               ContentHome.filters = ContentHome.filters ? ContentHome.filters.concat(result) : result;
+              $rootScope.Categories = ContentHome.filters;
               ContentHome.busyFilter = false;
               Buildfire.spinner.hide();
               $scope.$digest();

@@ -110,7 +110,7 @@
                 }
             };
         }])
-        .controller('AddEditPopupCtrl', ['$scope', '$modalInstance','Info', function ($scope, $modalInstance,Info) {
+        .controller('AddEditPopupCtrl', ['$scope', '$modalInstance','Info', '$rootScope', function ($scope, $modalInstance,Info, $rootScope) {
 
             if(Info && Info.title)
                 $scope.filterTitle = Info.title;
@@ -119,8 +119,19 @@
 
             $scope.isEdit = Info.isEdit;
 
+            $scope.filterError = null;
+
             $scope.ok = function () {
-                $modalInstance.close({title : $scope.filterTitle});
+                let existingCategoriesTitles = $rootScope.Categories ? $rootScope.Categories.map((e) => e.data.title.toLowerCase()) : [];
+
+                if (!$scope.filterTitle) {
+                    return $scope.filterError = "Category name cannot be empty";
+                } else if (existingCategoriesTitles.indexOf($scope.filterTitle.toLowerCase()) > -1) {
+                    return $scope.filterError = "Category name already exists, please enter a different one";
+                } else {
+                    $scope.filterError = null;
+                    $modalInstance.close({title : $scope.filterTitle});
+                }
             };
             $scope.cancel = function () {
                 $modalInstance.dismiss('no');

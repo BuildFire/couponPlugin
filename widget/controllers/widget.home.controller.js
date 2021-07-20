@@ -262,7 +262,7 @@
             null,
             function (err, position) {
               if (err) {
-                console.error(err);
+                console.error("Geo Location Error", err);
               }
               else if (position && position.coords) {
                 $scope.$apply(function () {
@@ -348,6 +348,13 @@
               if (resultAll.length == PAGINATION.itemCount) {
                 WidgetHome.busy = false;
               }
+              
+              if (WidgetHome.items.length === 0) {
+                document.getElementById('noData').style.display = "block";
+              } else {
+                document.getElementById('noData').style.display = "none";
+              }
+
               console.log("----------------------", WidgetHome.items);
               WidgetHome.setSavedItems();
               WidgetHome.setRedeemedItems();

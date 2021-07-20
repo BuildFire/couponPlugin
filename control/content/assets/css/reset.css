@@ -1,0 +1,26 @@
+.screens .screen.logoicon, .screens .screen.logoicon a {
+    width: 100px;
+}
+
+a.image-picker {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 30px !important;
+}
+
+a.image-picker img {
+    flex-grow: 1 !important;
+}
+
+.border-danger {
+    border: 1px solid #ed4b4b !important;
+}
+
+.text-small {
+    font-size: 12px !important;
+}
+
+.category-error-text {
+    margin-left: 2px;
+}

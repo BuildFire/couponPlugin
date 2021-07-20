@@ -17,7 +17,10 @@
         placeholder="Enter Title"
         class="form-control"
         minlength="1"
-      />
+        ng-class="{'border-danger': filterError}" />
+        <div class="text-left text-danger margin-top-five text-small category-error-text" ng-show="filterError">
+            {{filterError}}
+        </div>
     </div>
   </div>
 </div>
