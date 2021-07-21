@@ -499,6 +499,21 @@
           }
         };
 
+        ContentHome.clearFilters = (type) => {
+          if (type === 'status') {
+            ContentHome.data.content.selectedStatus = null;
+          } else if (type === 'filter') {
+            ContentHome.data.content.selectedFilter = null;
+          } else {
+            ContentHome.data.content.selectedFilter = null;
+            ContentHome.data.content.selectedStatus = null;
+          }
+
+          ContentHome.items = [];
+          ContentHome.searchOptionsForItems.skip = 0;
+
+          ContentHome.loadMoreItems('items');
+        }
 
         ContentHome.chooseFilter = function (value, title) {
           ContentHome.data.content.selectedFilter = { "title": title, "id": value };
@@ -766,6 +781,7 @@
             return;
           }
           ContentHome.busy = true;
+          ContentHome.isBusy = true;
           if (str !== 'filter')
             Buildfire.datastore.search(ContentHome.searchOptionsForItems, TAG_NAMES.COUPON_ITEMS, function (err, result) {
               if (err) {
@@ -818,6 +834,7 @@
                 $scope.$digest();
               });
               ContentHome.busy = false;
+              ContentHome.isBusy = false;
               console.log("-------------------llll", ContentHome.items)
               Buildfire.spinner.hide();
               $scope.$digest();

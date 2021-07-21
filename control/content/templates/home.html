@@ -32,6 +32,8 @@
       <input  type="text" class="form-control"
               placeholder="Search item name or summary"
               ng-model = 'ContentHome.searchValue'>
+        <div class="chips"><div class="chip" ng-if="ContentHome.data.content.selectedFilter.title"> {{ContentHome.data.content.selectedFilter.title}} <span class="btn-icon btn-delete-icon btn-danger clear-filter-icon" ng-click="ContentHome.clearFilters('filter')"></span></div></div>
+        <div class="chips"><div class="chip" ng-if="ContentHome.data.content.selectedStatus"> {{ContentHome.data.content.selectedStatus}} <span class="btn-icon btn-delete-icon btn-danger clear-filter-icon" ng-click="ContentHome.clearFilters('status')"></span></div></div>
       <button class="btn btn-info" ng-click="ContentHome.searchItem()"><span class="search-icon"></span></button>
     </div>
   
@@ -47,8 +49,8 @@
               <span class="chevron icon-chevron-down pull-right"></span>
             </button>
             <ul class="dropdown-menu extended" role="menu">
-              <li ng-click="ContentHome.chooseFilter('All Categories')"><a>All Categories</a></li>
-              <li ng-repeat="filter in ContentHome.filters"  ng-click="ContentHome.chooseFilter(filter.id, filter.data.title)"><a>{{filter.data.title}}</a></li>
+              <li ng-click="ContentHome.chooseFilter('All Categories')"><a href="">All Categories</a></li>
+              <li ng-repeat="filter in ContentHome.filters" ng-click="ContentHome.chooseFilter(filter.id, filter.data.title)"><a href="">{{filter.data.title}}</a></li>
             </ul>
           </div>
         </div>
@@ -61,15 +63,15 @@
               <span class="chevron icon-chevron-down pull-right"></span>
             </button>
             <ul class="dropdown-menu extended" role="menu">
-              <li><a  ng-click="ContentHome.chooseStatus('All Statuses')">All Statuses</a></li>
-              <li><a ng-click="ContentHome.chooseStatus('Active')">Active</a></li>
-              <li><a ng-click="ContentHome.chooseStatus('Expired')">Expired</a></li>
+              <li ng-click="ContentHome.chooseStatus('All Statuses')"><a href="">All Statuses</a></li>
+              <li ng-click="ContentHome.chooseStatus('Active')"><a href="">Active</a></li>
+              <li ng-click="ContentHome.chooseStatus('Expired')"><a href="">Expired</a></li>
             </ul>
           </div>
         </div>
       </div>
       <div class="flex">
-        <a href="" class="text-danger flex-left-auto caption">Clear Filters</a>
+        <a href="" class="text-danger flex-left-auto caption" ng-click="ContentHome.clearFilters()">Clear Filters</a>
       </div>
     </div>
 
@@ -117,8 +119,11 @@
       data-infinite-container=".infinite-scroll-parent-items"
       infinite-scroll-disabled="ContentHome.noMore"
       class="draggable-list-view wide-list has-btn links-list" >
-  <div class="well text-center margin-bottom-zero border-none" ng-if="!ContentHome.items.length">
+  <div class="well text-center margin-bottom-zero border-none" ng-if="!ContentHome.items.length && !ContentHome.isBusy">
     <p class="margin-zero">No items found.</p>
+  </div>
+  <div class="well text-center margin-bottom-zero border-none" ng-if="ContentHome.isBusy">
+    <p class="margin-zero">Loading...</p>
   </div>
   <div class="d-item double-line square-icon clearfix" ng-repeat="item in ContentHome.items">
     <span class="icon icon-menu pull-left cursor-grab-item"></span>

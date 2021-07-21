@@ -24,3 +24,50 @@ a.image-picker img {
 .category-error-text {
     margin-left: 2px;
 }
+
+.chip {
+    padding: 0 12px;
+    background-color: rgb(224, 224, 224);
+    border-radius: 100px;
+    display: inline-flex;
+    margin: 0 5px;
+    color: rgba(0, 0, 0, .87);
+    align-items: center;
+    height: 32px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    width: max-content;
+}
+
+.chip .icon {
+    font-size: 16px;
+    color: rgba(0, 0, 0, .54);
+    width: 20px;
+    text-align: center;
+}
+
+.chip .icon--leadind {
+    margin: 2px 4px 0 -4px;
+}
+
+.chip .icon--trailing {
+    margin: 2px -4px 0 4px;
+}
+
+.chips .chip.chip--active {
+    color: rgb(17, 64, 92);
+    background-color: rgba(17, 64, 92, 0.2);
+}
+
+.chips__filter .chip .chip--check {
+    display: none;
+}
+
+.chips__filter .chip.chip--active .chip--check {
+    display: block;
+}
+
+.clear-filter-icon {
+    margin-left: 8px;
+}
