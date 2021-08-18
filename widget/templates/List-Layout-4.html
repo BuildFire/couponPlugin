@@ -10,7 +10,7 @@
            ng-bind-html="WidgetHome.safeHtml(WidgetHome.data.content.description)"></p>
       </div>
 
-      <div class="panels" ng-if="WidgetHome.data.content"
+      <div class="panels infinite-scroll-container" ng-if="WidgetHome.data.content"
            infinite-scroll="WidgetHome.loadMore()"
            infinite-scroll-distance="1"
            data-infinite-container=".infinite-scroll-parent"
@@ -65,7 +65,7 @@
       <a class="whiteTheme stretch" ng-click="WidgetHome.showMapView()">Map</a>
     </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetHome.showFilter()">Filter</a>
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showFilter()">Category</a>
     </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()">Saved

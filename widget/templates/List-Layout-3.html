@@ -10,7 +10,7 @@
         <p class="margin-zero" ng-bind-html="WidgetHome.safeHtml(WidgetHome.data.content.description)"></p>
       </div>
 
-			<div class="notes items-grid" ng-if="WidgetHome.data.content" infinite-scroll="WidgetHome.loadMore()"
+			<div class="notes items-grid infinite-scroll-container" ng-if="WidgetHome.data.content" infinite-scroll="WidgetHome.loadMore()"
            infinite-scroll-distance="1"
            data-infinite-container=".infinite-scroll-parent"
            infinite-scroll-disabled="WidgetHome.busy">
@@ -59,7 +59,7 @@
       <a class="whiteTheme stretch" ng-click="WidgetHome.showMapView()">Map</a>
     </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetHome.showFilter()">Filter</a>
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showFilter()">Category</a>
     </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()">Saved
@@ -78,7 +78,7 @@
       <a class="whiteTheme stretch active">List</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetHome.showFilter()">Filter</a>
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showFilter()">Category</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()">Saved</a>

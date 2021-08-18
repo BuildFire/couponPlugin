@@ -110,17 +110,36 @@
                 }
             };
         }])
-        .controller('AddEditPopupCtrl', ['$scope', '$modalInstance','Info', function ($scope, $modalInstance,Info) {
+        .controller('AddEditPopupCtrl', ['$scope', '$modalInstance','Info', 'TAG_NAMES', function ($scope, $modalInstance,Info, TAG_NAMES) {
 
             if(Info && Info.title)
-                $scope.filterTitle = Info.title;
+                $scope.filterTitle = Info.title.trim();
             else
                 $scope.filterTitle = '';
 
             $scope.isEdit = Info.isEdit;
 
+            $scope.filterError = null;
+
             $scope.ok = function () {
-                $modalInstance.close({title : $scope.filterTitle});
+                if (!$scope.filterTitle) return $scope.filterError = "Category name cannot be empty";
+
+                let searchOptions = {
+                    filter: { "$json.title": { "$regex": $scope.filterTitle, "$options" : "-i" } },
+                    skip: 0,
+                    limit: 0 // the plus one is to check if there are any more
+                  };
+
+                buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
+                    const existingCategories = result.filter(elem => elem.data.title.toLowerCase() === $scope.filterTitle.toLowerCase());
+                    if (existingCategories.length > 0) {
+                        $scope.filterError = "Category name already exists, please enter a different one";
+                    } else {
+                        $scope.filterError = null;
+                        $modalInstance.close({title : $scope.filterTitle});
+                    }
+                    if (!$scope.$$phase) $scope.$digest();
+                })
             };
             $scope.cancel = function () {
                 $modalInstance.dismiss('no');

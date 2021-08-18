@@ -16,7 +16,6 @@
         };
 
         //Refresh list of saved items on pulling the tile bar
-
         buildfire.datastore.onRefresh(function () {
           WidgetSaved.init(function(err){
             if(!err){

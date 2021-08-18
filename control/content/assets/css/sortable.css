@@ -1,0 +1,112 @@
+.draggable-list-view.no-media .d-item,
+.draggable-list-view .d-item{
+  display: flex;
+  align-items: center;
+}
+.draggable-list-view.no-media .d-item::after,
+.draggable-list-view .d-item::after{
+  display: none;
+}
+.draggable-list-view .d-item.square-icon .media-holder{
+  margin-right: .5rem;
+  object-fit: cover;
+}
+.draggable-list-view .d-item.square-icon .media-holder {
+  object-fit: cover;
+}
+.draggable-list-view.no-media .d-item .copy{
+  display: flex;
+  top: auto;
+  align-items: center;
+  max-width: 96%;
+  width: 96%;
+}
+.draggable-list-view .d-item.double-line .copy{
+  top: auto;
+  display: flex;
+  align-items: center;
+  max-width: 96%;
+  width: 96%;
+}
+.draggable-list-view .d-item span.title,
+.draggable-list-view .d-item span.icon{
+  top: auto;
+}
+.draggable-list-view.has-btn.links-list .d-item.double-line .copy .pull-right span.btn-icon{
+  top: auto;
+}
+.draggable-list-view .pull-right .btn-icon{
+  width: 2.5rem;
+  height: 2.5rem; 
+  border-radius: .25rem;
+  font-size: 1.125rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: unset;
+  background-color: transparent;
+  color: #000;
+  margin: 0 !important;
+  top: auto;
+}
+.draggable-list-view .pull-right .btn-edit-icon:after{
+  font-size: 1.25rem;
+}
+.draggable-list-view .pull-right .btn-icon:hover{
+  background-color: #f2f2f2;
+}
+html[buildfire] .d-item .btn-delete-icon:after{
+  content: "\e60e";
+  font-family: "icomoon";
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: auto;
+  transition: color ease-in-out .2s;
+}
+html[buildfire] .d-item .btn-edit-icon::after {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: auto;
+  transition: color ease-in-out .3s;
+}
+html[buildfire] .d-item .btn-delete-icon:hover::after{
+  color: var(--c-danger);
+}
+html[buildfire] .d-item .btn-edit-icon:hover::after{
+  color: var(--c-primary);
+}
+
+.draggable-list-view.carousel-items .d-item span.title {
+  margin-top: 12px;
+  max-width: 50% !important;
+}
+
+.draggable-list-view .d-item .copy span.btn-icon {
+  top: 0px;
+  margin-left: 17px !important;
+}
+
+.media-holder.pull-left > img {
+  object-fit: cover !important;
+}
+
+.draggable-list-view.carousel-items .d-item span.title {
+  width: 50%;
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+.draggable-list-view .d-item.double-line .copy .pull-right {
+  top: 3px
+}
+
+a.text-primary.text {
+  top: -15px !important
+}
+
+.draggable-list-view.dynamic-link-list .d-item .copy {
+  margin-top: 0 !important;
+}

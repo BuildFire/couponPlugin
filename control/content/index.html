@@ -3,9 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- CSS -->
-    <link href="../../../../styles/helper.css" rel="stylesheet">
-    <link href="../../../../styles/siteIcons.css" rel="stylesheet">
+    
     
     <!-- build:bundleCSSFiles  -->
     <link href="assets/css/jquery-ui.css" rel="stylesheet">
@@ -39,6 +37,13 @@
     <script src="controllers/content.item.controller.js"></script>
     <script src="controllers/deepLink.js"></script>
 
+    <!-- CSS -->
+    <link href="../../../../styles/helper.css" rel="stylesheet">
+    <link href="../../../../styles/siteIcons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../content/assets/css/reset.css">
+    <link rel="stylesheet" href="../content/assets/css/bf_base.css">
+    <link rel="stylesheet" href="../content/assets/css/sortable.css">
+
     <!-- endbuild -->
 
     <script>
@@ -70,7 +75,6 @@
     }
 
     .header h4 {
-        color: #a6abba;
         font-size: 13px;
         line-height: 20px;
         font-weight: 300;
@@ -98,6 +102,6 @@
 </style>
 
 <body>
-<div class="content relative slide padding-content-top infinite-scroll-parent infinite-scroll-parent-items" ng-view=""></div>
+<div class="content relative slide padding-content-top infinite-scroll-parent infinite-scroll-parent-items padded-sm" ng-view=""></div>
 </body>
 </html>

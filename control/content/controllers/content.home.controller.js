@@ -9,6 +9,7 @@
         var ContentHome = this;
         ContentHome.searchValue = "";
         ContentHome.filter = null;
+        ContentHome.isBusy = true;
         var _data = {
           "content": {
             "carouselImages": [],
@@ -82,19 +83,19 @@
         })
 
         ContentHome.sortFilterOptions = [
-          SORT_FILTER.MANUALLY,
           SORT_FILTER.CATEGORY_NAME_A_Z,
-          SORT_FILTER.CATEGORY_NAME_Z_A
+          SORT_FILTER.CATEGORY_NAME_Z_A,
+          SORT_FILTER.MANUALLY,
         ];
 
         ContentHome.sortItemOptions = [
-          SORT.MANUALLY,
           SORT.ITEM_TITLE_A_Z,
           SORT.ITEM_TITLE_Z_A,
+          SORT.EXPIRATION_DATE_ASC,
+          SORT.EXPIRATION_DATE_DESC,
+          SORT.MANUALLY,
           SORT.NEWEST_FIRST,
           SORT.OLDEST_FIRST,
-          SORT.EXPIRATION_DATE_ASC,
-          SORT.EXPIRATION_DATE_DESC
         ];
 
         ContentHome.searchOptions = {
@@ -300,22 +301,22 @@
               } else {
                 var filterResponse = response;
                 var notFound = true;
-                if (ContentHome.filters && ContentHome.filters.length) {
-                  for (var index = 0; index < ContentHome.filters.length; index++) {
-                    if (ContentHome.filters[index].data.title == response.title) {
-                      notFound = false;
-                      confirmFilterAdd(filterResponse);
-                      break;
-                    }
-                    if (ContentHome.filters.length - 1 == index) {
-                      if (notFound)
-                        insertFilter(filterResponse);
-                      break;
-                    }
-                  }
-                } else {
+                // if (ContentHome.filters && ContentHome.filters.length) {
+                  // for (var index = 0; index < ContentHome.filters.length; index++) {
+                    // if (ContentHome.filters[index].data.title == response.title) {
+                    //   notFound = false;
+                    //   confirmFilterAdd(filterResponse);
+                    //   break;
+                    // }
+                    // if (ContentHome.filters.length - 1 == index) {
+                    //   if (notFound)
+                        // insertFilter(filterResponse);
+                    //   break;
+                    // }
+                  // }
+                // } else {
                   insertFilter(filterResponse);
-                }
+                // }
               }
             }
             if (!$scope.$apply)
@@ -359,30 +360,42 @@
         }
 
         ContentHome.deleteFilter = function (index) {
-          Modals.removePopupModal({ 'item': 'filter' }).then(function (result) {
-            if (result) {
-
-              Buildfire.datastore.delete(ContentHome.filters[index].id, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
-                if (err)
-                  return;
-                //ContentHome.items.splice(_index, 1);
-                ContentHome.filters.splice(index, 1);
-                var tmpArray = [];
-                ContentHome.filters.forEach(function (res, index) {
-                  tmpArray.push(res.id);
-                });
-                ContentHome.items.forEach(function (resItem, index) {
-                  // tmpArray.push(res.data.SelectedCategories);
-                  var intersectedCategories = tmpArray.filter(function (value) {
-                    return resItem.data.SelectedCategories.indexOf(value) > -1;
+          buildfire.dialog.confirm(
+            {
+              title: "Delete Category",
+              message: 'Are you sure you want to delete this category?',
+              isMessageHTML: true,
+              confirmButton: {
+                type: "danger",
+                text: "Delete"
+              }
+            },
+            (err, isConfirmed) => {
+              if (isConfirmed) {
+                Buildfire.datastore.delete(ContentHome.filters[index].id, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
+                  if (err) return;
+                  //ContentHome.items.splice(_index, 1);
+                  ContentHome.filters.splice(index, 1);
+                  var tmpArray = [];
+                  ContentHome.filters.forEach(function (res, index) {
+                    tmpArray.push(res.id);
                   });
-                  ContentHome.items[index].SelectedCommonCategories = intersectedCategories;
+                  ContentHome.items.forEach(function (resItem, index) {
+                    // tmpArray.push(res.data.SelectedCategories);
+                    var intersectedCategories = tmpArray.filter(function (value) {
+                      if (resItem.SelectedCategories) {
+                        return resItem.SelectedCategories.indexOf(value) > -1;
+                      }
+                    });
+                    ContentHome.items[index].SelectedCommonCategories = intersectedCategories;
+                  });
+                  $scope.$digest();
                 });
-                $scope.$digest();
-              });
+              }
             }
-          });
+          );
         };
+
         ContentHome.showFilter = function (index, itemId, selectedItems, categories, itemData) {
 
           //categories=ContentHome.filters;
@@ -445,32 +458,43 @@
         // ContentHome.createDeepLinksForItems();
 
         ContentHome.deleteItem = function (index) {
-          Modals.removeItemPopupModal({ 'item': 'item' }).then(function (result) {
-            if (result) {
-              if (ContentHome.items[index].data && ContentHome.items[index].data.SelectedCategories && ContentHome.items[index].data.SelectedCategories.length) {
-                ContentHome.items[index].data.SelectedCategories.forEach(function (category) {
-                  for (var index = 0; index < ContentHome.filters.length; index++) {
-                    if (ContentHome.filters[index].id == category) {
-                      ContentHome.filter = ContentHome.filters[index].data;
-                      ContentHome.filter.noOfItems -= 1;
-                      ContentHome.isItemValid = true;
+          buildfire.dialog.confirm(
+            {
+              title: "Delete Coupon",
+              message: 'Are you sure you want to delete this item? This action is not reversible.',
+              isMessageHTML: true,
+              confirmButton: {
+                type: "danger",
+                text: "Delete"
+              }
+            },
+            (err, isConfirmed) => {
+              if (isConfirmed) {
+                if (ContentHome.items[index].data && ContentHome.items[index].data.SelectedCategories && ContentHome.items[index].data.SelectedCategories.length) {
+                  ContentHome.items[index].data.SelectedCategories.forEach(function (category) {
+                    for (var index = 0; index < ContentHome.filters.length; index++) {
+                      if (ContentHome.filters[index].id == category) {
+                        ContentHome.filter = ContentHome.filters[index].data;
+                        ContentHome.filter.noOfItems -= 1;
+                        ContentHome.isItemValid = true;
+                      }
                     }
-                  }
+                  });
+                }
+  
+                Deeplink.deleteById(ContentHome.items[index].id);
+                Buildfire.datastore.delete(ContentHome.items[index].id, TAG_NAMES.COUPON_ITEMS, function (err, result) {
+                  if (err)
+                    return;
+  
+                  PluginEvents.unregister(ContentHome.items[index].id);
+                  //ContentHome.items.splice(_index, 1);
+                  ContentHome.items.splice(index, 1);
+                  $scope.$digest();
                 });
               }
-
-              Deeplink.deleteById(ContentHome.items[index].id);
-              Buildfire.datastore.delete(ContentHome.items[index].id, TAG_NAMES.COUPON_ITEMS, function (err, result) {
-                if (err)
-                  return;
-
-                PluginEvents.unregister(ContentHome.items[index].id);
-                //ContentHome.items.splice(_index, 1);
-                ContentHome.items.splice(index, 1);
-                $scope.$digest();
-              });
             }
-          });
+          );
         };
 
         ContentHome.sortFilterBy = function (value) {
@@ -499,10 +523,29 @@
           }
         };
 
+        ContentHome.clearFilters = (type) => {
+          if (type === 'status') {
+            // ContentHome.data.content.selectedStatus = null;
+            ContentHome.chooseStatus('All Statuses')
+          } else if (type === 'filter') {
+            // ContentHome.data.content.selectedFilter = null;
+            ContentHome.chooseFilter('All Categories');
+          } else {
+            ContentHome.data.content.selectedStatus = 'All Statuses';
+            ContentHome.data.content.selectedFilter = {title: undefined, id: "All Categories"};
+            
+            ContentHome.searchOptionsForItems.filter = { "$json.title": { "$regex": '/*' } };
+            ContentHome.items = [];
+            ContentHome.searchOptionsForItems.skip = 0;
+  
+            ContentHome.loadMoreItems('items');
+          }
+        }
 
         ContentHome.chooseFilter = function (value, title) {
           ContentHome.data.content.selectedFilter = { "title": title, "id": value };
-          ContentHome.data.content.selectedStatus = "All Statuses";
+
+          // ContentHome.data.content.selectedStatus = "All Statuses";
           ContentHome.searchValue = "";
           ContentHome.items = [];
           ContentHome.searchOptionsForItems.skip = 0;
@@ -765,6 +808,8 @@
             return;
           }
           ContentHome.busy = true;
+          ContentHome.isBusy = true;
+          
           if (str !== 'filter')
             Buildfire.datastore.search(ContentHome.searchOptionsForItems, TAG_NAMES.COUPON_ITEMS, function (err, result) {
               if (err) {
@@ -817,6 +862,7 @@
                 $scope.$digest();
               });
               ContentHome.busy = false;
+              ContentHome.isBusy = false;
               console.log("-------------------llll", ContentHome.items)
               Buildfire.spinner.hide();
               $scope.$digest();
