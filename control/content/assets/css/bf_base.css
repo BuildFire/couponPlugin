@@ -845,15 +845,14 @@ color: var(--c-info);
   right: auto !important;
 }
 .modal-dialog .header{
-  background-color: var(--c-gray3);
+  background-color: #eef0f0;
   color: var(--c-gray6);
   margin: 0;
 }
 html[buildfire] .modal .modal-dialog {
   border-radius: 4px;
   border: 1px solid #ddd;
-  /* position: fixed; */
-  width: 80%;
+  width: 600px;
   top: auto !important;
   left: auto !important;
   transform: unset;

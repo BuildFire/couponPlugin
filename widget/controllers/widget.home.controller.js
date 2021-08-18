@@ -350,9 +350,9 @@
               }
               
               if (WidgetHome.items.length === 0) {
-                document.getElementById('noData').style.display = "block";
+                document.querySelector('.infinite-scroll-container').classList.add("no-data");
               } else {
-                document.getElementById('noData').style.display = "none";
+                document.querySelector('.infinite-scroll-container').classList.remove("no-data");
               }
 
               console.log("----------------------", WidgetHome.items);

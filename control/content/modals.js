@@ -110,10 +110,10 @@
                 }
             };
         }])
-        .controller('AddEditPopupCtrl', ['$scope', '$modalInstance','Info', '$rootScope', function ($scope, $modalInstance,Info, $rootScope) {
+        .controller('AddEditPopupCtrl', ['$scope', '$modalInstance','Info', 'TAG_NAMES', function ($scope, $modalInstance,Info, TAG_NAMES) {
 
             if(Info && Info.title)
-                $scope.filterTitle = Info.title;
+                $scope.filterTitle = Info.title.trim();
             else
                 $scope.filterTitle = '';
 
@@ -122,16 +122,24 @@
             $scope.filterError = null;
 
             $scope.ok = function () {
-                let existingCategoriesTitles = $rootScope.Categories ? $rootScope.Categories.map((e) => e.data.title.toLowerCase()) : [];
+                if (!$scope.filterTitle) return $scope.filterError = "Category name cannot be empty";
 
-                if (!$scope.filterTitle) {
-                    return $scope.filterError = "Category name cannot be empty";
-                } else if (existingCategoriesTitles.indexOf($scope.filterTitle.toLowerCase()) > -1) {
-                    return $scope.filterError = "Category name already exists, please enter a different one";
-                } else {
-                    $scope.filterError = null;
-                    $modalInstance.close({title : $scope.filterTitle});
-                }
+                let searchOptions = {
+                    filter: { "$json.title": { "$regex": $scope.filterTitle, "$options" : "-i" } },
+                    skip: 0,
+                    limit: 0 // the plus one is to check if there are any more
+                  };
+
+                buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
+                    const existingCategories = result.filter(elem => elem.data.title.toLowerCase() === $scope.filterTitle.toLowerCase());
+                    if (existingCategories.length > 0) {
+                        $scope.filterError = "Category name already exists, please enter a different one";
+                    } else {
+                        $scope.filterError = null;
+                        $modalInstance.close({title : $scope.filterTitle});
+                    }
+                    if (!$scope.$$phase) $scope.$digest();
+                })
             };
             $scope.cancel = function () {
                 $modalInstance.dismiss('no');

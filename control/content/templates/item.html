@@ -9,20 +9,20 @@
       <input
         type="text"
         class="form-control"
-        placeholder="Coupon Title"
         ng-model="ContentItem.item.data.title"
+        maxlength="70"
       />
     </div>
   </div>
-  <hr class="none" />
+  <!-- <hr class="none" />
   <div class="item clearfix row">
-    <!-- <div class="col-md-3 labels pull-left">
+    <div class="col-md-3 labels pull-left">
       <span>Deep Link URL</span>
-    </div> -->
+    </div>
     <div class="col-md-9 main pull-right">
       <p class="margin-zero">{{ContentItem.item.data.deepLinkUrl}}</p>
     </div>
-  </div>
+  </div> -->
   <hr class="none" />
   <div class="item clearfix row">
     <div class="col-md-3 labels pull-left">
@@ -31,8 +31,8 @@
     <div class="col-md-9 main pull-right">
       <textarea
         class="form-control"
-        placeholder="Coupon Summary"
         ng-model="ContentItem.item.data.summary"
+        maxlength="250"
       ></textarea>
     </div>
   </div>
@@ -42,9 +42,9 @@
       <span>Include in the following Categories</span>
     </div>
     <div class="col-md-9 main pull-right">
-      <div class="col-xs-12 pull-left padding-zero margin-bottom-ten">
-        <a class="text-success" ng-click="ContentItem.addFilter()"
-          >Add New Category</a
+      <div class="col-xs-12 pull-left padding-zero margin-bottom-fifteen">
+        <button class="btn btn-add btn-success text-success" ng-click="ContentItem.addFilter()"
+          >Add Category</button
         >
       </div>
       <div
@@ -297,8 +297,8 @@
       <input
         type="text"
         class="form-control"
-        placeholder="Address Title"
         ng-model="ContentItem.item.data.addressTitle"
+        maxlength="70"
       />
     </div>
   </div>

@@ -1,5 +1,4 @@
 
-<div id="noData" class="no-data" style="display: none;"></div>
 <div class="holder load-in padding-zero has-bottom sticky-bottom-menu clearfix" ng-controller="WidgetHomeCtrl as WidgetHome" >
 	<div class="scrollable infinite-scroll-parent">
 		<div class="coupon items-layout3 layout3">
@@ -11,7 +10,7 @@
         <p class="margin-zero" ng-bind-html="WidgetHome.safeHtml(WidgetHome.data.content.description)"></p>
       </div>
 
-			<div class="notes items-grid" ng-if="WidgetHome.data.content" infinite-scroll="WidgetHome.loadMore()"
+			<div class="notes items-grid infinite-scroll-container" ng-if="WidgetHome.data.content" infinite-scroll="WidgetHome.loadMore()"
            infinite-scroll-distance="1"
            data-infinite-container=".infinite-scroll-parent"
            infinite-scroll-disabled="WidgetHome.busy">

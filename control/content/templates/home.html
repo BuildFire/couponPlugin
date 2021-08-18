@@ -32,8 +32,18 @@
       <input  type="text" class="form-control"
               placeholder="Search item name or summary"
               ng-model = 'ContentHome.searchValue'>
-        <div class="chips"><div class="chip" ng-if="ContentHome.data.content.selectedFilter.title"> {{ContentHome.data.content.selectedFilter.title}} <span class="btn-icon btn-delete-icon btn-danger clear-filter-icon" ng-click="ContentHome.clearFilters('filter')"></span></div></div>
-        <div class="chips"><div class="chip" ng-if="ContentHome.data.content.selectedStatus"> {{ContentHome.data.content.selectedStatus}} <span class="btn-icon btn-delete-icon btn-danger clear-filter-icon" ng-click="ContentHome.clearFilters('status')"></span></div></div>
+      <div class="chips">
+        <div class="chip" ng-if="ContentHome.data.content.selectedFilter.title">
+          {{ContentHome.data.content.selectedFilter.title}}
+          <span class="btn-icon btn-delete-icon btn-danger clear-filter-icon" ng-click="ContentHome.clearFilters('filter')"></span>
+        </div>
+      </div>
+      <div class="chips">
+        <div class="chip" ng-if="ContentHome.data.content.selectedStatus && ContentHome.data.content.selectedStatus !== 'All Statuses'">
+          {{ContentHome.data.content.selectedStatus}}
+          <span class="btn-icon btn-delete-icon btn-danger clear-filter-icon" ng-click="ContentHome.clearFilters('status')"></span>
+        </div>
+      </div>
       <button class="btn btn-info" ng-click="ContentHome.searchItem()"><span class="search-icon"></span></button>
     </div>
   
@@ -101,9 +111,9 @@
         <span class="chevron icon-chevron-down pull-right"></span>
       </button>
       <ul class="dropdown-menu extended" role="menu">
-        <li ng-click="ContentHome.openImportCSVDialog()"><a>Import CSV</a></li>
         <li ng-click="ContentHome.exportCSV()"><a>Export CSV</a></li>
-        <li class="margin-bottom-ten" ng-click="ContentHome.getTemplate()"><a>Get Template</a></li>
+        <li ng-click="ContentHome.getTemplate()"><a>Get Template</a></li>
+        <li class="margin-bottom-ten" ng-click="ContentHome.openImportCSVDialog()"><a>Import CSV</a></li>
         <li><p class="info-note caption margin-bottom-zero">Safari users need to rename the file to .csv to open the file.</p></li>
       </ul>
     </div>
@@ -129,7 +139,7 @@
     <span class="icon icon-menu pull-left cursor-grab-item"></span>
 
     <div class="media-holder pull-left">
-      <img  ng-if="item.data.listImage" ng-src="{{item.data.listImage}}">
+      <img ng-if="item.data.listImage" ng-src="{{item.data.listImage}}">
       <img ng-if="!item.data.listImage" src="../../../../styles/media/holder-1x1.png">
     </div>
     <div class="copy pull-right">
@@ -197,7 +207,7 @@
       <div class="col-md-6 padding-right-zero pull-left">
         <span class="title ellipsis">Includes {{filter.data.noOfItems || 0}} Items</span>
       </div>
-      <div class="pull-right">
+      <div class="pull-right" style="display: flex;">
         <span class="btn-icon btn-edit-icon btn-primary" ng-click="ContentHome.addEditFilter(filter, true , $index)"  onclick="clickMe(event)"></span>
         <span class="btn-icon btn-delete-icon btn-danger" ng-click="ContentHome.deleteFilter($index)"></span>
       </div>

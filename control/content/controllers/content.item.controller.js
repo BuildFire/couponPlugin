@@ -17,6 +17,7 @@
     "Buildfire",
     "RankOfLastItem",
     "PluginEvents",
+    "$rootScope",
     function (
       $scope,
       $routeParams,
@@ -32,7 +33,8 @@
       RankOfLastFilter,
       Buildfire,
       RankOfLastItem,
-      PluginEvents
+      PluginEvents,
+      $rootScope
     ) {
       $scope.pluginReady = false;
       var ContentItem = this;
@@ -313,7 +315,7 @@
           filter: { "$json.title": { $regex: "/*" } },
           sort: { title: 1 },
           skip: "0",
-          limit: "50",
+          limit: "5000",
         };
 
         Buildfire.datastore.search(
@@ -732,6 +734,34 @@
         updateItemsWithDelay,
         true
       );
+
+      buildfire.datastore.onUpdate((event) => {
+        if ($scope.isBusy) return;
+
+        if (event.tag === TAG_NAMES.COUPON_CATEGORIES) {
+          buildfire.spinner.show();
+          $scope.isBusy = true;
+
+          buildfire.datastore.search({}, TAG_NAMES.COUPON_CATEGORIES, function (err, result) {
+
+            var tmpArray = [];
+            result.forEach(function (res, index) {
+              tmpArray.push({
+                'title': res.data.title,
+                rank: index + 1,
+                id: res.data.id
+              });
+            });
+
+            $rootScope.Categories = result;
+            buildfire.spinner.hide();
+            setTimeout(() => {
+              $scope.isBusy = false;
+            }, 500)
+            $scope.$digest();
+          });
+        }
+      });
 
       /*
        * watch for changes in filters and trigger the saveDataWithDelay function on change

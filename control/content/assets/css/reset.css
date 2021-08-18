@@ -9,8 +9,10 @@ a.image-picker {
     line-height: 30px !important;
 }
 
-a.image-picker img {
-    flex-grow: 1 !important;
+.screens .screen a img {
+    object-fit: contain !important;
+    width: 100%;
+    z-index: 0 !important;
 }
 
 .border-danger {
@@ -27,14 +29,15 @@ a.image-picker img {
 
 .chip {
     padding: 0 12px;
+    padding-right: 6px;
     background-color: rgb(224, 224, 224);
     border-radius: 100px;
     display: inline-flex;
     margin: 0 5px;
-    color: rgba(0, 0, 0, .87);
+    color: var(--c-gray5);
     align-items: center;
-    height: 32px;
-    font-size: 14px;
+    height: 28px;
+    font-size: 12px;
     cursor: pointer;
     border: none;
     width: max-content;
@@ -70,4 +73,51 @@ a.image-picker img {
 
 .clear-filter-icon {
     margin-left: 8px;
+}
+
+html[buildfire] .chips .btn-delete-icon::after {
+    top: -1.5px !important;
+    left: -0.4px !important;
+}
+
+.chips .btn-delete-icon {
+    background-color: transparent !important;
+    color: var(--c-gray4) !important;
+}
+.chips .btn-delete-icon:hover {
+    background-color: transparent !important;
+    color: var(--c-gray5) !important;
+}
+
+.chips .btn-delete-icon:after {
+    font-size: 22px !important;
+}
+
+div.mce-widget.mce-tooltip.mce-tooltip-n{
+    display: none !important;
+}
+
+#ui-datepicker-div {
+    width: fit-content;
+}
+
+
+#carousel .draggable-list-view .d-item .copy {
+    top: auto;
+    padding-left: 15px;
+    max-width: 85% !important;
+    width: 100%;
+}
+
+#carousel .carousel-items div > div.copy.pull-right > div {
+    display: flex;
+    align-items: center;
+}
+
+#carousel .carousel-items div > div.copy.pull-right > div a {
+    margin-top: 2px;
+}
+
+.border-bottom-grey {
+    border-bottom: 1px solid #ddd !important
 }

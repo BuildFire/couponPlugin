@@ -1,7 +1,7 @@
 <!-- Add/Edit Filter Modal -->
 <!--<script type="text/ng-template" id="addEditFilter.html">-->
 <div class="header clearfix border-bottom-grey">
-  <h4 class="margin-zero">Add / Edit Category</h4>
+  <h4 class="margin-zero">{{isEdit ? 'Edit' : 'Add' }} Category</h4>
   <span class="icon icon-cross2 close-modal" ng-click="cancel()"></span>
 </div>
 <div class="padded clearfix row">
@@ -14,9 +14,9 @@
         id="filter-title"
         ng-model="filterTitle"
         type="text"
-        placeholder="Enter Title"
         class="form-control"
         minlength="1"
+        maxlength="70"
         ng-class="{'border-danger': filterError}" />
         <div class="text-left text-danger margin-top-five text-small category-error-text" ng-show="filterError">
             {{filterError}}
