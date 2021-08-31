@@ -478,6 +478,21 @@
             },
             !isNewItemInserted
           );
+          PluginEvents.register(
+            {
+              title: ContentItem.item.data.title+" Redeemed",
+              key: ContentItem.item.id+"_redeemed",
+            },
+            !isNewItemInserted
+          );
+          PluginEvents.register(
+            {
+              title: "All Redeemed",
+              key: "all_redeemed",
+            },
+            !isNewItemInserted
+          );
+
         }
         //#
         buildfire.messaging.sendMessageToWidget({});

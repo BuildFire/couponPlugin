@@ -248,6 +248,14 @@
               WidgetItem.item.isRedeemed = true;
               WidgetItem.item.redeemedOn = result.data.redeemedOn;
               $scope.enableRedeemButton();
+              var currentView = ViewStack.getCurrentView();
+
+              if (currentView.params && currentView.params.itemId && !currentView.params.stopSwitch) {
+                //Track Coupon Plugin Event
+                buildfire.analytics.trackAction("coupon_item_view_" + currentView.params.itemId+"_redeemed");
+                buildfire.analytics.trackAction("all_redeemed");
+                //#
+              }
               var redeemedModal = $modal.open({
                 templateUrl: 'templates/Redeem_Confirmation.html',
                 size: 'sm',
