@@ -113,9 +113,13 @@ h5{
 	margin-left: .75rem;
 }
 .layout1 .item-details{
-	display: flex;
-	justify-content: space-between;
+	display: block;
 }
+
+.caption-date {display:inline-block}
+.caption-date:first-letter {text-transform: uppercase}
+
+
 /* End Layout 1 ////////////////////////////////////////////////////////////////////////////// */
 
 /* Layout 2 ////////////////////////////////////////////////////////////////////////////// */
@@ -147,9 +151,9 @@ h5{
 	flex-shrink: 0;
 }
 .layout1 .item-details{
-	display: flex;
-	justify-content: space-between;
+	display: block;
 }
+
 /* End Layout 2 ////////////////////////////////////////////////////////////////////////////// */
 
 /* Layout 3 ////////////////////////////////////////////////////////////////////////////// */
@@ -226,6 +230,12 @@ h5{
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+}
+.redeemedView{	
+	display: flex;
+}
+.layout4-caption-date{
+	padding-left: 5px;
 }
 /* End Layout 4 ////////////////////////////////////////////////////////////////////////////// */
 

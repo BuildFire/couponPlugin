@@ -41,8 +41,8 @@
               </div>
             </div>
             <div class="" ng-click="WidgetHome.openDetails(item.id)">
-            <div class="">
-              <p  ng-if="item.redeemedOn" class="date margin-zero caption">Redeemed {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</p>
+            <div class="layout4 redeemedView">
+              <p ng-if="item.redeemedOn"  class="date margin-zero caption redeemedSpace">Redeemed <p ng-if="item.redeemedOn" class="date margin-zero caption layout4-caption-date caption-date ">{{item.redeemedOn  | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</p></p>
             </div>
               </div>
           </div>

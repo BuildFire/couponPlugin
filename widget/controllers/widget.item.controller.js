@@ -384,7 +384,16 @@
         };
         $scope.getRedeemedDateText=function(){
           var redeemedDate = new Date(WidgetItem.item.redeemedOn);
-          $scope.redeemedDateText =redeemedDate.toDateString() +" at "+redeemedDate.getHours()+":"+redeemedDate.getMinutes();
+          $scope.redeemedDateText =redeemedDate.toDateString() +" at "+redeemedDate.getHours()+":";
+          // add missing 0 in case minutes is 1 digit
+          if(redeemedDate.getMinutes().toString().length == 1){
+            $scope.redeemedDateText += `0${redeemedDate.getMinutes()}`
+          }
+          else{
+            $scope.redeemedDateText += `${redeemedDate.getMinutes()}`
+          }
+          // remove day from date string
+          $scope.redeemedDateText = $scope.redeemedDateText.slice(3);
         };
         init();
       }]);

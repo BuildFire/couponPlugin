@@ -45,7 +45,7 @@
                 <i ng-if="!item.data.expiresOn">No expiration date</i>
               </p>
               <p  class="caption ellipsis margin-zero bodyTextTheme opacity-seventy">
-                <i ng-if="item.redeemedOn" >Redeemed {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</i>
+                <i ng-if="item.redeemedOn" >Redeemed <i ng-if="item.redeemedOn" class="caption-date">{{item.redeemedOn  | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</i></i>
               </p>
               <p class="caption ellipsis margin-zero bodyTextTheme opacity-seventy">
                 <i>{{item.data.distanceText}}</i>
@@ -131,4 +131,3 @@
     </div>
   </div>
 </div>
-
