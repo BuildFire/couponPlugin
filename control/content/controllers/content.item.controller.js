@@ -473,7 +473,7 @@
         if (ContentItem.item && ContentItem.item.id && ContentItem.item.data) {
           PluginEvents.register(
             {
-              title: ContentItem.item.data.title,
+              title: ContentItem.item.data.title+" Opened",
               key: ContentItem.item.id,
             },
             !isNewItemInserted

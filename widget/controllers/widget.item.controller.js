@@ -253,7 +253,7 @@
               if (currentView.params && currentView.params.itemId && !currentView.params.stopSwitch) {
                 //Track Coupon Plugin Event
                 buildfire.analytics.trackAction("coupon_item_view_" + currentView.params.itemId+"_redeemed");
-                buildfire.analytics.trackAction("all_redeemed");
+                buildfire.analytics.trackAction("coupon_item_view_all_redeemed");
                 //#
               }
               var redeemedModal = $modal.open({
