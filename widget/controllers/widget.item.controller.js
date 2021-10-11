@@ -248,6 +248,14 @@
               WidgetItem.item.isRedeemed = true;
               WidgetItem.item.redeemedOn = result.data.redeemedOn;
               $scope.enableRedeemButton();
+              var currentView = ViewStack.getCurrentView();
+
+              if (currentView.params && currentView.params.itemId && !currentView.params.stopSwitch) {
+                //Track Coupon Plugin Event
+                buildfire.analytics.trackAction("coupon_item_view_" + currentView.params.itemId+"_redeemed");
+                buildfire.analytics.trackAction("coupon_item_view_all_redeemed");
+                //#
+              }
               var redeemedModal = $modal.open({
                 templateUrl: 'templates/Redeem_Confirmation.html',
                 size: 'sm',
@@ -376,7 +384,16 @@
         };
         $scope.getRedeemedDateText=function(){
           var redeemedDate = new Date(WidgetItem.item.redeemedOn);
-          $scope.redeemedDateText =redeemedDate.toDateString() +" at "+redeemedDate.getHours()+":"+redeemedDate.getMinutes();
+          $scope.redeemedDateText =redeemedDate.toDateString() +" at "+redeemedDate.getHours()+":";
+          // add missing 0 in case minutes is 1 digit
+          if(redeemedDate.getMinutes().toString().length == 1){
+            $scope.redeemedDateText += `0${redeemedDate.getMinutes()}`
+          }
+          else{
+            $scope.redeemedDateText += `${redeemedDate.getMinutes()}`
+          }
+          // remove day from date string
+          $scope.redeemedDateText = $scope.redeemedDateText.slice(3);
         };
         init();
       }]);

@@ -473,11 +473,26 @@
         if (ContentItem.item && ContentItem.item.id && ContentItem.item.data) {
           PluginEvents.register(
             {
-              title: ContentItem.item.data.title,
+              title: ContentItem.item.data.title+" Opened",
               key: ContentItem.item.id,
             },
             !isNewItemInserted
           );
+          PluginEvents.register(
+            {
+              title: ContentItem.item.data.title+" Redeemed",
+              key: ContentItem.item.id+"_redeemed",
+            },
+            !isNewItemInserted
+          );
+          PluginEvents.register(
+            {
+              title: "All Redeemed",
+              key: "all_redeemed",
+            },
+            !isNewItemInserted
+          );
+
         }
         //#
         buildfire.messaging.sendMessageToWidget({});

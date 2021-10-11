@@ -24,8 +24,8 @@
 							<h5 class="item-title ellipsis">{{item.data.title}}</h5>
               <p class="item-summary margin-zero ellipsis"> {{item.data.summary}}</p>
               <p class="item-date caption margin-zero" ng-if="item.data.expiresOn">Expires {{item.data.expiresOn | date}}</p>
-              <p class="item-date caption ellipsis margin-zero" ng-if="item.redeemedOn">Redeemed {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</p>
-							<p class="item-date caption" ng-if="!item.data.expiresOn">No expiration date</p>
+              <p ng-if="item.redeemedOn" class="item-date caption ellipsis margin-zero" >Redeemed <p ng-if="item.redeemedOn" class="item-date caption ellipsis margin-zero caption-date">{{item.redeemedOn  | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</p></p>							
+              <p class="item-date caption" ng-if="!item.data.expiresOn">No expiration date</p>
 
 							<!-- If summary, expires, or distance are empty, show these -->
 							<p class="item-summary caption margin-zero text-center ellipsis" ng-hide="item.data.summary">&nbsp;</p>
