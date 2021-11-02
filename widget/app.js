@@ -229,12 +229,11 @@
                     , marker = '';
 
 
-                  //If someone has clicked on the finder, stop centering on the item/location
-                  if (_index == 0 && !globals.wasFinderClicked) {
-                    map.setCenter(new google.maps.LatLng(_place.data.location.coordinates.lat, _place.data.location.coordinates.lng));
-                  }
-
                   if (_place.data && _place.data.location && _place.data.location.coordinates && _place.data.location.coordinates.lng && _place.data.location.coordinates.lat && !_place.alreadySet) {
+                    //If someone has clicked on the finder, stop centering on the item/location
+                    if (_index == 0 && !globals.wasFinderClicked) {
+                      map.setCenter(new google.maps.LatLng(_place.data.location.coordinates.lat, _place.data.location.coordinates.lng));
+                    }
                     marker = new google.maps.Marker({
                       position: { lat: _place.data.location.coordinates.lat, lng: _place.data.location.coordinates.lng },
                       map: map,
