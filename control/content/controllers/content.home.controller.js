@@ -989,7 +989,36 @@
                       });
                       rows[index].SelectedCategories = tmpCategoryIds;
 
+                      setTimeout(() => {                        
+                        var geocoder = new google.maps.Geocoder();
+                        geocoder.geocode({ "address": rows[index].location }, function (results, status) {
+                          if (status == google.maps.GeocoderStatus.OK) {
+                            var lat = results[0].geometry.location.lat(),
+                              lng = results[0].geometry.location.lng();
+                            // ContentHome.setLocation({location: rows[index].location, coordinates: {lng:lng, lat:lat}});
+                            rows[index].location = {
+                              coordinates: {
+                                lng: lng,
+                                lat: lat
+                              },
+                              addressTitle: rows[index].location
+                            };
+                            bulkInsertItems([rows[index]], rows[index].rank);
+                          }
+                          else {
+                            console.error('' +
+                              'Error else parts of google');
+                            rows[index].location = "";
+                            bulkInsertItems([rows[index]], rows[index].rank);
+                          }
+                        });
+                        $scope.$digest();
+                      }, 1000);
+                    });
 
+
+                  } else if ((!rows[index].SelectedCategories.length) && rows[index].location) {
+                    setTimeout(() => {                      
                       var geocoder = new google.maps.Geocoder();
                       geocoder.geocode({ "address": rows[index].location }, function (results, status) {
                         if (status == google.maps.GeocoderStatus.OK) {
@@ -1006,40 +1035,13 @@
                           bulkInsertItems([rows[index]], rows[index].rank);
                         }
                         else {
-                          console.error('' +
-                            'Error else parts of google');
+                          console.error('Error else parts of google');
                           rows[index].location = "";
                           bulkInsertItems([rows[index]], rows[index].rank);
                         }
                       });
                       $scope.$digest();
-                    });
-
-
-                  } else if ((!rows[index].SelectedCategories.length) && rows[index].location) {
-
-                    var geocoder = new google.maps.Geocoder();
-                    geocoder.geocode({ "address": rows[index].location }, function (results, status) {
-                      if (status == google.maps.GeocoderStatus.OK) {
-                        var lat = results[0].geometry.location.lat(),
-                          lng = results[0].geometry.location.lng();
-                        // ContentHome.setLocation({location: rows[index].location, coordinates: {lng:lng, lat:lat}});
-                        rows[index].location = {
-                          coordinates: {
-                            lng: lng,
-                            lat: lat
-                          },
-                          addressTitle: rows[index].location
-                        };
-                        bulkInsertItems([rows[index]], rows[index].rank);
-                      }
-                      else {
-                        console.error('Error else parts of google');
-                        rows[index].location = "";
-                        bulkInsertItems([rows[index]], rows[index].rank);
-                      }
-                    });
-                    $scope.$digest();
+                    }, 1000);
 
                   } else if (rows[index].SelectedCategories.length && (!rows[index].location)) {
                     var categoryList = rows[index].SelectedCategories.split(',');
