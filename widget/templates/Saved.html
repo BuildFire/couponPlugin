@@ -52,7 +52,7 @@
     </div>
   </div>
   <!-- If map is shown, use col-xs-3 like below -->
-  <div class="bottom fixed-bottom" ng-class="WidgetHome.navbarEnabled ? 'primaryBackgroundTheme' : ''"
+  <div class="bottom fixed-bottom" ng-class="WidgetHome.navbarEnabled ? '' : 'primaryBackgroundTheme'"
        ng-if="WidgetSaved.data.settings.mapView == 'show' || WidgetSaved.data.settings.filterPage == 'show'">
     <!--<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
       <span class="whiteTheme small">Filter Applied</span>
@@ -73,7 +73,7 @@
   </div>
 
   <!-- If map is hidden, use col-xs-4 like below-->
-  <div class="bottom fixed-bottom" ng-class="WidgetHome.navbarEnabled ? 'primaryBackgroundTheme' : ''"
+  <div class="bottom fixed-bottom" ng-class="WidgetHome.navbarEnabled ? '' : 'primaryBackgroundTheme'"
        ng-if="WidgetSaved.data.settings.mapView == 'hide'">
     <!--<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
       <span class="whiteTheme small">Filter Applied</span>
@@ -90,7 +90,7 @@
   </div>
 
   <!-- If filter is hidden, use col-xs-4 like below-->
-  <div class="bottom fixed-bottom" ng-class="WidgetHome.navbarEnabled ? 'primaryBackgroundTheme' : ''"
+  <div class="bottom fixed-bottom" ng-class="WidgetHome.navbarEnabled ? '' : 'primaryBackgroundTheme'"
        ng-if="WidgetSaved.data.settings.filterPage == 'hide'">
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch" ng-click="WidgetSaved.showListItems()">List</a>
@@ -104,7 +104,7 @@
   </div>
 
   <!-- If both  filter and map are hidden-->
-  <div class="bottom fixed-bottom" ng-class="WidgetHome.navbarEnabled ? 'primaryBackgroundTheme' : ''"
+  <div class="bottom fixed-bottom" ng-class="WidgetHome.navbarEnabled ? '' : 'primaryBackgroundTheme'"
        ng-if="WidgetSaved.data.settings.filterPage == 'hide' && WidgetSaved.data.settings.mapView == 'hide'">
     <div class="col-xs-6 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch" ng-click="WidgetSaved.showListItems()">List</a>
