@@ -5,7 +5,7 @@
     .controller('WidgetFilterCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'LAYOUTS', '$sce', '$rootScope', 'Buildfire', 'ViewStack', 'UserData', '$modal', '$timeout','SORT_FILTER',
       function ($scope, DataStore, TAG_NAMES, LAYOUTS, $sce, $rootScope, Buildfire, ViewStack, UserData, $modal, $timeout,SORT_FILTER) {
         var WidgetFilter = this;
-
+        WidgetFilter.navbarEnabled = buildfire.getContext().navbarEnabled;
         // default value
         WidgetFilter.filter={};
         WidgetFilter.filter.text = '';

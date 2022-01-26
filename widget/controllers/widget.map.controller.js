@@ -38,6 +38,7 @@
         WidgetMap.currentDate.getDate() - 1
       );
       WidgetMap.todayDate = +new Date();
+      WidgetMap.navbarEnabled = buildfire.getContext().navbarEnabled;
       WidgetMap.refreshData = 1;
       WidgetMap.filter = {};
       WidgetMap.deepLinkingDone = false;
