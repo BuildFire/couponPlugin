@@ -8,7 +8,7 @@
         $scope.showRedeemButton  =false;
         $scope.showItemRedeemed  =false;
         WidgetItem.listeners = {};
-
+        WidgetItem.navbarEnabled = buildfire.getContext().navbarEnabled;
         var currentView = ViewStack.getCurrentView();
 
         if (currentView.params && currentView.params.itemId && !currentView.params.stopSwitch) {

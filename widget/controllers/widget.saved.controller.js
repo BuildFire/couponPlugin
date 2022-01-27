@@ -9,6 +9,7 @@
         WidgetSaved.items = [];
         WidgetSaved.savedItems = {};
         WidgetSaved.hasAtleastOneSaved = false;
+        WidgetSaved.navbarEnabled = buildfire.getContext().navbarEnabled;
         WidgetSaved.listeners = {};
         var searchOptions = {
           skip: 0,

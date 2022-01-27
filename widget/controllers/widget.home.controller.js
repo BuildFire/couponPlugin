@@ -20,6 +20,7 @@
         WidgetHome.items = [];
         WidgetHome.filter={};
         WidgetHome.deepLinkingDone = false;
+        WidgetHome.navbarEnabled = buildfire.getContext().navbarEnabled;
         $rootScope.$on('FILTER_ITEMS', function (e, view) {
           WidgetHome.isFilterApplied = view.isFilterApplied;
           if (view && view.isFilterApplied) {
