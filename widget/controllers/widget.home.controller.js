@@ -284,6 +284,8 @@
         var onUpdateCallback = function (event) {
           console.log("==================== WIDGET UPDATE CALLED ===============================")
           console.log("==================== WIDGET UPDATE CALLED ===============================")
+          if($rootScope.importingCSV) return;
+          
           setTimeout(function () {
             if (event && event.tag === TAG_NAMES.COUPON_INFO) {
               WidgetHome.data = event.data;
@@ -655,12 +657,6 @@
             }
           });
         };
-
-        buildfire.messaging.onReceivedMessage = function(message){
-          if (message.importCSV === 'finished') {
-            location.reload();
-          }
-       }
 
         function getItemsDistance(_items) {
           if (WidgetHome.locationData.currentCoordinates == null) {

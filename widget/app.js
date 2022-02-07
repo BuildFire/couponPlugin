@@ -325,6 +325,9 @@
               $rootScope.$apply();
             }
             break;
+          case 'ImportCSV':
+            msg.importing ? $rootScope.importingCSV = true : $rootScope.importingCSV = false;
+            if(!$rootScope.importingCSV) window.location.reload();
           default:
             ViewStack.popAllViews(true);
         }
