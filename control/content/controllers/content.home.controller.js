@@ -74,6 +74,10 @@
 
         ContentHome.items = [];
 
+        ContentHome.importingCSV = false;
+        ContentHome.csvItems = 0;
+        ContentHome.csvImportedItems = 0;
+
         $rootScope.$on('ITEMS_UPDATED', function (e) {
           ContentHome.filters = [];
           ContentHome.items = [];
@@ -335,12 +339,12 @@
           });
         }
 
-        function insertFilter(response) {
+        function insertFilter(response, cb = null) {
           ContentHome.filter = {
             data: {
               title: response.title,
               rank: RankOfLastFilter.getRank() + 10,
-              noOfItems: 0
+              noOfItems: response.number ? response.number : 0
             }
           };
           ContentHome.data.content.rankOfLastFilter = RankOfLastFilter.getRank() + 10;
@@ -353,8 +357,10 @@
             ContentHome.filter.data.title = data.data.title;
             if (err) {
               ContentHome.isNewItemInserted = false;
+              if(cb) cb(err, null)
               return console.error('There was a problem saving your data');
             }
+            if(cb) cb(null, data);
             $scope.$digest();
           });
         }
@@ -364,7 +370,6 @@
             {
               title: "Delete Category",
               message: 'Are you sure you want to delete this category?',
-              isMessageHTML: true,
               confirmButton: {
                 type: "danger",
                 text: "Delete"
@@ -462,7 +467,6 @@
             {
               title: "Delete Coupon",
               message: 'Are you sure you want to delete this item? This action is not reversible.',
-              isMessageHTML: true,
               confirmButton: {
                 type: "danger",
                 text: "Delete"
@@ -827,7 +831,7 @@
               var tmpArray = [];
               var lastIndex = result.length;
               result.forEach(function (res, index) {
-                console.log("RES CATEGORIES", res.data.Categories)
+                
                 tmpArray.push({
                   'title': res.data.title,
                   rank: index + 1,
@@ -909,253 +913,204 @@
           console.log('completed');
         }
 
-        ContentHome.openImportCSVDialog = function () {
+        var codeAddress = (function() {
+          var index = 0;
+          var delay = 500;
+          var geocoder = new google.maps.Geocoder();
 
+          return function (address, callback) {
+            if (geocoder) setTimeout(geocoder.geocode.bind(geocoder, { 'address': "'" + address + "'" },
+              function (results, status) {
+                console.log("GEO CODE STATUS", status, results);
+                if (status == google.maps.GeocoderStatus.OK) {
+                  var obj = {
+                    lat: results[0].geometry.location.lat(),
+                    lng: results[0].geometry.location.lng()
+                  }
+                  callback(obj);
+                }
+                else if(status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
+                  codeAddress(address, callback);
+                }
+                else {
+                  console.error("Geocode was not successful for the following reason: " + status);
+                  callback(null);
+                }
+              }), index * delay);
+            index++;
+          };
+      })();
+
+        ContentHome.openImport = function () {
+          function getUnixFromDate(date) {
+            var isUnix = !date.includes('/');
+            if (isUnix) {
+              return date;
+            } else {
+              date = date.split('/');
+              var formattedDate = date[0] + '.' + date[1] + '.' + date[2];
+              return new Date(formattedDate).getTime();
+            }
+          }
           $csv.import(headerRow).then(function (rows) {
-            rows = rows.filter(function (row) {
-              return row.title;
-            });
-            setTimeout(function () {
-              buildfire.messaging.sendMessageToWidget({ importCSV: 'finished' })
-            }, rows.length * 300);
-            ContentHome.loading = true;
+            rows = rows.filter(function (row) { return row.title; });
+            
             if (rows && rows.length > 1) {
-              var categoryList = rows[1].Categories.split(',');
-              categoryList.forEach(function (category) {
-                var obj = {};
-                obj.title = category;
-                insertFilter(obj);
-              });
+              var categoriesList = [], columns = rows.shift();
 
-              var columns = rows.shift();
-
-              for (var _index = 0; _index < headerRow.length; _index++) {
-                if (header[headerRow[_index]] != columns[headerRow[_index]]) {
-                  ContentHome.loading = false;
-                  ContentHome.csvDataInvalid = true;
-                  break;
-                }
-              }
-
-              if (!ContentHome.loading)
+              if(JSON.stringify(Object.values(headerRow)) !== JSON.stringify(Object.keys(columns))) {
+                ContentHome.loading = false;
+                ContentHome.csvDataInvalid = true;
                 return;
+              }
+              
+              rows.map(el => categoriesList = categoriesList.concat(el.Categories.split(",")));
+              categoriesList = [... new Set(categoriesList)];
+              
+              var sortedCategories = [];
+              categoriesList.map(category => {
+                var exists = rows.filter(row => 
+                  row.SelectedCategories.toLowerCase().includes(category.toLowerCase()));
 
-              var rank = ContentHome.data.content.rankOfLastItem || 0;
-              RankOfLastItem.setRank(rank);
+                exists ? sortedCategories.push({ title: category, number: exists.length}) 
+                : null;
+              });
+              
+              buildfire.messaging.sendMessageToWidget({ type: "ImportCSV", importing: true });
+              buildfire.messaging.sendMessageToWidget({ importCSV: 'started' });
+              ContentHome.importingCSV = true;
+              
+              const insertCategories = (callback) => {
+                buildfire.datastore.search({ recordCount: true }, TAG_NAMES.COUPON_CATEGORIES, (err, categories) => {
+                  if (err) return console.error(err);
 
-              for (var index = 0; index < rows.length; index++) {
-                rank += 10;
-                rows[index].dateCreated = +new Date();
-                rows[index].links = [];
-                rows[index].rank = rank;
-                rows[index].body = "";
-                if (rows[index].startOn) rows[index].startOn = getUnixFromDate(rows[index].startOn);
-                if (rows[index].expiresOn) rows[index].expiresOn = getUnixFromDate(rows[index].expiresOn);
+                  let updatedAll = sortedCategories.length;
+                  if (categories && categories.result) {
+                    sortedCategories.map(cat => {
+                      let categoryExists = categories.result.find(el =>
+                        cat.title.toLowerCase() === el.data.title.toLowerCase());
 
-
-                if (rows[index].carouselImages) {
-                  var carousalImageUrlArray = rows[index].carouselImages.split(',');
-                  rows[index].carouselImages = [];
-
-                  carousalImageUrlArray.forEach(function (url) {
-                    var obj = {
-                      action: "noAction",
-                      iconUrl: url,
-                      title: "image"
-                    };
-                    rows[index].carouselImages.push(obj);
-                  })
-                }
-                asyncProcess(index, function (index) {
-
-                  if (rows[index].SelectedCategories.length && rows[index].location) {
-
-                    var categoryList = rows[index].SelectedCategories.split(',');
-
-                    var searchOptions = {
-                      filter: { "$json.title": { "$regex": '/*' } }
-                    };
-                    Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, data) {
-                      console.log("Saved", data.id);
-                      var tmpCategoryIds = [];
-                      data.forEach(function (categoryObj) {
-                        categoryList.forEach(function (categoryTitle) {
-                          if (categoryTitle == categoryObj.data.title) {
-                            categoryObj.data.noOfItems += 1;
-                            //  buildfire.datastore.save(categoryObj,TAG_NAMES.COUPON_CATEGORIES);
-                            tmpCategoryIds.push(categoryObj.id);
+                      if (categoryExists) {
+                        cat.id = categoryExists.id;
+                        categoryExists.data.noOfItems += cat.number;
+                        buildfire.datastore.update(categoryExists.id, categoryExists.data, TAG_NAMES.COUPON_CATEGORIES, () => {
+                          let toUpdate = ContentHome.filters.find(el => el.id === categoryExists.id);
+                          if(toUpdate) {
+                            let toUpdateIndex = ContentHome.filters.indexOf(toUpdate);
+                            ContentHome.filters[toUpdateIndex].data.noOfItems = categoryExists.data.noOfItems;      
                           }
-                        })
-                      });
-                      rows[index].SelectedCategories = tmpCategoryIds;
 
-
-                      var geocoder = new google.maps.Geocoder();
-                      geocoder.geocode({ "address": rows[index].location }, function (results, status) {
-                        if (status == google.maps.GeocoderStatus.OK) {
-                          var lat = results[0].geometry.location.lat(),
-                            lng = results[0].geometry.location.lng();
-                          // ContentHome.setLocation({location: rows[index].location, coordinates: {lng:lng, lat:lat}});
-                          rows[index].location = {
-                            coordinates: {
-                              lng: lng,
-                              lat: lat
-                            },
-                            addressTitle: rows[index].location
-                          };
-                          bulkInsertItems([rows[index]], rows[index].rank);
-                        }
-                        else {
-                          console.error('' +
-                            'Error else parts of google');
-                          rows[index].location = "";
-                          bulkInsertItems([rows[index]], rows[index].rank);
-                        }
-                      });
-                      $scope.$digest();
-                    });
-
-
-                  } else if ((!rows[index].SelectedCategories.length) && rows[index].location) {
-
-                    var geocoder = new google.maps.Geocoder();
-                    geocoder.geocode({ "address": rows[index].location }, function (results, status) {
-                      if (status == google.maps.GeocoderStatus.OK) {
-                        var lat = results[0].geometry.location.lat(),
-                          lng = results[0].geometry.location.lng();
-                        // ContentHome.setLocation({location: rows[index].location, coordinates: {lng:lng, lat:lat}});
-                        rows[index].location = {
-                          coordinates: {
-                            lng: lng,
-                            lat: lat
-                          },
-                          addressTitle: rows[index].location
-                        };
-                        bulkInsertItems([rows[index]], rows[index].rank);
+                          updatedAll--;
+                          if (updatedAll === 0) callback();
+                        });
                       }
                       else {
-                        console.error('Error else parts of google');
-                        rows[index].location = "";
-                        bulkInsertItems([rows[index]], rows[index].rank);
+                        insertFilter(cat, () => { updatedAll--; if (updatedAll === 0) callback(); });
                       }
                     });
-                    $scope.$digest();
-
-                  } else if (rows[index].SelectedCategories.length && (!rows[index].location)) {
-                    var categoryList = rows[index].SelectedCategories.split(',');
-
-                    var searchOptions = {
-                      filter: { "$json.title": { "$regex": '/*' } }
-                    };
-                    Buildfire.datastore.search(searchOptions, TAG_NAMES.COUPON_CATEGORIES, function (err, data) {
-                      console.log("Saved", data.id);
-                      var tmpCategoryIds = [];
-                      data.forEach(function (categoryObj) {
-                        categoryList.forEach(function (categoryTitle) {
-                          if (categoryTitle == categoryObj.data.title) {
-                            categoryObj.data.noOfItems += 1;
-                            buildfire.datastore.save(categoryObj, TAG_NAMES.COUPON_CATEGORIES);
-                            tmpCategoryIds.push(categoryObj.id);
-                          }
-                        })
-                      });
-                      rows[index].SelectedCategories = tmpCategoryIds;
-                      bulkInsertItems([rows[index]], null);
-                      $scope.$digest();
-
-                    });
                   } else {
-                    bulkInsertItems([rows[index]], null);
+                    sortedCategories.map(cat => {
+                      insertFilter(cat, () => { updatedAll--; if (updatedAll === 0) callback(); });
+                    });
                   }
                 });
               }
-            }
-            else {
-              ContentHome.loading = false;
-              ContentHome.csvDataInvalid = true;
-              $scope.$apply();
-            }
-            function getUnixFromDate(date) {
-              var isUnix = !date.includes('/');
-              if (isUnix) {
-                return date;
-              } else {
-                date = date.split('/');
-                var formattedDate = date[0] + '.' + date[1] + '.' + date[2];
-                return new Date(formattedDate).getTime();
-              }
-            }
-          }, function (error) {
-            ContentHome.loading = false;
-            $scope.$apply();
-            //do something on cancel
-          });
 
-        };
+              var savedCount = rows.length;
+              ContentHome.csvItems = savedCount;
 
-        function bulkInsertItems(rows, rank) {
-
-          if (validateCsv(rows)) {
-            rows.forEach(function (row, index) {
-              if (row.expiresOn) {
-                rows[index].expiresOn = Number(row.expiresOn)
-                rows[index].startOn = Number(row.startOn)
-              }
-            })
-            buildfire.datastore.bulkInsert(rows, TAG_NAMES.COUPON_ITEMS, function (err, data) {
-              if (err) {
-                console.error(error);
-                ContentHome.loading = false;
-                $scope.$apply();
-              }
-              else {
-                Buildfire.datastore.search({}, TAG_NAMES.COUPON_ITEMS, function (err, result) {
-                  if (err) {
-                    return console.error('-----------err in getting list inside bulk insert-------------', err);
-                  }
-                  if (result && result.length) {
-                    for (var i = 0; i < result.length; i++) {
-                      PluginEvents.register({ key: result[i].id, title: result[i].data.title }, true);
-                      if(!result[i].data.deepLinkId) {
-                        new Deeplink({
-                          deeplinkId: result[i].id,
-                          name: result[i].data.title,
-                          imageUrl: result[i].data.listImage ? data.data.listImage : null,
-                          deeplinkData: {
-                            id: result[i].id,
+              const saveRow = (row) => {
+                buildfire.datastore.insert(row, TAG_NAMES.COUPON_ITEMS, (err, result) => {
+                  if (err) console.error("Failed saving row data", row);
+                  if (result && result.id) {                    
+                    PluginEvents.register({ key: result.id, title: result.data.title }, true);
+                    if (!row.deepLinkId) {
+                      new Deeplink({
+                        deeplinkId: result.id,
+                        name: result.data.title,
+                        imageUrl: result.data.listImage ? result.data.listImage : null,
+                        deeplinkData: { id: result.id }
+                      }).save((err, deepLinkData) => {
+                        result.data.deepLinkId = deepLinkData.deeplinkId;
+                        buildfire.datastore.update(result.id, result.data, TAG_NAMES.COUPON_ITEMS, () => {
+                          savedCount--;
+                          ContentHome.csvImportedItems++;
+                          $scope.$digest();
+                          if(savedCount == 0) {
+                            buildfire.messaging.sendMessageToWidget({ type: "ImportCSV", importing: false });
+                            ContentHome.importingCSV = false;
+                            window.location.reload();
                           }
-                        }).save(function(err, deepLinkData) {
-                          result[i].data.deepLinkId = deepLinkData.deeplinkId;
-                          Buildfire.datastore.update(result[i].id, result[i].data, TAG_NAMES.COUPON_ITEMS, console.log)
                         });
-                      }
+                      });
                     }
                   }
                 });
-                ContentHome.loading = false;
-                ContentHome.isBusy = false;
-                ContentHome.items = [];
-                if (rank === null) {
-                  rank = rows[rows.length - 1].rank;
-                }
-                ContentHome.data.content.rankOfLastItem = rank;
-                RankOfLastItem.setRank(rank);
-                ContentHome.loadMoreItems('js');
               }
 
-            });
+              const proccessRows = (data) => {
+                data.map(row => {
+                  rank += 10;
+                  row.dateCreated = +new Date();
+                  row.links = [];
+                  row.rank = rank;
+                  row.body = "";
+                  let temp = [];
+                  row.SelectedCategories.length ? sortedCategories.map(cat =>
+                    row.SelectedCategories.split(",").map(el => {
+                      if (cat.title.toLowerCase() === el.toLowerCase())
+                        temp.push(cat.id);
+                    })) : null;
+                  row.SelectedCategories = temp;
+                  if (row.startOn) row.startOn = getUnixFromDate(row.startOn);
+                  if (row.expiresOn) row.expiresOn = getUnixFromDate(row.expiresOn);
+                  if (row.carouselImages) {
+                    row.carouselImages = row.carouselImages.split(',').map(url => {
+                      return {
+                        action: "noAction",
+                        iconUrl: url,
+                        title: "image"
+                      }
+                    });
+                  }
 
-            /*   DataStore.insert(rows,TAG_NAMES.COUPON_ITEMS).then(function (data) {
-             }, function errorHandler(error) {
+                  if (row.location) {
+                    codeAddress(row.location, (googleLocation) => {
+                      if(googleLocation) {
+                        row.location = {
+                          coordinates: { ...googleLocation },
+                          addressTitle: row.location
+                        };
+                      } else row.location = "";
+                      saveRow(row);
+                    });
+                  }
+                  else {
+                    row.location = "";
+                    saveRow(row);
+                  }
+                });
+              }
 
-             });*/
-          } else {
-            ContentHome.loading = false;
-            ContentHome.csvDataInvalid = true;
-            $timeout(function hideCsvDataError() {
-              ContentHome.csvDataInvalid = false;
-            }, 2000);
-          }
+              
+              var rank = ContentHome.data.content.rankOfLastItem || 0;
+              RankOfLastItem.setRank(rank);
+
+              insertCategories(() => {
+                let pageSize = 10;
+                let pages = Math.ceil(rows.length / pageSize), currentPage = 1;
+
+                const paginate = () => {
+                  let array = rows.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+                  proccessRows(array);
+                  if(currentPage != pages) currentPage++;
+                  else clearInterval(interval);
+                }
+
+                let interval = setInterval(paginate, 1000);
+              });
+            }
+          });
         }
 
         /**
@@ -1243,17 +1198,6 @@
                     }
                   } else if (typeof value.data.carouselImages == "undefined")
                     value.data.carouselImages = [];
-
-
-                  /*    if (typeof value.data.Categories === 'string' || value.data.Categories instanceof String) {
-                        if (value.data.Categories.length == 0) {
-                          value.data.carouselImages = "";
-                        } else {
-                          let oldUrl = value.data.carouselImages;
-                          value.data.carouselImages = [{ action: "noAction", iconUrl: oldUrl, title: "image" }];
-                        }
-                      } else if (typeof value.data.carouselImages == "undefined")
-                        value.data.carouselImages = [];*/
 
                   value.data.carouselImages = returnCommaSepratedListOfEntity(value.data.carouselImages, 'iconUrl')
                   if (value.data.SelectedCategories)

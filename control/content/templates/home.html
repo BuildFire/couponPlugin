@@ -113,7 +113,7 @@
       <ul class="dropdown-menu extended" role="menu">
         <li ng-click="ContentHome.exportCSV()"><a>Export CSV</a></li>
         <li ng-click="ContentHome.getTemplate()"><a>Get Template</a></li>
-        <li class="margin-bottom-ten" ng-click="ContentHome.openImportCSVDialog()"><a>Import CSV</a></li>
+        <li class="margin-bottom-ten" ng-click="ContentHome.openImport()"><a>Import CSV</a></li>
         <li><p class="info-note caption margin-bottom-zero">Safari users need to rename the file to .csv to open the file.</p></li>
       </ul>
     </div>
@@ -121,7 +121,10 @@
   <a class="btn btn-success btn-add col-md-3" href="#/item">Add Coupon</a>
   
 </div>
-
+<div class="well text-center margin-bottom-ten border-none ng-scope" ng-if="ContentHome.importingCSV">
+  <p class="margin-zero">Detected <span id="csvItems">{{ContentHome.csvItems}}</span> items. Successfully imported 
+    <span id="csvImportedItems">{{ContentHome.csvImportedItems}}</span></p>
+</div>
 <div class="infinite-scroll-parent-items" ng-style="ContentHome.items.length>9? {'height': '450px'}:{'height':'100%'}"  style="overflow-y: auto;">
 <div ui-sortable="ContentHome.itemSortableOptions" ng-model="ContentHome.items"
      infinite-scroll='ContentHome.loadMoreItems("html")'
