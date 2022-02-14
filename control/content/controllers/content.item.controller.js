@@ -183,7 +183,7 @@
       function isValidItem(item) {
         if (item) {
           if (item.startOn && item.expiresOn) {
-            if (item.expiresOn - item.startOn > 0) return item.title && true;
+            if (item.expiresOn - item.startOn >= 0) return item.title && true;
             else return false;
           } else return item.title;
         } else {
@@ -198,7 +198,7 @@
             ContentItem.item.data.expiresOn
           ) {
             if (
-              ContentItem.item.data.expiresOn - ContentItem.item.data.startOn >
+              ContentItem.item.data.expiresOn - ContentItem.item.data.startOn >=
               0
             )
               return ContentItem.item.data.title && true;
