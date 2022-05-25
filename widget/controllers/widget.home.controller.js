@@ -343,7 +343,7 @@
               if (resultAll) {
                 resultAll.forEach(function (_item) {
                   _item.data.distance = 0; // default distance value
-                  _item.data.distanceText = (WidgetHome.locationData.currentCoordinates) ? 'Fetching..' : 'NA';
+                  _item.data.distanceText = (WidgetHome.locationData.currentCoordinates) ? 'Fetching..' : '';
                 });
               }
               WidgetHome.items = WidgetHome.items.length ? WidgetHome.items.concat(resultAll) : resultAll;
@@ -672,7 +672,7 @@
               for (var _ind = 0; _ind < endIndex; _ind++) {
                 if (_items && _items[_ind]) {
 
-                  _items[_ind].data.distanceText = (result.rows[0].elements[_ind].status != 'OK') ? 'NA' : result.rows[0].elements[_ind].distance.text + ' away';
+                  _items[_ind].data.distanceText = (result.rows[0].elements[_ind].status != 'OK') ? '' : result.rows[0].elements[_ind].distance.text + ' away';
                   _items[_ind].data.distance = (result.rows[0].elements[_ind].status != 'OK') ? -1 : result.rows[0].elements[_ind].distance.value;
 
                     if (WidgetHome.isFilterApplied && WidgetHome.filter.distanceRange) {
