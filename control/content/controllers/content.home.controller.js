@@ -3,8 +3,8 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', '$timeout', 'TAG_NAMES', 'SORT', 'SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS', 'Buildfire', 'Modals', 'RankOfLastFilter', 'RankOfLastItem', '$csv', 'Utils', '$rootScope', 'PluginEvents',
-      function ($scope, $timeout, TAG_NAMES, SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem, $csv, Utils, $rootScope, PluginEvents) {
+    .controller('ContentHomeCtrl', ['$scope', '$timeout', 'TAG_NAMES', 'SORT', 'SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS', 'Buildfire', 'Modals', 'RankOfLastFilter', 'RankOfLastItem', '$csv', 'Utils', '$rootScope', 'PluginEvents', 'StateSeeder',
+      function ($scope, $timeout, TAG_NAMES, SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem, $csv, Utils, $rootScope, PluginEvents, StateSeeder) {
         var ContentHome = this;
         ContentHome.searchValue = "";
         ContentHome.filter = null;
@@ -816,6 +816,7 @@
             $scope.$digest();
           })
         }
+        let aiStateSeeder = StateSeeder.initStateSeeder(ContentHome.reloadCoupons);
 
         ContentHome.loadMoreItems = function (str) {
           Buildfire.spinner.show();
@@ -884,9 +885,6 @@
               ContentHome.busy = false;
               ContentHome.isBusy = false;
               console.log("-------------------llll", ContentHome.items)
-              if (!ContentHome.items || !ContentHome.items.length) {
-                  new StateSeeder(TAG_NAMES, DataStore, ContentHome.reloadCoupons);
-              }
               Buildfire.spinner.hide();
               $scope.$digest();
             });
@@ -1406,7 +1404,6 @@
         $scope.$watch(function () {
           return ContentHome.filter;
         }, updateItemsWithDelay, true);
-
 
       }]);
 })(window.angular, window.buildfire);

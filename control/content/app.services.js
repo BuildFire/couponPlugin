@@ -247,5 +247,205 @@
                     buildfire.analytics.unregisterEvent('coupon_item_view_' + key);
                 }
             };
-        }]);;
+        }]).factory('StateSeeder', ['TAG_NAMES' ,function(TAG_NAMES) {
+            // let reloadCoupons;
+            let itemsList;
+            let stateSeederInstance;
+            let reloadCoupons;
+            let jsonTemplate = {
+                items: [
+                  {
+                    title: "",
+                    summary: "",
+                    listImage: "", 
+                  },
+                ],
+              };
+             let handleAIReq = function(err, data) {
+                if (
+                  err ||
+                  !data ||
+                  typeof data !== "object" ||
+                  !Object.keys(data).length || !data.data || !data.data.items || !data.data.items.length
+                ) {
+                  return buildfire.dialog.toast({
+                    message: "Bad AI request, please try changing your request.",
+                    type: "danger",
+                  });
+                }
+          
+                itemsList = data.data.items;
+                //Check image URLs
+                let coupons = itemsList.map(item => {
+                  return new Promise((resolve, reject) => {
+                    elimanateNotFoundImages(item.listImage).then(res => {
+                      if (res.isValid) {
+                        item.listImage = res.newURL;
+                        resolve(item);
+                      } else {
+                        reject('image URL not valid');
+                      }
+                    })
+                  })
+                })
+          
+                // Check image URLs and apply defaults
+                Promise.allSettled(coupons).then(results => {
+                  itemsList = [];
+                  results.forEach(res => {
+                    if(res.status == 'fulfilled') {
+                      const coupon = res.value;
+                      if (coupon) {
+                        itemsList.push(coupon);
+                      }
+                    }
+                  })
+                  if (!itemsList.length) {
+                    stateSeederInstance.requestResult.complete();
+                    return buildfire.dialog.toast({
+                      message: "Bad AI request, please try changing your request.",
+                      type: "danger",
+                    });
+                  }
+                  
+                  // reset old data
+                  getOldCoupons().then(oldCouponsList => {
+                    if (stateSeederInstance.requestResult.resetData){
+                      deleteAll(oldCouponsList)
+                    } 
+                    // save new data
+                    itemsList.forEach(item => {  
+                      item = _applyDefaults(item);
+                      buildfire.datastore.insert(item, TAG_NAMES.COUPON_ITEMS, (err, res)=> {
+                        if (res) {
+                          item.deepLinkId = res.id,
+                          item.deepLinkUrl =  buildfire.deeplink.createLink({ id: res.id })
+                          buildfire.datastore.update(res.id, item, TAG_NAMES.COUPON_ITEMS, (err, res) => {
+                            if (res)
+                            buildfire.messaging.sendMessageToWidget({ type: "ImportCSV", importing: false });
+                            reloadCoupons();
+                          })
+                        }
+                      })
+                    })
+                })
+                stateSeederInstance.requestResult.complete();
+              })
+              }
+          
+              // UTILITIES
+            let _applyDefaults = function(item) {
+                if (item.title) {
+                  return {
+                    title: item.title,
+                    summary: item.summary || "N/A",
+                    listImage: item.listImage || "",
+                    startOn: Date.now(),
+                    expiresOn: Math.trunc(Date.now() + Math.random() * 8640000000),
+                    links: [],
+                    preRedemptionText: "Redeem Now",
+                    postRedemptionText: "Coupon Redeemed",
+                    carouselImages: [
+                      {
+                        "action": "noAction",
+                        "iconUrl": item.listImage,
+                        "title": "image"
+                      }
+                    ],
+                    rank: 30,
+                    addressTitle: "",
+                    location: {
+                      addressTitle: "",
+                      coordinates: {
+                        lat: "",
+                        lng: ""
+                      }
+                    },        
+                    Categories: [],
+                    reuseAfterInMinutes: -1,
+                    dateCreated: Date.now(),
+                    deepLinkUrl: '', // must have an id from datatore
+                    deepLinkId: '', //same as item id
+                    SelectedCategories: [],
+                  }
+                }
+                return null
+              }
+          
+              let elimanateNotFoundImages = function(url) {
+                const optimisedURL = url.replace('1080x720', '100x100'); 
+                return new Promise((resolve) => {
+                  if (url.includes("http")){
+                    const xhr = new XMLHttpRequest();
+                    xhr.open("GET", optimisedURL);
+                    xhr.onerror = (error) => {
+                      console.warn('provided URL is not a valid image', error);
+                      resolve({isValid: false, newURL: null});
+                    }
+                    xhr.onload = () => {
+                      if (xhr.responseURL.includes('source-404') || xhr.status == 404) {
+                        return resolve({isValid: false ,newURL: null});
+                      } else {
+                        return resolve({isValid: true, newURL: xhr.responseURL.replace('h=100', 'h=720').replace('w=100', 'w=1080') });
+                      }
+                    };
+                    xhr.send();
+                  } else resolve(false);
+                  });
+              };
+          
+              
+             let getOldCoupons = function() {
+                return new Promise((resolve, reject) => {
+                  buildfire.datastore.search(
+                    {},
+                    TAG_NAMES.COUPON_ITEMS,
+                    (err, results) => {
+                      if (err) reject(err);
+                      resolve(results);
+                    }
+                    );
+                  });
+                }
+                
+                let deleteAll = function(oldCouponsList) {
+                  const promises = oldCouponsList.map((coupon) =>
+                  deleteCoupon(coupon.id, TAG_NAMES.COUPON_ITEMS)
+                  );
+                  return Promise.all(promises);
+                }
+                
+                let deleteCoupon = function(taskId, tag) {
+                  return new Promise((resolve, reject) => {
+                    buildfire.datastore.delete(taskId, tag, (err, res) => {
+                      if (err) reject(err);
+                      resolve(res);
+                    });
+                  });
+                }
+            return {
+                initStateSeeder: function(callback) {
+                    reloadCoupons = callback;
+                    stateSeederInstance = new buildfire.components.aiStateSeeder({
+                        generateOptions: {
+                        userMessage: `List sample coupons for a new [business-type]`,
+                        maxRecords: 5,
+                        systemMessage:
+                            "title is the coupon title, summary is a brief summary, listImage is an image URL related to title and the list type, use source.unsplash.com for images URL image should be 1080x720, URL should not have premium_photo or source.unsplash.com/random.",
+                        jsonTemplate: jsonTemplate,
+                        callback: handleAIReq.bind(this),
+                        hintText: 'Replace values between brackets to match your requirements.',
+                        },
+                        importOptions: {
+                        jsonTemplate: jsonTemplate,
+                        sampleCSV: "Save 20% on Flights, Get 20% off on flight bookings with this exclusive coupon, https://source.unsplash.com/1080x720/?travel\n50% Off Hotel Bookings, Enjoy a 50% discount on hotel reservations using this limited-time coupon, https://source.unsplash.com/1080x720/?hotel\nCar Rental Special Offer, Rent a car for 7 days and pay for only 5 days with this coupon code, https://source.unsplash.com/1080x720/?car\nAdventure Tour Promo, Book an adventure tour and receive a free equipment rental worth $50 using this coupon, https://source.unsplash.com/1080x720/?adventure",
+                        maxRecords: 5,
+                        hintText: '',
+                        systemMessage: `each row has a coupon title and listImage URL`,
+                        callback: handleAIReq.bind(this),
+                        },
+                }).smartShowEmptyState();
+                },
+            }
+        }])
 })(window.angular, window.buildfire);

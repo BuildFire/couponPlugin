@@ -146,7 +146,6 @@
         };
 
         WidgetHome.init = function (cb) {
-          Buildfire.spinner.show();
           var success = function (result) {
               Buildfire.spinner.hide();
               if (result && result.data) {
@@ -339,6 +338,7 @@
         WidgetHome.getItems = function (filter) {
           Buildfire.spinner.show();
           var successAll = function (resultAll) {
+              Buildfire.spinner.hide();
               Buildfire.spinner.hide();
               if (resultAll) {
                 resultAll.forEach(function (_item) {
