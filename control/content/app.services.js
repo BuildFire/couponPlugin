@@ -311,22 +311,23 @@
                     checkOldData().then(() => {                    
                     // save new data
                         buildfire.messaging.sendMessageToWidget({ type: "ImportCSV", importing: true });
-                        itemsList.forEach((item, i)=> {  
-                        item = _applyDefaults(item);
-                        DataStore.insert(item, TAG_NAMES.COUPON_ITEMS).then((res)=> {
-                            if (res) {
-                                item.deepLinkId = res.id,
-                                item.deepLinkUrl =  buildfire.deeplink.createLink({ id: res.id })
-                                DataStore.update(res.id, item, TAG_NAMES.COUPON_ITEMS).then((res) => {
-                                })
-                                if(i == (itemsList.length - 1)) {
-                                    buildfire.messaging.sendMessageToWidget({ type: "ImportCSV", importing: false });
-                                    reloadCoupons();
+                        for (let i = 0; i < itemsList.length; i++) {
+                            itemsList[i] = _applyDefaults(itemsList[i]);
+                            DataStore.insert(itemsList[i], TAG_NAMES.COUPON_ITEMS).then((res)=> {
+                                if (res) {
+                                    itemsList[i].deepLinkId = res.id,
+                                    itemsList[i].deepLinkUrl =  buildfire.deeplink.createLink({ id: res.id })
+                                    DataStore.update(res.id, itemsList[i], TAG_NAMES.COUPON_ITEMS).then((res) => {
+                                    })
+                                    if(i == (itemsList.length - 1)) {
+                                        buildfire.messaging.sendMessageToWidget({ type: "ImportCSV", importing: false });
+                                        reloadCoupons();
+                                    }
                                 }
-                            }
-                        })
-                    })
-                }) 
+                            })
+
+                        }  
+                    }) 
                 stateSeederInstance.requestResult.complete();
               })
               }
@@ -426,6 +427,7 @@
                         callback: handleAIReq.bind(this),
                     },
                 }).smartShowEmptyState();
+                return true;
                 },
             }
         }])

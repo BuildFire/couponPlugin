@@ -8,7 +8,7 @@
         var ContentHome = this;
         let stateSeeder;
         $rootScope.$watch('showEmptyState', function(newValue, oldValue) {
-          if (typeof newValue === 'undefined' || newValue == true) {
+          if ((typeof newValue === 'undefined' || newValue == true) && !stateSeeder) {
             stateSeeder = StateSeeder.initStateSeeder(() => {ContentHome.reloadCoupons()});
           }
         })
@@ -819,6 +819,11 @@
               ContentHome.noMore = false;
             }
             ContentHome.items = result;
+            if (!ContentHome.items.length) {
+              $rootScope.showEmptyState = true;
+            } else {
+              $rootScope.showEmptyState = false;
+            }
             $scope.$digest();
           })
         }
