@@ -6,6 +6,12 @@
     .controller('ContentHomeCtrl', ['$scope', '$timeout', 'TAG_NAMES', 'SORT', 'SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS', 'Buildfire', 'Modals', 'RankOfLastFilter', 'RankOfLastItem', '$csv', 'Utils', '$rootScope', 'PluginEvents', 'StateSeeder',
       function ($scope, $timeout, TAG_NAMES, SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem, $csv, Utils, $rootScope, PluginEvents, StateSeeder) {
         var ContentHome = this;
+        let stateSeeder;
+        $rootScope.$watch('showEmptyState', function(newValue, oldValue) {
+          if (typeof newValue === 'undefined' || newValue == true) {
+            stateSeeder = StateSeeder.initStateSeeder(() => {ContentHome.reloadCoupons()});
+          }
+        })
         ContentHome.searchValue = "";
         ContentHome.filter = null;
         ContentHome.isBusy = true;
@@ -816,7 +822,6 @@
             $scope.$digest();
           })
         }
-        let aiStateSeeder = StateSeeder.initStateSeeder(ContentHome.reloadCoupons);
 
         ContentHome.loadMoreItems = function (str) {
           Buildfire.spinner.show();
@@ -862,7 +867,11 @@
 
               ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
               Buildfire.datastore.search(searchOptionsFilterForItemList, TAG_NAMES.COUPON_CATEGORIES, function (err, resultFilter) {
-
+              if (!ContentHome.items.length) {
+                $rootScope.showEmptyState = true;
+              } else {
+                $rootScope.showEmptyState = false;
+              }
                 if (err) {
                   Buildfire.spinner.hide();
                   return console.error('-----------err in getting list-------------', err);

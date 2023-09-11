@@ -247,8 +247,7 @@
                     buildfire.analytics.unregisterEvent('coupon_item_view_' + key);
                 }
             };
-        }]).factory('StateSeeder', ['TAG_NAMES' ,function(TAG_NAMES) {
-            // let reloadCoupons;
+        }]).factory('StateSeeder', ['TAG_NAMES', 'DataStore' ,function(TAG_NAMES, DataStore) {
             let itemsList;
             let stateSeederInstance;
             let reloadCoupons;
@@ -289,7 +288,7 @@
                   })
                 })
           
-                // Check image URLs and apply defaults
+                // Check image URLs
                 Promise.allSettled(coupons).then(results => {
                   itemsList = [];
                   results.forEach(res => {
@@ -308,27 +307,26 @@
                     });
                   }
                   
-                  // reset old data
-                  getOldCoupons().then(oldCouponsList => {
-                    if (stateSeederInstance.requestResult.resetData){
-                      deleteAll(oldCouponsList)
-                    } 
+                    // reset old data
+                    checkOldData().then(() => {                    
                     // save new data
-                    itemsList.forEach(item => {  
-                      item = _applyDefaults(item);
-                      buildfire.datastore.insert(item, TAG_NAMES.COUPON_ITEMS, (err, res)=> {
-                        if (res) {
-                          item.deepLinkId = res.id,
-                          item.deepLinkUrl =  buildfire.deeplink.createLink({ id: res.id })
-                          buildfire.datastore.update(res.id, item, TAG_NAMES.COUPON_ITEMS, (err, res) => {
-                            if (res)
-                            buildfire.messaging.sendMessageToWidget({ type: "ImportCSV", importing: false });
-                            reloadCoupons();
-                          })
-                        }
-                      })
+                        buildfire.messaging.sendMessageToWidget({ type: "ImportCSV", importing: true });
+                        itemsList.forEach((item, i)=> {  
+                        item = _applyDefaults(item);
+                        DataStore.insert(item, TAG_NAMES.COUPON_ITEMS).then((res)=> {
+                            if (res) {
+                                item.deepLinkId = res.id,
+                                item.deepLinkUrl =  buildfire.deeplink.createLink({ id: res.id })
+                                DataStore.update(res.id, item, TAG_NAMES.COUPON_ITEMS).then((res) => {
+                                })
+                                if(i == (itemsList.length - 1)) {
+                                    buildfire.messaging.sendMessageToWidget({ type: "ImportCSV", importing: false });
+                                    reloadCoupons();
+                                }
+                            }
+                        })
                     })
-                })
+                }) 
                 stateSeederInstance.requestResult.complete();
               })
               }
@@ -392,46 +390,29 @@
                     xhr.send();
                   } else resolve(false);
                   });
-              };
-          
-              
-             let getOldCoupons = function() {
-                return new Promise((resolve, reject) => {
-                  buildfire.datastore.search(
-                    {},
-                    TAG_NAMES.COUPON_ITEMS,
-                    (err, results) => {
-                      if (err) reject(err);
-                      resolve(results);
-                    }
-                    );
-                  });
-                }
+              };``
                 
-                let deleteAll = function(oldCouponsList) {
-                  const promises = oldCouponsList.map((coupon) =>
-                  deleteCoupon(coupon.id, TAG_NAMES.COUPON_ITEMS)
-                  );
-                  return Promise.all(promises);
+                let checkOldData = function() {
+                    return new Promise(resolve => {
+                        if (stateSeederInstance.requestResult.resetData){
+                            DataStore.save([], TAG_NAMES.COUPON_ITEMS).then(() => {
+                                resolve();
+                            })
+                        } else {
+                            resolve();
+                        }
+                    })
                 }
-                
-                let deleteCoupon = function(taskId, tag) {
-                  return new Promise((resolve, reject) => {
-                    buildfire.datastore.delete(taskId, tag, (err, res) => {
-                      if (err) reject(err);
-                      resolve(res);
-                    });
-                  });
-                }
+
             return {
-                initStateSeeder: function(callback) {
-                    reloadCoupons = callback;
+                initStateSeeder: function(onDataChange) {
+                    reloadCoupons = onDataChange;
                     stateSeederInstance = new buildfire.components.aiStateSeeder({
                         generateOptions: {
                         userMessage: `List sample coupons for a new [business-type]`,
                         maxRecords: 5,
                         systemMessage:
-                            "title is the coupon title, summary is a brief summary, listImage is an image URL related to title and the list type, use source.unsplash.com for images URL image should be 1080x720, URL should not have premium_photo or source.unsplash.com/random.",
+                            "listImage is an 1080x720 image URL related to title and the list type, use source.unsplash.com for images, URL should not have premium_photo or source.unsplash.com/random.",
                         jsonTemplate: jsonTemplate,
                         callback: handleAIReq.bind(this),
                         hintText: 'Replace values between brackets to match your requirements.',
@@ -441,9 +422,9 @@
                         sampleCSV: "Save 20% on Flights, Get 20% off on flight bookings with this exclusive coupon, https://source.unsplash.com/1080x720/?travel\n50% Off Hotel Bookings, Enjoy a 50% discount on hotel reservations using this limited-time coupon, https://source.unsplash.com/1080x720/?hotel\nCar Rental Special Offer, Rent a car for 7 days and pay for only 5 days with this coupon code, https://source.unsplash.com/1080x720/?car\nAdventure Tour Promo, Book an adventure tour and receive a free equipment rental worth $50 using this coupon, https://source.unsplash.com/1080x720/?adventure",
                         maxRecords: 5,
                         hintText: '',
-                        systemMessage: `each row has a coupon title and listImage URL`,
+                        systemMessage: '',
                         callback: handleAIReq.bind(this),
-                        },
+                    },
                 }).smartShowEmptyState();
                 },
             }

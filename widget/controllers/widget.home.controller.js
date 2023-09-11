@@ -339,7 +339,6 @@
           Buildfire.spinner.show();
           var successAll = function (resultAll) {
               Buildfire.spinner.hide();
-              Buildfire.spinner.hide();
               if (resultAll) {
                 resultAll.forEach(function (_item) {
                   _item.data.distance = 0; // default distance value
