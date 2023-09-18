@@ -3,13 +3,13 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', '$timeout', 'TAG_NAMES', 'SORT', 'SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS', 'Buildfire', 'Modals', 'RankOfLastFilter', 'RankOfLastItem', '$csv', 'Utils', '$rootScope', 'PluginEvents', 'StateSeeder',
-      function ($scope, $timeout, TAG_NAMES, SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem, $csv, Utils, $rootScope, PluginEvents, StateSeeder) {
+    .controller('ContentHomeCtrl', ['$scope', '$timeout', 'TAG_NAMES', 'SORT', 'SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS', 'Buildfire', 'Modals', 'RankOfLastFilter', 'RankOfLastItem', '$csv', 'Utils', '$rootScope', 'PluginEvents', 'StateSeeder', '$filter',
+      function ($scope, $timeout, TAG_NAMES, SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem, $csv, Utils, $rootScope, PluginEvents, StateSeeder, $filter) {
         var ContentHome = this;
         let stateSeeder;
         $rootScope.$watch('showEmptyState', function(newValue, oldValue) {
           if ((typeof newValue === 'undefined' || newValue == true) && !stateSeeder) {
-            stateSeeder = StateSeeder.initStateSeeder(() => {ContentHome.reloadCoupons()});
+            stateSeeder = StateSeeder.initStateSeeder();
           }
         })
         ContentHome.searchValue = "";
@@ -805,6 +805,7 @@
         };
 
         ContentHome.reloadCoupons = function () {
+          ContentHome.isBusy = true;
           Buildfire.datastore.search(ContentHome.searchOptionsForItems, TAG_NAMES.COUPON_ITEMS, function (err, result) {
             if (err) {
               Buildfire.spinner.hide();
@@ -819,12 +820,14 @@
               ContentHome.noMore = false;
             }
             ContentHome.items = result;
+            ContentHome.isBusy = false;
+            $rootScope.reloadCoupons = false;
+            $scope.$digest();
             if (!ContentHome.items.length) {
               $rootScope.showEmptyState = true;
             } else {
               $rootScope.showEmptyState = false;
             }
-            $scope.$digest();
           })
         }
 
@@ -1419,5 +1422,11 @@
           return ContentHome.filter;
         }, updateItemsWithDelay, true);
 
+        $rootScope.$watch('reloadCoupons', function(newValue, oldValue) {
+          if (newValue) {
+            ContentHome.reloadCoupons();
+          }
+        })
       }]);
+
 })(window.angular, window.buildfire);

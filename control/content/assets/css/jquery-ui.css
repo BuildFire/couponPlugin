@@ -1273,5 +1273,6 @@ body .ui-tooltip {
 }
 
 .draggable-list-view.wide-list{
-	overflow: visible !important;
+	/* overflow: visible !important; */
+	overflow-y: scroll;
 }
