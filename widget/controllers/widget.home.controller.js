@@ -146,7 +146,6 @@
         };
 
         WidgetHome.init = function (cb) {
-          Buildfire.spinner.show();
           var success = function (result) {
               Buildfire.spinner.hide();
               if (result && result.data) {

@@ -3,10 +3,15 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', '$timeout', 'TAG_NAMES', 'SORT', 'SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS', 'Buildfire', 'Modals', 'RankOfLastFilter', 'RankOfLastItem', '$csv', 'Utils', '$rootScope', 'PluginEvents',
-      function ($scope, $timeout, TAG_NAMES, SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem, $csv, Utils, $rootScope, PluginEvents) {
-
+    .controller('ContentHomeCtrl', ['$scope', '$timeout', 'TAG_NAMES', 'SORT', 'SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS', 'Buildfire', 'Modals', 'RankOfLastFilter', 'RankOfLastItem', '$csv', 'Utils', '$rootScope', 'PluginEvents', 'StateSeeder', '$filter',
+      function ($scope, $timeout, TAG_NAMES, SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem, $csv, Utils, $rootScope, PluginEvents, StateSeeder, $filter) {
         var ContentHome = this;
+        let stateSeeder;
+        $rootScope.$watch('showEmptyState', function(newValue, oldValue) {
+          if ((typeof newValue === 'undefined' || newValue == true) && !stateSeeder) {
+            stateSeeder = StateSeeder.initStateSeeder();
+          }
+        })
         ContentHome.searchValue = "";
         ContentHome.filter = null;
         ContentHome.isBusy = true;
@@ -799,9 +804,34 @@
           "limit": "50"
         };
 
-        ContentHome.loadMoreItems = function (str) {
-          console.log("------------------>>>>>>>>>>>>>>>>>>>>", str)
+        ContentHome.reloadCoupons = function () {
+          ContentHome.isBusy = true;
+          Buildfire.datastore.search(ContentHome.searchOptionsForItems, TAG_NAMES.COUPON_ITEMS, function (err, result) {
+            if (err) {
+              Buildfire.spinner.hide();
+              return console.error('-----------err in getting list-------------', err);
+            }
+            if (result.length <= SORT._limit) {// to indicate there are more
+              ContentHome.noMore = true;
+              Buildfire.spinner.hide();
+            } else {
+              result.pop();
+              ContentHome.searchOptionsForItems.skip = ContentHome.searchOptionsForItems.skip + SORT._limit;
+              ContentHome.noMore = false;
+            }
+            ContentHome.items = result;
+            ContentHome.isBusy = false;
+            $rootScope.reloadCoupons = false;
+            $scope.$digest();
+            if (!ContentHome.items.length) {
+              $rootScope.showEmptyState = true;
+            } else {
+              $rootScope.showEmptyState = false;
+            }
+          })
+        }
 
+        ContentHome.loadMoreItems = function (str) {
           Buildfire.spinner.show();
           if (ContentHome.busy) {
             return;
@@ -845,7 +875,11 @@
 
               ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
               Buildfire.datastore.search(searchOptionsFilterForItemList, TAG_NAMES.COUPON_CATEGORIES, function (err, resultFilter) {
-
+              if (!ContentHome.items.length) {
+                $rootScope.showEmptyState = true;
+              } else {
+                $rootScope.showEmptyState = false;
+              }
                 if (err) {
                   Buildfire.spinner.hide();
                   return console.error('-----------err in getting list-------------', err);
@@ -1323,6 +1357,7 @@
          * Go pull any previously saved data
          * */
         var init = function () {
+          console.log('$scope ====================>', $scope)
           var success = function (result) {
             console.info('Init success result:', result);
             ContentHome.data = result.data;
@@ -1387,6 +1422,11 @@
           return ContentHome.filter;
         }, updateItemsWithDelay, true);
 
-
+        $rootScope.$watch('reloadCoupons', function(newValue, oldValue) {
+          if (newValue) {
+            ContentHome.reloadCoupons();
+          }
+        })
       }]);
+
 })(window.angular, window.buildfire);

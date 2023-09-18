@@ -10,9 +10,7 @@
 .draggable-list-view .d-item.square-icon .media-holder{
   margin-right: .5rem;
   object-fit: cover;
-}
-.draggable-list-view .d-item.square-icon .media-holder {
-  object-fit: cover;
+  min-width: 50px;
 }
 .draggable-list-view.no-media .d-item .copy{
   display: flex;
@@ -91,6 +89,7 @@ html[buildfire] .d-item .btn-edit-icon:hover::after{
 
 .media-holder.pull-left > img {
   object-fit: cover !important;
+  min-width: 50px;
 }
 
 .draggable-list-view.carousel-items .d-item span.title {
@@ -101,6 +100,13 @@ html[buildfire] .d-item .btn-edit-icon:hover::after{
 
 .draggable-list-view .d-item.double-line .copy .pull-right {
   top: 3px
+}
+
+.draggable-list-view .d-item.double-line .copy .delete-icon-cont {
+  display: flex;
+}
+.draggable-list-view .d-item.double-line .overflow-hidden {
+  overflow: hidden;
 }
 
 a.text-primary.text {

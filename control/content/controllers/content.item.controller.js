@@ -495,8 +495,9 @@
 
         }
         //#
+        $rootScope.showEmptyState = false;
         buildfire.messaging.sendMessageToWidget({});
-        Location.goToHome();
+        $location.path('home');
       };
       ContentItem.setLocation = function (data) {
         console.log(

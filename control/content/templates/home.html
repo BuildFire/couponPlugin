@@ -138,35 +138,33 @@
   <div class="well text-center margin-bottom-zero border-none" ng-if="ContentHome.isBusy">
     <p class="margin-zero">Loading...</p>
   </div>
+    <!--  -->
   <div class="d-item double-line square-icon clearfix" ng-repeat="item in ContentHome.items">
     <span class="icon icon-menu pull-left cursor-grab-item"></span>
-
     <div class="media-holder pull-left">
-      <img ng-if="item.data.listImage" ng-src="{{item.data.listImage}}">
+      <img ng-if="item.data.listImage" ng-src="{{item.data.listImage}}" >
       <img ng-if="!item.data.listImage" src="../../../../styles/media/holder-1x1.png">
     </div>
-    <div class="copy pull-right">
-      <div class="col-md-4 padding-zero pull-left">
-        <a class="text-primary" href="#/item/{{item.id}}"><span
-            class="title ellipsis pull-left" >{{item.data.title}}</span></a>
-        <span class="title ellipsis pull-left" >{{item.data.summary}}</span>
-      </div>
-      <div class="col-md-3 padding-right-zero pull-left">
-        <span class="title pull-left ellipsis">Included in <br><a
-            class="text-primary" ng-click="ContentHome.showFilter($index, item.id, item.data.SelectedCategories, item.data.Categories, item.data)" onclick="clickMeFilter(event)">{{item.SelectedCommonCategories.length || 0}} Category(s)</a></span>
-      </div>
-      <div class="col-md-3 pull-left padding-right-zero">
+    <div class="col-md-4 overflow-hidden padding-right-zero">
+      <a class="text-primary" href="#/item/{{item.id}}"><span
+          class="title ellipsis pull-left" >{{item.data.title}}</span></a>
+      <span class="title ellipsis pull-left" >{{item.data.summary}}</span>
+    </div>
+    <div class="col-md-3">
+      <span class="title pull-left ellipsis">Included in <br><a
+        class="text-primary" ng-click="ContentHome.showFilter($index, item.id, item.data.SelectedCategories, item.data.Categories, item.data)" onclick="clickMeFilter(event)">{{item.SelectedCommonCategories.length || 0}} Category(s)</a></span>      </div>
+      <div class="col-md-3">
         <span
-            class="title pull-left ellipsis" ng-show="item.data.expiresOn!=''" ng-class="{'expired-item' : (ContentHome.currentDateTimestamp - item.data.expiresOn) > 1}">Expires On<br>{{item.data.expiresOn | date :'mediumDate'}}</span>
+        class="title pull-left ellipsis" ng-show="item.data.expiresOn!=''" ng-class="{'expired-item' : (ContentHome.currentDateTimestamp - item.data.expiresOn) > 1}">Expires On<br>{{item.data.expiresOn | date :'mediumDate'}}</span>
         <span
-            class="title pull-left ellipsis" ng-hide="item.data.expiresOn!=''">Expires On<br>No Expiration</span>
+        class="title pull-left ellipsis" ng-hide="item.data.expiresOn!=''">Expires On<br>No Expiration</span>
       </div>
-      <div class="col-xs-2 pull-right padding-right-zero text-right">
+      <div class="col-xs-1 pull-right padding-right-zero text-right delete-icon-cont">
         <span class="btn-icon btn-delete-icon btn-danger" ng-click="ContentHome.deleteItem($index)"></span>
       </div>
     </div>
   </div>
-</div>
+  <!--  -->
 </div>
 
 

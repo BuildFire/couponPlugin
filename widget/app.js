@@ -327,7 +327,7 @@
             break;
           case 'ImportCSV':
             msg.importing ? $rootScope.importingCSV = true : $rootScope.importingCSV = false;
-            if(!$rootScope.importingCSV) window.location.reload();
+            if(!$rootScope.importingCSV) window.location.href = window.location.href;
           default:
             ViewStack.popAllViews(true);
         }
