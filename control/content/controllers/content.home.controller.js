@@ -116,7 +116,8 @@
         ContentHome.searchOptionsForItems = {
           filter: { "$json.title": { "$regex": '/*' } },
           skip: SORT._skip,
-          limit: SORT._limit + 1 // the plus one is to check if there are any more
+          limit: SORT._limit + 1, // the plus one is to check if there are any more
+          sort: { "rank": 1 }
         };
         /*
          * create an artificial delay so api isnt called on every character entered
@@ -204,16 +205,16 @@
               var isRankChanged = false;
               if (next) {
                 if (prev) {
-                  draggedItem.data.rank = ((prev.data.rank || 0) + (next.data.rank || 0)) / 2;
+                  draggedItem.data.rank = Number((prev.data.rank || 0) + (next.data.rank || 0)) / 2;
                   isRankChanged = true;
                 } else {
-                  draggedItem.data.rank = (next.data.rank || 0) / 2;
+                  draggedItem.data.rank = Number(next.data.rank || 0) / 2;
                   isRankChanged = true;
                 }
               } else {
                 if (prev) {
-                  draggedItem.data.rank = (((prev.data.rank || 0) * 2) + 10) / 2;
-                  maxRank = draggedItem.data.rank;
+                  draggedItem.data.rank = Number(((prev.data.rank || 0) * 2) + 10) / 2;
+                  maxRank = Number(draggedItem.data.rank);
                   isRankChanged = true;
                 }
               }
@@ -829,6 +830,9 @@
               $rootScope.showEmptyState = false;
             }
           })
+          ContentHome.data.content.rankOfLastItem =
+          Number(isNaN(RankOfLastItem.getRank()) ? 0 : RankOfLastItem.getRank());
+          saveData(ContentHome.data, TAG_NAMES.COUPON_INFO);
         }
 
         ContentHome.loadMoreItems = function (str) {

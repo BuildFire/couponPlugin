@@ -127,10 +127,10 @@
               searchOptions.sort = {"title": -1};
               break;
             case SORT.EXPIRATION_DATE_ASC:
-              searchOptions.sort = {"expiresOn": -1};
+              searchOptions.sort = {"expiresOn": 1};
               break;
             case SORT.EXPIRATION_DATE_DESC:
-              searchOptions.sort = {"expiresOn": 1};
+              searchOptions.sort = {"expiresOn": -1};
               break;
             case SORT.NEWEST_FIRST:
               searchOptions.sort = {"dateCreated": -1};
@@ -285,7 +285,7 @@
           console.log("==================== WIDGET UPDATE CALLED ===============================")
           if($rootScope.importingCSV) return;
           
-          setTimeout(function () {
+          $timeout(function () {
             if (event && event.tag === TAG_NAMES.COUPON_INFO) {
               WidgetHome.data = event.data;
               if (!WidgetHome.data.design)
@@ -294,8 +294,9 @@
                 WidgetHome.data.content = {};
               if (!WidgetHome.data.settings)
                 WidgetHome.data.settings = {};
-              if (event.data.content.sortItemBy && currentSortOrder && (currentSortOrder != event.data.content.sortItemBy)) {
+              if (event.data.content.sortItemBy && (currentSortOrder != event.data.content.sortItemBy)) {
                 WidgetHome.data.content.sortItemBy = event.data.content.sortItemBy;
+                currentSortOrder = event.data.content.sortItemBy;
                 WidgetHome.items = [];
                 searchOptions.skip = 0;
                 WidgetHome.busy = false;
@@ -329,8 +330,7 @@
               }
             }
             currentListLayout = WidgetHome.data.design.itemListLayout;
-            $scope.$digest();
-          }, 0);
+          });
         };
 
         DataStore.onUpdate("home").then(null, null, onUpdateCallback);

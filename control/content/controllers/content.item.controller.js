@@ -115,7 +115,7 @@
             console.log("+++++++++++++++SSSSSSS", ContentItem.data);
             if (!ContentItem.data.content) {
               ContentItem.data.content = {
-                rankOfLastItem: "",
+                rankOfLastItem: 0,
               };
             }
             if (!ContentItem.data.settings) {
@@ -253,7 +253,8 @@
         } else if (!isNewItemInserted) {
           isNewItemInserted = true;
           _item.data.dateCreated = +new Date();
-          _item.data.rank = RankOfLastItem.getRank() + 10;
+          _item.data.rank =
+            Number(isNaN(RankOfLastItem.getRank()) ? 0 : RankOfLastItem.getRank()) + 10
           DataStore.insert(_item.data, TAG_NAMES.COUPON_ITEMS).then(
             function (data) {
               updating = false;
@@ -263,7 +264,7 @@
                 createDeepLink(data, true);
                 ContentItem.item.id = data.id;
                 ContentItem.data.content.rankOfLastItem =
-                  RankOfLastItem.getRank() + 10;
+                  Number(isNaN(RankOfLastItem.getRank()) ? 0 : RankOfLastItem.getRank()) + 10;
                 saveData(ContentItem.data, TAG_NAMES.COUPON_INFO);
                 updateMasterItem(ContentItem.item);
                 if (ContentItem.item.id)
@@ -676,7 +677,7 @@
               //if index is there it means filter update operation is performed
               ContentItem.filter = {
                 title: response.title,
-                rank: RankOfLastFilter.getRank() + 10,
+                rank: Number(isNaN(RankOfLastFilter.getRank()) ? 0 : RankOfLastFilter.getRank()) + 10,
                 noOfItems: 0,
               };
 

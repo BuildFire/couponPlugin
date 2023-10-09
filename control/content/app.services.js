@@ -313,7 +313,7 @@
                         let promises = itemsList.map((item, i) => {
                             return new Promise((resolve, reject) => {
                                 itemsList[i] = _applyDefaults(itemsList[i]);
-                                RankOfLastItem.setRank(itemsList[i].rank);
+                                RankOfLastItem.setRank(Number(itemsList[i].rank));
                                 DataStore.insert(itemsList[i], TAG_NAMES.COUPON_ITEMS).then((res)=> {
                                     if (res) {
                                         $rootScope.oldCouponsIds.push(res.id);
@@ -358,7 +358,7 @@
                     summary: item.summary || "",
                     listImage: item.listImage || "",
                     startOn: Date.now(),
-                    expiresOn: Math.trunc(Date.now() + Math.random() * 8640000000),
+                    expiresOn: Math.trunc(Date.now() + Math.random() * 8640000000), // Picks a random day from today to One hundred days in the future (1000 mil * 60 sec * 60 min * 24 hour) * 100 days
                     links: [],
                     preRedemptionText: "Redeem Now",
                     postRedemptionText: "Coupon Redeemed",
@@ -369,7 +369,7 @@
                         "title": "image"
                       }
                     ] : [],
-                    rank: RankOfLastItem.getRank() ? RankOfLastItem.getRank() + 10: 10,
+                    rank: RankOfLastItem.getRank() ? Number(RankOfLastItem.getRank()) + 10 : 10,
                     addressTitle: "",
                     location: {
                       addressTitle: "",
@@ -380,7 +380,7 @@
                     },        
                     Categories: [],
                     reuseAfterInMinutes: -1,
-                    dateCreated: Date.now(),
+                    dateCreated: Math.trunc(Date.now() + (Math.random() * 1000)),
                     deepLinkUrl: '', // must have an id from datatore
                     deepLinkId: '', //same as item id
                     SelectedCategories: [],
@@ -443,7 +443,7 @@
                         jsonTemplate: jsonTemplate,
                         sampleCSV: "Save 20% on Flights, Get 20% off on flight bookings with this exclusive coupon, https://source.unsplash.com/1080x720/?travel\n50% Off Hotel Bookings, Enjoy a 50% discount on hotel reservations using this limited-time coupon, https://source.unsplash.com/1080x720/?hotel\nCar Rental Special Offer, Rent a car for 7 days and pay for only 5 days with this coupon code, https://source.unsplash.com/1080x720/?car\nAdventure Tour Promo, Book an adventure tour and receive a free equipment rental worth $50 using this coupon, https://source.unsplash.com/1080x720/?adventure",
                         maxRecords: 5,
-                        hintText: 'Each row should start with a Coupon title, Summary, and Image URL',
+                        hintText: 'Each row should start with a coupon title, summary, and image URL.',
                         systemMessage: 'listImage is an image URL, summary and listImage are optional',
                         callback: handleAIReq.bind(this, true),
                     },
