@@ -830,9 +830,6 @@
               $rootScope.showEmptyState = false;
             }
           })
-          ContentHome.data.content.rankOfLastItem =
-          Number(isNaN(RankOfLastItem.getRank()) ? 0 : RankOfLastItem.getRank());
-          saveData(ContentHome.data, TAG_NAMES.COUPON_INFO);
         }
 
         ContentHome.loadMoreItems = function (str) {

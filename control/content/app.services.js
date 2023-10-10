@@ -248,6 +248,7 @@
                 }
             };
         }]).factory('StateSeeder', ['TAG_NAMES', 'DataStore', 'RankOfLastItem', '$rootScope', '$timeout' ,function(TAG_NAMES, DataStore, RankOfLastItem, $rootScope, $timeout) {
+            let couponInfo;
             let itemsList;
             let stateSeederInstance;
             $rootScope.oldCouponsIds = [];
@@ -339,10 +340,23 @@
                         })
                         Promise.allSettled(promises).then(() => {
                             $timeout(()=> {
-                                buildfire.messaging.sendMessageToWidget({ type: "ImportCSV", importing: false });
-                                $rootScope.reloadCoupons = true;
+                                DataStore.get(TAG_NAMES.COUPON_INFO).then((result) => {
+                                    couponInfo = result.data;
+                                    const rankOfLastItem = 
+                                    Number(isNaN(RankOfLastItem.getRank()) ? 0 : RankOfLastItem.getRank());
+                                    if (couponInfo.content) {
+                                        couponInfo.content.rankOfLastItem = rankOfLastItem;
+                                    } else {
+                                        couponInfo.content = {
+                                            rankOfLastItem: rankOfLastItem,
+                                          };
+                                    }
+                                    DataStore.save(couponInfo, TAG_NAMES.COUPON_INFO).then(() => {
+                                        buildfire.messaging.sendMessageToWidget({ type: "ImportCSV", importing: false });
+                                        $rootScope.reloadCoupons = true;
+                                    }).catch(err => console.warn('err while saving coupon info: ', err));
+                                }).catch(err => console.warn('err while getting coupon info: ', err));
                             })
-                            $rootScope.reloadCoupons = true;
                         }).catch(err => console.warn('error while saving data: ', err))
 
                     }) 
