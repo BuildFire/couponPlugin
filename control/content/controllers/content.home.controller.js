@@ -19,8 +19,8 @@
           "content": {
             "carouselImages": [],
             "description": '',
-            "rankOfLastFilter": '',
-            "rankOfLastItem": '',
+            "rankOfLastFilter": 0,
+            "rankOfLastItem": 0,
             "sortItemBy": SORT.MANUALLY,
             "sortFilterBy": SORT_FILTER.MANUALLY
           },
@@ -1362,7 +1362,7 @@
           var success = function (result) {
             console.info('Init success result:', result);
             ContentHome.data = result.data;
-            if (!ContentHome.data.content) {
+            if (!Object.keys(ContentHome.data).length) {
               ContentHome.data = angular.copy(_data);
             } else {
               if (!ContentHome.data.content)

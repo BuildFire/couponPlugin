@@ -247,11 +247,29 @@
                     buildfire.analytics.unregisterEvent('coupon_item_view_' + key);
                 }
             };
-        }]).factory('StateSeeder', ['TAG_NAMES', 'DataStore', 'RankOfLastItem', '$rootScope', '$timeout' ,function(TAG_NAMES, DataStore, RankOfLastItem, $rootScope, $timeout) {
-            let couponInfo;
+        }]).factory('StateSeeder', ['TAG_NAMES', 'DataStore', 'RankOfLastItem', '$rootScope', '$timeout', 'SORT', 'SORT_FILTER', 'LAYOUTS' ,function(TAG_NAMES, DataStore, RankOfLastItem, $rootScope, $timeout, SORT, SORT_FILTER, LAYOUTS) {
             let itemsList;
             let stateSeederInstance;
             $rootScope.oldCouponsIds = [];
+            let couponInfo = {
+                "content": {
+                  "carouselImages": [],
+                  "description": '',
+                  "rankOfLastFilter": '',
+                  "rankOfLastItem": '',
+                  "sortItemBy": SORT.MANUALLY,
+                  "sortFilterBy": SORT_FILTER.MANUALLY
+                },
+                "design": {
+                  "itemListLayout": LAYOUTS.itemListLayout[0].name
+                },
+                "settings": {
+                  "defaultView": "list",
+                  "distanceIn": "mi",
+                  "mapView": "show",
+                  "filterPage": "show"
+                }
+              };
             let jsonTemplate = {
                 items: [
                   {
@@ -341,7 +359,9 @@
                         Promise.allSettled(promises).then(() => {
                             $timeout(()=> {
                                 DataStore.get(TAG_NAMES.COUPON_INFO).then((result) => {
-                                    couponInfo = result.data;
+                                    if (result && result.data && Object.keys(result.data).length) {
+                                        couponInfo = result.data;
+                                    }
                                     const rankOfLastItem = 
                                     Number(isNaN(RankOfLastItem.getRank()) ? 0 : RankOfLastItem.getRank());
                                     if (couponInfo.content) {
