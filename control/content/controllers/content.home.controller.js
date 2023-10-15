@@ -1368,7 +1368,12 @@
               if (!ContentHome.data.content)
                 ContentHome.data.content = {};
               if (!ContentHome.data.settings)
-                ContentHome.data.settings = {};
+                ContentHome.data.settings = {
+                  defaultView: "list",
+                  distanceIn: "mi",
+                  mapView: "show",
+                  filterPage: "show"
+                };
               if (!ContentHome.data.content.carouselImages)
                 editor.loadItems([]);
               else
@@ -1376,7 +1381,7 @@
               if (!ContentHome.data.content.sortFilterBy)
                 ContentHome.data.content.sortFilterBy = ContentHome.sortFilterOptions[0];
               if (!ContentHome.data.content.sortItemBy)
-                ContentHome.data.content.sortItemBy = ContentHome.sortItemOptions[0];
+                ContentHome.data.content.sortItemBy = ContentHome.sortItemOptions[4];
               ContentHome.filters = [];
               ContentHome.searchOptions.skip = 0;
               ContentHome.busyFilter = false;
