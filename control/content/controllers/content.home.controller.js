@@ -3,8 +3,8 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', '$timeout', 'TAG_NAMES', 'SORT', 'SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS', 'Buildfire', 'Modals', 'RankOfLastFilter', 'RankOfLastItem', '$csv', 'Utils', '$rootScope', 'PluginEvents', 'StateSeeder', '$filter',
-      function ($scope, $timeout, TAG_NAMES, SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem, $csv, Utils, $rootScope, PluginEvents, StateSeeder, $filter) {
+    .controller('ContentHomeCtrl', ['$scope', '$timeout', 'TAG_NAMES', 'SORT', 'SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS', 'Buildfire', 'Modals', 'RankOfLastFilter', 'RankOfLastItem', '$csv', 'Utils', '$rootScope', 'PluginEvents', 'StateSeeder', 'defaultInfo',
+      function ($scope, $timeout, TAG_NAMES, SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem, $csv, Utils, $rootScope, PluginEvents, StateSeeder, defaultInfo ) {
         var ContentHome = this;
         let stateSeeder;
         $rootScope.$watch('showEmptyState', function(newValue, oldValue) {
@@ -15,27 +15,8 @@
         ContentHome.searchValue = "";
         ContentHome.filter = null;
         ContentHome.isBusy = true;
-        var _data = {
-          "content": {
-            "carouselImages": [],
-            "description": '',
-            "rankOfLastFilter": 0,
-            "rankOfLastItem": 0,
-            "sortItemBy": SORT.MANUALLY,
-            "sortFilterBy": SORT_FILTER.MANUALLY
-          },
-          "design": {
-            "itemListLayout": LAYOUTS.itemListLayout[0].name
-          },
-          "settings": {
-            "defaultView": "list",
-            "distanceIn": "mi",
-            "mapView": "show",
-            "filterPage": "show"
-          }
-        };
-
-
+        var _data = defaultInfo;
+        
         // Show the top plugin info part when on home view
         Buildfire.appearance.setHeaderVisibility(true);
 
@@ -1368,12 +1349,7 @@
               if (!ContentHome.data.content)
                 ContentHome.data.content = {};
               if (!ContentHome.data.settings)
-                ContentHome.data.settings = {
-                  defaultView: "list",
-                  distanceIn: "mi",
-                  mapView: "show",
-                  filterPage: "show"
-                };
+                ContentHome.data.settings = defaultInfo.settings;
               if (!ContentHome.data.content.carouselImages)
                 editor.loadItems([]);
               else

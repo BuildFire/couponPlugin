@@ -247,29 +247,33 @@
                     buildfire.analytics.unregisterEvent('coupon_item_view_' + key);
                 }
             };
-        }]).factory('StateSeeder', ['TAG_NAMES', 'DataStore', 'RankOfLastItem', '$rootScope', '$timeout', 'SORT', 'SORT_FILTER', 'LAYOUTS' ,function(TAG_NAMES, DataStore, RankOfLastItem, $rootScope, $timeout, SORT, SORT_FILTER, LAYOUTS) {
+        }]).factory('defaultInfo', ['SORT', 'SORT_FILTER', 'LAYOUTS', function(SORT, SORT_FILTER, LAYOUTS) {
+            return {
+                content: {
+                    carouselImages: [],
+                    description: '',
+                    rankOfLastFilter: 0,
+                    rankOfLastItem: 0,
+                    sortItemBy: SORT.MANUALLY,
+                    sortFilterBy: SORT_FILTER.MANUALLY
+                },
+                design: {
+                    itemListLayout: LAYOUTS.itemListLayout[0].name
+                },
+                settings: {
+                    defaultView: "list",
+                    distanceIn: "mi",
+                    mapView: "show",
+                    filterPage: "show"
+                }
+            }
+        }])
+        
+        .factory('StateSeeder', ['TAG_NAMES', 'DataStore', 'RankOfLastItem', '$rootScope', '$timeout', 'defaultInfo' ,function(TAG_NAMES, DataStore, RankOfLastItem, $rootScope, $timeout, defaultInfo) {
             let itemsList;
             let stateSeederInstance;
             $rootScope.oldCouponsIds = [];
-            let couponInfo = {
-                "content": {
-                  "carouselImages": [],
-                  "description": '',
-                  "rankOfLastFilter": '',
-                  "rankOfLastItem": '',
-                  "sortItemBy": SORT.MANUALLY,
-                  "sortFilterBy": SORT_FILTER.MANUALLY
-                },
-                "design": {
-                  "itemListLayout": LAYOUTS.itemListLayout[0].name
-                },
-                "settings": {
-                  "defaultView": "list",
-                  "distanceIn": "mi",
-                  "mapView": "show",
-                  "filterPage": "show"
-                }
-              };
+            let couponInfo = defaultInfo;
             let jsonTemplate = {
                 items: [
                   {
