@@ -73,7 +73,7 @@
                     preRedemptionText: '',
                     postRedemptionText: '',
                     carouselImages: [],
-                    rank: '',
+                    rank: 0,
                     addressTitle:'',
                     location: {
                         addressTitle: '',

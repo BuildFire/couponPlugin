@@ -3,8 +3,8 @@
 (function (angular, buildfire) {
   angular
     .module('couponPluginContent')
-    .controller('ContentHomeCtrl', ['$scope', '$timeout', 'TAG_NAMES', 'SORT', 'SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS', 'Buildfire', 'Modals', 'RankOfLastFilter', 'RankOfLastItem', '$csv', 'Utils', '$rootScope', 'PluginEvents', 'StateSeeder', '$filter',
-      function ($scope, $timeout, TAG_NAMES, SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem, $csv, Utils, $rootScope, PluginEvents, StateSeeder, $filter) {
+    .controller('ContentHomeCtrl', ['$scope', '$timeout', 'TAG_NAMES', 'SORT', 'SORT_FILTER', 'STATUS_CODE', 'DataStore', 'LAYOUTS', 'Buildfire', 'Modals', 'RankOfLastFilter', 'RankOfLastItem', '$csv', 'Utils', '$rootScope', 'PluginEvents', 'StateSeeder', 'defaultInfo',
+      function ($scope, $timeout, TAG_NAMES, SORT, SORT_FILTER, STATUS_CODE, DataStore, LAYOUTS, Buildfire, Modals, RankOfLastFilter, RankOfLastItem, $csv, Utils, $rootScope, PluginEvents, StateSeeder, defaultInfo ) {
         var ContentHome = this;
         let stateSeeder;
         $rootScope.$watch('showEmptyState', function(newValue, oldValue) {
@@ -15,27 +15,8 @@
         ContentHome.searchValue = "";
         ContentHome.filter = null;
         ContentHome.isBusy = true;
-        var _data = {
-          "content": {
-            "carouselImages": [],
-            "description": '',
-            "rankOfLastFilter": '',
-            "rankOfLastItem": '',
-            "sortItemBy": SORT.MANUALLY,
-            "sortFilterBy": SORT_FILTER.MANUALLY
-          },
-          "design": {
-            "itemListLayout": LAYOUTS.itemListLayout[0].name
-          },
-          "settings": {
-            "defaultView": "list",
-            "distanceIn": "mi",
-            "mapView": "show",
-            "filterPage": "show"
-          }
-        };
-
-
+        var _data = defaultInfo;
+        
         // Show the top plugin info part when on home view
         Buildfire.appearance.setHeaderVisibility(true);
 
@@ -116,7 +97,8 @@
         ContentHome.searchOptionsForItems = {
           filter: { "$json.title": { "$regex": '/*' } },
           skip: SORT._skip,
-          limit: SORT._limit + 1 // the plus one is to check if there are any more
+          limit: SORT._limit + 1, // the plus one is to check if there are any more
+          sort: { "rank": 1 }
         };
         /*
          * create an artificial delay so api isnt called on every character entered
@@ -204,16 +186,16 @@
               var isRankChanged = false;
               if (next) {
                 if (prev) {
-                  draggedItem.data.rank = ((prev.data.rank || 0) + (next.data.rank || 0)) / 2;
+                  draggedItem.data.rank = Number((prev.data.rank || 0) + (next.data.rank || 0)) / 2;
                   isRankChanged = true;
                 } else {
-                  draggedItem.data.rank = (next.data.rank || 0) / 2;
+                  draggedItem.data.rank = Number(next.data.rank || 0) / 2;
                   isRankChanged = true;
                 }
               } else {
                 if (prev) {
-                  draggedItem.data.rank = (((prev.data.rank || 0) * 2) + 10) / 2;
-                  maxRank = draggedItem.data.rank;
+                  draggedItem.data.rank = Number(((prev.data.rank || 0) * 2) + 10) / 2;
+                  maxRank = Number(draggedItem.data.rank);
                   isRankChanged = true;
                 }
               }
@@ -1361,13 +1343,13 @@
           var success = function (result) {
             console.info('Init success result:', result);
             ContentHome.data = result.data;
-            if (!ContentHome.data.content) {
+            if (!Object.keys(ContentHome.data).length) {
               ContentHome.data = angular.copy(_data);
             } else {
               if (!ContentHome.data.content)
                 ContentHome.data.content = {};
               if (!ContentHome.data.settings)
-                ContentHome.data.settings = {};
+                ContentHome.data.settings = defaultInfo.settings;
               if (!ContentHome.data.content.carouselImages)
                 editor.loadItems([]);
               else
@@ -1375,7 +1357,7 @@
               if (!ContentHome.data.content.sortFilterBy)
                 ContentHome.data.content.sortFilterBy = ContentHome.sortFilterOptions[0];
               if (!ContentHome.data.content.sortItemBy)
-                ContentHome.data.content.sortItemBy = ContentHome.sortItemOptions[0];
+                ContentHome.data.content.sortItemBy = ContentHome.sortItemOptions[4];
               ContentHome.filters = [];
               ContentHome.searchOptions.skip = 0;
               ContentHome.busyFilter = false;
