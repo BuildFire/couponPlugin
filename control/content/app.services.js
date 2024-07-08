@@ -471,14 +471,14 @@
                         userMessage: `List sample coupons for a new [Optics Shop]`,
                         maxRecords: 5,
                         systemMessage:
-                            "listImage is an image URL related to title and the list type, Use https://app.buildfire.com/api/stockImages/?topic={title}&imageType=medium, A maximum of 2 comma-separated title can be used for each URL",
+                            "listImage is an image URL related to the title or the list type, Use https://app.buildfire.com/api/stockImages/?topic={topic}&imageType=medium, a maximum of 2 comma-separated topics can be used for each URL.",
                         jsonTemplate: jsonTemplate,
                         callback: handleAIReq.bind(this, false),
                         hintText: 'Replace values between brackets to match your requirements.',
                         },
                         importOptions: {
                         jsonTemplate: jsonTemplate,
-                        sampleCSV: "Save 20% on Flights, Get 20% off on flight bookings with this exclusive coupon, https://app.buildfire.com/api/stockImages/?imageType=medium&topic=travel\\n50% Off Hotel Bookings, Enjoy a 50% discount on hotel reservations using this limited-time coupon, https://app.buildfire.com/api/stockImages/?imageType=medium&topic=hotel\\nCar Rental Special Offer, Rent a car for 7 days and pay for only 5 days with this coupon code, https://app.buildfire.com/api/stockImages/?imageType=medium&topic=Adventure Tour Promo, Book an adventure tour and receive a free equipment rental worth $50 using this coupon, https://app.buildfire.com/api/stockImages/?imageType=medium&topic=adventure",
+                        sampleCSV: "Save 20% on Flights, Get 20% off on flight bookings with this exclusive coupon, https://app.buildfire.com/api/stockImages/?imageType=medium&topic=travel\n50% Off Hotel Bookings, Enjoy a 50% discount on hotel reservations using this limited-time coupon, https://app.buildfire.com/api/stockImages/?imageType=medium&topic=hotel\nCar Rental Special Offer, Rent a car for 7 days and pay for only 5 days with this coupon code, https://app.buildfire.com/api/stockImages/?imageType=medium&topic=Adventure\nTour Promo, Book an adventure tour and receive a free equipment rental worth $50 using this coupon, https://app.buildfire.com/api/stockImages/?imageType=medium&topic=adventure",
                         maxRecords: 5,
                         hintText: 'Each row should start with a coupon title, summary, and image URL.',
                         systemMessage: 'listImage is an image URL, summary and listImage are optional',
