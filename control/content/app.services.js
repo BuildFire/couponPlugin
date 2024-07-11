@@ -268,7 +268,7 @@
                 }
             }
         }])
-        
+
         .factory('StateSeeder', ['TAG_NAMES', 'DataStore', 'RankOfLastItem', '$rootScope', '$timeout', 'defaultInfo' ,function(TAG_NAMES, DataStore, RankOfLastItem, $rootScope, $timeout, defaultInfo) {
             let itemsList;
             let stateSeederInstance;
@@ -279,7 +279,7 @@
                   {
                     title: "",
                     summary: "",
-                    listImage: "", 
+                    listImage: "",
                   },
                 ],
               };
@@ -309,7 +309,7 @@
                         })
                     })
                 })
-                
+
                 // Check image URLs
                 Promise.allSettled(coupons).then(results => {
                     itemsList = [];
@@ -328,9 +328,9 @@
                             type: "danger",
                         });
                     }
-                    
+
                     // reset old data
-                    checkOldData().then(() => {                    
+                    checkOldData().then(() => {
                         // save new data
                         buildfire.messaging.sendMessageToWidget({ type: "ImportCSV", importing: true });
                         let promises = itemsList.map((item, i) => {
@@ -356,7 +356,7 @@
                                             resolve();
                                         });
                                     }
-                                }) 
+                                })
 
                             });
                         })
@@ -366,7 +366,7 @@
                                     if (result && result.data && Object.keys(result.data).length) {
                                         couponInfo = result.data;
                                     }
-                                    const rankOfLastItem = 
+                                    const rankOfLastItem =
                                     Number(isNaN(RankOfLastItem.getRank()) ? 0 : RankOfLastItem.getRank());
                                     if (couponInfo.content) {
                                         couponInfo.content.rankOfLastItem = rankOfLastItem;
@@ -383,11 +383,11 @@
                             })
                         }).catch(err => console.warn('error while saving data: ', err))
 
-                    }) 
+                    })
                 stateSeederInstance?.requestResult?.complete();
               })
               }
-          
+
               // UTILITIES
             let _applyDefaults = function(item) {
                 if (item.title) {
@@ -415,7 +415,7 @@
                         lat: "",
                         lng: ""
                       }
-                    },        
+                    },
                     Categories: [],
                     reuseAfterInMinutes: -1,
                     dateCreated: Math.trunc(Date.now() + (Math.random() * 1000)),
@@ -426,13 +426,12 @@
                 }
                 return null
               }
-          
+
               let checkNotFoundImages = function(url, isImport) {
-                const optimisedURL = url.replace('1080x720', '100x100'); 
                 return new Promise((resolve) => {
                   if (url.includes("http")){
                     const xhr = new XMLHttpRequest();
-                    xhr.open("GET", optimisedURL);
+                    xhr.open("GET", url);
                     xhr.onerror = (error) => {
                       console.warn('provided URL is not a valid image', error);
                       resolve({isValid: true, newURL: isImport ? null : 'https://dummyimage.com/300x300/d7dbde/ffffff.png'});
@@ -441,14 +440,14 @@
                       if (xhr.responseURL.includes('source-404') || xhr.status == 404) {
                         return resolve({isValid: true ,newURL: isImport ? null : 'https://dummyimage.com/300x300/d7dbde/ffffff.png'});
                       } else {
-                        return resolve({isValid: true, newURL: xhr.responseURL.replace('h=100', 'h=720').replace('w=100', 'w=1080') });
+                        return resolve({isValid: true, newURL: xhr.responseURL});
                       }
                     };
                     xhr.send();
                   } else resolve({isValid: true ,newURL: isImport ? null : 'https://dummyimage.com/300x300/d7dbde/ffffff.png'});
                   });
               };``
-                
+
                 let checkOldData = function() {
                     return new Promise(resolve => {
                         if (stateSeederInstance.requestResult.resetData){
@@ -472,14 +471,14 @@
                         userMessage: `List sample coupons for a new [Optics Shop]`,
                         maxRecords: 5,
                         systemMessage:
-                            "listImage is an 1080x720 image URL related to title and the list type, use source.unsplash.com for images, URL should not have premium_photo or source.unsplash.com/random.",
+                            "listImage is an image URL related to the title or the list type, Use https://app.buildfire.com/api/stockImages/?topic={topic}&imageType=medium, a maximum of 2 comma-separated topics can be used for each URL.",
                         jsonTemplate: jsonTemplate,
                         callback: handleAIReq.bind(this, false),
                         hintText: 'Replace values between brackets to match your requirements.',
                         },
                         importOptions: {
                         jsonTemplate: jsonTemplate,
-                        sampleCSV: "Save 20% on Flights, Get 20% off on flight bookings with this exclusive coupon, https://source.unsplash.com/1080x720/?travel\n50% Off Hotel Bookings, Enjoy a 50% discount on hotel reservations using this limited-time coupon, https://source.unsplash.com/1080x720/?hotel\nCar Rental Special Offer, Rent a car for 7 days and pay for only 5 days with this coupon code, https://source.unsplash.com/1080x720/?car\nAdventure Tour Promo, Book an adventure tour and receive a free equipment rental worth $50 using this coupon, https://source.unsplash.com/1080x720/?adventure",
+                        sampleCSV: "Save 20% on Flights, Get 20% off on flight bookings with this exclusive coupon, https://app.buildfire.com/api/stockImages/?imageType=medium&topic=travel\n50% Off Hotel Bookings, Enjoy a 50% discount on hotel reservations using this limited-time coupon, https://app.buildfire.com/api/stockImages/?imageType=medium&topic=hotel\nCar Rental Special Offer, Rent a car for 7 days and pay for only 5 days with this coupon code, https://app.buildfire.com/api/stockImages/?imageType=medium&topic=Adventure\nTour Promo, Book an adventure tour and receive a free equipment rental worth $50 using this coupon, https://app.buildfire.com/api/stockImages/?imageType=medium&topic=adventure",
                         maxRecords: 5,
                         hintText: 'Each row should start with a coupon title, summary, and image URL.',
                         systemMessage: 'listImage is an image URL, summary and listImage are optional',
