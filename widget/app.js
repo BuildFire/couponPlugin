@@ -286,7 +286,29 @@
         }
       }
     })
-    .run(['ViewStack', '$rootScope', function (ViewStack, $rootScope) {
+    .service('ScriptLoaderService', ['$q', function ($q) {
+      this.loadScript = function (url) {
+        const deferred = $q.defer(); // Use $q to create a promise
+
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = url;
+
+        script.onload = function () {
+          console.info(`Successfully loaded script: ${url}`);
+          deferred.resolve(); // Resolve the promise when the script is loaded
+        };
+
+        script.onerror = function () {
+          console.error(`Failed to load script: ${url}`);
+          deferred.reject('Failed to load script.');
+        };
+
+        document.head.appendChild(script);
+        return deferred.promise; // Return the promise
+      };
+    }])
+    .run(['ViewStack', '$rootScope', 'ScriptLoaderService', function (ViewStack, $rootScope, ScriptLoaderService) {
       buildfire.history.onPop(function () {
         if (ViewStack.hasViews()) {
           if (ViewStack.getCurrentView().template == 'Item') {
@@ -333,6 +355,23 @@
         }
       };
 
+      const initGoogleMapsSDK = () => {
+        const { apiKeys } = buildfire.getContext();
+        const { googleMapKey } = apiKeys;
+        const googleMapsURL = `https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places&key=${googleMapKey}`;
 
+        ScriptLoaderService.loadScript(googleMapsURL)
+            .then(() => {
+              console.info("Successfully loaded Google's Maps SDK.");
+            })
+            .catch(() => {
+              buildfire.dialog.alert({
+                title: 'Error',
+                message: 'Failed to load Google Maps API.',
+              });
+            });
+      };
+
+      initGoogleMapsSDK();
     }])
 })(window.angular, window.buildfire, window);
