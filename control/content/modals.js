@@ -125,7 +125,7 @@
                 if (!$scope.filterTitle) return $scope.filterError = "Category name cannot be empty";
 
                 let searchOptions = {
-                    filter: { "$json.title": { "$regex": $scope.filterTitle, "$options" : "-i" } },
+                    filter: { "$json.title": { "$regex": $scope.filterTitle, "$options" : "i" } },
                     skip: 0,
                     limit: 0 // the plus one is to check if there are any more
                   };
