@@ -303,6 +303,13 @@
           console.error(`Failed to load script: ${url}`);
           deferred.reject('Failed to load script.');
         };
+        window.gm_authFailure = () => {
+          buildfire.dialog.alert({
+            title: 'Error',
+            message: 'Failed to load Google Maps API.',
+          });
+          deferred.resolve();
+        };
 
         document.head.appendChild(script);
         return deferred.promise; // Return the promise
@@ -361,15 +368,15 @@
         const googleMapsURL = `https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places&key=${googleMapKey}`;
 
         ScriptLoaderService.loadScript(googleMapsURL)
-            .then(() => {
-              console.info("Successfully loaded Google's Maps SDK.");
-            })
-            .catch(() => {
-              buildfire.dialog.alert({
-                title: 'Error',
-                message: 'Failed to load Google Maps API.',
-              });
+          .then(() => {
+            console.info("Successfully loaded Google's Maps SDK.");
+          })
+          .catch(() => {
+            buildfire.dialog.alert({
+              title: 'Error',
+              message: 'Failed to load Google Maps API.',
             });
+          });
       };
 
       initGoogleMapsSDK();

@@ -17,11 +17,11 @@
     "enabled":true
   }
 }
-,"widget":{
-
-},
-  "features" : [{"name":"Geo"}]
-,
+,"widget":{},
+  "features" : [{"name":"Geo"}],
+  "usesApiKeys": [
+    { "name": "googleMapKey" }
+  ],
   "languages" : ["en"],
   "media": [
     { "type": "image-resource", "path": "marketplacegif.gif" },

@@ -18,7 +18,6 @@
             NOT_ITEM_ARRAY: 'NOT_ITEM_ARRAY'
         })
         .constant('GOOGLE_KEYS', {
-            API_KEY: 'AIzaSyC4Dw4EzKeyVBXWBsbO9-UgyEARL6WLrlU'
         })
         .constant('STATUS_MESSAGES', {
             UNDEFINED_DATA: 'Undefined data provided',

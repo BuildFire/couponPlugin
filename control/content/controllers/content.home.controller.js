@@ -16,7 +16,7 @@
         ContentHome.filter = null;
         ContentHome.isBusy = true;
         var _data = defaultInfo;
-        
+
         // Show the top plugin info part when on home view
         Buildfire.appearance.setHeaderVisibility(true);
 
@@ -472,12 +472,12 @@
                     }
                   });
                 }
-  
+
                 Deeplink.deleteById(ContentHome.items[index].id);
                 Buildfire.datastore.delete(ContentHome.items[index].id, TAG_NAMES.COUPON_ITEMS, function (err, result) {
                   if (err)
                     return;
-  
+
                   PluginEvents.unregister(ContentHome.items[index].id);
                   //ContentHome.items.splice(_index, 1);
                   ContentHome.items.splice(index, 1);
@@ -524,11 +524,11 @@
           } else {
             ContentHome.data.content.selectedStatus = 'All Statuses';
             ContentHome.data.content.selectedFilter = {title: undefined, id: "All Categories"};
-            
+
             ContentHome.searchOptionsForItems.filter = { "$json.title": { "$regex": '/*' } };
             ContentHome.items = [];
             ContentHome.searchOptionsForItems.skip = 0;
-  
+
             ContentHome.loadMoreItems('items');
           }
         }
@@ -825,7 +825,7 @@
           }
           ContentHome.busy = true;
           ContentHome.isBusy = true;
-          
+
           if (str !== 'filter')
             Buildfire.datastore.search(ContentHome.searchOptionsForItems, TAG_NAMES.COUPON_ITEMS, function (err, result) {
               if (err) {
@@ -843,7 +843,7 @@
               var tmpArray = [];
               var lastIndex = result.length;
               result.forEach(function (res, index) {
-                
+
                 tmpArray.push({
                   'title': res.data.title,
                   rank: index + 1,
@@ -970,7 +970,7 @@
           }
           $csv.import(headerRow).then(function (rows) {
             rows = rows.filter(function (row) { return row.title; });
-            
+
             if (rows && rows.length > 1) {
               var categoriesList = [], columns = rows.shift();
 
@@ -979,23 +979,23 @@
                 ContentHome.csvDataInvalid = true;
                 return;
               }
-              
+
               rows.map(el => categoriesList = categoriesList.concat(el.Categories.split(",")));
               categoriesList = [... new Set(categoriesList)];
-              
+
               var sortedCategories = [];
               categoriesList.map(category => {
-                var exists = rows.filter(row => 
+                var exists = rows.filter(row =>
                   row.SelectedCategories.toLowerCase().includes(category.toLowerCase()));
 
-                exists ? sortedCategories.push({ title: category, number: exists.length}) 
+                exists ? sortedCategories.push({ title: category, number: exists.length})
                 : null;
               });
-              
+
               buildfire.messaging.sendMessageToWidget({ type: "ImportCSV", importing: true });
               buildfire.messaging.sendMessageToWidget({ importCSV: 'started' });
               ContentHome.importingCSV = true;
-              
+
               const insertCategories = (callback) => {
                 buildfire.datastore.search({ recordCount: true }, TAG_NAMES.COUPON_CATEGORIES, (err, categories) => {
                   if (err) return console.error(err);
@@ -1013,7 +1013,7 @@
                           let toUpdate = ContentHome.filters.find(el => el.id === categoryExists.id);
                           if(toUpdate) {
                             let toUpdateIndex = ContentHome.filters.indexOf(toUpdate);
-                            ContentHome.filters[toUpdateIndex].data.noOfItems = categoryExists.data.noOfItems;      
+                            ContentHome.filters[toUpdateIndex].data.noOfItems = categoryExists.data.noOfItems;
                           }
 
                           updatedAll--;
@@ -1038,7 +1038,7 @@
               const saveRow = (row) => {
                 buildfire.datastore.insert(row, TAG_NAMES.COUPON_ITEMS, (err, result) => {
                   if (err) console.error("Failed saving row data", row);
-                  if (result && result.id) {                    
+                  if (result && result.id) {
                     PluginEvents.register({ key: result.id, title: result.data.title }, true);
                     if (!row.deepLinkId) {
                       new Deeplink({
@@ -1108,7 +1108,7 @@
                 });
               }
 
-              
+
               var rank = ContentHome.data.content.rankOfLastItem || 0;
               RankOfLastItem.setRank(rank);
 
