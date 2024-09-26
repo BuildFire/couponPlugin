@@ -8,7 +8,12 @@
         .when('/', {
           templateUrl: 'templates/home.html',
           controllerAs: 'ContentHome',
-          controller: 'ContentHomeCtrl'
+          controller: 'ContentHomeCtrl',
+          resolve: {
+            ScriptLoaderService: function (ScriptLoaderService) {
+              return ScriptLoaderService.loadScript();
+            }
+          }
         })
         .when('/item', {
           templateUrl: 'templates/item.html',
@@ -46,7 +51,44 @@
           });
       }
     }])
-    .run(['$location', '$rootScope', function ($location, $rootScope) {
+    .service('ScriptLoaderService', ['$q', function ($q) {
+      this.loadScript = function () {
+        const deferred = $q.defer();
+
+        const { apiKeys } = buildfire.getContext();
+        const { googleMapKey } = apiKeys;
+        const url = `https://maps.googleapis.com/maps/api/js?v=v=3.exp&libraries=places&key=${googleMapKey}`;
+
+
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = url;
+
+        if (document.querySelector(`script[src="${url}"]`)) {
+          console.info(`Script: ${url} is already loaded`);
+          deferred.resolve();
+          return deferred.promise;
+        }
+
+        script.onload = function () {
+          console.info(`Successfully loaded script: ${url}`);
+          deferred.resolve();
+        };
+
+        script.onerror = function () {
+          console.error(`Failed to load script: ${url}`);
+          deferred.reject('Failed to load script.');
+        };
+
+        window.gm_authFailure = () => {
+          deferred.resolve();
+        };
+
+        document.head.appendChild(script);
+        return deferred.promise;
+      };
+    }])
+    .run(['$location', '$rootScope','ScriptLoaderService', function ($location, $rootScope,ScriptLoaderService) {
       buildfire.messaging.onReceivedMessage = function (msg) {
         switch (msg.type) {
           case 'OpenItem':
