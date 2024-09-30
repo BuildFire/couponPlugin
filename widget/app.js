@@ -151,7 +151,7 @@
         },
         link: function (scope, elem, attrs) {
           var newClustererMap = '';
-          elem.css('min-height', '596px').css('width', '100%');
+          elem.css('width', '100%');
           scope.$watch('refreshData', function (newValue, oldValue) {
             if (newValue) {
               var mapCenterLng = (scope.locationData && scope.locationData.currentCoordinates && scope.locationData.currentCoordinates.length && scope.locationData.currentCoordinates[0]) ? scope.locationData.currentCoordinates[0] : -87.7679;
@@ -167,7 +167,8 @@
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 zoomControlOptions: {
                   position: google.maps.ControlPosition.RIGHT_TOP
-                }
+                },
+                mapId:'mainPageMap'
               });
 
               var styleOptions = {
@@ -209,16 +210,16 @@
               };
 
               if (scope.locationData && scope.locationData.currentCoordinates && scope.locationData.currentCoordinates.length) {
-                var currentLocationMarker = new google.maps.Marker({
+                const pinGlyph = new google.maps.marker.PinElement({});
+                var currentLocationMarker = new google.maps.marker.AdvancedMarkerElement({
                   position: {
                     lat: scope.locationData.currentCoordinates[1],
                     lng: scope.locationData.currentCoordinates[0]
                   },
+                  content: pinGlyph.element,
                   map: map,
-                  icon: currentLocationIcon,
-                  shape: shape,
-                  optimized: false
                 });
+                currentLocationMarker.content.innerHTML = `<img width="20" height="20" src=${currentLocationIcon.url} />`;
               }
 
               var placeLocationMarkers = [];
@@ -234,23 +235,25 @@
                     if (_index == 0 && !globals.wasFinderClicked) {
                       map.setCenter(new google.maps.LatLng(_place.data.location.coordinates.lat, _place.data.location.coordinates.lng));
                     }
-                    marker = new google.maps.Marker({
+                    const image = document.createElement("img");
+                    image.width = 20;
+                    image.height = 20;
+                    image.src =placeLocationIcon.url;
+
+                    marker = new google.maps.marker.AdvancedMarkerElement({
                       position: { lat: _place.data.location.coordinates.lat, lng: _place.data.location.coordinates.lng },
                       map: map,
-                      icon: placeLocationIcon,
-                      shape: shape,
                       title: _place.couponContained ? (_place.couponContained.length + " coupons") : _place.data.title,
                       zIndex: _index,
-                      optimized: false,
-                      dist: _place.data.distanceText
+                      content: image,
                     });
                     marker.addListener('click', function () {
                       var _this = this;
                       if (selectedLocation) {
-                        selectedLocation.setIcon(placeLocationIcon);
+                        selectedLocation.content.src = placeLocationIcon.url;
                       }
+                      _this.content.src = selectedLocationIcon.url;
 
-                      _this.setIcon(selectedLocationIcon);
                       selectedLocation = _this;
                       scope.markerCallback(_this.zIndex);
                     });
@@ -278,7 +281,7 @@
               map.addListener('click', function () {
                 if (selectedLocation) {
                   scope.markerCallback(null);
-                  selectedLocation.setIcon(placeLocationIcon);
+                  selectedLocation.content.src = placeLocationIcon.url;
                 }
               });
             }
@@ -365,7 +368,7 @@
       const initGoogleMapsSDK = () => {
         const { apiKeys } = buildfire.getContext();
         const { googleMapKey } = apiKeys;
-        const googleMapsURL = `https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places&key=${googleMapKey}`;
+        const googleMapsURL = `https://maps.googleapis.com/maps/api/js?v=weekly&sensor=true&libraries=places,marker&key=${googleMapKey}`;
 
         ScriptLoaderService.loadScript(googleMapsURL)
           .then(() => {
