@@ -238,7 +238,7 @@
                     const image = document.createElement("img");
                     image.width = 20;
                     image.height = 20;
-                    image.src =placeLocationIcon.url;
+                    image.src =placeLocationIconImageUrl;
 
                     marker = new google.maps.marker.AdvancedMarkerElement({
                       position: { lat: _place.data.location.coordinates.lat, lng: _place.data.location.coordinates.lng },

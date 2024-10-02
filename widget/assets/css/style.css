@@ -896,7 +896,7 @@ html[buildfire='widget'] .modal {
 	background-position: center;
 	height: 80vh;
 }
-.google-map {
+#googleMap {
 	height: calc(100% - 32px);
 	background:#eef0f0;
 }

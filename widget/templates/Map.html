@@ -2,7 +2,7 @@
     class="no-scroll holder padding-zero has-bottom has-extra-links has-filter map-layout sticky-bottom-menu"
     ng-controller="WidgetMapCtrl as WidgetMap">
   <div class="scrollable">
-    <div class="google-map"
+    <div class="google-map" id="googleMap"
          ng-if="WidgetMap.data && WidgetMap.locationData.items && WidgetMap.allItemsFormatted">
       <div google-map class="google-map-fix" style="height:100%;"
            location-data="WidgetMap.locationData"
