@@ -57,7 +57,7 @@
 
         const { apiKeys } = buildfire.getContext();
         const { googleMapKey } = apiKeys;
-        const url = `https://maps.googleapis.com/maps/api/js?v=v=3.exp&libraries=places&key=${googleMapKey}`;
+        const url = `https://maps.googleapis.com/maps/api/js?v=weekly&libraries=places,marker&key=${googleMapKey}`;
 
 
         const script = document.createElement('script');

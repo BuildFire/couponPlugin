@@ -231,7 +231,7 @@ h5{
 	align-items: center;
 	justify-content: space-between;
 }
-.redeemedView{	
+.redeemedView{
 	display: flex;
 }
 .layout4-caption-date{
@@ -718,7 +718,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .coupon.layout2.valign .list-item-copy .copy-holder{
 	position:absolute;
 	top:50% !important;
-	transform:translateY(-50%) !important;	
+	transform:translateY(-50%) !important;
 	width:95%;
 	padding-left:75px;
 } */
@@ -746,7 +746,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 .map-layout .layout3 .list-layout{
 	max-height:245px;
-	overflow-y:auto;	
+	overflow-y:auto;
 }
 .map-layout .layout3 .list-layout .list-item-media .list-media-holder{
 	width:96px !important;
@@ -825,7 +825,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 .filter .item.active span.icon.icon-chevron-down{
 	transform:rotate(-180deg);
-	-ms-transform:rotate(-180deg); 
+	-ms-transform:rotate(-180deg);
 	-webkit-transform:rotate(-180deg);
 }
 .filter .item .filter-content{
@@ -895,4 +895,13 @@ html[buildfire='widget'] .modal {
 	background-attachment: absolute;
 	background-position: center;
 	height: 80vh;
+}
+#googleMap {
+	height: calc(100vh - 32px);
+	background:#eef0f0;
+}
+
+body.has-safe-area #googleMap{
+	height: calc(100vh - 32px - env(safe-area-inset-bottom) ) !important ;
+	height: calc(100vh - 32px - constant(safe-area-inset-bottom)) !important;
 }
