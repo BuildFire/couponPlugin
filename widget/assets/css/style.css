@@ -897,6 +897,11 @@ html[buildfire='widget'] .modal {
 	height: 80vh;
 }
 #googleMap {
-	height: calc(100% - 32px);
+	height: calc(100vh - 32px);
 	background:#eef0f0;
+}
+
+body.has-safe-area #googleMap{
+	height: calc(100vh - 32px - env(safe-area-inset-bottom) ) !important ;
+	height: calc(100vh - 32px - constant(safe-area-inset-bottom)) !important;
 }
