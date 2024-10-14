@@ -236,7 +236,7 @@
               }
           };
       })
-      .directive("googleMap", function () {
+      .directive("googleMap", ['Utils', function (Utils) {
           return {
               template: "<div></div>",
               replace: true,
@@ -248,18 +248,24 @@
                       if (newValue) {
                           scope.coordinates = newValue;
                           if (scope.coordinates) {
-                              var map = new google.maps.Map(elem[0], {
+                              const options = {
                                   center: new google.maps.LatLng(scope.coordinates.lat, scope.coordinates.lng),
-                                  zoomControl: false,
                                   streetViewControl: false,
                                   mapTypeControl: false,
                                   zoom: 15,
-                                  mapTypeId: google.maps.MapTypeId.ROADMAP
-                              });
-                              var marker = new google.maps.Marker({
+                                  mapTypeId: google.maps.MapTypeId.ROADMAP,
+                                  mapId: 'contentMap',
+                              }
+                              if (Utils.VersionCheckService()) {
+                                  options.cameraControl = false;
+                              } else {
+                                  options.zoomControl = false;
+                              }
+                              var map = new google.maps.Map(elem[0],options);
+                              var marker = new google.maps.marker.AdvancedMarkerElement({
                                   position: new google.maps.LatLng(scope.coordinates.lat, scope.coordinates.lng),
                                   map: map,
-                                  draggable: true
+                                  gmpDraggable: true
                               });
 
                               var styleOptions = {
@@ -278,7 +284,7 @@
                           google.maps.event.addListener(marker, 'dragend', function (event) {
                               scope.coordinates = [event.latLng.lng(), event.latLng.lat()];
                               geocoder.geocode({
-                                  latLng: marker.getPosition()
+                                  latLng: marker.position
                               }, function (responses) {
                                   if (responses && responses.length > 0) {
                                       scope.location = responses[0].formatted_address;
@@ -301,7 +307,7 @@
                   }, true);
               }
           }
-      })
+      }])
       .directive('ngEnter', function () {
           return function (scope, element, attrs) {
               element.bind("keydown keypress", function (event) {

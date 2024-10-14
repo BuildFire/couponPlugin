@@ -2,7 +2,7 @@
     class="no-scroll holder padding-zero has-bottom has-extra-links has-filter map-layout sticky-bottom-menu"
     ng-controller="WidgetMapCtrl as WidgetMap">
   <div class="scrollable">
-    <div class="google-map" style="height:100%; background:#eef0f0;"
+    <div class="google-map" id="googleMap"
          ng-if="WidgetMap.data && WidgetMap.locationData.items && WidgetMap.allItemsFormatted">
       <div google-map class="google-map-fix" style="height:100%;"
            location-data="WidgetMap.locationData"
@@ -66,7 +66,7 @@
           <div class="bookmark-holder btn-icon primaryBackgroundTheme"
                 ng-if="WidgetMap.currentLoggedInUser"
                 ng-click="WidgetMap.addRemoveSavedItem(WidgetMap.selectedItem)">
-            <span 
+            <span
                 ng-class="WidgetMap.selectedItem.isSaved?'btn-icon glyphicon glyphicon-star whiteTheme primaryBackgroundTheme':'btn-icon glyphicon glyphicon-star-empty'"></span>
           </div>
         </div>
