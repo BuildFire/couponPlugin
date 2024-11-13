@@ -5,7 +5,6 @@
     .controller('WidgetHomeCtrl', ['$scope', 'TAG_NAMES', 'LAYOUTS', 'DataStore', 'PAGINATION', 'Buildfire', 'Location', '$rootScope', 'ViewStack', '$sce', 'UserData', '$modal', '$timeout', 'SORT', 'GeoDistance',
       function ($scope, TAG_NAMES, LAYOUTS, DataStore, PAGINATION, Buildfire, Location, $rootScope, ViewStack, $sce, UserData, $modal, $timeout, SORT, GeoDistance) {
         var WidgetHome = this;
-        console.log('inside widget home controller--------------->');
         WidgetHome.listeners = {};
         $rootScope.deviceHeight = window.innerHeight;
         $rootScope.deviceWidth = window.innerWidth || 320;
@@ -106,7 +105,6 @@
         buildfire.datastore.onRefresh(function () {
           WidgetHome.init(function(err){
             if(!err){
-              console.log(">>>>>>Refreshed home list");
               WidgetHome.items = [];
               searchOptions.skip = 0;
               WidgetHome.busy = false;
@@ -249,7 +247,6 @@
             var $html = $('<div />', {html: html});
             $html.find('iframe').each(function (index, element) {
               var src = element.src;
-              console.log('element is: ', src, src.indexOf('http'));
               src = src && src.indexOf('file://') != -1 ? src.replace('file://', 'http://') : src;
               element.src = src && src.indexOf('http') != -1 ? src : 'http:' + src;
             });
@@ -266,7 +263,6 @@
               }
               else if (position && position.coords) {
                 $scope.$apply(function () {
-                  console.log('position>>>>>.', position);
                   WidgetHome.locationData.currentCoordinates = [position.coords.longitude, position.coords.latitude];
                   localStorage.setItem('user_location', JSON.stringify(WidgetHome.locationData.currentCoordinates));
                 });
@@ -281,10 +277,8 @@
         WidgetHome.init(function(){});
 
         var onUpdateCallback = function (event) {
-          console.log("==================== WIDGET UPDATE CALLED ===============================")
-          console.log("==================== WIDGET UPDATE CALLED ===============================")
           if($rootScope.importingCSV) return;
-          
+
           $timeout(function () {
             if (event && event.tag === TAG_NAMES.COUPON_INFO) {
               WidgetHome.data = event.data;
@@ -350,14 +344,13 @@
               if (resultAll.length == PAGINATION.itemCount) {
                 WidgetHome.busy = false;
               }
-              
+
               if (WidgetHome.items.length === 0) {
                 document.querySelector('.infinite-scroll-container').classList.add("no-data");
               } else {
                 document.querySelector('.infinite-scroll-container').classList.remove("no-data");
               }
 
-              console.log("----------------------", WidgetHome.items);
               WidgetHome.setSavedItems();
               WidgetHome.setRedeemedItems();
               $scope.getRedeemedDateText();
@@ -370,9 +363,8 @@
             },
             errorAll = function (error) {
               Buildfire.spinner.hide();
-              console.log("error", error)
+              console.error(error);
             };
-          console.log("***********", WidgetHome.data.content);
           if (WidgetHome.data && WidgetHome.data.content && WidgetHome.data.content.sortItemBy) {
             searchOptions = WidgetHome.getSearchOptions(WidgetHome.data.content.sortItemBy);
           }
@@ -383,10 +375,18 @@
                 skip: 0,
                 filter: {
                   "$and": [{
-                    "$json.expiresOn": {$gte: WidgetHome.yesterdayDate}
+                    "$or": [
+                        {"$json.expiresOn": {$gte: WidgetHome.yesterdayDate}},
+                        {"$json.expiresOn": ""},
+                        {"$json.expiresOn": 0},
+                    ]
                   },
                   {
-                    "$json.startOn": { $lte: WidgetHome.todayDate }
+                    "$or": [
+                        {"$json.startOn": {$lte: WidgetHome.todayDate}},
+                        {"$json.startOn": ""},
+                        {"$json.startOn": 0},
+                    ]
                   },
                   {"$json.location.coordinates": {$exists: true}}]
                 }
@@ -397,11 +397,20 @@
               searchOptions= {
                 skip: 0,
                 filter: {
-                  "$and": [{
-                    "$json.expiresOn": {$gte: WidgetHome.yesterdayDate}
-                  },
+                  "$and": [
+                    {
+                        "$or": [
+                            {"$json.expiresOn": {$gte: WidgetHome.yesterdayDate}},
+                            {"$json.expiresOn": ""},
+                            {"$json.expiresOn": 0},
+                        ]
+                    },
                   {
-                    "$json.startOn": { $lte: WidgetHome.todayDate }
+                    "$or": [
+                            {"$json.startOn": { $lte: WidgetHome.todayDate }},
+                            {"$json.startOn": ""},
+                            {"$json.startOn": 0},
+                        ]
                   },
                   {"$json.location.coordinates": {$exists: true}}]
                 }
@@ -457,7 +466,6 @@
         };
 
         WidgetHome.loadMore = function () {
-          console.log("===============In loadmore");
           if (WidgetHome.busy) return;
           WidgetHome.busy = true;
           WidgetHome.getItems();
@@ -499,10 +507,8 @@
           Buildfire.spinner.show();
           var err = function (error) {
             Buildfire.spinner.hide();
-            console.log("============ There is an error in getting data", error);
           }, result = function (result) {
             Buildfire.spinner.hide();
-            console.log("===========Saved Coupons", result);
             WidgetHome.saved = result;
             if (setSaved)
               WidgetHome.setSavedItems();
@@ -527,7 +533,6 @@
           Buildfire.spinner.show();
           var err = function (error) {
             Buildfire.spinner.hide();
-            console.log("============ There is an error in getting redeemed coupons data", error);
           }, result = function (result) {
             Buildfire.spinner.hide();
             WidgetHome.redeemed = result;
@@ -564,7 +569,6 @@
           };
           var successItem = function (result) {
             Buildfire.spinner.hide();
-            console.log("Inserted", result);
             WidgetHome.items[index].isSaved = true;
             WidgetHome.items[index].savedId = result.id;
             if (!$scope.$$phase)
@@ -614,7 +618,6 @@
 
         var loginCallback = function () {
           buildfire.auth.getCurrentUser(function (err, user) {
-            console.log("=========User", user);
             if (user) {
               WidgetHome.currentLoggedInUser = user;
               $scope.$apply();
@@ -637,7 +640,6 @@
          * Check for current logged in user, if not show login screen
          */
         buildfire.auth.getCurrentUser(function (err, user) {
-          console.log("===========LoggedInUser", user);
           if (user) {
             WidgetHome.currentLoggedInUser = user;
             $scope.$apply();
@@ -663,8 +665,6 @@
           }
           if (_items && _items.length) {
             GeoDistance.getDistance(WidgetHome.locationData.currentCoordinates, _items, WidgetHome.data.settings.distanceIn).then(function (result) {
-              console.log('WidgetHome.locationData.currentCoordinates', WidgetHome.locationData.currentCoordinates);
-              console.log('distance result', result);
               var endIndex=WidgetHome.items.length;
              // var tempItem=_items;
               var deleteItemArrayIndex=[];
@@ -744,7 +744,6 @@
             buildfire.datastore.onRefresh(function () {
               WidgetHome.init(function(err){
                 if(!err){
-                  console.log(">>>>>>Refreshed home list");
                   WidgetHome.items = [];
                   searchOptions.skip = 0;
                   WidgetHome.busy = false;
