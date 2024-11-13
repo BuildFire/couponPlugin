@@ -319,7 +319,6 @@
 
         function confirmFilterAdd(filterResponse) {
           Modals.removePopupFilterModal({}).then(function (response) {
-            console.log(response);
             if (response) {
               insertFilter(filterResponse);
             }
@@ -338,7 +337,6 @@
           RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter);
           ContentHome.filters.unshift(ContentHome.filter);
           Buildfire.datastore.insert(ContentHome.filter.data, TAG_NAMES.COUPON_CATEGORIES, false, function (err, data) {
-            console.log("Saved", data.id);
             ContentHome.isUpdating = false;
             ContentHome.filter.id = data.id;
             ContentHome.filter.data.title = data.data.title;
@@ -564,7 +562,7 @@
                   "$and": [{
                     "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
                   }, { "$json.title": { "$regex": '/*' } }]
-                }, { "$or": [{ "$json.expiresOn": { "$gte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$eq": "" } }] }]
+                }, { "$or": [{ "$json.expiresOn": { "$gte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$eq": "" } }, { "$json.expiresOn": { "$eq": 0 } }] }]
               }
             } else if (ContentHome.data.content.selectedStatus == 'Expired') {
               ContentHome.searchOptionsForItems.filter =
@@ -573,7 +571,7 @@
                   "$and": [{
                     "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
                   }, { "$json.title": { "$regex": '/*' } }]
-                }, { "$or": [{ "$json.expiresOn": { "$lte": ContentHome.tommorowDate } }] }]
+                }, { "$and": [{ "$json.expiresOn": { "$lte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$ne": "" } }, { "$json.expiresOn": { "$eq": 0 } }] }]
               }
             } else if (ContentHome.data.content.selectedStatus == 'All Statuses') {
               ContentHome.searchOptionsForItems.filter =
@@ -589,14 +587,16 @@
               {
                 "$and": [{
                   "$and": [{ "$json.title": { "$regex": '/*' } }]
-                }, { "$or": [{ "$json.expiresOn": { "$gte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$eq": "" } }] }]
+                }, { "$or": [{ "$json.expiresOn": { "$gte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$eq": "" } }, { "$json.expiresOn": { "$eq": 0 } }] }]
               }
             } else if (ContentHome.data.content.selectedStatus == 'Expired') {
               ContentHome.searchOptionsForItems.filter =
               {
                 "$and": [
                   { "$json.title": { "$regex": '/*' } },
-                  { "$json.expiresOn": { "$lte": ContentHome.tommorowDate } }
+                  { "$json.expiresOn": { "$lte": ContentHome.tommorowDate } },
+                  { "$json.expiresOn": { "$ne": 0 } },
+                  { "$json.expiresOn": { "$ne": "" } },
                 ]
               }
             }
@@ -610,7 +610,6 @@
           ContentHome.searchOptionsForItems.skip = 0;
 
           ContentHome.loadMoreItems('items');//, {"$json.title": {"$regex": '/*'}}
-          console.log("-------------------llll", ContentHome.searchOptionsForItems.filter)
         };
 
         ContentHome.searchItem = function () {
@@ -624,7 +623,7 @@
                   "$and": [{
                     "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
                   }, { "$or": [{ "$json.title": { "$regex": ContentHome.searchValue, "$options": "i" } }, { "$json.summary": { "$regex": ContentHome.searchValue, "$options": "i" } }] }]
-                }, { "$or": [{ "$json.expiresOn": { "$gte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$eq": "" } }] }]
+                }, { "$or": [{ "$json.expiresOn": { "$gte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$eq": "" } }, { "$json.expiresOn": { "$eq": 0 } }] }]
               }
             } else if (ContentHome.data.content.selectedStatus == 'Expired') {
 
@@ -634,7 +633,7 @@
                   "$and": [{
                     "$json.SelectedCategories": { $eq: ContentHome.data.content.selectedFilter.id }
                   }, { "$or": [{ "$json.title": { "$regex": ContentHome.searchValue, "$options": "i" } }, { "$json.summary": { "$regex": ContentHome.searchValue, "$options": "i" } }] }]
-                }, { "$or": [{ "$json.expiresOn": { "$lte": ContentHome.tommorowDate } }] }]
+                }, { "$and": [{ "$json.expiresOn": { "$lte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$ne": 0 } }, { "$json.expiresOn": { "$ne": "" } }] }]
               }
             }
           } else if (ContentHome.data.content.selectedStatus && ContentHome.data.content.selectedStatus !== "All Statuses") {
@@ -643,14 +642,14 @@
               {
                 "$and": [{
                   "$and": [{ "$or": [{ "$json.title": { "$regex": ContentHome.searchValue, "$options": "i" } }, { "$json.summary": { "$regex": ContentHome.searchValue, "$options": "i" } }] }]
-                }, { "$or": [{ "$json.expiresOn": { "$gte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$eq": "" } }] }]
+                }, { "$or": [{ "$json.expiresOn": { "$gte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$eq": "" } }, { "$json.expiresOn": { "$eq": 0 } }] }]
               }
             } else if (ContentHome.data.content.selectedStatus == 'Expired') {
               ContentHome.searchOptionsForItems.filter =
               {
                 "$and": [{
                   "$and": [{ "$or": [{ "$json.title": { "$regex": ContentHome.searchValue, "$options": "i" } }, { "$json.summary": { "$regex": ContentHome.searchValue, "$options": "i" } }] }]
-                }, { "$or": [{ "$json.expiresOn": { "$lte": ContentHome.tommorowDate } }] }]
+                }, { "$and": [{ "$json.expiresOn": { "$lte": ContentHome.tommorowDate } }, { "$json.expiresOn": { "$ne": 0 } }, { "$json.expiresOn": { "$ne": "" } }] }]
               }
             }
           } else if (ContentHome.data.content.selectedFilter && ContentHome.data.content.selectedFilter.id !== 'All Categories') {
@@ -734,7 +733,6 @@
         };
 
         ContentHome.loadMore = function (str) {
-          console.log("------------------>>>>>>>>>>>>>>>>>>>>in", str)
 
           Buildfire.spinner.show();
           if (ContentHome.busyFilter) {
@@ -883,38 +881,10 @@
               });
               ContentHome.busy = false;
               ContentHome.isBusy = false;
-              console.log("-------------------llll", ContentHome.items)
               Buildfire.spinner.hide();
               $scope.$digest();
             });
         };
-
-
-
-        /* *//**
-          * ContentHome.getMore is used to load the items
-          *//*
-  ContentHome.getMore = function () {
-    if (ContentHome.isBusy && !ContentHome.noMore) {
-      return;
-    }
-    // updateSearchOptions();
-    ContentHome.isBusy = true;
-    DataStore.search(searchOptions,TAG_NAMES.COUPON_ITEMS).then(function success(result) {
-      if (result.length <= _limit) {// to indicate there are more
-        ContentHome.noMore = true;
-      }
-      else {
-        result.pop();
-        searchOptions.skip = searchOptions.skip + _limit;
-        ContentHome.noMore = false;
-      }
-      ContentHome.items = ContentHome.items ? ContentHome.items.concat(result) : result;
-      ContentHome.isBusy = false;
-    }, function fail() {
-      ContentHome.isBusy = false;
-    });
-  };*/
 
 
         function validateCsv(items) {
@@ -926,7 +896,6 @@
 
         function asyncProcess(index, cb) {
           cb(index);
-          console.log('completed');
         }
 
         var codeAddress = (function() {
@@ -937,7 +906,6 @@
           return function (address, callback) {
             if (geocoder) setTimeout(geocoder.geocode.bind(geocoder, { 'address': "'" + address + "'" },
               function (results, status) {
-                console.log("GEO CODE STATUS", status, results);
                 if (status == google.maps.GeocoderStatus.OK) {
                   var obj = {
                     lat: results[0].geometry.location.lat(),
@@ -1339,7 +1307,6 @@
          * Go pull any previously saved data
          * */
         var init = function () {
-          console.log('$scope ====================>', $scope)
           var success = function (result) {
             console.info('Init success result:', result);
             ContentHome.data = result.data;
@@ -1364,7 +1331,6 @@
               ContentHome.busy = false;
               ContentHome.data.content.selectedFilter = null;
               ContentHome.data.content.selectedStatus = null;
-              console.log("-------------------llll", ContentHome.data.content);
               RankOfLastFilter.setRank(ContentHome.data.content.rankOfLastFilter || 0);
               RankOfLastItem.setRank(ContentHome.data.content.rankOfLastItem || 0);
             }
