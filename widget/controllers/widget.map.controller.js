@@ -142,9 +142,7 @@
       //Refresh items on pulling the tile bar
 
       buildfire.datastore.onRefresh(function () {
-        WidgetMap.init(function (err) {
-          console.log(">>>>>>Refreshed map");
-        });
+        WidgetMap.init(function (err) {});
       });
 
       /**
@@ -157,7 +155,7 @@
       WidgetMap.getAllItems = function (filter) {
         Buildfire.spinner.show();
         var successAll = function (resultAll) {
-            console.log("GET ALL ITEMS", resultAll);
+
             Buildfire.spinner.hide();
             if (resultAll) {
               resultAll.forEach(function (_item) {
@@ -180,9 +178,8 @@
           },
           errorAll = function (error) {
             Buildfire.spinner.hide();
-            console.log("error getting items", error);
+            console.error(error);
           };
-        console.log("***********", WidgetMap.data.content);
 
         if (WidgetMap.isFilterApplied) {
           var itemFilter;
@@ -192,10 +189,18 @@
               filter: {
                 $and: [
                   {
-                    "$json.expiresOn": { $gte: WidgetMap.yesterdayDate },
+                    "$or": [
+                        {"$json.expiresOn": { $gte: WidgetMap.yesterdayDate }},
+                        {"$json.expiresOn": ""},
+                        {"$json.expiresOn": 0},
+                    ]
                   },
                   {
-                    "$json.startOn": { $lte: WidgetMap.todayDate },
+                    "$or": [
+                        {"$json.startOn": { $lte: WidgetMap.todayDate }},
+                        {"$json.startOn": ""},
+                        {"$json.startOn": 0},
+                    ]
                   },
                   { "$json.location.coordinates": { $exists: true } },
                 ],
@@ -211,10 +216,18 @@
               filter: {
                 $and: [
                   {
-                    "$json.expiresOn": { $gte: WidgetMap.yesterdayDate },
+                    "$or": [
+                        {"$json.expiresOn": { $gte: WidgetMap.yesterdayDate }},
+                        {"$json.expiresOn": ""},
+                        {"$json.expiresOn": 0},
+                    ]
                   },
                   {
-                    "$json.startOn": { $lte: WidgetMap.todayDate },
+                    "$or": [
+                        {"$json.startOn": { $lte: WidgetMap.todayDate }},
+                        {"$json.startOn": ""},
+                        {"$json.startOn": 0},
+                    ]
                   },
                   { "$json.location.coordinates": { $exists: true } },
                 ],
@@ -307,7 +320,6 @@
 
       WidgetMap.showListItems = function () {
         WidgetMap.isFilterApplied = false;
-        console.log("============", WidgetMap.data.design.itemListLayout);
         if (WidgetMap.data.settings.defaultView == "list")
           ViewStack.popAllViews();
         else
@@ -322,10 +334,7 @@
         Buildfire.spinner.show();
         var err = function (error) {
             Buildfire.spinner.hide();
-            console.log(
-              "============ There is an error in getting redeemed coupons data",
-              error
-            );
+            console.error(error);
           },
           result = function (result) {
             Buildfire.spinner.hide();
@@ -391,7 +400,6 @@
             }
           }
         }
-        console.log("IIIIIII", WidgetMap.locationData.items);
         if (isChanged) WidgetMap.refreshData += 1;
         WidgetMap.allItemsFormatted = true;
       };
@@ -419,15 +427,11 @@
         Buildfire.spinner.show();
         var err = function (error) {
             Buildfire.spinner.hide();
-            console.log(
-              "============ There is an error in getting saved items data",
-              error
-            );
+            console.error(error);
           },
           result = function (result) {
             Buildfire.spinner.hide();
             WidgetMap.saved = result;
-            console.log("...................", WidgetMap.saved);
             WidgetMap.setSavedItem();
           };
         UserData.search({}, TAG_NAMES.COUPON_SAVED).then(result, err);
@@ -572,7 +576,6 @@
           };
           var successItem = function (result) {
               Buildfire.spinner.hide();
-              console.log("Inserted", result);
               if (multipleCoupons) {
                 WidgetMap.selectedItem.couponContained[index].isSaved = true;
                 WidgetMap.selectedItem.couponContained[index].savedId =
@@ -655,10 +658,6 @@
             WidgetMap.data.settings.distanceIn
           ).then(
             function (result) {
-              console.log(
-                "WidgetMap.locationData.currentCoordinates",
-                WidgetMap.locationData.currentCoordinates
-              );
 
               var endIndex = WidgetMap.locationData.items.length;
               // var tempItem=_items;
@@ -759,9 +758,7 @@
             //bind on refresh again
 
             buildfire.datastore.onRefresh(function () {
-              WidgetMap.init(function (err) {
-                console.log(">>>>>>Refreshed map");
-              });
+              WidgetMap.init(function (err) {});
             });
           }
         }

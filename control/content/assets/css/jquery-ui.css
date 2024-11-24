@@ -822,7 +822,6 @@ body .ui-tooltip {
 /* Component containers
 ----------------------------------*/
 .ui-widget {
-	font-family:'Muli', Helvetica, Arial !important;
 	font-size: 1em;
 }
 .ui-widget .ui-widget {
@@ -832,7 +831,6 @@ body .ui-tooltip {
 .ui-widget select,
 .ui-widget textarea,
 .ui-widget button {
-	font-family:'Muli', Helvetica, Arial !important;
 	font-size: 1em;
 }
 .ui-widget-content {
@@ -841,7 +839,6 @@ body .ui-tooltip {
 	color: #222222;
 	margin-top:6px;
 	padding:6px;
-	font-family:'Muli', Helvetica, Arial !important;
 }
 .ui-widget-content a {
 	color: #222222;
