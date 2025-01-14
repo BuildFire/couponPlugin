@@ -1,5 +1,5 @@
 
-<div class="holder load-in padding-zero has-bottom sticky-bottom-menu clearfix" ng-controller="WidgetHomeCtrl as WidgetHome" >
+<div class="holder load-in padding-zero has-bottom sticky-bottom-menu clearfix" ng-class="WidgetHome.isFilterApplied?'has-filter':''" ng-controller="WidgetHomeCtrl as WidgetHome" >
 	<div class="scrollable infinite-scroll-parent">
 		<div class="coupon items-layout3 layout3">
       <div id="carousel" ng-if="WidgetHome.data.content.carouselImages.length"
@@ -24,7 +24,7 @@
 							<h5 class="item-title ellipsis">{{item.data.title}}</h5>
               <p class="item-summary margin-zero ellipsis"> {{item.data.summary}}</p>
               <p class="item-date caption margin-zero" ng-if="item.data.expiresOn">Expires {{item.data.expiresOn | date}}</p>
-              <p ng-if="item.redeemedOn" class="item-date caption ellipsis margin-zero" >Redeemed <p ng-if="item.redeemedOn" class="item-date caption ellipsis margin-zero caption-date">{{item.redeemedOn  | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</p></p>							
+              <p ng-if="item.redeemedOn" class="item-date caption ellipsis margin-zero" >Redeemed <p ng-if="item.redeemedOn" class="item-date caption ellipsis margin-zero caption-date">{{item.redeemedOn  | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</p></p>
               <p class="item-date caption" ng-if="!item.data.expiresOn">No expiration date</p>
 
 							<!-- If summary, expires, or distance are empty, show these -->
