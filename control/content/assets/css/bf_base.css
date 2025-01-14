@@ -45,7 +45,6 @@ margin-bottom: .5em;
 }
 .section-title, h1{
   font-size: 1.125rem;
-  font-weight: bold;
   color: var(--c-info);
   padding-top: .875rem;
   margin-bottom: 1.5rem;
