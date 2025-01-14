@@ -490,7 +490,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	padding-bottom: 7vh !important;
 }
 .holder.has-bottom.has-filter{
-	padding-bottom: 8vh !important;
+	padding-bottom: calc(7vh + 23px) !important;
 }
 .holder.has-bottom.has-extra-links,
 .holder.has-bottom.has-extra-links.has-filter{
@@ -518,32 +518,23 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	background: var(--bf-theme-primary);
 }
 
-.holder.has-filter .bottom.fixed-bottom {
-	min-height: 8vh;
-}
 
-html[safe-area="true"] .holder .bottom.fixed-bottom {
+body.has-safe-area .holder .bottom.fixed-bottom {
 	padding-bottom: env(safe-area-inset-bottom) !important;
 	padding-bottom: constant(safe-area-inset-bottom) !important;
-	min-height: calc(7vh + env(safe-area-inset-bottom)) !important;
-	min-height: calc(7vh + constant(safe-area-inset-bottom)) !important;
-}
-html[safe-area="true"] .holder.has-filter .bottom.fixed-bottom {
-	min-height: calc(8vh + env(safe-area-inset-bottom)) !important;
-	min-height: calc(8vh + constant(safe-area-inset-bottom)) !important;
 }
 
-html[safe-area="true"] .holder.has-bottom {
+body.has-safe-area .holder.has-bottom {
 	padding-bottom: calc(env(safe-area-inset-bottom) + 7vh) !important;
 }
-html[safe-area="true"] .holder.has-bottom.has-filter{
-	padding-bottom: calc(env(safe-area-inset-bottom) + 8vh) !important;
+body.has-safe-area .holder.has-bottom.has-filter{
+	padding-bottom: calc(env(safe-area-inset-bottom) + 7vh + 23px) !important;
 }
-html[safe-area="true"] .holder.has-bottom.has-extra-links,
-html[safe-area="true"] .holder.has-bottom.has-extra-links.has-filter{
+body.has-safe-area .holder.has-bottom.has-extra-links,
+body.has-safe-area .holder.has-bottom.has-extra-links.has-filter{
 	padding-bottom: calc(env(safe-area-inset-bottom) + 5.5rem) !important;
 }
-html[safe-area="true"] .holder.has-bottom.has-extra-links.has-filter.map-layout{
+body.has-safe-area .holder.has-bottom.has-extra-links.has-filter.map-layout{
 	padding-bottom: calc(env(safe-area-inset-bottom)) !important;
 }
 
