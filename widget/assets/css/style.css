@@ -540,7 +540,6 @@ body.has-safe-area .holder.has-bottom.has-extra-links.has-filter.map-layout{
 
 .holder .bottom.fixed-bottom .primaryBackgroundTheme{
 	background:#09a3ee;
-	min-height: 46px;
 }
 .holder .bottom.fixed-bottom .defaultBackgroundTheme{
 	background:#000;
