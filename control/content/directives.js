@@ -254,7 +254,7 @@
                                   mapTypeControl: false,
                                   zoom: 15,
                                   mapTypeId: google.maps.MapTypeId.ROADMAP,
-                                  mapId: 'contentMap',
+                                  mapId: buildfire.getContext().apiKeys.mapId || 'bfContentMap',
                               }
                               if (Utils.VersionCheckService()) {
                                   options.cameraControl = false;
@@ -268,18 +268,6 @@
                                   gmpDraggable: true
                               });
 
-                              var styleOptions = {
-                                  name: "Report Error Hide Style"
-                              };
-                              var MAP_STYLE = [
-                                  {
-                                      stylers: [
-                                          {visibility: "on"}
-                                      ]
-                                  }];
-                              var mapType = new google.maps.StyledMapType(MAP_STYLE, styleOptions);
-                              map.mapTypes.set("Report Error Hide Style", mapType);
-                              map.setMapTypeId("Report Error Hide Style");
                           }
                           google.maps.event.addListener(marker, 'dragend', function (event) {
                               scope.coordinates = [event.latLng.lng(), event.latLng.lat()];
