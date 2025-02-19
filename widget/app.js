@@ -168,7 +168,7 @@
                 zoomControlOptions: {
                   position: google.maps.ControlPosition.RIGHT_TOP
                 },
-                mapId: buildfire.getContext().apiKeys.mapId ||'bfMainPageMap'
+                mapId: buildfire.getContext().apiKeys.googleMapId ||'bfMainPageMap'
               });
               var getCustomMarkerIcon = function (_imageUrl) {
                 return {

@@ -254,7 +254,7 @@
                                   mapTypeControl: false,
                                   zoom: 15,
                                   mapTypeId: google.maps.MapTypeId.ROADMAP,
-                                  mapId: buildfire.getContext().apiKeys.mapId || 'bfContentMap',
+                                  mapId: buildfire.getContext().apiKeys.googleMapId || 'bfContentMap',
                               }
                               if (Utils.VersionCheckService()) {
                                   options.cameraControl = false;
