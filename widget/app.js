@@ -168,22 +168,8 @@
                 zoomControlOptions: {
                   position: google.maps.ControlPosition.RIGHT_TOP
                 },
-                mapId:'mainPageMap'
+                mapId: buildfire.getContext().apiKeys.googleMapId ||'bfMainPageMap'
               });
-
-              var styleOptions = {
-                name: "Report Error Hide Style"
-              };
-              var MAP_STYLE = [
-                {
-                  stylers: [
-                    { visibility: "on" }
-                  ]
-                }];
-              var mapType = new google.maps.StyledMapType(MAP_STYLE, styleOptions);
-              map.mapTypes.set("Report Error Hide Style", mapType);
-              map.setMapTypeId("Report Error Hide Style");
-
               var getCustomMarkerIcon = function (_imageUrl) {
                 return {
                   url: _imageUrl,
