@@ -1,0 +1,179 @@
+{
+  "sections": {
+    "general": {
+      "title": "General",
+      "labels": {
+        "enterKeywordsOrPhrase": {
+          "title": "Enter keywords or phrase",
+          "maxLength": 100,
+          "defaultValue": "Enter keywords or phrase"
+        },
+        "clear": {
+          "title": "Clear",
+          "maxLength": 50,
+          "defaultValue": "Clear"
+        },
+        "distance": {
+          "title": "Distance",
+          "maxLength": 50,
+          "defaultValue": "Distance"
+        },
+        "sortingOptions": {
+          "title": "Sorting Options",
+          "maxLength": 50,
+          "defaultValue": "Sorting Options"
+        },
+        "default": {
+          "title": "Default",
+          "maxLength": 50,
+          "defaultValue": "Default"
+        },
+        "closestToMe": {
+          "title": "Closest to Me",
+          "maxLength": 50,
+          "defaultValue": "Closest to Me"
+        },
+        "enableLocationSharing": {
+          "title": "Enable Location sharing to activate Closest to Me.",
+          "maxLength": 150,
+          "defaultValue": "Enable Location sharing to activate Closest to Me."
+        },
+        "categories": {
+          "title": "Categories",
+          "maxLength": 50,
+          "defaultValue": "Categories"
+        },
+        "allItems": {
+          "title": "All Items",
+          "maxLength": 50,
+          "defaultValue": "All Items"
+        },
+        "cancel": {
+          "title": "Cancel",
+          "maxLength": 50,
+          "defaultValue": "Cancel"
+        },
+        "apply": {
+          "title": "Apply",
+          "maxLength": 50,
+          "defaultValue": "Apply"
+        },
+        "reset": {
+          "title": "Reset",
+          "maxLength": 50,
+          "defaultValue": "Reset"
+        },
+        "searchItemNameOrSummary": {
+          "title": "Search item name or summary...",
+          "maxLength": 100,
+          "defaultValue": "Search item name or summary..."
+        },
+        "noCouponsSaved": {
+          "title": "No coupons saved.",
+          "maxLength": 100,
+          "defaultValue": "No coupons saved."
+        },
+        "expires": {
+          "title": "Expires",
+          "maxLength": 50,
+          "defaultValue": "Expires"
+        },
+        "redeemed": {
+          "title": "Redeemed",
+          "maxLength": 50,
+          "defaultValue": "Redeemed"
+        },
+        "list": {
+          "title": "List",
+          "maxLength": 50,
+          "defaultValue": "List"
+        },
+        "map": {
+          "title": "Map",
+          "maxLength": 50,
+          "defaultValue": "Map"
+        },
+        "category": {
+          "title": "Category",
+          "maxLength": 50,
+          "defaultValue": "Category"
+        },
+        "saved": {
+          "title": "Saved",
+          "maxLength": 50,
+          "defaultValue": "Saved"
+        },
+        "openMoreOptions": {
+          "title": "Open More Options",
+          "maxLength": 100,
+          "defaultValue": "Open More Options"
+        },
+        "itemRedeemedTimeago": {
+          "title": "Item redeemed",
+          "maxLength": 100,
+          "defaultValue": "Item redeemed"
+        },
+        "redeemThisItem": {
+          "title": "Redeem this Item",
+          "maxLength": 100,
+          "defaultValue": "Redeem this Item"
+        },
+        "expAbbreviation": {
+          "title": "Exp.",
+          "maxLength": 10,
+          "defaultValue": "Exp."
+        },
+        "close": {
+          "title": "Close",
+          "maxLength": 50,
+          "defaultValue": "Close"
+        },
+        "filterApplied": {
+          "title": "Filter Applied",
+          "maxLength": 50,
+          "defaultValue": "Filter Applied"
+        },
+        "noExpirationDate": {
+          "title": "No expiration date",
+          "maxLength": 50,
+          "defaultValue": "No expiration date"
+        },
+        "filter": {
+          "title": "Filter",
+          "maxLength": 50,
+          "defaultValue": "Filter"
+        },
+        "itemSavedConfirmation": {
+          "title": "Item Saved!",
+          "maxLength": 50,
+          "defaultValue": "Item Saved!"
+        },
+        "itemRedeemedConfirmation": {
+          "title": "Item Redeemed",
+          "maxLength": 50,
+          "defaultValue": "Item Redeemed"
+        },
+        "itemRemovedFromSaved": {
+          "title": "Item removed from saved list",
+          "maxLength": 100,
+          "defaultValue": "Item removed from saved list"
+        },
+        "errorTitle": {
+          "title": "Error",
+          "maxLength": 50,
+          "defaultValue": "Error"
+        },
+        "failedToLoadGoogleMapsApi": {
+          "title": "Failed to load Google Maps API.",
+          "maxLength": 100,
+          "defaultValue": "Failed to load Google Maps API."
+        },
+        "itemNoLongerExists": {
+          "title": "This item no longer exists!",
+          "maxLength": 100,
+          "defaultValue": "This item no longer exists!"
+        }
+      }
+    }
+  }
+}

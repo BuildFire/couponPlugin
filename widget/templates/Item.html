@@ -16,10 +16,10 @@
           <div class="item-actions">
             <div class="coupon-details">
               <p class="caption margin-zero ellipsis"
-                ng-if="WidgetItem.item.data.expiresOn"><i>Expires
+                ng-if="WidgetItem.item.data.expiresOn"><i bfSting="general.expires">Expires
               {{WidgetItem.item.data.expiresOn | date}}</i></p>
               <p class="margin-zero caption ellipsis"
-                ng-if="WidgetItem.item.redeemedOn"><i>Redeemed {{redeemedDateText}}</i></p>
+                ng-if="WidgetItem.item.redeemedOn"><i bfSting="general.redeemed">Redeemed {{redeemedDateText}}</i></p>
             </div>
 
             <img ng-if="WidgetItem.item.data.location.coordinates && WidgetItem.item.data.location.coordinates.lng" src="assets/media/map-icon.png"
@@ -39,7 +39,7 @@
         <div class="padded">
           <div class="text-center" ng-if="WidgetItem.item.data.links.length">
             <a class="text-primary"
-               ng-click="WidgetItem.openLinks(WidgetItem.item.data.links)">Open
+               ng-click="WidgetItem.openLinks(WidgetItem.item.data.links)" bfSting="general.openMoreOptions">Open
               More Options</a>
           </div>
   
@@ -63,12 +63,12 @@
 
   <div class="bottom fixed-bottom transition-third primaryBackgroundTheme">
     <div class=" text-center"  ng-show="showItemRedeemed">
-      <p class="whiteTheme stretch margin-top-ten">Item redeemed
+      <p class="whiteTheme stretch margin-top-ten" bfSting="general.itemRedeemedTimeago">Item redeemed
         {{WidgetItem.item.redeemedOn |timeago}}</p>
     </div>
     <div class=" text-center primaryBackgroundTheme"
          ng-click="WidgetItem.redeemCoupon(WidgetItem.item)" ng-show="showRedeemButton">
-      <p class="whiteTheme stretch margin-top-ten">Redeem this Item</p>
+      <p class="whiteTheme stretch margin-top-ten" bfSting="general.redeemThisItem">Redeem this Item</p>
     </div>
   </div>
 </div>

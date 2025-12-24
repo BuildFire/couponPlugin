@@ -29,11 +29,11 @@
                           {{item.data.summary}}
               </p>
               <p class="caption ellipsis margin-zero bodyTextTheme opacity-seventy">
-                <i ng-if="item.data.expiresOn">Expires {{item.data.expiresOn | date}}</i>
-                <i ng-if="!item.data.expiresOn">No expiration date</i>
+                <i ng-if="item.data.expiresOn" bfSting="general.expires">Expires {{item.data.expiresOn | date}}</i>
+                <i ng-if="!item.data.expiresOn" bfSting="general.noExpirationDate">No expiration date</i>
               </p>
               <p class="caption ellipsis margin-zero bodyTextTheme opacity-seventy">
-                <i ng-if="item.redeemedOn" >Redeemed <i ng-if="item.redeemedOn" class="caption-date">{{item.redeemedOn  | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</i></i>
+                <i ng-if="item.redeemedOn" bfSting="general.redeemed">Redeemed <i ng-if="item.redeemedOn" class="caption-date">{{item.redeemedOn  | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</i></i>
               </p>
               <p class="caption ellipsis margin-zero bodyTextTheme opacity-seventy">
                 <i>{{item.data.distanceText}}</i>
@@ -54,19 +54,19 @@
        ng-if="WidgetHome.data.settings.mapView == 'show' && WidgetHome.data.settings.filterPage == 'show'">
     <div
         class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme" ng-if="WidgetHome.isFilterApplied">
-      <span class="whiteTheme small">Filter Applied</span>
+      <span class="whiteTheme small" bfSting="general.filterApplied">Filter Applied</span>
     </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch active">List</a>
+      <a class="whiteTheme stretch active" bfSting="general.list">List</a>
     </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetHome.showMapView()">Map</a>
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showMapView()" bfSting="general.map">Map</a>
     </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetHome.showFilter()">Category</a>
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showFilter()" bfSting="general.category">Category</a>
     </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()">Saved
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()" bfSting="general.saved">Saved
       </a>
     </div>
   </div>
@@ -76,16 +76,16 @@
        ng-if="WidgetHome.data.settings.mapView == 'hide' && WidgetHome.data.settings.filterPage == 'show'">
     <div
         class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme" ng-if="WidgetHome.isFilterApplied">
-      <span class="whiteTheme small">Filter Applied</span>
+      <span class="whiteTheme small" bfSting="general.filterApplied">Filter Applied</span>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch active">List</a>
+      <a class="whiteTheme stretch active" bfSting="general.list">List</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetHome.showFilter()">Category</a>
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showFilter()" bfSting="general.category">Category</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()">Saved</a>
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()" bfSting="general.saved">Saved</a>
     </div>
   </div>
 
@@ -94,16 +94,16 @@
        ng-if="WidgetHome.data.settings.filterPage == 'hide' && WidgetHome.data.settings.mapView == 'show'">
     <div
         class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme" ng-if="WidgetHome.isFilterApplied">
-      <span class="whiteTheme small">Filter Applied</span>
+      <span class="whiteTheme small" bfSting="general.filterApplied">Filter Applied</span>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch active">List</a>
+      <a class="whiteTheme stretch active" bfSting="general.list">List</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetHome.showMapView()">Map</a>
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showMapView()" bfSting="general.map">Map</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()">Saved</a>
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()" bfSting="general.saved">Saved</a>
     </div>
   </div>
 
@@ -112,13 +112,13 @@
        ng-if="WidgetHome.data.settings.filterPage == 'hide' && WidgetHome.data.settings.mapView == 'hide'">
     <div
         class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme" ng-if="WidgetHome.isFilterApplied">
-      <span class="whiteTheme small">Filter Applied</span>
+      <span class="whiteTheme small" bfSting="general.filterApplied">Filter Applied</span>
     </div>
     <div class="col-xs-6 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch active">List</a>
+      <a class="whiteTheme stretch active" bfSting="general.list">List</a>
     </div>
     <div class="col-xs-6 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()">Saved</a>
+      <a class="whiteTheme stretch" ng-click="WidgetHome.showSavedItems()" bfSting="general.saved">Saved</a>
     </div>
   </div>
 </div>

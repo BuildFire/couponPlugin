@@ -4,8 +4,8 @@
     <div class="coupon saved-items-layout">
 
       <div class="form-holder search-holder backgroundColorTheme">
-        <input type="text" class="border-none form-control bodyTextTheme has-clear keyword" placeholder="Search item name or summary..." ng-model="WidgetSaved.keyword">
-        <span class="clear-icon text-danger" ng-if="WidgetSaved.keyword" ng-click="WidgetSaved.clearSearchResult()">Clear</span>
+        <input type="text" class="border-none form-control bodyTextTheme has-clear keyword" placeholder="Search item name or summary..." ng-model="WidgetSaved.keyword" bfSting="general.searchItemNameOrSummary">
+        <span class="clear-icon text-danger" ng-if="WidgetSaved.keyword" ng-click="WidgetSaved.clearSearchResult()" bfSting="general.clear">Clear</span>
       </div>
       
       <div class="list-layout search-list" infinite-scroll="WidgetSaved.loadMore()"
@@ -14,7 +14,7 @@
       infinite-scroll-disabled="WidgetSaved.busy">
   
         <div class="text-center no-results hidde" ng-if="!WidgetSaved.hasAtleastOneSaved">
-          <p class="margin-top-ten">No coupons saved.</p>
+          <p class="margin-top-ten" bfSting="general.noCouponsSaved">No coupons saved.</p>
         </div>
       
         <div class="list-item" ng-if="item.isSaved" ng-repeat="item in WidgetSaved.items">
@@ -32,10 +32,10 @@
                 </p>
                 <p
                     class="caption ellipsis margin-zero bodyTextTheme opacity-seventy" ng-if="item.data.expiresOn">
-                  <i>Expires {{item.data.expiresOn | date}}</i>
+                  <i bfSting="general.expires">Expires {{item.data.expiresOn | date}}</i>
                 </p>
                 <p  class="caption ellipsis margin-zero bodyTextTheme opacity-seventy" ng-if="item.redeemedOn" >
-                  <i>Redeemed {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</i>
+                  <i bfSting="general.redeemed">Redeemed {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</i>
                 </p>
                 <p class="caption ellipsis margin-zero bodyTextTheme opacity-seventy">
                   <i>{{item.data.distanceText}}</i>
@@ -58,16 +58,16 @@
       <span class="whiteTheme small">Filter Applied</span>
     </div>-->
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetSaved.showListItems()">List</a>
+      <a class="whiteTheme stretch" ng-click="WidgetSaved.showListItems()" bfSting="general.list">List</a>
     </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetSaved.showMapView()">Map</a>
+      <a class="whiteTheme stretch" ng-click="WidgetSaved.showMapView()" bfSting="general.map">Map</a>
     </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetSaved.showFilter()">Category</a>
+      <a class="whiteTheme stretch" ng-click="WidgetSaved.showFilter()" bfSting="general.category">Category</a>
     </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch active">Saved
+      <a class="whiteTheme stretch active" bfSting="general.saved">Saved
       </a>
     </div>
   </div>
@@ -79,13 +79,13 @@
       <span class="whiteTheme small">Filter Applied</span>
     </div>-->
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch active" ng-click="WidgetSaved.showListItems()">List</a>
+      <a class="whiteTheme stretch active" ng-click="WidgetSaved.showListItems()" bfSting="general.list">List</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetSaved.showFilter()">Category</a>
+      <a class="whiteTheme stretch" ng-click="WidgetSaved.showFilter()" bfSting="general.category">Category</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch active">Saved</a>
+      <a class="whiteTheme stretch active" bfSting="general.saved">Saved</a>
     </div>
   </div>
 
@@ -93,13 +93,13 @@
   <div class="bottom fixed-bottom" ng-class="WidgetSaved.navbarEnabled ? '' : 'primaryBackgroundTheme'"
        ng-if="WidgetSaved.data.settings.filterPage == 'hide'">
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetSaved.showListItems()">List</a>
+      <a class="whiteTheme stretch" ng-click="WidgetSaved.showListItems()" bfSting="general.list">List</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetSaved.showMapView()">Map</a>
+      <a class="whiteTheme stretch" ng-click="WidgetSaved.showMapView()" bfSting="general.map">Map</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch active">Saved</a>
+      <a class="whiteTheme stretch active" bfSting="general.saved">Saved</a>
     </div>
   </div>
 
@@ -107,10 +107,10 @@
   <div class="bottom fixed-bottom" ng-class="WidgetSaved.navbarEnabled ? '' : 'primaryBackgroundTheme'"
        ng-if="WidgetSaved.data.settings.filterPage == 'hide' && WidgetSaved.data.settings.mapView == 'hide'">
     <div class="col-xs-6 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetSaved.showListItems()">List</a>
+      <a class="whiteTheme stretch" ng-click="WidgetSaved.showListItems()" bfSting="general.list">List</a>
     </div>
     <div class="col-xs-6 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch active">Saved</a>
+      <a class="whiteTheme stretch active" bfSting="general.saved">Saved</a>
     </div>
   </div>
 </div>
