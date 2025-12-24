@@ -39,7 +39,7 @@
                 }
                 ViewStack.pop();
                 buildfire.dialog.toast({
-                  message: "This item no longer exists!"
+                  message: getString('general.itemNoLongerExists')
                 })
               }
             callback();
@@ -384,7 +384,7 @@
         };
         $scope.getRedeemedDateText=function(){
           var redeemedDate = new Date(WidgetItem.item.redeemedOn);
-          $scope.redeemedDateText =redeemedDate.toDateString() +" at "+redeemedDate.getHours()+":";
+          $scope.redeemedDateText =redeemedDate.toDateString() +" "+ getString('general.at') +" "+redeemedDate.getHours()+":";
           // add missing 0 in case minutes is 1 digit
           if(redeemedDate.getMinutes().toString().length == 1){
             $scope.redeemedDateText += `0${redeemedDate.getMinutes()}`

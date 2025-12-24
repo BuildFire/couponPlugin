@@ -555,7 +555,7 @@
         $scope.getRedeemedDateText=function(item){
           if(item && item.redeemedOn) {
             var redeemedDate = new Date(item.redeemedOn);
-            return "Redeemed  "+ redeemedDate.toDateString() + " at " + redeemedDate.getHours() + ":" + redeemedDate.getMinutes();
+            return getString('general.redeemed') + " " + redeemedDate.toDateString() + " " + getString('general.at') + " " + redeemedDate.getHours() + ":" + redeemedDate.getMinutes();
           }
           else
             return "";

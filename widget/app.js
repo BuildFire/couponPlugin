@@ -294,8 +294,8 @@
         };
         window.gm_authFailure = () => {
           buildfire.dialog.alert({
-            title: 'Error',
-            message: 'Failed to load Google Maps API.',
+            title: getString('general.errorTitle'),
+            message: getString('general.failedToLoadGoogleMapsApi'),
           });
           deferred.resolve();
         };
@@ -305,6 +305,7 @@
       };
     }])
     .run(['ViewStack', '$rootScope', 'ScriptLoaderService', function (ViewStack, $rootScope, ScriptLoaderService) {
+      $rootScope.getString = getString;
       buildfire.history.onPop(function () {
         if (ViewStack.hasViews()) {
           if (ViewStack.getCurrentView().template == 'Item') {
@@ -362,8 +363,8 @@
           })
           .catch(() => {
             buildfire.dialog.alert({
-              title: 'Error',
-              message: 'Failed to load Google Maps API.',
+              title: getString('general.errorTitle'),
+              message: getString('general.failedToLoadGoogleMapsApi'),
             });
           });
       };
@@ -379,7 +380,15 @@
         }
       };
 
-      initGoogleMapsSDK();
-      applySafeAreaStyles();
+      initLanguageStrings()
+        .then(() => {
+          initGoogleMapsSDK();
+          applySafeAreaStyles();
+        })
+        .catch((error) => {
+          console.error('Error loading language strings', error);
+          initGoogleMapsSDK();
+          applySafeAreaStyles();
+        });
     }])
 })(window.angular, window.buildfire, window);

@@ -158,6 +158,11 @@
           "maxLength": 100,
           "defaultValue": "Item removed from saved list"
         },
+        "at": {
+          "title": "At",
+          "maxLength": 10,
+          "defaultValue": "at"
+        },
         "errorTitle": {
           "title": "Error",
           "maxLength": 50,
