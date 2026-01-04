@@ -33,7 +33,8 @@ const stringKey = [
   'general.at',
   'general.errorTitle',
   'general.failedToLoadGoogleMapsApi',
-  'general.itemNoLongerExists'
+  'general.itemNoLongerExists',
+  'general.away'
 ];
 
 const stringsKeys = stringKey.reduce((acc, key) => {
