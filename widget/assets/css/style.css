@@ -1,7 +1,12 @@
 /* Global Styles ////////////////////////////////////////////////////////////////////////////// */
 html{
 	font-size: 16px !important;
+
 }
+.body.no-scroll .scrollable {
+	padding-bottom: var(--bf-safe-area-inset-bottom) !important;
+}
+
 .caption {
 	font-size: .75rem;
 	line-height: 1.25rem;
@@ -61,7 +66,7 @@ h5{
 	}
 }
 .bottom.fixed-bottom.primaryBackgroundTheme{
-	padding-bottom: env(safe-area-inset-bottom);
+	padding-bottom: var(--bf-safe-area-inset-bottom);
 }
 .plugin-slider .plugin-slide,
 .plugin-slider.owl-carousel .owl-stage-outer,
@@ -243,6 +248,7 @@ h5{
 .coupon-item .item-actions{
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
 }
 .coupon-item .item-actions img{
 	margin-left: auto;
@@ -262,7 +268,7 @@ h5{
 .saved-items-layout .list-item,
 .map-items .list-item{
 	display: flex;
-	padding: .75rem .5rem .75rem .75rem;
+	padding: 1.5rem .5rem .75rem .75rem;
 	align-items: center;
 }
 .saved-items-layout .list-item .list-media-holder,
@@ -311,7 +317,7 @@ h5{
 	border-radius: .25rem;
 	align-items: center;
 	position: fixed;
-	top: 0;
+	top: var(--bf-safe-area-inset-top);
 	left: 0;
 	width: calc(100% - 1.5rem);
 	box-shadow: 0 0.05rem 0.25rem rgba(135, 135, 135, 0.2);
@@ -394,6 +400,9 @@ h5{
 }
 
 /* List Layout Grids */
+.list-layout {
+	padding-top: calc(40px + var(--bf-safe-area-inset-top)) !important;
+}
 .list-layout .list-item-media{
 
 	left:0;
@@ -516,26 +525,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	min-height: 7vh;
 	height: fit-content;
 	background: var(--bf-theme-primary);
-}
-
-
-body.has-safe-area .holder .bottom.fixed-bottom {
-	padding-bottom: env(safe-area-inset-bottom) !important;
-	padding-bottom: constant(safe-area-inset-bottom) !important;
-}
-
-body.has-safe-area .holder.has-bottom {
-	padding-bottom: calc(env(safe-area-inset-bottom) + 7vh) !important;
-}
-body.has-safe-area .holder.has-bottom.has-filter{
-	padding-bottom: calc(env(safe-area-inset-bottom) + 7vh + 23px) !important;
-}
-body.has-safe-area .holder.has-bottom.has-extra-links,
-body.has-safe-area .holder.has-bottom.has-extra-links.has-filter{
-	padding-bottom: calc(env(safe-area-inset-bottom) + 5.5rem) !important;
-}
-body.has-safe-area .holder.has-bottom.has-extra-links.has-filter.map-layout{
-	padding-bottom: calc(env(safe-area-inset-bottom)) !important;
+	overflow: hidden;
 }
 
 .holder .bottom.fixed-bottom .primaryBackgroundTheme{
@@ -591,6 +581,9 @@ body.has-safe-area .holder.has-bottom.has-extra-links.has-filter.map-layout{
 	font-size:14px;
 	text-decoration:none;
 	z-index:9;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .holder .bottom div a.active{
@@ -618,6 +611,10 @@ body.has-safe-area .holder.has-bottom.has-extra-links.has-filter.map-layout{
 }
 
 /* Custom */
+.coupon {
+	padding-top: var(--bf-safe-area-inset-top);
+	padding-bottom: var(--bf-safe-area-inset-bottom);
+}
 .coupon .list-item-copy p.small{
 	font-size:11px;
 	line-height:15px;
@@ -752,7 +749,7 @@ body.has-safe-area .holder.has-bottom.has-extra-links.has-filter.map-layout{
 /* Map Layout */
 .map-layout .overlay-list{
 	position:absolute;
-	top:-245px;
+	top: calc( -250px - var(--bf-safe-area-inset-top)) !important;
 	left:0;
 	width:100%;
 	background:#fff;
@@ -919,7 +916,6 @@ html[buildfire='widget'] .modal {
 	background:#eef0f0;
 }
 
-body.has-safe-area #googleMap{
-	height: calc(100vh - 32px - env(safe-area-inset-bottom) ) !important ;
-	height: calc(100vh - 32px - constant(safe-area-inset-bottom)) !important;
+body #googleMap{
+		height: calc(100vh - 32px - var(--bf-safe-area-inset-bottom)) !important;
 }
