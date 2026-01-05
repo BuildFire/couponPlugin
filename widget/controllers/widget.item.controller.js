@@ -39,7 +39,7 @@
                 }
                 ViewStack.pop();
                 buildfire.dialog.toast({
-                  message: getString('general.itemNoLongerExists')
+                  message: getString('confirmations.itemNoLongerExists')
                 })
               }
             callback();
