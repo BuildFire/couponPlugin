@@ -1,4 +1,4 @@
-
+const defaultStrings = {};
 const getString = (key) => {
   return stringsKeys[key] || defaultValues[key];
 };

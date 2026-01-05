@@ -111,11 +111,6 @@
         }
       }
     },
-    "listScreen": {
-      "title": "List Screen",
-      "labels": {
-      }
-    },
     "mapScreen": {
       "title": "Map Screen",
       "labels": {
