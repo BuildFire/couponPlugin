@@ -330,8 +330,8 @@ h5{
 	color: inherit !important;
 	opacity: .5;
 }
-.search-list{
-	padding-top: 3.75rem;
+.list-layout.search-list{
+	padding-top: 3.75rem !important
 }
 .no-results{
 	padding: 30vh 1rem;
@@ -917,5 +917,5 @@ html[buildfire='widget'] .modal {
 }
 
 body #googleMap{
-		height: calc(100vh - 32px - var(--bf-safe-area-inset-bottom)) !important;
+	height: calc(100vh - 32px - var(--bf-safe-area-inset-bottom)) !important;
 }
