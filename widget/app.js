@@ -294,7 +294,7 @@
         };
         window.gm_authFailure = () => {
           buildfire.dialog.alert({
-            title: getString('general.errorTitle'),
+            title: 'Error',
             message: getString('general.failedToLoadGoogleMapsApi'),
           });
           deferred.resolve();
@@ -363,7 +363,7 @@
           })
           .catch(() => {
             buildfire.dialog.alert({
-              title: getString('general.errorTitle'),
+              title: 'Error',
               message: getString('general.failedToLoadGoogleMapsApi'),
             });
           });

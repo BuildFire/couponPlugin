@@ -39,7 +39,7 @@
         <div class="padded">
           <div class="text-center" ng-if="WidgetItem.item.data.links.length">
             <a class="text-primary"
-               ng-click="WidgetItem.openLinks(WidgetItem.item.data.links)">{{getString('general.openMoreOptions')}}</a>
+               ng-click="WidgetItem.openLinks(WidgetItem.item.data.links)">{{getString('itemDetails.openMoreOptions')}}</a>
           </div>
   
           <div class="redeem-photo text-center margin-top-five margin-bottom-ten" ng-if="WidgetItem.item.data.preRedemptionImage && showRedeemButton">
@@ -62,12 +62,12 @@
 
   <div class="bottom fixed-bottom transition-third primaryBackgroundTheme">
     <div class=" text-center"  ng-show="showItemRedeemed">
-      <p class="whiteTheme stretch margin-top-ten">{{getString('general.itemRedeemedTimeago')}}
+      <p class="whiteTheme stretch margin-top-ten">{{getString('itemDetails.itemRedeemedTimeago')}}
         {{WidgetItem.item.redeemedOn |timeago}}</p>
     </div>
     <div class=" text-center primaryBackgroundTheme"
          ng-click="WidgetItem.redeemCoupon(WidgetItem.item)" ng-show="showRedeemButton">
-      <p class="whiteTheme stretch margin-top-ten">{{getString('general.redeemThisItem')}}</p>
+      <p class="whiteTheme stretch margin-top-ten">{{getString('itemDetails.redeemThisItem')}}</p>
     </div>
   </div>
 </div>

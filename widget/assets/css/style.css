@@ -749,7 +749,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 /* Map Layout */
 .map-layout .overlay-list{
 	position:absolute;
-	top: calc( -250px - var(--bf-safe-area-inset-top)) !important;
+	top: calc( -250px - var(--bf-safe-area-inset-top));
 	left:0;
 	width:100%;
 	background:#fff;
@@ -869,6 +869,8 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 .filter .toggle-btns{
 	border:1px solid rgba(155,155,155,.2);
+	display: flex;
+	align-items: center;
 }
 .holder .toggle-btns a{
 	padding:6px 8px 4px;
