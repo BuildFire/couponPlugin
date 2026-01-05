@@ -16,25 +16,10 @@ const getLanguage = (key) => {
 };
 
 const initLanguageStrings = () => {
-  return new Promise((resolve, reject) => {
-    fetch("../resources/languages.json")
-      .then((res) => res.json())
-      .then((data) => {
-        const sections = data.sections;
-        for (const sectionKey in sections) {
-          const labels = sections[sectionKey].labels;
-          for (const labelKey in labels) {
-            defaultStrings[`${sectionKey}.${labelKey}`] = labels[labelKey].defaultValue;
-          }
-        }
+    return new Promise((resolve, reject) => {
         const arr = Object.keys(stringsKeys).map((el) => getLanguage(el));
-        return Promise.all(arr);
-      })
-      .then((values) => resolve(values))
-      .catch((error) => {
-        console.error("Error initializing language strings:", error);
-        const arr = Object.keys(stringsKeys).map((el) => getLanguage(el));
-        Promise.all(arr).then(resolve).catch(reject);
-      });
-  });
+        Promise.all(arr)
+            .then((values) => resolve(values))
+            .catch((error) => reject(error));
+    });
 };
