@@ -1,8 +1,8 @@
 'use strict';
 
-var catalyst = angular.module('ngtimeago', []);
+var couponFilters = angular.module('couponFilters', []);
 
-catalyst.filter('timeago', function() {
+couponFilters.filter('timeago', function() {
   return function(input) {
     if (!input) return '';
 

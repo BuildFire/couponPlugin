@@ -1,7 +1,7 @@
 'use strict';
 
 (function (angular, buildfire, window) {
-  angular.module('couponPluginWidget', ['ui.bootstrap', 'ngAnimate', 'infinite-scroll', 'ngtimeago', 'rzModule'])
+  angular.module('couponPluginWidget', ['ui.bootstrap', 'ngAnimate', 'infinite-scroll', 'couponFilters', 'rzModule'])
     .config(['$compileProvider', function ($compileProvider) {
 
       /**
