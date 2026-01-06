@@ -15,11 +15,8 @@ catalyst.filter('timeago', function() {
     const diffInSeconds = (date - now) / 1000;
     const absSeconds = Math.abs(diffInSeconds);
 
-    if (absSeconds < 60) {
-      return lang.startsWith('ar') ? 'قبل لحظات' : 'just now';
-    }
-
     const units = [
+      { limit: 60, name: 'second', divisor: 1 },
       { limit: 3600, name: 'minute', divisor: 60 },
       { limit: 86400, name: 'hour', divisor: 3600 },
       { limit: 604800, name: 'day', divisor: 86400 },
