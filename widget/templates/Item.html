@@ -16,10 +16,10 @@
           <div class="item-actions">
             <div class="coupon-details">
               <p class="caption margin-zero ellipsis"
-                ng-if="WidgetItem.item.data.expiresOn"><i>Expires
+                ng-if="WidgetItem.item.data.expiresOn"><i>{{getString('general.expires')}}
               {{WidgetItem.item.data.expiresOn | date}}</i></p>
               <p class="margin-zero caption ellipsis"
-                ng-if="WidgetItem.item.redeemedOn"><i>Redeemed {{redeemedDateText}}</i></p>
+                ng-if="WidgetItem.item.redeemedOn"><i>{{getString('general.redeemed')}} {{redeemedDateText}}</i></p>
             </div>
 
             <img ng-if="WidgetItem.item.data.location.coordinates && WidgetItem.item.data.location.coordinates.lng" src="assets/media/map-icon.png"
@@ -39,8 +39,7 @@
         <div class="padded">
           <div class="text-center" ng-if="WidgetItem.item.data.links.length">
             <a class="text-primary"
-               ng-click="WidgetItem.openLinks(WidgetItem.item.data.links)">Open
-              More Options</a>
+               ng-click="WidgetItem.openLinks(WidgetItem.item.data.links)">{{getString('itemDetails.openMoreOptions')}}</a>
           </div>
   
           <div class="redeem-photo text-center margin-top-five margin-bottom-ten" ng-if="WidgetItem.item.data.preRedemptionImage && showRedeemButton">
@@ -63,12 +62,12 @@
 
   <div class="bottom fixed-bottom transition-third primaryBackgroundTheme">
     <div class=" text-center"  ng-show="showItemRedeemed">
-      <p class="whiteTheme stretch margin-top-ten">Item redeemed
+      <p class="whiteTheme stretch margin-top-ten">{{getString('itemDetails.itemRedeemedTimeago')}}
         {{WidgetItem.item.redeemedOn |timeago}}</p>
     </div>
     <div class=" text-center primaryBackgroundTheme"
          ng-click="WidgetItem.redeemCoupon(WidgetItem.item)" ng-show="showRedeemButton">
-      <p class="whiteTheme stretch margin-top-ten">Redeem this Item</p>
+      <p class="whiteTheme stretch margin-top-ten">{{getString('itemDetails.redeemThisItem')}}</p>
     </div>
   </div>
 </div>

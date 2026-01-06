@@ -1,7 +1,7 @@
 'use strict';
 
 (function (angular, buildfire, window) {
-  angular.module('couponPluginWidget', ['ui.bootstrap', 'ngAnimate', 'infinite-scroll', 'ngtimeago', 'rzModule'])
+  angular.module('couponPluginWidget', ['ui.bootstrap', 'ngAnimate', 'infinite-scroll', 'couponFilters', 'rzModule'])
     .config(['$compileProvider', function ($compileProvider) {
 
       /**
@@ -294,8 +294,8 @@
         };
         window.gm_authFailure = () => {
           buildfire.dialog.alert({
-            title: 'Error',
-            message: 'Failed to load Google Maps API.',
+            title: getString('errors.errorTitle'),
+            message: getString('errors.failedToLoadGoogleMapsApi'),
           });
           deferred.resolve();
         };
@@ -305,6 +305,7 @@
       };
     }])
     .run(['ViewStack', '$rootScope', 'ScriptLoaderService', function (ViewStack, $rootScope, ScriptLoaderService) {
+      $rootScope.getString = getString;
       buildfire.history.onPop(function () {
         if (ViewStack.hasViews()) {
           if (ViewStack.getCurrentView().template == 'Item') {
@@ -362,24 +363,19 @@
           })
           .catch(() => {
             buildfire.dialog.alert({
-              title: 'Error',
-              message: 'Failed to load Google Maps API.',
+              title: getString('errors.errorTitle'),
+              message: getString('errors.failedToLoadGoogleMapsApi'),
             });
           });
       };
-      const applySafeAreaStyles = () => {
-        const { navbarEnabled } = buildfire.getContext();
-        const rootElement = document.querySelector('html');
-        const isSafeAreaEnabled = rootElement.getAttribute('safe-area') === 'true';
-        if (isSafeAreaEnabled) {
-          if (!navbarEnabled) {
-            const body = document.querySelector('body');
-            body.classList.add('has-safe-area');
-          }
-        }
-      };
 
-      initGoogleMapsSDK();
-      applySafeAreaStyles();
+      initLanguageStrings()
+        .then(() => {
+          initGoogleMapsSDK();
+        })
+        .catch((error) => {
+          console.error('Error loading language strings', error);
+          initGoogleMapsSDK();
+        });
     }])
 })(window.angular, window.buildfire, window);

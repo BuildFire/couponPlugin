@@ -555,7 +555,7 @@
         $scope.getRedeemedDateText=function(item){
           if(item && item.redeemedOn) {
             var redeemedDate = new Date(item.redeemedOn);
-            return "Redeemed  "+ redeemedDate.toDateString() + " at " + redeemedDate.getHours() + ":" + redeemedDate.getMinutes();
+            return getString('general.redeemed') + " " + redeemedDate.toDateString() + " " + getString('general.at') + " " + redeemedDate.getHours() + ":" + redeemedDate.getMinutes();
           }
           else
             return "";
@@ -671,7 +671,7 @@
               for (var _ind = 0; _ind < endIndex; _ind++) {
                 if (_items && _items[_ind]) {
 
-                  _items[_ind].data.distanceText = (result.rows[0].elements[_ind].status != 'OK') ? '' : result.rows[0].elements[_ind].distance.text + ' away';
+                  _items[_ind].data.distanceText = (result.rows[0].elements[_ind].status != 'OK') ? '' : result.rows[0].elements[_ind].distance.text + ' ' + getString('general.away');
                   _items[_ind].data.distance = (result.rows[0].elements[_ind].status != 'OK') ? -1 : result.rows[0].elements[_ind].distance.value;
 
                     if (WidgetHome.isFilterApplied && WidgetHome.filter.distanceRange) {

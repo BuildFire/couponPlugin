@@ -3,13 +3,13 @@
   <div class="scrollable">
     <div class="coupon filter layout3">
       <div class="form-holder search-holder backgroundColorTheme">
-        <input type="text" class="border-none form-control has-clear keyword" placeholder="Enter keywords or phrase" ng-model="WidgetFilter.filter.text">
-        <span class="clear-icon text-danger" ng-if="WidgetFilter.filter.text" ng-click="WidgetFilter.filter.text=''">Clear</span>
+        <input type="text" class="border-none form-control has-clear keyword" placeholder="{{getString('categories.enterKeywordsOrPhrase')}}" ng-model="WidgetFilter.filter.text">
+        <span class="clear-icon text-danger" ng-if="WidgetFilter.filter.text" ng-click="WidgetFilter.filter.text=''">{{getString('general.clear')}}</span>
         <hr class="small margin-zero">
       </div>
       <div class="filters search-list">
         <div class="item active distance padded">
-          <h5>Distance</h5>
+          <h5>{{getString('categories.distance')}}</h5>
           <div class="filter-content distance padding-left-ten padding-right-ten">
             <rzslider ng-if="WidgetFilter.distanceSlider" rz-slider-tpl-url="templates/Slider-Template.html"
                       rz-slider-floor="WidgetFilter.distanceSlider.floor"
@@ -23,42 +23,40 @@
           </div>
         </div>
         <div class="item active sorting padded">
-          <h5>Sorting Options</h5>
+          <h5>{{getString('categories.sortingOptions')}}</h5>
           <div class="filter-content">
             <div class="toggle-btns border-radius-four overflow-hidden">
               <div ng-click="WidgetFilter.filter.sortOnClosest = false"
                    class="col-xs-6 padding-zero text-center"
                    ng-class="WidgetFilter.filter.sortOnClosest ? '' : 'primaryBackgroundTheme'">
-                <a ng-class="WidgetFilter.filter.sortOnClosest ? '' : 'whiteTheme'">Default</a>
+                <a ng-class="WidgetFilter.filter.sortOnClosest ? '' : 'whiteTheme'">{{getString('categories.default')}}</a>
               </div>
               <div ng-hide="WidgetFilter.locationData.currentCoordinates == null"
                    ng-class="!WidgetFilter.filter.sortOnClosest ? '' : 'primaryBackgroundTheme'"
                    ng-class="WidgetFilter.filter.sortOnClosest ? '' : 'active'"
                    ng-click="WidgetFilter.filter.sortOnClosest = true" class="col-xs-6 padding-zero text-center">
-                <a ng-class="WidgetFilter.filter.sortOnClosest ? 'whiteTheme' : ''">Closest to Me</a>
+                <a ng-class="WidgetFilter.filter.sortOnClosest ? 'whiteTheme' : ''">{{getString('categories.closestToMe')}}</a>
               </div>
               <div ng-show="WidgetFilter.locationData.currentCoordinates == null"
                    class="col-xs-6 padding-zero text-center">
-                <a class="opacity-forty" ng-class="WidgetFilter.filter.sortOnClosest ? 'active' : ''">Closest to
-                  Me</a>
+                <a class="opacity-forty" ng-class="WidgetFilter.filter.sortOnClosest ? 'active' : ''">{{getString('categories.closestToMe')}}</a>
               </div>
             </div>
             <p class="location-share-msg margin-bottom-zero margin-top-twenty padding-bottom-zero"
                ng-if="WidgetFilter.locationData.currentCoordinates == null">
-              Enable Location sharing to activate Closest to Me.
+              <span>{{getString('categories.enableLocationSharing')}}</span>
             </p>
           </div>
         </div>
         <hr class="small">
         <div class="item active" ng-if="WidgetFilter.categories.length">
           <div class="padded">
-            <h5 class="margin-zero">Categories</h5>
+            <h5 class="margin-zero">{{getString('categories.categories')}}</h5>
           </div>
           <div class="filter-content">
             <p class="margin-zero checklist-item"
                ng-class="WidgetFilter.allSelected?'text-primary':''"
-               ng-click="WidgetFilter.setCategories('ALL', true)">All
-              Items</p>
+               ng-click="WidgetFilter.setCategories('ALL', true)">{{getString('categories.allItems')}}</p>
             <span ng-repeat="category in WidgetFilter.categories">
 						<p class="margin-zero checklist-item" ng-class="category.isSelected?'text-primary':''"
                ng-click="WidgetFilter.setCategories(category, false, $index)">{{category.data.title}}</p>
@@ -70,15 +68,15 @@
   </div>
   <div class="bottom fixed-bottom" ng-class="WidgetFilter.navbarEnabled ? '' : 'primaryBackgroundTheme'">
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetFilter.back()">Cancel</a>
+      <a class="whiteTheme stretch" ng-click="WidgetFilter.back()">{{getString('categories.cancel')}}</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch active" ng-click="WidgetFilter.applyFilter()">
-        Apply</a>
+        {{getString('categories.apply')}}</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
       <a class="whiteTheme stretch" ng-click="WidgetFilter.resetFilters()">
-        Reset</a>
+        {{getString('categories.reset')}}</a>
     </div>
   </div>
 </div>

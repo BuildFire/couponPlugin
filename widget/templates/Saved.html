@@ -4,8 +4,8 @@
     <div class="coupon saved-items-layout">
 
       <div class="form-holder search-holder backgroundColorTheme">
-        <input type="text" class="border-none form-control bodyTextTheme has-clear keyword" placeholder="Search item name or summary..." ng-model="WidgetSaved.keyword">
-        <span class="clear-icon text-danger" ng-if="WidgetSaved.keyword" ng-click="WidgetSaved.clearSearchResult()">Clear</span>
+        <input type="text" class="border-none form-control bodyTextTheme has-clear keyword" placeholder="{{getString('savedScreen.searchItemNameOrSummary')}}" ng-model="WidgetSaved.keyword">
+        <span class="clear-icon text-danger" ng-if="WidgetSaved.keyword" ng-click="WidgetSaved.clearSearchResult()">{{getString('general.clear')}}</span>
       </div>
       
       <div class="list-layout search-list" infinite-scroll="WidgetSaved.loadMore()"
@@ -14,7 +14,7 @@
       infinite-scroll-disabled="WidgetSaved.busy">
   
         <div class="text-center no-results hidde" ng-if="!WidgetSaved.hasAtleastOneSaved">
-          <p class="margin-top-ten">No coupons saved.</p>
+          <p class="margin-top-ten">{{getString('savedScreen.noCouponsSaved')}}</p>
         </div>
       
         <div class="list-item" ng-if="item.isSaved" ng-repeat="item in WidgetSaved.items">
@@ -32,10 +32,10 @@
                 </p>
                 <p
                     class="caption ellipsis margin-zero bodyTextTheme opacity-seventy" ng-if="item.data.expiresOn">
-                  <i>Expires {{item.data.expiresOn | date}}</i>
+                  <i>{{getString('general.expires')}} {{item.data.expiresOn | date}}</i>
                 </p>
                 <p  class="caption ellipsis margin-zero bodyTextTheme opacity-seventy" ng-if="item.redeemedOn" >
-                  <i>Redeemed {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</i>
+                  <i>{{getString('general.redeemed')}} {{item.redeemedOn | date:"MMM dd, yyyy 'at' h:mma" | lowercase}}</i>
                 </p>
                 <p class="caption ellipsis margin-zero bodyTextTheme opacity-seventy">
                   <i>{{item.data.distanceText}}</i>
@@ -55,19 +55,19 @@
   <div class="bottom fixed-bottom" ng-class="WidgetSaved.navbarEnabled ? '' : 'primaryBackgroundTheme'"
        ng-if="WidgetSaved.data.settings.mapView == 'show' || WidgetSaved.data.settings.filterPage == 'show'">
     <!--<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
-      <span class="whiteTheme small">Filter Applied</span>
+      <span class="whiteTheme small">{{getString('navigation.filterApplied')}}</span>
     </div>-->
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetSaved.showListItems()">List</a>
+      <a class="whiteTheme stretch" ng-click="WidgetSaved.showListItems()">{{getString('navigation.list')}}</a>
     </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetSaved.showMapView()">Map</a>
+      <a class="whiteTheme stretch" ng-click="WidgetSaved.showMapView()">{{getString('navigation.map')}}</a>
     </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetSaved.showFilter()">Category</a>
+      <a class="whiteTheme stretch" ng-click="WidgetSaved.showFilter()">{{getString('navigation.category')}}</a>
     </div>
     <div class="col-xs-3 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch active">Saved
+      <a class="whiteTheme stretch active">{{getString('navigation.saved')}}
       </a>
     </div>
   </div>
@@ -76,16 +76,16 @@
   <div class="bottom fixed-bottom" ng-class="WidgetSaved.navbarEnabled ? '' : 'primaryBackgroundTheme'"
        ng-if="WidgetSaved.data.settings.mapView == 'hide'">
     <!--<div class="col-xs-12 pull-left text-center filterBar opacity-seventy primaryBackgroundTheme">
-      <span class="whiteTheme small">Filter Applied</span>
+      <span class="whiteTheme small">{{getString('navigation.filterApplied')}}</span>
     </div>-->
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch active" ng-click="WidgetSaved.showListItems()">List</a>
+      <a class="whiteTheme stretch active" ng-click="WidgetSaved.showListItems()">{{getString('navigation.list')}}</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetSaved.showFilter()">Category</a>
+      <a class="whiteTheme stretch" ng-click="WidgetSaved.showFilter()">{{getString('navigation.category')}}</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch active">Saved</a>
+      <a class="whiteTheme stretch active">{{getString('navigation.saved')}}</a>
     </div>
   </div>
 
@@ -93,13 +93,13 @@
   <div class="bottom fixed-bottom" ng-class="WidgetSaved.navbarEnabled ? '' : 'primaryBackgroundTheme'"
        ng-if="WidgetSaved.data.settings.filterPage == 'hide'">
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetSaved.showListItems()">List</a>
+      <a class="whiteTheme stretch" ng-click="WidgetSaved.showListItems()">{{getString('navigation.list')}}</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetSaved.showMapView()">Map</a>
+      <a class="whiteTheme stretch" ng-click="WidgetSaved.showMapView()">{{getString('navigation.map')}}</a>
     </div>
     <div class="col-xs-4 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch active">Saved</a>
+      <a class="whiteTheme stretch active">{{getString('navigation.saved')}}</a>
     </div>
   </div>
 
@@ -107,10 +107,10 @@
   <div class="bottom fixed-bottom" ng-class="WidgetSaved.navbarEnabled ? '' : 'primaryBackgroundTheme'"
        ng-if="WidgetSaved.data.settings.filterPage == 'hide' && WidgetSaved.data.settings.mapView == 'hide'">
     <div class="col-xs-6 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch" ng-click="WidgetSaved.showListItems()">List</a>
+      <a class="whiteTheme stretch" ng-click="WidgetSaved.showListItems()">{{getString('navigation.list')}}</a>
     </div>
     <div class="col-xs-6 pull-left text-center primaryBackgroundTheme">
-      <a class="whiteTheme stretch active">Saved</a>
+      <a class="whiteTheme stretch active">{{getString('navigation.saved')}}</a>
     </div>
   </div>
 </div>
