@@ -400,9 +400,7 @@ h5{
 }
 
 /* List Layout Grids */
-.list-layout {
-	padding-top: calc(40px + var(--bf-safe-area-inset-top)) !important;
-}
+
 .list-layout .list-item-media{
 
 	left:0;
