@@ -65,8 +65,12 @@ h5{
 			opacity: 1;
 	}
 }
-.bottom.fixed-bottom.primaryBackgroundTheme{
-	padding-bottom: var(--bf-safe-area-inset-bottom);
+.bottom.fixed-bottom{
+	padding-bottom: calc(var(--bf-safe-area-inset-bottom) + 15px) !important;
+}
+.bottom.fixed-bottom .btn-primary{
+	width: calc(100vw - 32px);
+	margin: 0 16px;
 }
 .plugin-slider .plugin-slide,
 .plugin-slider.owl-carousel .owl-stage-outer,
@@ -493,18 +497,18 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 
 /* Fixed Bottom */
-.holder.has-bottom{
-	padding-bottom: 7vh !important;
+.holder.has-bottom .scrollable{
+	padding-bottom: calc(45px + var(--bf-safe-area-inset-bottom)) !important;
 }
-.holder.has-bottom.has-filter{
-	padding-bottom: calc(7vh + 23px) !important;
+.holder.has-bottom.has-filter .scrollable{
+	padding-bottom: calc(68px + var(--bf-safe-area-inset-bottom)) !important;
 }
-.holder.has-bottom.has-extra-links,
-.holder.has-bottom.has-extra-links.has-filter{
-	padding-bottom: 5.5rem !important;
+.holder.has-bottom.has-extra-links .scrollable,
+.holder.has-bottom.has-extra-links.has-filter .scrollable{
+	padding-bottom: calc(5.5rem + var(--bf-safe-area-inset-bottom)) !important;
 }
-.holder.has-bottom.has-extra-links.has-filter.map-layout{
-	padding-bottom: 0rem !important;
+.holder.has-bottom.has-extra-links.has-filter.map-layout .scrollable{
+	padding-bottom: calc(0rem + var(--bf-safe-area-inset-bottom)) !important;
 }
 
 .holder.has-bottom.has-filter .bottom .filterBar{
@@ -520,10 +524,12 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	left: 0;
 	z-index: 11;
 	width: 100%;
-	min-height: 7vh;
-	height: fit-content;
+	height: calc(var(--bf-safe-area-inset-bottom) + 45px);
 	background: var(--bf-theme-primary);
 	overflow: hidden;
+}
+.holder .bottom.fixed-bottom.item-buttons-container {
+	background: unset !important;
 }
 
 .holder .bottom.fixed-bottom .primaryBackgroundTheme{
@@ -911,11 +917,12 @@ html[buildfire='widget'] .modal {
 	background-position: center;
 	height: 80vh;
 }
-#googleMap {
-	height: calc(100vh - 32px);
+
+body #googleMap{
+	height: calc(100vh - 45px - var(--bf-safe-area-inset-bottom)) !important;
 	background:#eef0f0;
 }
 
-body #googleMap{
-	height: calc(100vh - 32px - var(--bf-safe-area-inset-bottom)) !important;
+body #googleMap .gm-fullscreen-control {
+	top: calc(var(--bf-safe-area-inset-top) + 32px) !important;
 }
