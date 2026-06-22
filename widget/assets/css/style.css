@@ -529,7 +529,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	overflow: hidden;
 }
 .holder .bottom.fixed-bottom.item-buttons-container {
-	background: unset !important;
+	background: var(--bf-theme-background) !important;
 }
 
 .holder .bottom.fixed-bottom .primaryBackgroundTheme{
