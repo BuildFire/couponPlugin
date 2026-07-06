@@ -60,12 +60,12 @@
     </div>
   </div>
 
-  <div class="bottom fixed-bottom transition-third primaryBackgroundTheme">
-    <div class=" text-center"  ng-show="showItemRedeemed">
+  <div class="bottom fixed-bottom transition-third item-buttons-container">
+    <div class="btn btn-primary text-center"  ng-show="showItemRedeemed">
       <p class="whiteTheme stretch margin-top-ten">{{getString('itemDetails.itemRedeemedTimeago')}}
         {{WidgetItem.item.redeemedOn |timeago}}</p>
     </div>
-    <div class=" text-center primaryBackgroundTheme"
+    <div class="btn btn-primary text-center"
          ng-click="WidgetItem.redeemCoupon(WidgetItem.item)" ng-show="showRedeemButton">
       <p class="whiteTheme stretch margin-top-ten">{{getString('itemDetails.redeemThisItem')}}</p>
     </div>
